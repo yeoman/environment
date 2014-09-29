@@ -1,10 +1,10 @@
 /**
- * @module yeoman-generator
+ * @module yeoman-environment
  */
 
 'use strict';
 
-var Environment = require('./lib/env');
+var Environment = require('./lib/environment');
 
 /**
  * The generator system is a framework for node to author reusable and
@@ -33,54 +33,7 @@ var Environment = require('./lib/env');
  *
  */
 
-/** @alias module:yeoman-generator */
-var yeoman = module.exports = function createEnv(args, opts, adapter) {
+/** @alias module:yeoman-environment */
+module.exports = function createEnv(args, opts, adapter) {
   return new Environment(args, opts, adapter);
-};
-
-/**
- * Reference to the inquirer module
- * @deprecated Require your own copy of the module, this one will be removed after 1.0
- */
-yeoman.inquirer = require('inquirer');
-
-/**
- * Global file helpers methods
- * {@link https://github.com/SBoudrias/file-utils}
- */
-yeoman.file = require('file-utils');
-
-// hoist up top level class the generator extend
-yeoman.Base = require('./lib/base');
-yeoman.NamedBase = require('./lib/named-base');
-
-/**
- * Test helpers
- * {@link module:test/helpers}
- */
-yeoman.test = require('./lib/test/helpers');
-
-/**
- * Test assertions helpers
- * {@link module:test/assert}
- */
-yeoman.assert = require('./lib/test/assert');
-
-/**
- * Yeoman base's generators
- * @enum generators
- */
-yeoman.generators = {
-
-  /**
-   * Base Generator
-   * {@link Base}
-   */
-  Base: yeoman.Base,
-
-  /**
-   * Named Base Generator
-   * {@link NamedBase}
-   */
-  NamedBase: yeoman.NamedBase
 };

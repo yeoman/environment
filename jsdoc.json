@@ -5,7 +5,7 @@
   },
   "opts": {
     "recurse": true,
-    "destination": "../yeoman-generator-doc/"
+    "destination": "../yeoman-environment-doc/"
   },
   "plugins": [
     "plugins/markdown"

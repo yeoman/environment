@@ -1,10 +1,9 @@
 /*global describe, before, beforeEach, afterEach, it */
 'use strict';
-var TerminalAdapter = require('../lib/env/adapter');
-var sinon = require('sinon');
+var assert = require('assert');
 var inquirer = require('inquirer');
-var yeoman = require('..');
-var assert = yeoman.assert;
+var sinon = require('sinon');
+var TerminalAdapter = require('../lib/adapter');
 
 describe('TerminalAdapter', function () {
   beforeEach(function () {

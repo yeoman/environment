@@ -1,6 +1,6 @@
 {
-  "name": "yeoman-generator",
-  "version": "0.17.7",
+  "name": "yeoman-environment",
+  "version": "1.0.0",
   "description": "Rails-inspired generator system that provides scaffolding for your apps",
   "license": "BSD",
   "keywords": [
@@ -18,57 +18,35 @@
   ],
   "homepage": "http://yeoman.io",
   "author": "The Yeoman Team",
-  "repository": "yeoman/generator",
+  "repository": "yeoman/environment",
   "engines": {
     "node": ">=0.10.0"
   },
   "scripts": {
     "test": "gulp",
-    "doc": "jsdoc -c ./jsdoc.json ./readme.md",
-    "test-generator": "mocha test/generators/*.js --reporter spec --timeout 100000"
+    "doc": "jsdoc -c ./jsdoc.json ./readme.md"
   },
   "dependencies": {
-    "async": "^0.9.0",
     "chalk": "^0.5.1",
-    "cheerio": "^0.17.0",
-    "class-extend": "^0.1.0",
-    "cross-spawn": "^0.2.3",
-    "dargs": "^2.0.3",
     "debug": "^1.0.1",
     "diff": "^1.0.4",
-    "download": "^1.0.2",
-    "file-utils": "^0.2.0",
-    "findup-sync": "^0.1.2",
-    "github-username": "^1.0.0",
     "glob": "^4.0.2",
     "grouped-queue": "^0.3.0",
-    "gruntfile-editor": "^0.2.0",
-    "iconv-lite": "^0.4.4",
     "inquirer": "^0.7.1",
-    "isbinaryfile": "^2.0.0",
     "lodash": "^2.4.1",
-    "mime": "^1.2.9",
-    "mkdirp": "^0.5.0",
-    "nopt": "^3.0.0",
-    "request": "^2.40.0",
-    "rimraf": "^2.2.0",
-    "run-async": "^0.1.0",
-    "shelljs": "^0.3.0",
     "text-table": "^0.2.0",
-    "underscore.string": "^2.3.1"
+    "yeoman-generator": "^0.17.7"
   },
   "devDependencies": {
     "gulp": "^3.6.0",
     "gulp-coveralls": "^0.1.0",
+    "gulp-eslint": "~0.1.8",
     "gulp-istanbul": "^0.2.0",
     "gulp-jscs": "^1.1.0",
     "gulp-jshint": "^1.5.3",
     "gulp-mocha": "^1.0.0",
     "jshint-stylish": "^0.4.0",
-    "mockery": "^1.4.0",
-    "nock": "^0.45.0",
-    "proxyquire": "^1.0.0",
-    "sinon": "^1.9.1",
-    "gulp-eslint": "~0.1.8"
+    "shelljs": "^0.3.0",
+    "sinon": "^1.9.1"
   }
 }

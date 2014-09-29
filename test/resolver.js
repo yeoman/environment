@@ -5,11 +5,12 @@ var path = require('path');
 var assert = require('assert');
 var shell = require('shelljs');
 
-var Environment = require('../lib/env');
+var Environment = require('../lib/environment');
 
 var globalLookupTest = process.env.NODE_PATH ? it : xit;
 
 describe('Environment Resolver', function () {
+  this.timeout(100000);
 
   describe('#lookup()', function () {
     before(function () {

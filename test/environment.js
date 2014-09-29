@@ -1,18 +1,18 @@
 /*global it, describe, before, beforeEach, afterEach */
 /*jshint scripturl: true */
 'use strict';
+var events = require('events');
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
 var sinon = require('sinon');
-var generators = require('..');
-var Base = generators.Base;
-var helpers = generators.test;
-var assert = generators.assert;
-var events = require('events');
-var TerminalAdapter = require('../lib/env/adapter');
-var Environment = require('../lib/env');
-var Store = require('../lib/env/store');
+var yeoman = require('yeoman-generator');
+var Base = yeoman.generators.Base;
+var assert = yeoman.assert;
+var helpers = yeoman.test;
+var TerminalAdapter = require('../lib/adapter');
+var Environment = require('../lib/environment');
+var Store = require('../lib/store');
 
 describe('Environment', function () {
 
@@ -494,12 +494,12 @@ describe('Environment', function () {
   describe('Events', function () {
     before(function () {
       var Generator = this.Generator = function () {
-        generators.Base.apply(this, arguments);
+        Base.apply(this, arguments);
       };
 
       Generator.namespace = 'angular:all';
 
-      util.inherits(Generator, generators.Base);
+      util.inherits(Generator, Base);
 
       Generator.prototype.createSomething = function () {};
       Generator.prototype.createSomethingElse = function () {};
@@ -507,7 +507,7 @@ describe('Environment', function () {
 
     it('emits the series of event on a specific generator', function (done) {
       var angular = new this.Generator([], {
-        env: generators(),
+        env: yeoman(),
         resolved: __filename,
         'skip-install': true
       });
@@ -560,7 +560,7 @@ describe('Environment', function () {
         };
       }
 
-      generators([], { 'skip-install': true })
+      yeoman([], { 'skip-install': true })
         .registerStub(this.Generator, 'angular:all')
         // Series of events proxied from the resolved generator
         .on('generators:start', assertEvent('generators:start'))
@@ -586,12 +586,12 @@ describe('Environment', function () {
 
     it('only call the end event once (bug #402)', function (done) {
       function GeneratorOnce() {
-        generators.Base.apply(this, arguments);
+        Base.apply(this, arguments);
         this.sourceRoot(path.join(__dirname, 'fixtures'));
         this.destinationRoot(path.join(__dirname, 'temp'));
       }
 
-      util.inherits(GeneratorOnce, generators.Base);
+      util.inherits(GeneratorOnce, Base);
 
       GeneratorOnce.prototype.createDuplicate = function () {
         this.copy('foo-copy.js');
@@ -599,7 +599,7 @@ describe('Environment', function () {
       };
 
       var generatorOnce = new GeneratorOnce([], {
-        env: generators(),
+        env: yeoman(),
         resolved: __filename,
         'skip-install': true
       });

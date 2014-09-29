@@ -1,4 +1,4 @@
-var generators = require('../../../..');
+var generators = require('yeoman-generator').generators;
 var util = require('util');
 
 var Generator = module.exports = function Generator(args, options) {
