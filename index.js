@@ -24,7 +24,7 @@ var Environment = require('./lib/environment');
  * `node_modules/yeoman-backbone/lib/generators`)
  *
  * @example
- *    var yeoman = require('yeoman-generators');
+ *    var yeoman = require('yeoman-environment');
  *
  *    var env = yeoman('angular:model')
  *      .run(function(err) {
