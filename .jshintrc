@@ -15,5 +15,14 @@
   "smarttabs": true,
   "indent": 2,
   "quotmark": "single",
-  "scripturl": true
+  "scripturl": true,
+  "globals": [
+    "describe",
+    "it",
+    "xit",
+    "before",
+    "after",
+    "beforeEach",
+    "afterEach"
+  ]
 }

@@ -1,4 +1,3 @@
-/*global it, xit, describe, before, after, beforeEach, afterEach */
 'use strict';
 var fs = require('fs');
 var path = require('path');

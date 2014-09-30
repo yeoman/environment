@@ -1,4 +1,3 @@
-/*global describe, before, beforeEach, afterEach, it */
 'use strict';
 var assert = require('assert');
 var inquirer = require('inquirer');
