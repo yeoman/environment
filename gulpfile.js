@@ -21,7 +21,7 @@ gulp.task('static', function () {
     'doc.js',
     'gulpfile.js'
   ])
-  .pipe(jshint('.jshintrc'))
+  .pipe(jshint())
   .pipe(jshint.reporter('jshint-stylish'))
   .pipe(jshint.reporter('fail'))
   .pipe(jscs())

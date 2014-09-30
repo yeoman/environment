@@ -7,22 +7,14 @@ var path = require('path');
 var util = require('util');
 var sinon = require('sinon');
 var yeoman = require('yeoman-generator');
-var Base = yeoman.generators.Base;
 var assert = yeoman.assert;
-var helpers = yeoman.test;
 var TerminalAdapter = require('../lib/adapter');
 var Environment = require('../lib/environment');
-var Store = require('../lib/store');
 
 describe('Environment', function () {
 
   beforeEach(function () {
     this.env = new Environment([], { 'skip-install': true });
-    process.chdir(__dirname);
-  });
-
-  afterEach(function () {
-    this.env.removeAllListeners();
   });
 
   it('is an instance of EventEmitter', function () {
@@ -43,6 +35,16 @@ describe('Environment', function () {
     it('take options parameter', function () {
       var opts = { foo: 'bar' };
       assert.equal(new Environment(null, opts).options, opts);
+    });
+
+    it('instantiates a TerminalAdapter if none provided', function () {
+      assert.ok(this.env.adapter instanceof TerminalAdapter);
+    });
+
+    it('uses the provided object as adapter if any', function () {
+      var dummyAdapter = {};
+      var env = new Environment(null, null, dummyAdapter);
+      assert.equal(env.adapter, dummyAdapter, 'Not the adapter provided');
     });
   });
 
@@ -66,21 +68,11 @@ describe('Environment', function () {
       this.expected = this.expected.replace('Usage: init', 'Usage: gg');
       assert.textEqual(this.env.help('gg').trim(), this.expected);
     });
-    it('instantiates a TerminalAdapter if none provided', function () {
-      assert.ok(this.env.adapter instanceof TerminalAdapter, 'Not a TerminalAdapter');
-    });
-
-    it('uses the provided object as adapter if any', function () {
-      var dummyAdapter = {};
-      var env = new Environment(null, null, dummyAdapter);
-      assert.equal(env.adapter, dummyAdapter, 'Not the adapter provided');
-    });
-
   });
 
   describe('#create()', function () {
     beforeEach(function () {
-      this.Generator = helpers.createDummyGenerator();
+      this.Generator = yeoman.generators.Base.extend();
       this.env.registerStub(this.Generator, 'stub');
       this.env.registerStub(this.Generator, 'stub:foo:bar');
     });
@@ -112,15 +104,13 @@ describe('Environment', function () {
       var args = ['foo', 'bar'];
       var generator = this.env.create('stub', { arguments: args1, args: args });
       assert.deepEqual(generator.arguments, args1);
-      assert.notDeepEqual(generator.arguments, args);
     });
 
     it('default arguments to `env.arguments`', function () {
       var args = ['foo', 'bar'];
       this.env.arguments = args;
       var generator = this.env.create('stub');
-      assert.notEqual(generator.arguments, args, 'not passed by reference');
-      assert.deepEqual(generator.arguments, args);
+      assert.notEqual(generator.arguments, args, 'expect arguments to not be passed by reference');
     });
 
     it('pass options.options', function () {
@@ -153,42 +143,19 @@ describe('Environment', function () {
     it('adds the namespace as called on the options', function () {
       assert.equal(this.env.create('stub:foo:bar').options.namespace, 'stub:foo:bar');
     });
-
-    describe('NamedBase', function () {
-      beforeEach(function () {
-        this.env.register('./fixtures/custom-generator-extend', 'scaffold');
-
-        this.NamedGenerator = this.env.get('scaffold');
-      });
-
-      it('does not raise an error when the help option is provided but the required name parameter is not', function () {
-        assert.doesNotThrow(this.env.create.bind(this.env, 'scaffold', { options: { help: true }}));
-      });
-
-      it('calls the named base generator with the help option and provides the required name parameter', function () {
-        var generator = this.env.create('scaffold', { args: ['foo'], options: { help: true }});
-
-        assert.equal(generator.options.help, true);
-        assert.equal(generator.name, 'foo');
-      });
-
-      it('throws an error when the required name parameter is not provided', function () {
-        assert.throws(this.env.create.bind(this.env, 'scaffold'));
-      });
-    });
   });
 
   describe('#run()', function () {
     beforeEach(function () {
       var self = this;
-      this.Stub = Base.extend({
+      this.Stub = yeoman.generators.Base.extend({
         constructor: function () {
           self.args = arguments;
-          Base.apply(this, arguments);
+          yeoman.generators.Base.apply(this, arguments);
         },
         exec: function () {}
       });
-      this.runMethod = sinon.spy(Base.prototype, 'run');
+      this.runMethod = sinon.spy(this.Stub.prototype, 'run');
       this.env.registerStub(this.Stub, 'stub:run');
     });
 
@@ -280,12 +247,12 @@ describe('Environment', function () {
 
     it('determine registered Generator namespace and resolved path', function () {
       var simple = this.env.get('fixtures:custom-generator-simple');
-      assert.ok(typeof simple === 'function');
+      assert.equal(typeof simple, 'function');
       assert.ok(simple.namespace, 'fixtures:custom-generator-simple');
       assert.ok(simple.resolved, path.resolve(this.simplePath));
 
       var extend = this.env.get('scaffold');
-      assert.ok(typeof extend === 'function');
+      assert.equal(typeof extend, 'function');
       assert.ok(extend.namespace, 'scaffold');
       assert.ok(extend.resolved, path.resolve(this.extendPath));
     });
@@ -471,7 +438,6 @@ describe('Environment', function () {
       this.env = new Environment();
       delete this.env.adapter;
       delete this.env.runLoop;
-
     });
 
     it('add an adapter', function () {
@@ -493,16 +459,10 @@ describe('Environment', function () {
   // involved in the process.
   describe('Events', function () {
     before(function () {
-      var Generator = this.Generator = function () {
-        Base.apply(this, arguments);
-      };
-
-      Generator.namespace = 'angular:all';
-
-      util.inherits(Generator, Base);
-
-      Generator.prototype.createSomething = function () {};
-      Generator.prototype.createSomethingElse = function () {};
+      this.Generator = yeoman.generators.Base.extend({
+        createSomething: sinon.spy()
+      });
+      this.Generator.namespace = 'angular:all';
     });
 
     it('emits the series of event on a specific generator', function (done) {
@@ -585,18 +545,9 @@ describe('Environment', function () {
     });
 
     it('only call the end event once (bug #402)', function (done) {
-      function GeneratorOnce() {
-        Base.apply(this, arguments);
-        this.sourceRoot(path.join(__dirname, 'fixtures'));
-        this.destinationRoot(path.join(__dirname, 'temp'));
-      }
-
-      util.inherits(GeneratorOnce, Base);
-
-      GeneratorOnce.prototype.createDuplicate = function () {
-        this.copy('foo-copy.js');
-        this.copy('foo-copy.js');
-      };
+      var GeneratorOnce = yeoman.generators.Base.extend({
+        boom: sinon.spy();
+      });
 
       var generatorOnce = new GeneratorOnce([], {
         env: yeoman(),
@@ -617,74 +568,4 @@ describe('Environment', function () {
       generatorOnce.run();
     });
   });
-
-  describe('Store', function () {
-    beforeEach(function () {
-      this.store = new Store();
-    });
-
-    describe('#add() / #get()', function () {
-      beforeEach(function () {
-        this.modulePath = path.join(__dirname, 'fixtures/mocha-generator');
-        this.module = require(this.modulePath);
-      });
-
-      describe('storing as module', function () {
-        beforeEach(function () {
-          this.store.add('foo:module', this.module);
-          this.outcome = this.store.get('foo:module');
-        });
-
-        it('store and return the module', function () {
-          assert.equal(this.outcome, this.module);
-        });
-
-        it('assign meta data to the module', function () {
-          assert.equal(this.outcome.namespace, 'foo:module');
-        });
-
-        it('assign dummy resolved value (can\'t determine the path of an instantiated)', function () {
-          assert.ok(this.outcome.resolved.length > 0);
-        });
-      });
-
-      describe('storing as module path', function () {
-        beforeEach(function () {
-          this.store.add('foo:path', this.modulePath);
-          this.outcome = this.store.get('foo:path');
-        });
-
-        it('store and returns the required module', function () {
-          assert.notEqual(this.outcome, this.modulePath);
-          assert.equal(this.outcome.usage, 'Usage can be used to customize the help output');
-        });
-
-        it('assign meta data to the module', function () {
-          assert.equal(this.outcome.resolved, this.modulePath);
-          assert.equal(this.outcome.namespace, 'foo:path');
-        });
-      });
-
-      it('normalize Generators', function () {
-        var method = function () {};
-        this.store.add('foo', method);
-        var Generator = this.store.get('foo');
-
-        assert.implement(Generator.prototype, Base.prototype);
-        assert.equal(Generator.prototype.exec, method);
-      });
-    });
-
-    describe('#namespaces()', function () {
-      beforeEach(function () {
-        this.store.add('foo', {});
-        this.store.add('lab', {});
-      });
-
-      it('return stored module namespaces', function () {
-        assert.deepEqual(this.store.namespaces(), ['foo', 'lab']);
-      });
-    });
-  });
-
 });
