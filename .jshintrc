@@ -16,13 +16,8 @@
   "indent": 2,
   "quotmark": "single",
   "scripturl": true,
-  "globals": [
-    "describe",
-    "it",
-    "xit",
-    "before",
-    "after",
-    "beforeEach",
-    "afterEach"
-  ]
+  "mocha": true,
+  "globals": {
+    "xit": false
+  }
 }

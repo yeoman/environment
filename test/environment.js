@@ -465,7 +465,7 @@ describe('Environment', function () {
     before(function () {
       this.Generator = yeoman.generators.Base.extend({
         createSomething: function () {},
-        createSomethingElse: function () {},
+        createSomethingElse: function () {}
       });
       this.Generator.namespace = 'angular:all';
     });
