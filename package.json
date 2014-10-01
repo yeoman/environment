@@ -29,11 +29,11 @@
   },
   "dependencies": {
     "chalk": "^0.5.1",
-    "debug": "^1.0.1",
+    "debug": "^2.0.0",
     "diff": "^1.0.4",
     "glob": "^4.0.2",
     "grouped-queue": "^0.3.0",
-    "inquirer": "^0.7.1",
+    "inquirer": "^0.8.0",
     "lodash": "^2.4.1",
     "text-table": "^0.2.0",
     "yeoman-generator": "^0.17.7"
@@ -42,11 +42,11 @@
     "gulp": "^3.6.0",
     "gulp-coveralls": "^0.1.0",
     "gulp-eslint": "~0.1.8",
-    "gulp-istanbul": "^0.2.0",
+    "gulp-istanbul": "^0.3.1",
     "gulp-jscs": "^1.1.0",
     "gulp-jshint": "^1.5.3",
     "gulp-mocha": "^1.0.0",
-    "jshint-stylish": "^0.4.0",
+    "jshint-stylish": "^1.0.0",
     "matcha": "^0.5.0",
     "shelljs": "^0.3.0",
     "sinon": "^1.9.1"

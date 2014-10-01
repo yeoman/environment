@@ -7,25 +7,18 @@ var eslint = require('gulp-eslint');
 var istanbul = require('gulp-istanbul');
 var coveralls = require('gulp-coveralls');
 
-var handleErr = function (err) {
-  console.log(err.message);
-  process.exit(1);
-};
-
 gulp.task('static', function () {
   return gulp.src([
     'test/*.js',
     'lib/**/*.js',
     'benchmark/**/*.js',
     'index.js',
-    'doc.js',
     'gulpfile.js'
   ])
   .pipe(jshint())
   .pipe(jshint.reporter('jshint-stylish'))
   .pipe(jshint.reporter('fail'))
   .pipe(jscs())
-  .on('error', handleErr)
   .pipe(eslint())
   .pipe(eslint.format())
   .pipe(eslint.failOnError());
@@ -40,8 +33,7 @@ gulp.task('test', function (cb) {
   .on('finish', function () {
     gulp.src(['test/*.js'])
       .pipe(mocha({
-        reporter: 'spec',
-        timeout: 100000
+        reporter: 'spec'
       }))
       .pipe(istanbul.writeReports())
       .on('end', cb);
