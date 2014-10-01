@@ -17,6 +17,10 @@ describe('Environment', function () {
     this.env = new Environment([], { 'skip-install': true });
   });
 
+  afterEach(function () {
+    this.env.removeAllListeners();
+  });
+
   it('is an instance of EventEmitter', function () {
     assert.ok(new Environment() instanceof events.EventEmitter);
   });
@@ -51,8 +55,8 @@ describe('Environment', function () {
   describe('#help()', function () {
     beforeEach(function () {
       this.env
-        .register('./fixtures/custom-generator-simple')
-        .register('./fixtures/custom-generator-extend');
+        .register(path.join(__dirname, 'fixtures/custom-generator-simple'))
+        .register(path.join(__dirname, 'fixtures/custom-generator-extend'));
 
       this.expected = fs.readFileSync(path.join(__dirname, 'fixtures/help.txt'), 'utf8').trim();
 
@@ -155,7 +159,7 @@ describe('Environment', function () {
         },
         exec: function () {}
       });
-      this.runMethod = sinon.spy(this.Stub.prototype, 'run');
+      this.runMethod = sinon.spy(yeoman.generators.Base.prototype, 'run');
       this.env.registerStub(this.Stub, 'stub:run');
     });
 
@@ -227,14 +231,14 @@ describe('Environment', function () {
     });
 
     it('returns the generator', function () {
-      assert.ok(this.env.run('stub:run') instanceof Base);
+      assert.ok(this.env.run('stub:run') instanceof yeoman.generators.Base);
     });
   });
 
   describe('#register()', function () {
     beforeEach(function () {
-      this.simplePath = './fixtures/custom-generator-simple';
-      this.extendPath = './fixtures/custom-generator-extend';
+      this.simplePath = path.join(__dirname, 'fixtures/custom-generator-simple');
+      this.extendPath = path.join(__dirname, './fixtures/custom-generator-extend');
       assert.equal(this.env.namespaces().length, 0, 'env should be empty');
       this.env
         .register(this.simplePath, 'fixtures:custom-generator-simple')
@@ -268,7 +272,7 @@ describe('Environment', function () {
     beforeEach(function () {
       this.simpleDummy = sinon.spy();
       this.completeDummy = function () {};
-      util.inherits(this.completeDummy, Base);
+      util.inherits(this.completeDummy, yeoman.generators.Base);
       this.env
         .registerStub(this.simpleDummy, 'dummy:simple')
         .registerStub(this.completeDummy, 'dummy:complete');
@@ -279,7 +283,7 @@ describe('Environment', function () {
     });
 
     it('extend simple function with Base', function (done) {
-      assert.implement(this.env.get('dummy:simple'), Base);
+      assert.implement(this.env.get('dummy:simple'), yeoman.generators.Base);
       this.env.run('dummy:simple', function () {
         assert.ok(this.simpleDummy.calledOnce);
         done();
@@ -298,9 +302,9 @@ describe('Environment', function () {
   describe('#namespaces()', function () {
     beforeEach(function () {
       this.env
-        .register('./fixtures/custom-generator-simple')
-        .register('./fixtures/custom-generator-extend')
-        .register('./fixtures/custom-generator-extend', 'support:scaffold');
+        .register(path.join(__dirname, './fixtures/custom-generator-simple'))
+        .register(path.join(__dirname, './fixtures/custom-generator-extend'))
+        .register(path.join(__dirname, './fixtures/custom-generator-extend'), 'support:scaffold');
     });
 
     it('get the list of namespaces', function () {
@@ -310,8 +314,8 @@ describe('Environment', function () {
 
   describe('#getGeneratorsMeta()', function () {
     beforeEach(function () {
-      this.generatorPath = './fixtures/custom-generator-simple';
-      this.env.register('./fixtures/custom-generator-simple');
+      this.generatorPath = path.join(__dirname, './fixtures/custom-generator-simple');
+      this.env.register(this.generatorPath);
     });
 
     it('get the registered Generators metadatas', function () {
@@ -370,8 +374,8 @@ describe('Environment', function () {
     beforeEach(function () {
       this.generator = require('./fixtures/mocha-generator');
       this.env
-        .register('./fixtures/mocha-generator', 'fixtures:mocha-generator')
-        .register('./fixtures/mocha-generator', 'mocha:generator');
+        .register(path.join(__dirname, './fixtures/mocha-generator'), 'fixtures:mocha-generator')
+        .register(path.join(__dirname, './fixtures/mocha-generator'), 'mocha:generator');
     });
 
     it('get a specific generator', function () {
@@ -460,7 +464,8 @@ describe('Environment', function () {
   describe('Events', function () {
     before(function () {
       this.Generator = yeoman.generators.Base.extend({
-        createSomething: sinon.spy()
+        createSomething: function () {},
+        createSomethingElse: function () {},
       });
       this.Generator.namespace = 'angular:all';
     });
@@ -546,7 +551,7 @@ describe('Environment', function () {
 
     it('only call the end event once (bug #402)', function (done) {
       var GeneratorOnce = yeoman.generators.Base.extend({
-        boom: sinon.spy();
+        boom: function () {}
       });
 
       var generatorOnce = new GeneratorOnce([], {

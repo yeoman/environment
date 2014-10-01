@@ -28,6 +28,7 @@ describe('Environment Resolver', function () {
 
     after(function () {
       fs.unlinkSync(path.join(this.projectRoot, './node_modules/generator-extend'));
+      process.chdir(__dirname);
     });
 
     beforeEach(function () {

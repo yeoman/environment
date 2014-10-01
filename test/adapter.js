@@ -1,5 +1,5 @@
 'use strict';
-var assert = require('assert');
+var assert = require('yeoman-generator').assert;
 var inquirer = require('inquirer');
 var sinon = require('sinon');
 var TerminalAdapter = require('../lib/adapter');
