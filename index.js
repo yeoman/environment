@@ -4,7 +4,7 @@
 
 'use strict';
 
-var Environment = require('./lib/environment');
+var Environment = exports.Environment = require('./lib/environment');
 
 /**
  * The generator system is a framework for node to author reusable and
@@ -33,7 +33,6 @@ var Environment = require('./lib/environment');
  *
  */
 
-/** @alias module:yeoman-environment */
-module.exports = function createEnv(args, opts, adapter) {
+exports.createEnv = function createEnv(args, opts, adapter) {
   return new Environment(args, opts, adapter);
 };
