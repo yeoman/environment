@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Rails-inspired generator system that provides scaffolding for your apps",
   "license": "BSD",
+  "main": "lib/environment.js",
   "keywords": [
     "development",
     "dev",

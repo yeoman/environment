@@ -436,6 +436,13 @@ describe('Environment', function () {
     });
   });
 
+  describe('.createEnv()', function () {
+    it('create an environment', function () {
+      var env = Environment.createEnv();
+      assert(env instanceof Environment);
+    });
+  });
+
   // Events
   // ------
 
