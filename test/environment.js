@@ -91,25 +91,6 @@ describe('Environment', function () {
       assert.deepEqual(generator.arguments, args);
     });
 
-    it('pass options.arguments as string', function () {
-      var args = 'foo bar';
-      var generator = this.env.create('stub', { arguments: args });
-      assert.deepEqual(generator.arguments, args.split(' '));
-    });
-
-    it('pass options.args (as `arguments` alias)', function () {
-      var args = ['foo', 'bar'];
-      var generator = this.env.create('stub', { args: args });
-      assert.deepEqual(generator.arguments, args);
-    });
-
-    it('prefer options.arguments over options.args', function () {
-      var args1 = ['yo', 'unicorn'];
-      var args = ['foo', 'bar'];
-      var generator = this.env.create('stub', { arguments: args1, args: args });
-      assert.deepEqual(generator.arguments, args1);
-    });
-
     it('default arguments to `env.arguments`', function () {
       var args = ['foo', 'bar'];
       this.env.arguments = args;
