@@ -487,7 +487,7 @@ describe('Environment', function () {
         .on('angular:end', assertEvent('angular:end'))
 
         // Run the generator
-        .run('angular myapp', { 'skip-install' : true });
+        .run('angular myapp', { 'skip-install': true });
     });
   });
 });
