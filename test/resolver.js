@@ -31,10 +31,10 @@ describe('Environment Resolver', function () {
       process.chdir(__dirname);
     });
 
-    beforeEach(function () {
+    beforeEach(function (done) {
       this.env = new Environment();
       assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-      this.env.lookup();
+      this.env.lookup(done);
     });
 
     it('register local generators', function () {
