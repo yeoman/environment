@@ -443,64 +443,23 @@ describe('Environment', function () {
     });
   });
 
-  // Events
-  // ------
-
-  // A series of events are emitted during the generation process. Both on
-  // the global `generators` handler and each individual generators
-  // involved in the process.
   describe('Events', function () {
-    before(function () {
+    beforeEach(function () {
       this.Generator = yeoman.generators.Base.extend({
         createSomething: function () {},
         createSomethingElse: function () {}
       });
-      this.Generator.namespace = 'angular:all';
+      this.env = Environment.createEnv();
+      this.env.registerStub(this.Generator, 'angular');
     });
 
-    it('emits the series of event on a specific generator', function (done) {
-      var angular = new this.Generator([], {
-        env: yeoman(),
-        resolved: __filename,
-        'skip-install': true
-      });
-
-      var lifecycle = ['start', 'createSomething', 'createSomethingElse', 'end'];
-
-      function assertEvent(e) {
-        return function () {
-          assert.equal(e, lifecycle.shift());
-          if (e === 'end') {
-            done();
-          }
-        };
-      }
-
-      angular
-        // Start event, emitted right before "running" the generator.
-        .on('start', assertEvent('start'))
-        // End event, emitted after the generation process, when every generator method and hooks are executed
-        .on('end', assertEvent('end'))
-        // Emitted when a conflict is detected, right after the prompt happens.
-        // .on('conflict', assertEvent('conflict'))
-        // Emitted on every prompt, both for conflict state and generators one.
-        // .on('prompt', assertEvent('prompt'))
-        // Emitted right before a hook is invoked
-        // .on('hook', assertEvent('hook'))
-        // Emitted on each generator method
-        .on('createSomething', assertEvent('createSomething'))
-        .on('createSomethingElse', assertEvent('createSomethingElse'));
-
-      angular.run();
-    });
-
-    it('hoists up the series of event from specific generator to the generators handler', function (done) {
+    it('triggers lifecycle events while running generators', function (done) {
       var lifecycle = [
         'generators:start',
-        'angular:all:start',
-        'angular:all:createSomething',
-        'angular:all:createSomethingElse',
-        'angular:all:end',
+        'angular:start',
+        'angular:createSomething',
+        'angular:createSomethingElse',
+        'angular:end',
         'generators:end'
       ];
 
@@ -513,52 +472,22 @@ describe('Environment', function () {
         };
       }
 
-      yeoman([], { 'skip-install': true })
-        .registerStub(this.Generator, 'angular:all')
-        // Series of events proxied from the resolved generator
+      this.env
+        // Series of environment own events
         .on('generators:start', assertEvent('generators:start'))
         .on('generators:end', assertEvent('generators:end'))
-        // .on('conflict', assertEvent('generators:conflict'))
-        // .on('prompt', assertEvent('generators:prompt'))
-        // .on('hook', assertEvent('generators:start'))
-
-        // Emitted for each generator method invoked, prefix by the generator namespace
-        .on('angular:all:createSomething', assertEvent('angular:all:createSomething'))
-        .on('angular:all:createSomethingElse', assertEvent('angular:all:createSomethingElse'))
 
         // Additionally, for more specific events, same prefixing happens on
         // start, end, conflict, prompt and hook.
-        .on('angular:all:start', assertEvent('angular:all:start'))
-        .on('angular:all:end', assertEvent('angular:all:end'))
-        .on('angular:all:conflict', assertEvent('angular:all:conflict'))
-        .on('angular:all:prompt', assertEvent('angular:all:prompt'))
+        .on('angular:start', assertEvent('angular:start'))
+        .on('angular:prompt', assertEvent('angular:prompt'))
+        .on('angular:createSomething', assertEvent('angular:createSomething'))
+        .on('angular:createSomethingElse', assertEvent('angular:createSomethingElse'))
+        .on('angular:conflict', assertEvent('angular:conflict'))
+        .on('angular:end', assertEvent('angular:end'))
 
-        // actual run
-        .run('angular:all myapp');
-    });
-
-    it('only call the end event once (bug #402)', function (done) {
-      var GeneratorOnce = yeoman.generators.Base.extend({
-        boom: function () {}
-      });
-
-      var generatorOnce = new GeneratorOnce([], {
-        env: yeoman(),
-        resolved: __filename,
-        'skip-install': true
-      });
-
-      var isFirstEndEvent = true;
-
-      generatorOnce.on('end', function () {
-        assert.ok(isFirstEndEvent);
-        if (isFirstEndEvent) {
-          done();
-        }
-        isFirstEndEvent = false;
-      });
-
-      generatorOnce.run();
+        // Run the generator
+        .run('angular myapp', { 'skip-install' : true });
     });
   });
 });
