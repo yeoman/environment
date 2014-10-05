@@ -1,6 +1,6 @@
 {
   "source": {
-    "include": ["index.js", "lib"],
+    "include": ["lib"],
     "includePattern": ".+\\.js(doc)?$"
   },
   "opts": {
