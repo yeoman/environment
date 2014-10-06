@@ -2,6 +2,7 @@
 var assert = require('yeoman-generator').assert;
 var inquirer = require('inquirer');
 var sinon = require('sinon');
+var logSymbols = require('log-symbols');
 var TerminalAdapter = require('../lib/adapter');
 
 describe('TerminalAdapter', function () {
@@ -125,12 +126,12 @@ describe('TerminalAdapter', function () {
 
     it('#ok() adds a green "✔ " at the beginning and \\n at the end', function () {
       this.adapter.log.ok('dummy');
-      assert(this.spylog.withArgs('\u001b[32m✔ \u001b[39mdummy\n').calledOnce);
+      assert(this.spylog.withArgs(logSymbols.success + ' dummy\n').calledOnce);
     });
 
     it('#error() adds a green "✗ " at the beginning and \\n at the end', function () {
       this.adapter.log.error('dummy');
-      assert(this.spylog.withArgs('\u001b[31m✗ \u001b[39mdummy\n').calledOnce);
+      assert(this.spylog.withArgs(logSymbols.error + ' dummy\n').calledOnce);
     });
 
     describe('statuses', function () {
