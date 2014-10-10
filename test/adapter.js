@@ -1,5 +1,6 @@
 'use strict';
 var assert = require('yeoman-generator').assert;
+var _ = require('lodash');
 var inquirer = require('inquirer');
 var sinon = require('sinon');
 var logSymbols = require('log-symbols');
@@ -12,18 +13,20 @@ describe('TerminalAdapter', function () {
 
   describe('#prompt()', function () {
     beforeEach(function () {
-      this.spy = sinon.spy(inquirer, 'prompt');
+      this.sandbox = sinon.sandbox.create();
+      this.spy = sinon.spy();
+      this.sandbox.stub(inquirer, 'createPromptModule').returns(this.spy);
+      this.adapter = new TerminalAdapter();
     });
 
     afterEach(function () {
-      inquirer.prompt.restore();
+      this.sandbox.restore();
     });
 
     it('pass its arguments to inquirer', function () {
       var questions = [];
-      var cb = function () {};
-      this.adapter.prompt(questions, cb);
-      assert(this.spy.withArgs(questions, cb).calledOnce);
+      this.adapter.prompt(questions, _.noop);
+      sinon.assert.calledWith(this.spy, questions, _.noop);
     });
   });
 
