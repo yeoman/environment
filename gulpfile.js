@@ -6,6 +6,7 @@ var jscs = require('gulp-jscs');
 var eslint = require('gulp-eslint');
 var istanbul = require('gulp-istanbul');
 var coveralls = require('gulp-coveralls');
+var plumber = require('gulp-plumber');
 
 gulp.task('static', function () {
   return gulp.src([
@@ -26,12 +27,12 @@ gulp.task('static', function () {
 
 gulp.task('test', function (cb) {
   gulp.src([
-    'lib/**/*.js',
-    'index.js'
+    'lib/**/*.js'
   ])
-  .pipe(istanbul())
+  .pipe(istanbul({ includeUntested: true }))
   .on('finish', function () {
     gulp.src(['test/*.js'])
+      .pipe(plumber())
       .pipe(mocha({
         reporter: 'spec'
       }))
