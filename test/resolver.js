@@ -99,16 +99,16 @@ describe('Environment Resolver', function () {
       process.env.NODE_PATH = this.NODE_PATH;
     });
 
-    it('walk up the CWD lookups dir', function () {
-      var paths = this.env.getNpmPaths();
-      assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
-      var prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
-      assert.equal(paths[1], path.join(prevdir, 'node_modules'));
-    });
-
     describe('with NODE_PATH', function () {
       beforeEach(function () {
         process.env.NODE_PATH = '/some/dummy/path';
+      });
+
+      it('walk up the CWD lookups dir', function () {
+        var paths = this.env.getNpmPaths();
+        assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
+        var prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
+        assert.equal(paths[1], path.join(prevdir, 'node_modules'));
       });
 
       it('append NODE_PATH', function () {
@@ -119,6 +119,13 @@ describe('Environment Resolver', function () {
     describe('without NODE_PATH', function () {
       beforeEach(function () {
         delete process.env.NODE_PATH;
+      });
+
+      it('walk up the CWD lookups dir', function () {
+        var paths = this.env.getNpmPaths();
+        assert.equal(paths[3], path.join(process.cwd(), 'node_modules'));
+        var prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
+        assert.equal(paths[4], path.join(prevdir, 'node_modules'));
       });
 
       it('append best bet if NODE_PATH is unset', function () {
