@@ -7,7 +7,7 @@ It provides a high-level API to discover, create and run generators, as well as 
 ## Usage
 
 ```js
-var yeoman = require('yeoman-generator');
+var yeoman = require('yeoman-environment');
 
 var env = yeoman.createEnv();
 
