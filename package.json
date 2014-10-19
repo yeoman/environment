@@ -37,6 +37,7 @@
     "inquirer": "^0.8.0",
     "lodash": "^2.4.1",
     "log-symbols": "^1.0.1",
+    "mem-fs": "SBoudrias/mem-fs",
     "text-table": "^0.2.0",
     "untildify": "^1.0.0",
     "yeoman-generator": "^0.17.7"
