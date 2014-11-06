@@ -50,6 +50,10 @@ describe('Environment', function () {
       var env = new Environment(null, null, dummyAdapter);
       assert.equal(env.adapter, dummyAdapter, 'Not the adapter provided');
     });
+
+    it('instantiates a mem-fs instance', function () {
+      assert.ok(this.env.sharedFs);
+    });
   });
 
   describe('#help()', function () {
@@ -442,6 +446,7 @@ describe('Environment', function () {
       this.env = new Environment();
       delete this.env.adapter;
       delete this.env.runLoop;
+      delete this.env.sharedFs;
     });
 
     it('add an adapter', function () {
@@ -452,6 +457,11 @@ describe('Environment', function () {
     it('add a runLoop', function () {
       Environment.enforceUpdate(this.env);
       assert(this.env.runLoop);
+    });
+
+    it('add a shared mem-fs instance', function () {
+      Environment.enforceUpdate(this.env);
+      assert(this.env.sharedFs);
     });
   });
 
