@@ -1,9 +1,9 @@
 /*global suite, bench */
 'use strict';
-var generators = require('..');
+var yeoman = require('..');
 
-suite('Env', function () {
-  bench('#lookup()', function () {
-    generators().lookup();
+suite('Environment', function () {
+  bench('#lookup()', function (done) {
+    yeoman.createEnv().lookup(done);
   });
 });
