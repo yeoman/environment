@@ -348,6 +348,13 @@ describe('Environment', function () {
       assert.equal(this.env.namespace('node_modules/generator-mocha/backbone/model.js'), 'mocha:backbone:model');
     });
 
+    it('create namespace from scoped path', function () {
+      assert.equal(this.env.namespace('@dummyscope/generator-backbone/all.js'), '@dummyscope/backbone:all');
+      assert.equal(this.env.namespace('@dummyscope/generator-mocha/backbone/model/index.js'), '@dummyscope/mocha:backbone:model');
+      assert.equal(this.env.namespace('@dummyscope/generator-mocha/backbone/model.js'), '@dummyscope/mocha:backbone:model');
+      assert.equal(this.env.namespace('/node_modules/@dummyscope/generator-mocha/backbone/model.js'), '@dummyscope/mocha:backbone:model');
+    });
+
     it('handle relative paths', function () {
       assert.equal(this.env.namespace('../local/stuff'), 'local:stuff');
       assert.equal(this.env.namespace('./local/stuff'), 'local:stuff');

@@ -32,7 +32,7 @@ describe('Environment Resolver', function () {
         fs.mkdirSync(scopedFolder);
       }
 
-      if(!fs.existsSync(scopedGenerator)) {
+      if (!fs.existsSync(scopedGenerator)) {
         fs.symlinkSync(
           path.resolve('../custom-generator-scoped'),
           scopedGenerator,
@@ -57,10 +57,11 @@ describe('Environment Resolver', function () {
     it('register local generators', function () {
       assert.ok(this.env.get('dummy:app'));
       assert.ok(this.env.get('dummy:yo'));
-      assert.ok(this.env.get('@dummyscope/scoped:app'));
     });
 
-    return;
+    it('register generators in scoped packages', function () {
+      assert.ok(this.env.get('@dummyscope/scoped:app'));
+    });
 
     it('register non-dependency local generator', function () {
       assert.ok(this.env.get('jquery:app'));
@@ -68,7 +69,7 @@ describe('Environment Resolver', function () {
 
     if (!process.env.NODE_PATH) {
       console.log('Skipping tests for global generators. Please setup `NODE_PATH` ' +
-      'environment variable to run it.');
+        'environment variable to run it.');
     }
 
     it('local generators prioritized over global', function () {
@@ -88,7 +89,7 @@ describe('Environment Resolver', function () {
       before(function () {
         this.projectSubRoot = path.join(this.projectRoot, 'subdir');
         process.chdir(this.projectSubRoot);
-        shell.exec('npm install', {silent: true});
+        shell.exec('npm install', { silent: true });
       });
 
       beforeEach(function () {
