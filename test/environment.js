@@ -83,10 +83,15 @@ describe('Environment', function () {
       this.Generator = yeoman.generators.Base.extend();
       this.env.registerStub(this.Generator, 'stub');
       this.env.registerStub(this.Generator, 'stub:foo:bar');
+      this.env.registerStub(this.Generator, '@scope/stub');
     });
 
     it('instantiate a generator', function () {
       assert.ok(this.env.create('stub') instanceof this.Generator);
+    });
+
+    it('instantiate a scoped generator', function () {
+      assert.ok(this.env.create('@scope/stub') instanceof this.Generator);
     });
 
     it('pass options.arguments', function () {

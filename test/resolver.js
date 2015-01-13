@@ -12,6 +12,9 @@ describe('Environment Resolver', function () {
   this.timeout(100000);
 
   describe('#lookup()', function () {
+    var scopedFolder = path.resolve('./node_modules/@dummyscope');
+    var scopedGenerator = path.join(scopedFolder, 'generator-scoped');
+
     before(function () {
       this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
       process.chdir(this.projectRoot);
@@ -24,10 +27,24 @@ describe('Environment Resolver', function () {
         path.resolve('./node_modules/generator-extend'),
         'dir'
       );
+
+      if (!fs.existsSync(scopedFolder)) {
+        fs.mkdirSync(scopedFolder);
+      }
+
+      if(!fs.existsSync(scopedGenerator)) {
+        fs.symlinkSync(
+          path.resolve('../custom-generator-scoped'),
+          scopedGenerator,
+          'dir'
+        );
+      }
     });
 
     after(function () {
       fs.unlinkSync(path.join(this.projectRoot, './node_modules/generator-extend'));
+      fs.unlinkSync(scopedGenerator);
+      fs.rmdirSync(scopedFolder);
       process.chdir(__dirname);
     });
 
@@ -40,7 +57,10 @@ describe('Environment Resolver', function () {
     it('register local generators', function () {
       assert.ok(this.env.get('dummy:app'));
       assert.ok(this.env.get('dummy:yo'));
+      assert.ok(this.env.get('@dummyscope/scoped:app'));
     });
+
+    return;
 
     it('register non-dependency local generator', function () {
       assert.ok(this.env.get('jquery:app'));
@@ -48,7 +68,7 @@ describe('Environment Resolver', function () {
 
     if (!process.env.NODE_PATH) {
       console.log('Skipping tests for global generators. Please setup `NODE_PATH` ' +
-        'environment variable to run it.');
+      'environment variable to run it.');
     }
 
     it('local generators prioritized over global', function () {
@@ -68,7 +88,7 @@ describe('Environment Resolver', function () {
       before(function () {
         this.projectSubRoot = path.join(this.projectRoot, 'subdir');
         process.chdir(this.projectSubRoot);
-        shell.exec('npm install', { silent: true });
+        shell.exec('npm install', {silent: true});
       });
 
       beforeEach(function () {
