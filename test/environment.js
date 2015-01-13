@@ -83,10 +83,15 @@ describe('Environment', function () {
       this.Generator = yeoman.generators.Base.extend();
       this.env.registerStub(this.Generator, 'stub');
       this.env.registerStub(this.Generator, 'stub:foo:bar');
+      this.env.registerStub(this.Generator, '@scope/stub');
     });
 
     it('instantiate a generator', function () {
       assert.ok(this.env.create('stub') instanceof this.Generator);
+    });
+
+    it('instantiate a scoped generator', function () {
+      assert.ok(this.env.create('@scope/stub') instanceof this.Generator);
     });
 
     it('pass options.arguments', function () {
@@ -341,6 +346,13 @@ describe('Environment', function () {
       assert.equal(this.env.namespace('generator-mocha/backbone/model/index.js'), 'mocha:backbone:model');
       assert.equal(this.env.namespace('generator-mocha/backbone/model.js'), 'mocha:backbone:model');
       assert.equal(this.env.namespace('node_modules/generator-mocha/backbone/model.js'), 'mocha:backbone:model');
+    });
+
+    it('create namespace from scoped path', function () {
+      assert.equal(this.env.namespace('@dummyscope/generator-backbone/all.js'), '@dummyscope/backbone:all');
+      assert.equal(this.env.namespace('@dummyscope/generator-mocha/backbone/model/index.js'), '@dummyscope/mocha:backbone:model');
+      assert.equal(this.env.namespace('@dummyscope/generator-mocha/backbone/model.js'), '@dummyscope/mocha:backbone:model');
+      assert.equal(this.env.namespace('/node_modules/@dummyscope/generator-mocha/backbone/model.js'), '@dummyscope/mocha:backbone:model');
     });
 
     it('handle relative paths', function () {
