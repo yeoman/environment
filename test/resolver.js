@@ -3,7 +3,6 @@ var fs = require('fs');
 var path = require('path');
 var assert = require('assert');
 var shell = require('shelljs');
-
 var Environment = require('../lib/environment');
 
 var globalLookupTest = process.env.NODE_PATH ? it : xit;

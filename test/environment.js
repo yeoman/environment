@@ -12,7 +12,6 @@ var TerminalAdapter = require('../lib/adapter');
 var Environment = require('../lib/environment');
 
 describe('Environment', function () {
-
   beforeEach(function () {
     this.env = new Environment([], { 'skip-install': true });
   });

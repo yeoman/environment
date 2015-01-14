@@ -54,7 +54,6 @@ describe('TerminalAdapter', function () {
 
     afterEach(function () {
       console.error.restore();
-
       process.stderr.write = stderrWriteBackup;
     });
 
@@ -70,7 +69,6 @@ describe('TerminalAdapter', function () {
 
     it('substitutes strings correctly when context argument is falsey', function () {
       this.adapter.log('Zero = %d, One = %s', 0, 1);
-
       assert(this.spyerror.calledOnce);
       assert.equal(logMessage, 'Zero = 0, One = 1\n');
     });
@@ -101,7 +99,6 @@ describe('TerminalAdapter', function () {
   });
 
   describe('#log', function () {
-
     beforeEach(function () {
       this.spylog = sinon.spy(process.stderr, 'write');
     });
