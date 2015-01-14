@@ -3,7 +3,6 @@ var gulp = require('gulp');
 var mocha = require('gulp-mocha');
 var jshint = require('gulp-jshint');
 var jscs = require('gulp-jscs');
-var eslint = require('gulp-eslint');
 var istanbul = require('gulp-istanbul');
 var coveralls = require('gulp-coveralls');
 var plumber = require('gulp-plumber');
@@ -19,10 +18,7 @@ gulp.task('static', function () {
   .pipe(jshint())
   .pipe(jshint.reporter('jshint-stylish'))
   .pipe(jshint.reporter('fail'))
-  .pipe(jscs())
-  .pipe(eslint())
-  .pipe(eslint.format())
-  .pipe(eslint.failOnError());
+  .pipe(jscs());
 });
 
 gulp.task('test', function (cb) {
