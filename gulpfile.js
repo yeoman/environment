@@ -22,6 +22,8 @@ gulp.task('static', function () {
 });
 
 gulp.task('test', function (cb) {
+  var mochaErr;
+
   gulp.src([
     'lib/**/*.js'
   ])
@@ -32,8 +34,13 @@ gulp.task('test', function (cb) {
       .pipe(mocha({
         reporter: 'spec'
       }))
+      .on('error', function (err) {
+        mochaErr = err;
+      })
       .pipe(istanbul.writeReports())
-      .on('end', cb);
+      .on('end', function () {
+        cb(mochaErr);
+      });
   });
 });
 
