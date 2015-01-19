@@ -29,6 +29,9 @@
     "benchmark": "matcha benchmark/**",
     "prepublish": "nsp audit-package"
   },
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "chalk": "^0.5.1",
     "debug": "^2.0.0",
