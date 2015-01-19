@@ -1,5 +1,4 @@
 'use strict';
-
 var assert = require('assert');
 var util = require('../lib/util/util');
 var Env = require('../');

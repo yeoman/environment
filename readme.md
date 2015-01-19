@@ -1,8 +1,6 @@
-# Yeoman Environment [![Build Status](https://secure.travis-ci.org/yeoman/generator.svg?branch=master)](http://travis-ci.org/yeoman/environment) [![Coverage Status](https://coveralls.io/repos/yeoman/environment/badge.png)](https://coveralls.io/r/yeoman/environment)
+# Yeoman Environment [![Build Status](https://travis-ci.org/yeoman/generator.svg?branch=master)](https://travis-ci.org/yeoman/environment) [![Coverage Status](https://coveralls.io/repos/yeoman/environment/badge.png)](https://coveralls.io/r/yeoman/environment)
 
-> Yeoman runtime environment
-
-Responsible for handling the lifecyle and bootstrap of generators in a specific environment (your app).
+> Handles the lifecyle and bootstrapping of generators in a specific environment
 
 It provides a high-level API to discover, create and run generators, as well as further tuning where and how a generator is resolved.
 

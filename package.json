@@ -1,7 +1,7 @@
 {
   "name": "yeoman-environment",
   "version": "1.2.0",
-  "description": "Rails-inspired generator system that provides scaffolding for your apps",
+  "description": "Handles the lifecyle and bootstrapping of generators in a specific environment",
   "license": "BSD",
   "main": "lib/environment.js",
   "keywords": [
@@ -18,7 +18,7 @@
     "app"
   ],
   "homepage": "http://yeoman.io",
-  "author": "The Yeoman Team",
+  "author": "Yeoman team",
   "repository": "yeoman/environment",
   "engines": {
     "node": ">=0.10.0"

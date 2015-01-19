@@ -1,5 +1,4 @@
 'use strict';
-
 var assert = require('assert');
 var path = require('path');
 var yeoman = require('yeoman-generator');
