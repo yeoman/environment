@@ -50,15 +50,6 @@ describe('Store', function () {
         assert.equal(this.outcome.namespace, 'foo:path');
       });
     });
-
-    it('normalize Generators', function () {
-      var method = function () {};
-      this.store.add('foo', method);
-      var Generator = this.store.get('foo');
-
-      assert.implement(Generator.prototype, yeoman.generators.Base.prototype);
-      assert.equal(Generator.prototype.exec, method);
-    });
   });
 
   describe('#namespaces()', function () {
