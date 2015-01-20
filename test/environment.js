@@ -290,14 +290,6 @@ describe('Environment', function () {
       assert.equal(this.completeDummy, this.env.get('dummy:complete'));
     });
 
-    it('extend simple function with Base', function (done) {
-      assert.implement(this.env.get('dummy:simple'), yeoman.generators.Base);
-      this.env.run('dummy:simple', function () {
-        assert.ok(this.simpleDummy.calledOnce);
-        done();
-      }.bind(this));
-    });
-
     it('throws if invalid generator', function () {
       assert.throws(this.env.registerStub.bind(this.env, [], 'dummy'), /stub\sfunction/);
     });
