@@ -331,6 +331,7 @@ describe('Environment', function () {
       assert.equal(this.env.namespace('backbone/all/main.js'), 'backbone:all');
       assert.equal(this.env.namespace('backbone/all'), 'backbone:all');
       assert.equal(this.env.namespace('backbone/all.js'), 'backbone:all');
+      assert.equal(this.env.namespace('backbone/app/index.js'), 'backbone:app');
       assert.equal(this.env.namespace('backbone.js'), 'backbone');
 
       assert.equal(this.env.namespace('generator-backbone/all.js'), 'backbone:all');
