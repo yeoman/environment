@@ -32,9 +32,9 @@ var events = require('events');
 var chalk = require('chalk');
 var _ = require('lodash');
 var GroupedQueue = require('grouped-queue');
-
+var untildify = require('untildify');
+var memFs = require('mem-fs');
 var debug = require('debug')('generators:environment');
-
 var Store = require('./store');
 var resolver = require('./resolver');
 var TerminalAdapter = require('./adapter');
@@ -73,6 +73,7 @@ var Environment = module.exports = function Environment(args, opts, adapter) {
   this.store = new Store();
 
   this.runLoop = new GroupedQueue(Environment.queues);
+  this.sharedFs = memFs.create();
 
   this.lookups = ['.', 'generators', 'lib/generators'];
   this.aliases = [];
@@ -83,7 +84,16 @@ var Environment = module.exports = function Environment(args, opts, adapter) {
 util.inherits(Environment, events.EventEmitter);
 _.extend(Environment.prototype, resolver);
 
-Environment.queues = ['initializing', 'prompting', 'configuring', 'default', 'writing', 'conflicts', 'install', 'end'];
+Environment.queues = [
+  'initializing',
+  'prompting',
+  'configuring',
+  'default',
+  'writing',
+  'conflicts',
+  'install',
+  'end'
+];
 
 /**
  * Error handler taking `err` instance of Error.
@@ -97,6 +107,7 @@ Environment.queues = ['initializing', 'prompting', 'configuring', 'default', 'wr
 
 Environment.prototype.error = function error(err) {
   err = err instanceof Error ? err : new Error(err);
+
   if (!this.emit('error', err)) {
     throw err;
   }
@@ -157,7 +168,7 @@ Environment.prototype.help = function help(name) {
  * Registers a specific `generator` to this environment. This generator is stored under
  * provided namespace, or a default namespace format if none if available.
  *
- * @param  {String} name      - Filepath to the a generator or a NPM module name
+ * @param  {String} name      - Filepath to the a generator or a npm package name
  * @param  {String} namespace - Namespace under which register the generator (optional)
  * @return {this}
  */
@@ -194,6 +205,7 @@ Environment.prototype.registerStub = function registerStub(Generator, namespace)
   if (!_.isFunction(Generator)) {
     return this.error(new Error('You must provide a stub function to register.'));
   }
+
   if (!_.isString(namespace)) {
     return this.error(new Error('You must provide a namespace to register.'));
   }
@@ -234,7 +246,9 @@ Environment.prototype.getGeneratorsMeta = function getGeneratorsMeta() {
 
 Environment.prototype.get = function get(namespace) {
   // Stop the recursive search if nothing is left
-  if (!namespace) return;
+  if (!namespace) {
+    return;
+  }
 
   return this.store.get(namespace) ||
     this.store.get(this.alias(namespace)) ||
@@ -276,14 +290,16 @@ Environment.prototype.create = function create(namespace, options) {
  *
  * @param {String}       namespace
  * @param {Object}       options
- * @param {Array}        options.arguments  Arguments to pass the instance
+ * @param {Array|String} options.arguments  Arguments to pass the instance
  * @param {Object}       options.options    Options to pass the instance
  */
 
 Environment.prototype.instantiate = function instantiate(Generator, options) {
   options = options || {};
 
-  var args = options.arguments || _.clone(this.arguments);
+  var args = options.arguments || options.args || _.clone(this.arguments);
+  args = Array.isArray(args) ? args : args.split(' ');
+
   var opts = options.options || _.clone(this.options);
 
   opts.env = this;
@@ -326,7 +342,7 @@ Environment.prototype.run = function run(args, options, done) {
   }
 
   var generator = this.create(name, {
-    arguments: args,
+    args: args,
     options: options
   });
 
@@ -337,16 +353,6 @@ Environment.prototype.run = function run(args, options, done) {
   if (options.help) {
     return console.log(generator.help());
   }
-
-  generator.on('start', this.emit.bind(this, 'generators:start'));
-  generator.on('start', this.emit.bind(this, name + ':start'));
-
-  generator.on('method', function (method) {
-    this.emit(name + ':' + method);
-  }.bind(this));
-
-  generator.on('end', this.emit.bind(this, name + ':end'));
-  generator.on('end', this.emit.bind(this, 'generators:end'));
 
   return generator.run(done);
 };
@@ -387,6 +393,11 @@ Environment.prototype.namespace = function namespace(filepath) {
     return ns.replace(lookup, '');
   }, ns);
 
+  var folders = ns.split(path.sep);
+  var scope = _.findLast(folders, function (folder) {
+    return folder.indexOf('@') === 0;
+  });
+
   // cleanup `ns` from unwanted parts and then normalize slashes to `:`
   ns = ns
     .replace(/(.*generator-)/, '') // remove before `generator-`
@@ -394,6 +405,10 @@ Environment.prototype.namespace = function namespace(filepath) {
     .replace(/\.+/g, '') // remove `.`
     .replace(/^[\/\\]+/, '') // remove leading `/`
     .replace(/[\/\\]+/g, ':'); // replace slashes by `:`
+
+  if (scope) {
+    ns = scope + '/' + ns;
+  }
 
   debug('Resolve namespaces for %s: %s', filepath, ns);
 
@@ -411,11 +426,7 @@ Environment.prototype.resolveModulePath = function resolveModulePath(moduleId) {
     moduleId = path.resolve(moduleId);
   }
 
-  if (moduleId[0] === '~') {
-    moduleId = process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'] + moduleId.slice(1);
-  }
-
-  return require.resolve(moduleId);
+  return require.resolve(untildify(moduleId));
 };
 
 /**
@@ -429,10 +440,24 @@ Environment.enforceUpdate = function (env) {
   if (!env.adapter) {
     env.adapter = new TerminalAdapter();
   }
+
   if (!env.runLoop) {
-    env.runLoop = new GroupedQueue(['initializing', 'prompting', 'configuring', 'default',
-    'writing', 'conflicts', 'install', 'end']);
+    env.runLoop = new GroupedQueue([
+      'initializing',
+      'prompting',
+      'configuring',
+      'default',
+      'writing',
+      'conflicts',
+      'install',
+      'end'
+    ]);
   }
+
+  if (!env.sharedFs) {
+    env.sharedFs = memFs.create();
+  }
+
   return env;
 };
 
@@ -471,7 +496,7 @@ Environment.util = require('./util/util');
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Sat Oct 04 2014 18:34:01 GMT-0700 (PDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Sun Feb 08 2015 15:51:11 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>
