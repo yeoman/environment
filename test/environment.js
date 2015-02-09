@@ -376,6 +376,13 @@ describe('Environment', function () {
       assert.equal(this.env.namespace('/Users/yeoman/.nvm/v0.10.22/lib/node_modules/generator-backbone/all/index.js'), 'backbone:all');
       assert.equal(this.env.namespace('/usr/lib/node_modules/generator-backbone/all/index.js'), 'backbone:all');
     });
+
+    it('handle paths when multiples lookups are in it', function () {
+      assert.equal(
+        this.env.namespace('c:\\projects\\yeoman\\generators\\generator-example\\generators\\app\\index.js'),
+        'example:app'
+      );
+    });
   });
 
   describe('#get()', function () {

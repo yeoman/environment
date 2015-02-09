@@ -36,6 +36,7 @@
     "chalk": "^0.5.1",
     "debug": "^2.0.0",
     "diff": "^1.0.4",
+    "escape-string-regexp": "^1.0.2",
     "globby": "^1.1.0",
     "grouped-queue": "^0.3.0",
     "inquirer": "^0.8.0",
