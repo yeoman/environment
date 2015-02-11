@@ -24,7 +24,7 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "gulp",
+    "test": "make tests",
     "doc": "jsdoc -c ./jsdoc.json ./readme.md",
     "benchmark": "matcha benchmark/**",
     "prepublish": "nsp audit-package"
@@ -47,6 +47,7 @@
     "untildify": "^2.0.0"
   },
   "devDependencies": {
+    "coveralls": "^2.11.2",
     "gulp": "^3.6.0",
     "gulp-coveralls": "^0.1.3",
     "gulp-istanbul": "^0.6.0",
@@ -54,9 +55,12 @@
     "gulp-jshint": "^1.5.3",
     "gulp-mocha": "^2.0.0",
     "gulp-util": "^3.0.3",
+    "istanbul": "^0.3.5",
     "jsdoc": "^3.3.0-alpha9",
+    "jshint": "^2.6.0",
     "jshint-stylish": "^1.0.0",
     "matcha": "^0.6.0",
+    "mocha": "^2.1.0",
     "nsp": "*",
     "shelljs": "^0.3.0",
     "sinon": "^1.9.1",
