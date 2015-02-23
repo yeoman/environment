@@ -33,7 +33,7 @@ describe('TerminalAdapter', function () {
   describe('#diff()', function () {
     it('returns properly colored diffs', function () {
       var diff = this.adapter.diff('var', 'let');
-      assert.textEqual(diff, '\n\u001b[41mremoved\u001b[49m \u001b[42m\u001b[30madded\u001b[39m\u001b[49m\n\n\u001b[42m\u001b[30mlet\u001b[39m\u001b[49m\u001b[41mvar\u001b[49m\n');
+      assert.textEqual(diff, '\n\u001b[41mremoved\u001b[49m \u001b[30m\u001b[42madded\u001b[49m\u001b[39m\n\n\u001b[30m\u001b[42mlet\u001b[49m\u001b[39m\u001b[41mvar\u001b[49m\n');
     });
   });
 
