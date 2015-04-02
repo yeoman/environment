@@ -243,6 +243,20 @@ describe('Environment', function () {
     });
   });
 
+  describe('#registerModulePath()', function () {
+    it('resolves to a directory if no file type specified', function () {
+      var modulePath = path.join(__dirname, 'fixtures/custom-generator-scoped/package');
+      var specifiedJS = path.join(__dirname, 'fixtures/custom-generator-scoped/package/index.js');
+      var specifiedJSON = path.join(__dirname, 'fixtures/custom-generator-scoped/package.json');
+      var specifiedNode = path.join(__dirname, 'fixtures/custom-generator-scoped/package/nodefile.node');
+
+      assert.equal(specifiedJS, this.env.resolveModulePath(modulePath));
+      assert.equal(specifiedJS, this.env.resolveModulePath(specifiedJS));
+      assert.equal(specifiedJSON, this.env.resolveModulePath(specifiedJSON));
+      assert.equal(specifiedNode, this.env.resolveModulePath(specifiedNode));
+    });
+  });
+
   describe('#register()', function () {
     beforeEach(function () {
       this.simplePath = path.join(__dirname, 'fixtures/custom-generator-simple');
