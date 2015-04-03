@@ -496,4 +496,11 @@ describe('Environment', function () {
       assert(env instanceof Environment);
     });
   });
+
+  describe('.namespaceToName()', function () {
+    it('convert a namespace to a name', function () {
+      var name = Environment.namespaceToName('mocha:generator');
+      assert.equal(name, 'mocha');
+    });
+  });
 });
