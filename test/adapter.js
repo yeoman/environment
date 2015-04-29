@@ -113,7 +113,7 @@ describe('TerminalAdapter', function () {
       assert(this.spylog.withArgs(testString).calledOnce);
     });
 
-    it('#write() accepts utile#format style arguments', function () {
+    it('#write() accepts util#format style arguments', function () {
       this.adapter.log.write('A number: %d, a string: %s', 1, 'bla');
       assert(this.spylog.withArgs('A number: 1, a string: bla').calledOnce);
     });
