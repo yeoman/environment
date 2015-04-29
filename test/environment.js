@@ -55,28 +55,6 @@ describe('Environment', function () {
     });
   });
 
-  describe('#help()', function () {
-    beforeEach(function () {
-      this.env
-        .register(path.join(__dirname, 'fixtures/custom-generator-simple'))
-        .register(path.join(__dirname, 'fixtures/custom-generator-extend'));
-
-      this.expected = fs.readFileSync(path.join(__dirname, 'fixtures/help.txt'), 'utf8').trim();
-
-      // lazy "update the help fixtures because something changed" statement
-      // fs.writeFileSync(path.join(__dirname, 'fixtures/help.txt'), env.help().trim());
-    });
-
-    it('output the general help', function () {
-      assert.textEqual(this.env.help().trim(), this.expected);
-    });
-
-    it('output the help with a custom bin name', function () {
-      this.expected = this.expected.replace('Usage: init', 'Usage: gg');
-      assert.textEqual(this.env.help('gg').trim(), this.expected);
-    });
-  });
-
   describe('#create()', function () {
     beforeEach(function () {
       this.Generator = yeoman.generators.Base.extend();
