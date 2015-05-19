@@ -1,8 +1,8 @@
 Usage: init GENERATOR [args] [options]
 
 General options:
-  -h, --help     # Print generator's options and usage
-  -f, --force    # Overwrite files that already exist
+  --help       # Print generator's options and usage
+  -f, --force  # Overwrite files that already exist
 
 Please choose a generator below.
 
