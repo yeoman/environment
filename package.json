@@ -44,7 +44,8 @@
     "log-symbols": "^1.0.1",
     "mem-fs": "^1.1.0",
     "text-table": "^0.2.0",
-    "untildify": "^2.0.0"
+    "untildify": "^2.0.0",
+    "array-uniq": "~1.0.0"
   },
   "devDependencies": {
     "coveralls": "^2.11.2",
