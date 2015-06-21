@@ -3,6 +3,7 @@ var fs = require('fs');
 var path = require('path');
 var assert = require('assert');
 var shell = require('shelljs');
+var pathExists = require('path-exists');
 var Environment = require('../lib/environment');
 
 var globalLookupTest = process.env.NODE_PATH ? it : xit;
@@ -27,11 +28,11 @@ describe('Environment Resolver', function () {
         'dir'
       );
 
-      if (!fs.existsSync(scopedFolder)) {
+      if (!pathExists.sync(scopedFolder)) {
         fs.mkdirSync(scopedFolder);
       }
 
-      if (!fs.existsSync(scopedGenerator)) {
+      if (!pathExists.sync(scopedGenerator)) {
         fs.symlinkSync(
           path.resolve('../custom-generator-scoped'),
           scopedGenerator,
