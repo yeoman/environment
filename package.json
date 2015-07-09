@@ -2,7 +2,7 @@
   "name": "yeoman-environment",
   "version": "1.2.5",
   "description": "Handles the lifecyle and bootstrapping of generators in a specific environment",
-  "license": "BSD",
+  "license": "BSD-2-Clause",
   "main": "lib/environment.js",
   "keywords": [
     "development",
