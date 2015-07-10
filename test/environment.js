@@ -344,6 +344,11 @@ describe('Environment', function () {
       this.generatorPath = path.join(__dirname, './fixtures/custom-generator-simple');
       this.env.register(this.generatorPath);
     });
+    
+    it('get the registered generators names', function () {
+      var names = this.env.getGeneratorNames();
+      assert(Array.isArray(names));
+    });
   });
 
   describe('#namespace()', function () {
