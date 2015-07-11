@@ -346,8 +346,7 @@ describe('Environment', function () {
     });
     
     it('get the registered generators names', function () {
-      var names = this.env.getGeneratorNames();
-      console.log(names);
+      assert.deepEqual(this.env.getGeneratorNames(), ['simple']);
     });
   });
 
