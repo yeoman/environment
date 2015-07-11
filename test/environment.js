@@ -338,6 +338,17 @@ describe('Environment', function () {
       assert.deepEqual(meta.namespace, 'simple');
     });
   });
+  
+  describe('#getGeneratorNames', function () {
+    beforeEach(function () {
+      this.generatorPath = path.join(__dirname, './fixtures/custom-generator-simple');
+      this.env.register(this.generatorPath);
+    });
+    
+    it('get the registered generators names', function () {
+      assert.deepEqual(this.env.getGeneratorNames(), ['simple']);
+    });
+  });
 
   describe('#namespace()', function () {
     it('create namespace from path', function () {
