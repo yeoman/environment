@@ -395,6 +395,9 @@ describe('Environment', function () {
     it('remove lookups from namespace', function () {
       assert.equal(this.env.namespace('backbone/generators/all/index.js'), 'backbone:all');
       assert.equal(this.env.namespace('backbone/lib/generators/all/index.js'), 'backbone:all');
+      assert.equal(this.env.namespace('some-lib/generators/all/index.js'), 'some-lib:all');
+      assert.equal(this.env.namespace('my.thing/generators/app/index.js'), 'my.thing:app');
+      assert.equal(this.env.namespace('meta/generators/generators-thing/index.js'), 'meta:generators-thing');
     });
 
     it('remove path before the generator name', function () {
