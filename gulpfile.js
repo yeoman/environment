@@ -19,6 +19,8 @@ gulp.task('static', function () {
   .pipe(jshint.reporter('jshint-stylish'))
   .pipe(jshint.reporter('fail'))
   .pipe(jscs())
+  .pipe(jscs.reporter())
+  .pipe(jscs.reporter('fail'))
   .on('error', gutil.log);
 });
 
