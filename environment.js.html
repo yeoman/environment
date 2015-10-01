@@ -22,6 +22,7 @@
     
 
 
+
     
     <section>
         <article>
@@ -32,6 +33,7 @@ var events = require('events');
 var chalk = require('chalk');
 var _ = require('lodash');
 var GroupedQueue = require('grouped-queue');
+var escapeStrRe = require('escape-string-regexp');
 var untildify = require('untildify');
 var memFs = require('mem-fs');
 var debug = require('debug')('generators:environment');
@@ -74,6 +76,11 @@ var Environment = module.exports = function Environment(args, opts, adapter) {
 
   this.runLoop = new GroupedQueue(Environment.queues);
   this.sharedFs = memFs.create();
+
+  // Each composed generator might set listeners on these shared resources. Let's make sure
+  // Node won't complain about event listeners leaks.
+  this.runLoop.setMaxListeners(0);
+  this.sharedFs.setMaxListeners(0);
 
   this.lookups = ['.', 'generators', 'lib/generators'];
   this.aliases = [];
@@ -129,8 +136,8 @@ Environment.prototype.help = function help(name) {
     'Usage: :binary: GENERATOR [args] [options]',
     '',
     'General options:',
-    '  -h, --help     # Print generator\'s options and usage',
-    '  -f, --force    # Overwrite files that already exist',
+    '  --help       # Print generator\'s options and usage',
+    '  -f, --force  # Overwrite files that already exist',
     '',
     'Please choose a generator below.',
     ''
@@ -234,6 +241,16 @@ Environment.prototype.getGeneratorsMeta = function getGeneratorsMeta() {
 };
 
 /**
+ * Get registered generators names
+ *
+ * @return {Array}
+ */
+
+Environment.prototype.getGeneratorNames = function getGeneratorNames() {
+  return _.uniq(Object.keys(this.getGeneratorsMeta()).map(Environment.namespaceToName));
+};
+
+/**
  * Get a single generator from the registered list of generators. The lookup is
  * based on generator's namespace, "walking up" the namespaces until a matching
  * is found. Eg. if an `angular:common` namespace is registered, and we try to
@@ -271,7 +288,7 @@ Environment.prototype.create = function create(namespace, options) {
 
   var Generator = this.get(namespace);
 
-  if (!Generator) {
+  if (!_.isFunction(Generator)) {
     return this.error(
       new Error(
         'You don\'t seem to have a generator with the name ' + namespace + ' installed.\n' +
@@ -383,13 +400,15 @@ Environment.prototype.namespace = function namespace(filepath) {
   }
 
   // cleanup extension and normalize path for differents OS
-  var ns = path.normalize(filepath.replace(path.extname(filepath), ''));
+  var ns = path.normalize(filepath.replace(new RegExp(escapeStrRe(path.extname(filepath)) + '$'), ''));
 
   // Sort lookups by length so biggest are removed first
-  var lookups = _(this.lookups).map(path.normalize).sortBy('length').value().reverse();
+  var lookups = _(this.lookups.concat(['..'])).map(path.normalize).sortBy('length').value().reverse();
 
-  // if `ns` contain a lookup dir in it's path, remove it.
+  // if `ns` contains a lookup dir in its path, remove it.
   ns = lookups.reduce(function (ns, lookup) {
+    // only match full directory (begin with leading slash or start of input, end with trailing slash)
+    lookup = new RegExp('(?:\\\\|/|^)' + escapeStrRe(lookup) + '(?=\\\\|/)', 'g');
     return ns.replace(lookup, '');
   }, ns);
 
@@ -402,7 +421,6 @@ Environment.prototype.namespace = function namespace(filepath) {
   ns = ns
     .replace(/(.*generator-)/, '') // remove before `generator-`
     .replace(/[\/\\](index|main)$/, '') // remove `/index` or `/main`
-    .replace(/\.+/g, '') // remove `.`
     .replace(/^[\/\\]+/, '') // remove leading `/`
     .replace(/[\/\\]+/g, ':'); // replace slashes by `:`
 
@@ -424,6 +442,9 @@ Environment.prototype.namespace = function namespace(filepath) {
 Environment.prototype.resolveModulePath = function resolveModulePath(moduleId) {
   if (moduleId[0] === '.') {
     moduleId = path.resolve(moduleId);
+  }
+  if (path.extname(moduleId) === '') {
+    moduleId += path.sep;
   }
 
   return require.resolve(untildify(moduleId));
@@ -475,6 +496,17 @@ Environment.createEnv = function (args, opts, adapter) {
 };
 
 /**
+ * Convert a generators namespace to its name
+ *
+ * @param  {String} namespace
+ * @return {String}
+ */
+
+Environment.namespaceToName = function (namespace) {
+  return namespace.split(':')[0];
+};
+
+/**
  * Expose the utilities on the module
  * @see {@link env/util}
  */
@@ -490,13 +522,13 @@ Environment.util = require('./util/util');
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="log.html">env/log</a></li><li><a href="util.html">env/util</a></li></ul><h3>Classes</h3><ul><li><a href="Environment.html">Environment</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="resolver.html">env/resolver</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-env_log.html">env/log</a></li><li><a href="module-env_util.html">env/util</a></li></ul><h3>Classes</h3><ul><li><a href="Environment.html">Environment</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="env_resolver.html">env/resolver</a></li></ul>
 </nav>
 
-<br clear="both">
+<br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Sun Feb 08 2015 15:51:11 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.3</a> on Wed Sep 30 2015 23:29:57 GMT-0700 (PDT)
 </footer>
 
 <script> prettyPrint(); </script>
