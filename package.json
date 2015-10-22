@@ -18,7 +18,7 @@
     "app"
   ],
   "homepage": "http://yeoman.io",
-  "author": "Yeoman team",
+  "author": "Yeoman",
   "repository": "yeoman/environment",
   "engines": {
     "node": ">=0.10.0"
