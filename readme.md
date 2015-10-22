@@ -1,4 +1,4 @@
-# Yeoman Environment [![Build Status](https://travis-ci.org/yeoman/generator.svg?branch=master)](https://travis-ci.org/yeoman/environment) [![Coverage Status](https://coveralls.io/repos/yeoman/environment/badge.png)](https://coveralls.io/r/yeoman/environment)
+# Yeoman Environment [![Build Status](https://travis-ci.org/yeoman/generator.svg?branch=master)](https://travis-ci.org/yeoman/environment) [![Coverage Status](https://coveralls.io/repos/yeoman/environment/badge.svg?branch=master&service=github)](https://coveralls.io/github/yeoman/environment?branch=master)
 
 > Handles the lifecyle and bootstrapping of generators in a specific environment
 
