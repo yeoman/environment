@@ -1,2 +1,2 @@
-var yeoman = require('yeoman-generator');
-module.exports = yeoman.generators.NamedBase.extend();
+var generators = require('yeoman-generator');
+module.exports = generators.Base.extend();

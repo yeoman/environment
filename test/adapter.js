@@ -1,5 +1,5 @@
 'use strict';
-var assert = require('yeoman-generator').assert;
+var assert = require('yeoman-assert');
 var _ = require('lodash');
 var inquirer = require('inquirer');
 var sinon = require('sinon');

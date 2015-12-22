@@ -6,8 +6,8 @@ var fs = require('fs');
 var path = require('path');
 var util = require('util');
 var sinon = require('sinon');
-var yeoman = require('yeoman-generator');
-var assert = yeoman.assert;
+var generators = require('yeoman-generator');
+var assert = require('yeoman-assert');
 var TerminalAdapter = require('../lib/adapter');
 var Environment = require('../lib/environment');
 
@@ -79,7 +79,7 @@ describe('Environment', function () {
 
   describe('#create()', function () {
     beforeEach(function () {
-      this.Generator = yeoman.generators.Base.extend();
+      this.Generator = generators.Base.extend();
       this.env.registerStub(this.Generator, 'stub');
       this.env.registerStub(this.Generator, 'stub:foo:bar');
       this.env.registerStub(this.Generator, '@scope/stub');
@@ -160,14 +160,14 @@ describe('Environment', function () {
   describe('#run()', function () {
     beforeEach(function () {
       var self = this;
-      this.Stub = yeoman.generators.Base.extend({
+      this.Stub = generators.Base.extend({
         constructor: function () {
           self.args = arguments;
-          yeoman.generators.Base.apply(this, arguments);
+          generators.Base.apply(this, arguments);
         },
         exec: function () {}
       });
-      this.runMethod = sinon.spy(yeoman.generators.Base.prototype, 'run');
+      this.runMethod = sinon.spy(generators.Base.prototype, 'run');
       this.env.registerStub(this.Stub, 'stub:run');
     });
 
@@ -239,7 +239,7 @@ describe('Environment', function () {
     });
 
     it('returns the generator', function () {
-      assert.ok(this.env.run('stub:run') instanceof yeoman.generators.Base);
+      assert.ok(this.env.run('stub:run') instanceof generators.Base);
     });
   });
 
@@ -294,7 +294,7 @@ describe('Environment', function () {
     beforeEach(function () {
       this.simpleDummy = sinon.spy();
       this.completeDummy = function () {};
-      util.inherits(this.completeDummy, yeoman.generators.Base);
+      util.inherits(this.completeDummy, generators.Base);
       this.env
         .registerStub(this.simpleDummy, 'dummy:simple')
         .registerStub(this.completeDummy, 'dummy:complete');
