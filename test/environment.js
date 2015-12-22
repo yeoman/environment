@@ -430,6 +430,13 @@ describe('Environment', function () {
       assert.equal(this.env.get('mocha:generator:too:many'), this.generator);
     });
 
+    it('fallback to requiring generator from a file path', function () {
+      assert.equal(
+        this.env.get(path.join(__dirname, './fixtures/mocha-generator')),
+        this.generator
+      );
+    });
+
     it('returns undefined if namespace is not found', function () {
       assert.equal(this.env.get('not:there'), undefined);
       assert.equal(this.env.get(), undefined);
