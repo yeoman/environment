@@ -9,4 +9,4 @@ node_js:
 before_script:
   - export NODE_PATH="$NVM_PATH/../node_modules"
 env:
-  - DEBUG="generators:*"
+  - DEBUG="yeoman:*"
