@@ -1,45 +1,57 @@
 'use strict';
 var path = require('path');
 var gulp = require('gulp');
+var eslint = require('gulp-eslint');
+var excludeGitignore = require('gulp-exclude-gitignore');
 var mocha = require('gulp-mocha');
-var jshint = require('gulp-jshint');
-var jscs = require('gulp-jscs');
 var istanbul = require('gulp-istanbul');
+var nsp = require('gulp-nsp');
+var plumber = require('gulp-plumber');
 var coveralls = require('gulp-coveralls');
-var gutil = require('gulp-util');
 
 gulp.task('static', function () {
-  return gulp.src([
-    'test/*.js',
-    'lib/**/*.js',
-    'benchmark/**/*.js',
-    'gulpfile.js'
-  ])
-  .pipe(jshint())
-  .pipe(jshint.reporter('jshint-stylish'))
-  .pipe(jshint.reporter('fail'))
-  .pipe(jscs())
-  .pipe(jscs.reporter())
-  .pipe(jscs.reporter('fail'))
-  .on('error', gutil.log);
+  return gulp.src('**/*.js')
+    .pipe(excludeGitignore())
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 });
 
-gulp.task('test', function (cb) {
-  gulp.src(['lib/**/*.js'])
-  .pipe(istanbul({ includeUntested: true }))
-  .on('finish', function () {
-    gulp.src(['test/*.js'], { read: false })
-      .pipe(mocha({ reporter: 'spec' }))
-      .on('error', gutil.log)
-      .pipe(istanbul.writeReports())
-      .on('end', cb);
-  });
+gulp.task('nsp', function (cb) {
+  nsp({package: path.resolve('package.json')}, cb);
+});
+
+gulp.task('pre-test', function () {
+  return gulp.src('lib/**/*.js')
+    .pipe(istanbul({
+      includeUntested: true
+    }))
+    .pipe(istanbul.hookRequire());
+});
+
+gulp.task('test', ['pre-test'], function (cb) {
+  var mochaErr;
+
+  gulp.src('test/*.js')
+    .pipe(plumber())
+    .pipe(mocha({reporter: 'spec'}))
+    .on('error', function (err) {
+      mochaErr = err;
+    })
+    .pipe(istanbul.writeReports())
+    .on('end', function () {
+      cb(mochaErr);
+    });
 });
 
 gulp.task('coveralls', ['test'], function () {
-  if (!process.env.CI) return;
+  if (!process.env.CI) {
+    return;
+  }
+
   return gulp.src(path.join(__dirname, 'coverage/lcov.info'))
     .pipe(coveralls());
 });
 
+gulp.task('prepublish', ['nsp']);
 gulp.task('default', ['static', 'test', 'coveralls']);

@@ -1,9 +1,11 @@
 sudo: false
 language: node_js
 node_js:
-  - 'stable'
-  - '0.12'
-  - '0.10'
+  - stable
+  - v5
+  - v4
+  - v0.10
+  - v0.12
 before_script:
   - export NODE_PATH="$NVM_PATH/../node_modules"
 env:
