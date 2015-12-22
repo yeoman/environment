@@ -27,7 +27,7 @@
     "test": "make tests",
     "doc": "jsdoc -c ./jsdoc.json ./readme.md",
     "benchmark": "matcha benchmark/**",
-    "prepublish": "nsp audit-package"
+    "prepublish": "nsp check"
   },
   "files": [
     "lib"
@@ -37,7 +37,7 @@
     "debug": "^2.0.0",
     "diff": "^2.1.2",
     "escape-string-regexp": "^1.0.2",
-    "globby": "^3.0.1",
+    "globby": "^4.0.0",
     "grouped-queue": "^0.3.0",
     "inquirer": "^0.11.0",
     "lodash": "^3.1.0",
@@ -61,7 +61,7 @@
     "jshint-stylish": "^2.0.1",
     "matcha": "^0.6.0",
     "mocha": "^2.1.0",
-    "nsp": "*",
+    "nsp": "^2.2.0",
     "shelljs": "^0.5.0",
     "sinon": "^1.9.1",
     "yeoman-generator": "^0.20.1"
