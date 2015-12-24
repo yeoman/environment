@@ -426,10 +426,6 @@ describe('Environment', function () {
       assert.equal(this.env.get('fixtures:mocha-generator'), this.generator);
     });
 
-    it('walks recursively the namespace to get the closest match', function () {
-      assert.equal(this.env.get('mocha:generator:too:many'), this.generator);
-    });
-
     it('fallback to requiring generator from a file path', function () {
       assert.equal(
         this.env.get(path.join(__dirname, './fixtures/mocha-generator')),
