@@ -81,7 +81,7 @@ describe('Environment Resolver', function () {
     });
 
     it('register symlinked generators', function () {
-      assert.ok(this.env.get('extend:support:scaffold'));
+      assert.ok(this.env.get('extend:support'));
     });
 
     describe('when there\'s ancestor node_modules/ folder', function () {
