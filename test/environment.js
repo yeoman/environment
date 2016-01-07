@@ -58,8 +58,8 @@ describe('Environment', function () {
   describe('#help()', function () {
     beforeEach(function () {
       this.env
-        .register(path.join(__dirname, 'fixtures/custom-generator-simple'))
-        .register(path.join(__dirname, 'fixtures/custom-generator-extend'));
+        .register(path.join(__dirname, 'fixtures/generator-simple'))
+        .register(path.join(__dirname, 'fixtures/generator-extend/support'));
 
       this.expected = fs.readFileSync(path.join(__dirname, 'fixtures/help.txt'), 'utf8').trim();
 
@@ -245,10 +245,10 @@ describe('Environment', function () {
 
   describe('#registerModulePath()', function () {
     it('resolves to a directory if no file type specified', function () {
-      var modulePath = path.join(__dirname, 'fixtures/custom-generator-scoped/package');
-      var specifiedJS = path.join(__dirname, 'fixtures/custom-generator-scoped/package/index.js');
-      var specifiedJSON = path.join(__dirname, 'fixtures/custom-generator-scoped/package.json');
-      var specifiedNode = path.join(__dirname, 'fixtures/custom-generator-scoped/package/nodefile.node');
+      var modulePath = path.join(__dirname, 'fixtures/generator-scoped/package');
+      var specifiedJS = path.join(__dirname, 'fixtures/generator-scoped/package/index.js');
+      var specifiedJSON = path.join(__dirname, 'fixtures/generator-scoped/package.json');
+      var specifiedNode = path.join(__dirname, 'fixtures/generator-scoped/package/nodefile.node');
 
       assert.equal(specifiedJS, this.env.resolveModulePath(modulePath));
       assert.equal(specifiedJS, this.env.resolveModulePath(specifiedJS));
@@ -259,11 +259,11 @@ describe('Environment', function () {
 
   describe('#register()', function () {
     beforeEach(function () {
-      this.simplePath = path.join(__dirname, 'fixtures/custom-generator-simple');
-      this.extendPath = path.join(__dirname, './fixtures/custom-generator-extend');
+      this.simplePath = path.join(__dirname, 'fixtures/generator-simple');
+      this.extendPath = path.join(__dirname, './fixtures/generator-extend/support');
       assert.equal(this.env.namespaces().length, 0, 'env should be empty');
       this.env
-        .register(this.simplePath, 'fixtures:custom-generator-simple')
+        .register(this.simplePath, 'fixtures:generator-simple')
         .register(this.extendPath, 'scaffold');
     });
 
@@ -272,9 +272,9 @@ describe('Environment', function () {
     });
 
     it('determine registered Generator namespace and resolved path', function () {
-      var simple = this.env.get('fixtures:custom-generator-simple');
+      var simple = this.env.get('fixtures:generator-simple');
       assert.equal(typeof simple, 'function');
-      assert.ok(simple.namespace, 'fixtures:custom-generator-simple');
+      assert.ok(simple.namespace, 'fixtures:generator-simple');
       assert.ok(simple.resolved, path.resolve(this.simplePath));
 
       var extend = this.env.get('scaffold');
@@ -316,19 +316,19 @@ describe('Environment', function () {
   describe('#namespaces()', function () {
     beforeEach(function () {
       this.env
-        .register(path.join(__dirname, './fixtures/custom-generator-simple'))
-        .register(path.join(__dirname, './fixtures/custom-generator-extend'))
-        .register(path.join(__dirname, './fixtures/custom-generator-extend'), 'support:scaffold');
+        .register(path.join(__dirname, './fixtures/generator-simple'))
+        .register(path.join(__dirname, './fixtures/generator-extend/support'))
+        .register(path.join(__dirname, './fixtures/generator-extend/support'), 'support:scaffold');
     });
 
     it('get the list of namespaces', function () {
-      assert.deepEqual(this.env.namespaces(), ['simple', 'extend:support:scaffold', 'support:scaffold']);
+      assert.deepEqual(this.env.namespaces(), ['simple', 'extend:support', 'support:scaffold']);
     });
   });
 
   describe('#getGeneratorsMeta()', function () {
     beforeEach(function () {
-      this.generatorPath = path.join(__dirname, './fixtures/custom-generator-simple');
+      this.generatorPath = path.join(__dirname, './fixtures/generator-simple');
       this.env.register(this.generatorPath);
     });
 
@@ -341,7 +341,7 @@ describe('Environment', function () {
 
   describe('#getGeneratorNames', function () {
     beforeEach(function () {
-      this.generatorPath = path.join(__dirname, './fixtures/custom-generator-simple');
+      this.generatorPath = path.join(__dirname, './fixtures/generator-simple');
       this.env.register(this.generatorPath);
     });
 
@@ -415,15 +415,15 @@ describe('Environment', function () {
 
   describe('#get()', function () {
     beforeEach(function () {
-      this.generator = require('./fixtures/mocha-generator');
+      this.generator = require('./fixtures/generator-mocha');
       this.env
-        .register(path.join(__dirname, './fixtures/mocha-generator'), 'fixtures:mocha-generator')
-        .register(path.join(__dirname, './fixtures/mocha-generator'), 'mocha:generator');
+        .register(path.join(__dirname, './fixtures/generator-mocha'), 'fixtures:generator-mocha')
+        .register(path.join(__dirname, './fixtures/generator-mocha'), 'mocha:generator');
     });
 
     it('get a specific generator', function () {
       assert.equal(this.env.get('mocha:generator'), this.generator);
-      assert.equal(this.env.get('fixtures:mocha-generator'), this.generator);
+      assert.equal(this.env.get('fixtures:generator-mocha'), this.generator);
     });
 
     it('remove paths from namespace at resolution (for backward compatibility)', function () {
@@ -432,7 +432,7 @@ describe('Environment', function () {
 
     it('fallback to requiring generator from a file path', function () {
       assert.equal(
-        this.env.get(path.join(__dirname, './fixtures/mocha-generator')),
+        this.env.get(path.join(__dirname, './fixtures/generator-mocha')),
         this.generator
       );
     });

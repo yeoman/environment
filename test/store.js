@@ -10,7 +10,7 @@ describe('Store', function () {
 
   describe('#add() / #get()', function () {
     beforeEach(function () {
-      this.modulePath = path.join(__dirname, 'fixtures/mocha-generator');
+      this.modulePath = path.join(__dirname, 'fixtures/generator-mocha');
       this.module = require(this.modulePath);
     });
 

@@ -22,7 +22,7 @@ describe('Environment Resolver', function () {
       shell.exec('npm install -g generator-dummytest generator-dummy', { silent: true });
 
       fs.symlinkSync(
-        path.resolve('../custom-generator-extend'),
+        path.resolve('../generator-extend'),
         path.resolve('./node_modules/generator-extend'),
         'dir'
       );
@@ -33,7 +33,7 @@ describe('Environment Resolver', function () {
 
       if (!fs.existsSync(scopedGenerator)) {
         fs.symlinkSync(
-          path.resolve('../custom-generator-scoped'),
+          path.resolve('../generator-scoped'),
           scopedGenerator,
           'dir'
         );

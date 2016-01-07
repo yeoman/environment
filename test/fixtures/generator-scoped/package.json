@@ -1,8 +1,7 @@
 {
   "author": "",
-  "name": "custom-generator-scoped",
+  "name": "generator-scoped",
   "version": "0.0.0",
-  "main": "app/scaffold/main.js",
   "dependencies": {},
   "devDependencies": {},
   "optionalDependencies": {},
