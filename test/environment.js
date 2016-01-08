@@ -428,6 +428,7 @@ describe('Environment', function () {
 
     it('remove paths from namespace at resolution (for backward compatibility)', function () {
       assert.equal(this.env.get('mocha:generator:/a/dummy/path/'), this.generator);
+      assert.equal(this.env.get('mocha:generator:C:\\foo\\bar'), this.generator);
     });
 
     it('fallback to requiring generator from a file path', function () {
