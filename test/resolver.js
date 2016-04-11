@@ -143,9 +143,9 @@ describe('Environment Resolver', function () {
 
       it('walk up the CWD lookups dir', function () {
         var paths = this.env.getNpmPaths();
-        assert.equal(paths[3], path.join(process.cwd(), 'node_modules'));
+        assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
         var prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
-        assert.equal(paths[4], path.join(prevdir, 'node_modules'));
+        assert.equal(paths[1], path.join(prevdir, 'node_modules'));
       });
 
       it('append best bet if NODE_PATH is unset', function () {
