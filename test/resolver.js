@@ -132,7 +132,7 @@ describe('Environment Resolver', function () {
         });
 
         afterEach(function () {
-          process.env[env] = '';
+          delete process.env[env];
         });
 
         it('walk up the CWD lookups dir', function () {
