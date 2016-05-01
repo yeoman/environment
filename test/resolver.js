@@ -188,7 +188,6 @@ describe('Environment Resolver', function () {
     describe('without NVM_PATH', function () {
       beforeEach(function () {
         delete process.env.NVM_PATH;
-        this.dirname = path.join(this.bestBet, 'node_modules');
       });
 
       it('walk up the CWD lookups dir', function () {
@@ -198,7 +197,7 @@ describe('Environment Resolver', function () {
       });
 
       it('append best bet if NVM_PATH is unset', function () {
-        assert(this.env.getNpmPaths().indexOf(this.dirname) >= 0);
+        assert(this.env.getNpmPaths().indexOf(path.join(this.bestBet, 'node_modules')) >= 0);
         assert(this.env.getNpmPaths().indexOf(this.bestBet2) >= 0);
       });
     });
