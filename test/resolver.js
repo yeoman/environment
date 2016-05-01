@@ -124,11 +124,14 @@ describe('Environment Resolver', function () {
         process.env.NODE_PATH = '/some/dummy/path';
       });
 
+      afterEach(function () {
+        delete process.env.NODE_PATH;
+      });
+
       it('walk up the CWD lookups dir', function () {
         var paths = this.env.getNpmPaths();
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
-        var prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
-        assert.equal(paths[1], path.join(prevdir, 'node_modules'));
+        assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
       });
 
       it('append NODE_PATH', function () {
@@ -161,5 +164,43 @@ describe('Environment Resolver', function () {
         }
       });
     });
+
+    describe('with NVM_PATH', function () {
+      beforeEach(function () {
+        process.env.NVM_PATH = '/some/dummy/path';
+      });
+
+      afterEach(function () {
+        delete process.env.NVM_PATH;
+      });
+
+      it('walk up the CWD lookups dir', function () {
+        var paths = this.env.getNpmPaths();
+        assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
+        assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
+      });
+
+      it('append NVM_PATH', function () {
+        assert(this.env.getNpmPaths().indexOf(path.join(path.dirname(process.env.NVM_PATH), 'node_modules')) >= 0);
+      });
+    });
+
+    describe('without NVM_PATH', function () {
+      beforeEach(function () {
+        delete process.env.NVM_PATH;
+      });
+
+      it('walk up the CWD lookups dir', function () {
+        var paths = this.env.getNpmPaths();
+        assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
+        assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
+      });
+
+      it('append best bet if NVM_PATH is unset', function () {
+        assert(this.env.getNpmPaths().indexOf(path.join(this.bestBet, 'node_modules')) >= 0);
+        assert(this.env.getNpmPaths().indexOf(this.bestBet2) >= 0);
+      });
+    });
+
   });
 });
