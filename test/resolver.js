@@ -119,47 +119,64 @@ describe('Environment Resolver', function () {
       process.env.NODE_PATH = this.NODE_PATH;
     });
 
-    describe('with NODE_PATH', function () {
-      beforeEach(function () {
-        process.env.NODE_PATH = '/some/dummy/path';
-      });
+    describe('with NODE_PATH', testWith('NODE_PATH'));
+    describe('without NODE_PATH', testWithout('NODE_PATH'));
+    describe('with NVM_PATH', testWith('NVM_PATH', true));
+    describe('without NVM_PATH', testWithout('NVM_PATH', true));
 
-      it('walk up the CWD lookups dir', function () {
-        var paths = this.env.getNpmPaths();
-        assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
-        var prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
-        assert.equal(paths[1], path.join(prevdir, 'node_modules'));
-      });
+    function testWith(env, dirname) {
+      return function () {
+        beforeEach(function () {
+          process.env[env] = '/some/dummy/path';
+          this.dirname = path.join(path.dirname(process.env[env]), 'node_modules');
+        });
 
-      it('append NODE_PATH', function () {
-        assert(this.env.getNpmPaths().indexOf(process.env.NODE_PATH) >= 0);
-      });
-    });
+        afterEach(function () {
+          process.env[env] = '';
+        });
 
-    describe('without NODE_PATH', function () {
-      beforeEach(function () {
-        delete process.env.NODE_PATH;
-      });
+        it('walk up the CWD lookups dir', function () {
+          var paths = this.env.getNpmPaths();
+          assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
+          var prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
+          assert.equal(paths[1], path.join(prevdir, 'node_modules'));
+        });
 
-      it('walk up the CWD lookups dir', function () {
-        var paths = this.env.getNpmPaths();
-        assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
-        var prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
-        assert.equal(paths[1], path.join(prevdir, 'node_modules'));
-      });
+        it('append ' + env, function () {
+          assert(this.env.getNpmPaths().indexOf(dirname ? this.dirname : process.env[env]) >= 0);
+        });
+      };
+    }
 
-      it('append best bet if NODE_PATH is unset', function () {
-        assert(this.env.getNpmPaths().indexOf(this.bestBet) >= 0);
-        assert(this.env.getNpmPaths().indexOf(this.bestBet2) >= 0);
-      });
+    function testWithout(env, dirname) {
+      return function () {
+        beforeEach(function () {
+          process.env[env] = '';
+          process.env.NODE_PATH = '';
+          this.bestBet = dirname ? path.join(path.dirname(this.bestBet), 'node_modules') : this.bestBet;
+          this.bestBet = dirname ? path.join(path.dirname(this.bestBet), 'node_modules') : this.bestBet;
+        });
 
-      it('append default NPM dir depending on your OS', function () {
-        if (process.platform === 'win32') {
-          assert(this.env.getNpmPaths().indexOf(path.join(process.env.APPDATA, 'npm/node_modules')) >= 0);
-        } else {
-          assert(this.env.getNpmPaths().indexOf('/usr/lib/node_modules') >= 0);
-        }
-      });
-    });
+        it('walk up the CWD lookups dir', function () {
+          var paths = this.env.getNpmPaths();
+          assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
+          var prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
+          assert.equal(paths[1], path.join(prevdir, 'node_modules'));
+        });
+
+        it('append best bet if ' + env + ' is unset', function () {
+          assert(this.env.getNpmPaths().indexOf(this.bestBet) >= 0);
+          assert(this.env.getNpmPaths().indexOf(this.bestBet2) >= 0);
+        });
+
+        it('append default NPM dir depending on your OS', function () {
+          if (process.platform === 'win32') {
+            assert(this.env.getNpmPaths().indexOf(path.join(process.env.APPDATA, 'npm/node_modules')) >= 0);
+          } else {
+            assert(this.env.getNpmPaths().indexOf('/usr/lib/node_modules') >= 0);
+          }
+        });
+      };
+    }
   });
 });
