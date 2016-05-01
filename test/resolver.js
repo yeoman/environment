@@ -131,8 +131,7 @@ describe('Environment Resolver', function () {
       it('walk up the CWD lookups dir', function () {
         var paths = this.env.getNpmPaths();
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
-        var prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
-        assert.equal(paths[1], path.join(prevdir, 'node_modules'));
+        assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
       });
 
       it('append NODE_PATH', function () {
@@ -169,7 +168,6 @@ describe('Environment Resolver', function () {
     describe('with NVM_PATH', function () {
       beforeEach(function () {
         process.env.NVM_PATH = '/some/dummy/path';
-        this.dirname = path.join(path.dirname(process.env.NVM_PATH), 'node_modules');
       });
 
       afterEach(function () {
@@ -179,12 +177,11 @@ describe('Environment Resolver', function () {
       it('walk up the CWD lookups dir', function () {
         var paths = this.env.getNpmPaths();
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
-        var prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
-        assert.equal(paths[1], path.join(prevdir, 'node_modules'));
+        assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
       });
 
       it('append NVM_PATH', function () {
-        assert(this.env.getNpmPaths().indexOf(this.dirname) >= 0);
+        assert(this.env.getNpmPaths().indexOf(path.join(path.dirname(process.env.NVM_PATH), 'node_modules')) >= 0);
       });
     });
 
@@ -197,8 +194,7 @@ describe('Environment Resolver', function () {
       it('walk up the CWD lookups dir', function () {
         var paths = this.env.getNpmPaths();
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
-        var prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
-        assert.equal(paths[1], path.join(prevdir, 'node_modules'));
+        assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
       });
 
       it('append best bet if NVM_PATH is unset', function () {
