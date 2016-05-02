@@ -36,12 +36,12 @@
     "escape-string-regexp": "^1.0.2",
     "globby": "^4.0.0",
     "grouped-queue": "^0.3.0",
-    "inquirer": "^0.11.0",
-    "lodash": "^3.1.0",
+    "inquirer": "^1.0.2",
+    "lodash": "^4.11.1",
     "log-symbols": "^1.0.1",
     "mem-fs": "^1.1.0",
     "text-table": "^0.2.0",
-    "untildify": "^2.0.0"
+    "untildify": "^3.0.1"
   },
   "devDependencies": {
     "coveralls": "^2.11.6",

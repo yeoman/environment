@@ -14,8 +14,9 @@ describe('TerminalAdapter', function () {
   describe('#prompt()', function () {
     beforeEach(function () {
       this.sandbox = sinon.sandbox.create();
-      this.spy = sinon.spy();
-      this.sandbox.stub(inquirer, 'createPromptModule').returns(this.spy);
+      this.fakePromise = {then: sinon.spy()};
+      this.stub = sinon.stub().returns(this.fakePromise);
+      this.sandbox.stub(inquirer, 'createPromptModule').returns(this.stub);
       this.adapter = new TerminalAdapter();
     });
 
@@ -25,8 +26,11 @@ describe('TerminalAdapter', function () {
 
     it('pass its arguments to inquirer', function () {
       var questions = [];
-      this.adapter.prompt(questions, _.noop);
-      sinon.assert.calledWith(this.spy, questions, _.noop);
+      var func = function () {};
+      var ret = this.adapter.prompt(questions, func);
+      sinon.assert.calledWith(this.stub, questions);
+      sinon.assert.calledWith(this.fakePromise.then, func);
+      assert.equal(ret, this.fakePromise);
     });
   });
 
@@ -45,8 +49,8 @@ describe('TerminalAdapter', function () {
       this.spyerror = sinon.spy(console, 'error');
 
       logMessage = '';
-      process.stderr.write = (function (write) {
-        return function (str, encoding, fd) {
+      process.stderr.write = (function () {
+        return function (str) {
           logMessage = str;
         };
       }(process.stderr.write));
