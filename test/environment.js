@@ -431,6 +431,38 @@ describe('Environment', function () {
       assert.equal(this.env.get('mocha:generator:C:\\foo\\bar'), this.generator);
     });
 
+    it('works with Windows\' absolute paths', function() {
+      var getMethod;
+      var aliasMethod;
+      var getByPathMethod;
+
+      var absolutePaht = 'C:\\foo\\bar'; 
+
+      try
+      {
+        getMethod = sinon.stub(this.env.store, 'get').returns(null);
+        aliasMethod = sinon.stub(this.env, 'alias').returns("");
+        getByPathMethod = sinon.stub(this.env, 'getByPath').returns(null);
+
+        this.env.get(absolutePaht);
+
+        assert.ok(getMethod.calledTwice);
+        assert.ok(getMethod.alwaysCalledWithExactly(""));
+
+        assert.ok(aliasMethod.calledOnce);
+        assert.ok(aliasMethod.calledWithExactly(""));
+
+        assert.ok(getByPathMethod.calledOnce);
+        assert.ok(getByPathMethod.calledWithExactly(absolutePaht));
+      }
+      finally
+      {
+        getMethod.restore();
+        aliasMethod.restore();
+        getByPathMethod.restore();
+      }
+    });
+
     it('fallback to requiring generator from a file path', function () {
       assert.equal(
         this.env.get(path.join(__dirname, './fixtures/generator-mocha')),
