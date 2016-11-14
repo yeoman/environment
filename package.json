@@ -1,6 +1,6 @@
 {
   "name": "yeoman-environment",
-  "version": "1.6.5",
+  "version": "1.6.6",
   "description": "Handles the lifecyle and bootstrapping of generators in a specific environment",
   "homepage": "http://yeoman.io",
   "author": "Yeoman",
