@@ -4,8 +4,6 @@ node_js:
   - v6
   - v5
   - v4
-  - v0.10
-  - v0.12
 before_script:
   - export NODE_PATH="$NVM_PATH/../node_modules"
 env:
