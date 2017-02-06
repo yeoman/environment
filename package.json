@@ -32,16 +32,16 @@
   "dependencies": {
     "chalk": "^1.0.0",
     "debug": "^2.0.0",
-    "diff": "^2.1.2",
+    "diff": "^3.2.0",
     "escape-string-regexp": "^1.0.2",
-    "globby": "^4.0.0",
+    "globby": "^6.1.0",
     "grouped-queue": "^0.3.0",
-    "inquirer": "^1.0.2",
+    "inquirer": "^3.0.1",
     "lodash": "^4.11.1",
     "log-symbols": "^1.0.1",
     "mem-fs": "^1.1.0",
     "text-table": "^0.2.0",
-    "untildify": "^2.0.0"
+    "untildify": "^3.0.2"
   },
   "devDependencies": {
     "coveralls": "^2.11.6",
