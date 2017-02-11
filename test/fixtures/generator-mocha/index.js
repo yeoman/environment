@@ -1,6 +1,6 @@
-var generators = require('yeoman-generator');
+var Generator = require('yeoman-generator');
 
-var Generator = module.exports = generators.Base.extend({
+var Generator = module.exports = Generator.extend({
   default: function () {
     console.log('Executing generator with', this.arguments, this.options);
   }

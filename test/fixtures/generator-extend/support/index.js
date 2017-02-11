@@ -1,2 +1,3 @@
-var generators = require('yeoman-generator');
-module.exports = generators.Base.extend();
+'use strict';
+var Generator = require('yeoman-generator');
+module.exports = Generator.extend();
