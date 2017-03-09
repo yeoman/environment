@@ -1,20 +1,20 @@
 'use strict';
-var assert = require('assert');
-var path = require('path');
-var Store = require('../lib/store');
+const assert = require('assert');
+const path = require('path');
+const Store = require('../lib/store');
 
-describe('Store', function () {
+describe('Store', () => {
   beforeEach(function () {
     this.store = new Store();
   });
 
-  describe('#add() / #get()', function () {
+  describe('#add() / #get()', () => {
     beforeEach(function () {
       this.modulePath = path.join(__dirname, 'fixtures/generator-mocha');
       this.module = require(this.modulePath);
     });
 
-    describe('storing as module', function () {
+    describe('storing as module', () => {
       beforeEach(function () {
         this.store.add('foo:module', this.module);
         this.outcome = this.store.get('foo:module');
@@ -33,7 +33,7 @@ describe('Store', function () {
       });
     });
 
-    describe('storing as module path', function () {
+    describe('storing as module path', () => {
       beforeEach(function () {
         this.store.add('foo:path', this.modulePath);
         this.outcome = this.store.get('foo:path');
@@ -51,7 +51,7 @@ describe('Store', function () {
     });
   });
 
-  describe('#namespaces()', function () {
+  describe('#namespaces()', () => {
     beforeEach(function () {
       this.store.add('foo', {});
       this.store.add('lab', {});

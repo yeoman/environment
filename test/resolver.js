@@ -1,30 +1,30 @@
 'use strict';
-var fs = require('fs');
-var path = require('path');
-var assert = require('assert');
-var shell = require('shelljs');
-var Environment = require('../lib/environment');
+const fs = require('fs');
+const path = require('path');
+const assert = require('assert');
+const shell = require('shelljs');
+const Environment = require('../lib/environment');
 
-var globalLookupTest = process.env.NODE_PATH ? it : xit;
+const globalLookupTest = process.env.NODE_PATH ? it : xit;
 
 describe('Environment Resolver', function () {
   this.timeout(100000);
 
-  describe('#lookup()', function () {
-    var scopedFolder = path.resolve('./node_modules/@dummyscope');
-    var scopedGenerator = path.join(scopedFolder, 'generator-scoped');
+  describe('#lookup()', () => {
+    const scopedFolder = path.resolve('node_modules/@dummyscope');
+    const scopedGenerator = path.join(scopedFolder, 'generator-scoped');
 
     before(function () {
       this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
       process.chdir(this.projectRoot);
-      shell.exec('npm install', { silent: true });
-      shell.exec('npm install generator-jquery', { silent: true });
-      shell.exec('npm install -g generator-dummytest generator-dummy', { silent: true });
+      shell.exec('npm install', {silent: true});
+      shell.exec('npm install generator-jquery', {silent: true});
+      shell.exec('npm install -g generator-dummytest generator-dummy', {silent: true});
 
       fs.symlinkSync(
-        path.resolve('../generator-extend'),
-        path.resolve('./node_modules/generator-extend'),
-        'dir'
+				path.resolve('../generator-extend'),
+				path.resolve('node_modules/generator-extend'),
+				'dir'
       );
 
       if (!fs.existsSync(scopedFolder)) {
@@ -33,15 +33,15 @@ describe('Environment Resolver', function () {
 
       if (!fs.existsSync(scopedGenerator)) {
         fs.symlinkSync(
-          path.resolve('../generator-scoped'),
-          scopedGenerator,
-          'dir'
+					path.resolve('../generator-scoped'),
+					scopedGenerator,
+					'dir'
         );
       }
     });
 
     after(function () {
-      fs.unlinkSync(path.join(this.projectRoot, './node_modules/generator-extend'));
+      fs.unlinkSync(path.join(this.projectRoot, 'node_modules/generator-extend'));
       fs.unlinkSync(scopedGenerator);
       fs.rmdirSync(scopedFolder);
       process.chdir(__dirname);
@@ -67,8 +67,7 @@ describe('Environment Resolver', function () {
     });
 
     if (!process.env.NODE_PATH) {
-      console.log('Skipping tests for global generators. Please setup `NODE_PATH` ' +
-        'environment variable to run it.');
+      console.log('Skipping tests for global generators. Please setup `NODE_PATH` environment variable to run it.');
     }
 
     it('local generators prioritized over global', function () {
@@ -84,11 +83,11 @@ describe('Environment Resolver', function () {
       assert.ok(this.env.get('extend:support'));
     });
 
-    describe('when there\'s ancestor node_modules/ folder', function () {
+    describe('when there\'s ancestor node_modules/ folder', () => {
       before(function () {
         this.projectSubRoot = path.join(this.projectRoot, 'subdir');
         process.chdir(this.projectSubRoot);
-        shell.exec('npm install', { silent: true });
+        shell.exec('npm install', {silent: true});
       });
 
       beforeEach(function () {
@@ -107,7 +106,7 @@ describe('Environment Resolver', function () {
     });
   });
 
-  describe('#getNpmPaths()', function () {
+  describe('#getNpmPaths()', () => {
     beforeEach(function () {
       this.NODE_PATH = process.env.NODE_PATH;
       this.bestBet = path.join(__dirname, '../../../..');
@@ -119,17 +118,17 @@ describe('Environment Resolver', function () {
       process.env.NODE_PATH = this.NODE_PATH;
     });
 
-    describe('with NODE_PATH', function () {
-      beforeEach(function () {
+    describe('with NODE_PATH', () => {
+      beforeEach(() => {
         process.env.NODE_PATH = '/some/dummy/path';
       });
 
-      afterEach(function () {
+      afterEach(() => {
         delete process.env.NODE_PATH;
       });
 
       it('walk up the CWD lookups dir', function () {
-        var paths = this.env.getNpmPaths();
+        const paths = this.env.getNpmPaths();
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
         assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
       });
@@ -139,15 +138,15 @@ describe('Environment Resolver', function () {
       });
     });
 
-    describe('without NODE_PATH', function () {
-      beforeEach(function () {
+    describe('without NODE_PATH', () => {
+      beforeEach(() => {
         delete process.env.NODE_PATH;
       });
 
       it('walk up the CWD lookups dir', function () {
-        var paths = this.env.getNpmPaths();
+        const paths = this.env.getNpmPaths();
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
-        var prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
+        const prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
         assert.equal(paths[1], path.join(prevdir, 'node_modules'));
       });
 
@@ -165,17 +164,17 @@ describe('Environment Resolver', function () {
       });
     });
 
-    describe('with NVM_PATH', function () {
-      beforeEach(function () {
+    describe('with NVM_PATH', () => {
+      beforeEach(() => {
         process.env.NVM_PATH = '/some/dummy/path';
       });
 
-      afterEach(function () {
+      afterEach(() => {
         delete process.env.NVM_PATH;
       });
 
       it('walk up the CWD lookups dir', function () {
-        var paths = this.env.getNpmPaths();
+        const paths = this.env.getNpmPaths();
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
         assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
       });
@@ -185,13 +184,13 @@ describe('Environment Resolver', function () {
       });
     });
 
-    describe('without NVM_PATH', function () {
-      beforeEach(function () {
+    describe('without NVM_PATH', () => {
+      beforeEach(() => {
         delete process.env.NVM_PATH;
       });
 
       it('walk up the CWD lookups dir', function () {
-        var paths = this.env.getNpmPaths();
+        const paths = this.env.getNpmPaths();
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
         assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
       });
@@ -201,6 +200,5 @@ describe('Environment Resolver', function () {
         assert(this.env.getNpmPaths().indexOf(this.bestBet2) >= 0);
       });
     });
-
   });
 });

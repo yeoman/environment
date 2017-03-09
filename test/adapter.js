@@ -1,17 +1,16 @@
 'use strict';
-var assert = require('yeoman-assert');
-var _ = require('lodash');
-var inquirer = require('inquirer');
-var sinon = require('sinon');
-var logSymbols = require('log-symbols');
-var TerminalAdapter = require('../lib/adapter');
+const assert = require('yeoman-assert');
+const inquirer = require('inquirer');
+const sinon = require('sinon');
+const logSymbols = require('log-symbols');
+const TerminalAdapter = require('../lib/adapter');
 
-describe('TerminalAdapter', function () {
+describe('TerminalAdapter', () => {
   beforeEach(function () {
     this.adapter = new TerminalAdapter();
   });
 
-  describe('#prompt()', function () {
+  describe('#prompt()', () => {
     beforeEach(function () {
       this.sandbox = sinon.sandbox.create();
       this.fakePromise = {then: sinon.spy()};
@@ -25,38 +24,38 @@ describe('TerminalAdapter', function () {
     });
 
     it('pass its arguments to inquirer', function () {
-      var questions = [];
-      var func = function () {};
-      var ret = this.adapter.prompt(questions, func);
+      const questions = [];
+      const func = () => {};
+      const ret = this.adapter.prompt(questions, func);
       sinon.assert.calledWith(this.stub, questions);
       sinon.assert.calledWith(this.fakePromise.then, func);
       assert.equal(ret, this.fakePromise);
     });
   });
 
-  describe('#diff()', function () {
+  describe('#diff()', () => {
     it('returns properly colored diffs', function () {
-      var diff = this.adapter.diff('var', 'let');
-      assert.textEqual(diff, '\n\u001b[41mremoved\u001b[49m \u001b[30m\u001b[42madded\u001b[49m\u001b[39m\n\n\u001b[41mvar\u001b[49m\u001b[30m\u001b[42mlet\u001b[49m\u001b[39m\n');
+      const diff = this.adapter.diff('var', 'let');
+      assert.textEqual(diff, '\n\u001B[41mremoved\u001B[49m \u001B[30m\u001B[42madded\u001B[49m\u001B[39m\n\n\u001B[41mvar\u001B[49m\u001B[30m\u001B[42mlet\u001B[49m\u001B[39m\n');
     });
   });
 
-  describe('#log()', function () {
-    var logMessage;
-    var stderrWriteBackup = process.stderr.write;
+  describe('#log()', () => {
+    let logMessage;
+    const stderrWriteBackup = process.stderr.write;
 
     beforeEach(function () {
       this.spyerror = sinon.spy(console, 'error');
 
       logMessage = '';
-      process.stderr.write = (function () {
-        return function (str) {
+      process.stderr.write = (() => {
+        return str => {
           logMessage = str;
         };
-      }(process.stderr.write));
+      })(process.stderr.write);
     });
 
-    afterEach(function () {
+    afterEach(() => {
       console.error.restore();
       process.stderr.write = stderrWriteBackup;
     });
@@ -90,7 +89,7 @@ describe('TerminalAdapter', function () {
     });
 
     it('#write() objects', function () {
-      var outputObject = {
+      const outputObject = {
         something: 72,
         another: 12
       };
@@ -99,20 +98,19 @@ describe('TerminalAdapter', function () {
       assert(this.spyerror.withArgs(outputObject).calledOnce);
       assert.equal(logMessage, '{ something: 72, another: 12 }\n');
     });
-
   });
 
-  describe('#log', function () {
+  describe('#log', () => {
     beforeEach(function () {
       this.spylog = sinon.spy(process.stderr, 'write');
     });
 
-    afterEach(function () {
+    afterEach(() => {
       process.stderr.write.restore();
     });
 
     it('#write() pass strings as they are', function () {
-      var testString = 'dummy';
+      const testString = 'dummy';
       this.adapter.log.write(testString);
       assert(this.spylog.withArgs(testString).calledOnce);
     });
@@ -130,15 +128,15 @@ describe('TerminalAdapter', function () {
 
     it('#ok() adds a green "✔ " at the beginning and \\n at the end', function () {
       this.adapter.log.ok('dummy');
-      assert(this.spylog.withArgs(logSymbols.success + ' dummy\n').calledOnce);
+      assert(this.spylog.withArgs(`${logSymbols.success} dummy\n`).calledOnce);
     });
 
     it('#error() adds a green "✗ " at the beginning and \\n at the end', function () {
       this.adapter.log.error('dummy');
-      assert(this.spylog.withArgs(logSymbols.error + ' dummy\n').calledOnce);
+      assert(this.spylog.withArgs(`${logSymbols.error} dummy\n`).calledOnce);
     });
 
-    describe('statuses', function () {
+    describe('statuses', () => {
       it('#skip()');
       it('#force()');
       it('#create()');

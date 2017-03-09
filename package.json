@@ -24,7 +24,7 @@
   "license": "BSD-2-Clause",
   "repository": "yeoman/environment",
   "scripts": {
-    "test": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "test": "gulp",
     "doc": "jsdoc -c ./jsdoc.json ./readme.md",
     "benchmark": "matcha benchmark/**",
     "prepublish": "gulp prepublish"
@@ -47,10 +47,7 @@
     "coveralls": "^2.11.6",
     "gulp": "^3.6.0",
     "gulp-coveralls": "^0.1.0",
-    "gulp-eslint": "^3.0.1",
-    "gulp-exclude-gitignore": "^1.0.0",
     "gulp-istanbul": "^1.1.1",
-    "gulp-jscs": "^4.0.0",
     "gulp-mocha": "^3.0.1",
     "gulp-nsp": "^2.1.0",
     "gulp-plumber": "^1.0.0",
@@ -62,5 +59,12 @@
     "sinon": "^1.9.1",
     "yeoman-assert": "^3.0.0",
     "yeoman-generator": "^1.1.0"
+  },
+  "xo": {
+    "space": true,
+    "envs": [
+      "node",
+      "mocha"
+    ]
   }
 }

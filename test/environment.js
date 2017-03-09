@@ -1,15 +1,13 @@
-/*global it, describe, before, beforeEach, afterEach */
-/*jshint scripturl: true */
 'use strict';
-var events = require('events');
-var fs = require('fs');
-var path = require('path');
-var util = require('util');
-var sinon = require('sinon');
-var Generator = require('yeoman-generator');
-var assert = require('yeoman-assert');
-var TerminalAdapter = require('../lib/adapter');
-var Environment = require('../lib/environment');
+const events = require('events');
+const fs = require('fs');
+const path = require('path');
+const util = require('util');
+const sinon = require('sinon');
+const Generator = require('yeoman-generator');
+const assert = require('yeoman-assert');
+const TerminalAdapter = require('../lib/adapter');
+const Environment = require('../lib/environment');
 
 describe('Environment', function () {
   beforeEach(function () {
