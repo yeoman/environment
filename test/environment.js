@@ -9,32 +9,32 @@ const assert = require('yeoman-assert');
 const TerminalAdapter = require('../lib/adapter');
 const Environment = require('../lib/environment');
 
-describe('Environment', function () {
+describe('Environment', () => {
   beforeEach(function () {
-    this.env = new Environment([], { 'skip-install': true });
+    this.env = new Environment([], {'skip-install': true});
   });
 
   afterEach(function () {
     this.env.removeAllListeners();
   });
 
-  it('is an instance of EventEmitter', function () {
+  it('is an instance of EventEmitter', () => {
     assert.ok(new Environment() instanceof events.EventEmitter);
   });
 
-  describe('constructor', function () {
-    it('take arguments option', function () {
-      var args = ['foo'];
+  describe('constructor', () => {
+    it('take arguments option', () => {
+      const args = ['foo'];
       assert.equal(new Environment(args).arguments, args);
     });
 
-    it('take arguments parameter option as string', function () {
-      var args = 'foo bar';
+    it('take arguments parameter option as string', () => {
+      const args = 'foo bar';
       assert.deepEqual(new Environment(args).arguments, args.split(' '));
     });
 
-    it('take options parameter', function () {
-      var opts = { foo: 'bar' };
+    it('take options parameter', () => {
+      const opts = {foo: 'bar'};
       assert.equal(new Environment(null, opts).options, opts);
     });
 
@@ -42,9 +42,9 @@ describe('Environment', function () {
       assert.ok(this.env.adapter instanceof TerminalAdapter);
     });
 
-    it('uses the provided object as adapter if any', function () {
-      var dummyAdapter = {};
-      var env = new Environment(null, null, dummyAdapter);
+    it('uses the provided object as adapter if any', () => {
+      const dummyAdapter = {};
+      const env = new Environment(null, null, dummyAdapter);
       assert.equal(env.adapter, dummyAdapter, 'Not the adapter provided');
     });
 
@@ -53,7 +53,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#help()', function () {
+  describe('#help()', () => {
     beforeEach(function () {
       this.env
         .register(path.join(__dirname, 'fixtures/generator-simple'))
@@ -61,7 +61,7 @@ describe('Environment', function () {
 
       this.expected = fs.readFileSync(path.join(__dirname, 'fixtures/help.txt'), 'utf8').trim();
 
-      // lazy "update the help fixtures because something changed" statement
+      // Lazy "update the help fixtures because something changed" statement
       // fs.writeFileSync(path.join(__dirname, 'fixtures/help.txt'), env.help().trim());
     });
 
@@ -75,7 +75,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#create()', function () {
+  describe('#create()', () => {
     beforeEach(function () {
       this.Generator = Generator.extend();
       this.env.registerStub(this.Generator, 'stub');
@@ -92,45 +92,45 @@ describe('Environment', function () {
     });
 
     it('pass options.arguments', function () {
-      var args = ['foo', 'bar'];
-      var generator = this.env.create('stub', { arguments: args });
+      const args = ['foo', 'bar'];
+      const generator = this.env.create('stub', {arguments: args});
       assert.deepEqual(generator.arguments, args);
     });
 
     it('pass options.arguments as string', function () {
-      var args = 'foo bar';
-      var generator = this.env.create('stub', { arguments: args });
+      const args = 'foo bar';
+      const generator = this.env.create('stub', {arguments: args});
       assert.deepEqual(generator.arguments, args.split(' '));
     });
 
     it('pass options.args (as `arguments` alias)', function () {
-      var args = ['foo', 'bar'];
-      var generator = this.env.create('stub', { args: args });
+      const args = ['foo', 'bar'];
+      const generator = this.env.create('stub', {args});
       assert.deepEqual(generator.arguments, args);
     });
 
     it('prefer options.arguments over options.args', function () {
-      var args1 = ['yo', 'unicorn'];
-      var args = ['foo', 'bar'];
-      var generator = this.env.create('stub', { arguments: args1, args: args });
+      const args1 = ['yo', 'unicorn'];
+      const args = ['foo', 'bar'];
+      const generator = this.env.create('stub', {arguments: args1, args});
       assert.deepEqual(generator.arguments, args1);
     });
 
     it('default arguments to `env.arguments`', function () {
-      var args = ['foo', 'bar'];
+      const args = ['foo', 'bar'];
       this.env.arguments = args;
-      var generator = this.env.create('stub');
+      const generator = this.env.create('stub');
       assert.notEqual(generator.arguments, args, 'expect arguments to not be passed by reference');
     });
 
     it('pass options.options', function () {
-      var opts = { foo: 'bar' };
-      var generator = this.env.create('stub', { options: opts });
+      const opts = {foo: 'bar'};
+      const generator = this.env.create('stub', {options: opts});
       assert.equal(generator.options, opts);
     });
 
     it('default options to `env.options` content', function () {
-      this.env.options = { foo: 'bar' };
+      this.env.options = {foo: 'bar'};
       assert.equal(this.env.create('stub').options.foo, 'bar');
     });
 
@@ -155,16 +155,19 @@ describe('Environment', function () {
     });
   });
 
-  describe('#run()', function () {
+  describe('#run()', () => {
     beforeEach(function () {
-      var self = this;
-      this.Stub = Generator.extend({
-        constructor: function () {
-          self.args = arguments;
-          Generator.apply(this, arguments);
-        },
-        exec: function () {}
-      });
+      const self = this;
+
+      this.Stub = class extends Generator {
+        constructor(args, opts) {
+          super(args, opts);
+          self.args = [args, opts];
+        }
+
+        exec() {}
+      };
+
       this.runMethod = sinon.spy(Generator.prototype, 'run');
       this.env.registerStub(this.Stub, 'stub:run');
     });
@@ -174,52 +177,52 @@ describe('Environment', function () {
     });
 
     it('runs a registered generator', function (done) {
-      this.env.run(['stub:run'], function () {
+      this.env.run(['stub:run'], () => {
         assert.ok(this.runMethod.calledOnce);
         done();
-      }.bind(this));
+      });
     });
 
     it('pass args and options to the runned generator', function (done) {
-      var args = ['stub:run', 'module'];
-      var options = { 'skip-install': true };
-      this.env.run(args, options, function () {
+      const args = ['stub:run', 'module'];
+      const options = {'skip-install': true};
+      this.env.run(args, options, () => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'module');
         assert.equal(this.args[1], options);
         done();
-      }.bind(this));
+      });
     });
 
     it('without options, it default to env.options', function (done) {
-      var args = ['stub:run', 'foo'];
-      this.env.options = { some: 'stuff', 'skip-install': true };
-      this.env.run(args, function () {
+      const args = ['stub:run', 'foo'];
+      this.env.options = {some: 'stuff', 'skip-install': true};
+      this.env.run(args, () => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'foo');
         assert.equal(this.args[1], this.env.options);
         done();
-      }.bind(this));
+      });
     });
 
     it('without args, it default to env.arguments', function (done) {
       this.env.arguments = ['stub:run', 'my-args'];
-      this.env.options = { 'skip-install': true };
-      this.env.run(function () {
+      this.env.options = {'skip-install': true};
+      this.env.run(() => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'my-args');
         assert.equal(this.args[1], this.env.options);
         done();
-      }.bind(this));
+      });
     });
 
     it('can take string as args', function (done) {
-      var args = 'stub:run module';
-      this.env.run(args, function () {
+      const args = 'stub:run module';
+      this.env.run(args, () => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'module');
         done();
-      }.bind(this));
+      });
     });
 
     it('can take no arguments', function () {
@@ -229,7 +232,7 @@ describe('Environment', function () {
     });
 
     it('launch error if generator is not found', function (done) {
-      this.env.on('error', function (err) {
+      this.env.on('error', err => {
         assert.ok(err.message.indexOf('some:unknown:generator') >= 0);
         done();
       });
@@ -241,12 +244,12 @@ describe('Environment', function () {
     });
   });
 
-  describe('#registerModulePath()', function () {
+  describe('#registerModulePath()', () => {
     it('resolves to a directory if no file type specified', function () {
-      var modulePath = path.join(__dirname, 'fixtures/generator-scoped/package');
-      var specifiedJS = path.join(__dirname, 'fixtures/generator-scoped/package/index.js');
-      var specifiedJSON = path.join(__dirname, 'fixtures/generator-scoped/package.json');
-      var specifiedNode = path.join(__dirname, 'fixtures/generator-scoped/package/nodefile.node');
+      const modulePath = path.join(__dirname, 'fixtures/generator-scoped/package');
+      const specifiedJS = path.join(__dirname, 'fixtures/generator-scoped/package/index.js');
+      const specifiedJSON = path.join(__dirname, 'fixtures/generator-scoped/package.json');
+      const specifiedNode = path.join(__dirname, 'fixtures/generator-scoped/package/nodefile.node');
 
       assert.equal(specifiedJS, this.env.resolveModulePath(modulePath));
       assert.equal(specifiedJS, this.env.resolveModulePath(specifiedJS));
@@ -255,7 +258,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#register()', function () {
+  describe('#register()', () => {
     beforeEach(function () {
       this.simplePath = path.join(__dirname, 'fixtures/generator-simple');
       this.extendPath = path.join(__dirname, './fixtures/generator-extend/support');
@@ -270,25 +273,31 @@ describe('Environment', function () {
     });
 
     it('determine registered Generator namespace and resolved path', function () {
-      var simple = this.env.get('fixtures:generator-simple');
+      const simple = this.env.get('fixtures:generator-simple');
       assert.equal(typeof simple, 'function');
       assert.ok(simple.namespace, 'fixtures:generator-simple');
       assert.ok(simple.resolved, path.resolve(this.simplePath));
 
-      var extend = this.env.get('scaffold');
+      const extend = this.env.get('scaffold');
       assert.equal(typeof extend, 'function');
       assert.ok(extend.namespace, 'scaffold');
       assert.ok(extend.resolved, path.resolve(this.extendPath));
     });
 
-    it('throw when String is not passed as first parameter', function () {
-      assert.throws(function () { this.env.register(function () {}, 'blop'); });
-      assert.throws(function () { this.env.register([], 'blop'); });
-      assert.throws(function () { this.env.register(false, 'blop'); });
+    it('throw when String is not passed as first parameter', () => {
+      assert.throws(function () {
+        this.env.register(() => {}, 'blop');
+      });
+      assert.throws(function () {
+        this.env.register([], 'blop');
+      });
+      assert.throws(function () {
+        this.env.register(false, 'blop');
+      });
     });
   });
 
-  describe('#registerStub()', function () {
+  describe('#registerStub()', () => {
     beforeEach(function () {
       this.simpleDummy = sinon.spy();
       this.completeDummy = function () {};
@@ -311,7 +320,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#namespaces()', function () {
+  describe('#namespaces()', () => {
     beforeEach(function () {
       this.env
         .register(path.join(__dirname, './fixtures/generator-simple'))
@@ -324,20 +333,20 @@ describe('Environment', function () {
     });
   });
 
-  describe('#getGeneratorsMeta()', function () {
+  describe('#getGeneratorsMeta()', () => {
     beforeEach(function () {
       this.generatorPath = path.join(__dirname, './fixtures/generator-simple');
       this.env.register(this.generatorPath);
     });
 
     it('get the registered Generators metadatas', function () {
-      var meta = this.env.getGeneratorsMeta().simple;
+      const meta = this.env.getGeneratorsMeta().simple;
       assert.deepEqual(meta.resolved, require.resolve(this.generatorPath));
       assert.deepEqual(meta.namespace, 'simple');
     });
   });
 
-  describe('#getGeneratorNames', function () {
+  describe('#getGeneratorNames', () => {
     beforeEach(function () {
       this.generatorPath = path.join(__dirname, './fixtures/generator-simple');
       this.env.register(this.generatorPath);
@@ -348,7 +357,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#namespace()', function () {
+  describe('#namespace()', () => {
     it('create namespace from path', function () {
       assert.equal(this.env.namespace('backbone/all/index.js'), 'backbone:all');
       assert.equal(this.env.namespace('backbone/all/main.js'), 'backbone:all');
@@ -411,7 +420,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('#get()', function () {
+  describe('#get()', () => {
     beforeEach(function () {
       this.generator = require('./fixtures/generator-mocha');
       this.env
@@ -429,20 +438,20 @@ describe('Environment', function () {
       assert.equal(this.env.get('mocha:generator:C:\\foo\\bar'), this.generator);
     });
 
-    it('works with Windows\' absolute paths', sinon.test(function() {
-        var absolutePath = 'C:\\foo\\bar';
+    it('works with Windows\' absolute paths', sinon.test(function () {
+      const absolutePath = 'C:\\foo\\bar';
 
-        var envMock = this.mock(this.env);
+      const envMock = this.mock(this.env);
 
-        envMock
-          .expects("getByPath")
+      envMock
+          .expects('getByPath')
           .once()
           .withExactArgs(absolutePath)
           .returns(null);
 
-        this.env.get(absolutePath);
+      this.env.get(absolutePath);
 
-        envMock.verify();
+      envMock.verify();
     }));
 
     it('fallback to requiring generator from a file path', function () {
@@ -458,10 +467,10 @@ describe('Environment', function () {
     });
   });
 
-  describe('#error()', function () {
+  describe('#error()', () => {
     it('delegate error handling to the listener', function (done) {
-      var error = new Error('foo bar');
-      this.env.on('error', function (err) {
+      const error = new Error('foo bar');
+      this.env.on('error', err => {
         assert.equal(error, err);
         done();
       });
@@ -473,20 +482,20 @@ describe('Environment', function () {
     });
 
     it('returns the error', function () {
-      var error = new Error('foo bar');
-      this.env.on('error', function () {});
+      const error = new Error('foo bar');
+      this.env.on('error', () => {});
       assert.equal(this.env.error(error), error);
     });
   });
 
-  describe('#alias()', function () {
+  describe('#alias()', () => {
     it('apply regex and replace with alternative value', function () {
       this.env.alias(/^([^:]+)$/, '$1:app');
       assert.equal(this.env.alias('foo'), 'foo:app');
     });
 
     it('apply multiple regex', function () {
-      this.env.alias(/^([a-zA-Z0-9:\*]+)$/, 'generator-$1');
+      this.env.alias(/^([a-zA-Z0-9:*]+)$/, 'generator-$1');
       this.env.alias(/^([^:]+)$/, '$1:app');
       assert.equal(this.env.alias('foo'), 'generator-foo:app');
     });
@@ -502,7 +511,7 @@ describe('Environment', function () {
     });
   });
 
-  describe('.enforceUpdate()', function () {
+  describe('.enforceUpdate()', () => {
     beforeEach(function () {
       this.env = new Environment();
       delete this.env.adapter;
@@ -526,16 +535,16 @@ describe('Environment', function () {
     });
   });
 
-  describe('.createEnv()', function () {
-    it('create an environment', function () {
-      var env = Environment.createEnv();
+  describe('.createEnv()', () => {
+    it('create an environment', () => {
+      const env = Environment.createEnv();
       assert(env instanceof Environment);
     });
   });
 
-  describe('.namespaceToName()', function () {
-    it('convert a namespace to a name', function () {
-      var name = Environment.namespaceToName('mocha:generator');
+  describe('.namespaceToName()', () => {
+    it('convert a namespace to a name', () => {
+      const name = Environment.namespaceToName('mocha:generator');
       assert.equal(name, 'mocha');
     });
   });
