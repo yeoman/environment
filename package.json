@@ -56,8 +56,9 @@
     "matcha": "^0.7.0",
     "mocha": "^3.2.0",
     "shelljs": "^0.7.0",
-    "sinon": "^1.9.1",
-    "xo": "^0.17.1",
+    "sinon": "^2.1.0",
+    "sinon-test": "^1.0.1",
+    "xo": "^0.18.1",
     "yeoman-assert": "^3.0.0",
     "yeoman-generator": "^1.1.0"
   },

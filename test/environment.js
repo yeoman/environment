@@ -4,10 +4,14 @@ const fs = require('fs');
 const path = require('path');
 const util = require('util');
 const sinon = require('sinon');
+const sinonTest = require('sinon-test');
 const Generator = require('yeoman-generator');
 const assert = require('yeoman-assert');
 const TerminalAdapter = require('../lib/adapter');
 const Environment = require('../lib/environment');
+
+sinon.test = sinonTest.configureTest(sinon);
+sinon.testCase = sinonTest.configureTestCase(sinon);
 
 describe('Environment', () => {
   beforeEach(function () {
