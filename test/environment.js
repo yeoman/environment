@@ -246,6 +246,13 @@ describe('Environment', () => {
     it('returns the generator', function () {
       assert.ok(this.env.run('stub:run') instanceof Generator);
     });
+
+    it('correctly append scope in generator hint', function () {
+      this.env.on('error', err => {
+        assert.ok(err.message.indexOf('@dummyscope/generator-package') >= 0);
+      });
+      this.env.run('@dummyscope/package');
+    });
   });
 
   describe('#registerModulePath()', () => {
