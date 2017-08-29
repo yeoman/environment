@@ -55,6 +55,11 @@ describe('Environment', () => {
     it('instantiates a mem-fs instance', function () {
       assert.ok(this.env.sharedFs);
     });
+
+    it('takes multi-word arguments', () => {
+      const args = 'foo bar "foo bar" baz "bar foo"';
+      assert.deepEqual(new Environment(args).arguments, ['foo', 'bar', 'foo bar', 'baz', 'bar foo']);
+    });
   });
 
   describe('#help()', () => {
