@@ -75,6 +75,8 @@ describe('Environment Resolver', function () {
     });
 
     globalLookupTest('register global generators', function () {
+      console.log('hej');
+      console.log(this.env.get('dummytest:app'));
       assert.ok(this.env.get('dummytest:app'));
       assert.ok(this.env.get('dummytest:controller'));
     });
