@@ -4,6 +4,7 @@ const inquirer = require('inquirer');
 const sinon = require('sinon');
 const logSymbols = require('log-symbols');
 const TerminalAdapter = require('../lib/adapter');
+const createLog = require('../lib/util/log');
 
 describe('TerminalAdapter', () => {
   beforeEach(function () {
@@ -144,6 +145,34 @@ describe('TerminalAdapter', () => {
       it('#conflict()');
       it('#identical()');
       it('#info()');
+    });
+  });
+
+  describe('#log', () => {
+    const funcs = ['write', 'writeln', 'ok', 'error', 'table'];
+    const defaultColors = [
+      'skip', 'force', 'create', 'invoke', 'conflict', 'identical', 'info'];
+    it('log has functions', function () {
+      this.adapter.log = createLog();
+      funcs.concat(defaultColors).forEach(k => {
+        assert.equal(typeof this.adapter.log[k], 'function');
+      });
+    });
+    it('log can be added custom status', function () {
+      this.adapter.log = createLog({colors: {merge: 'yellow'}});
+      funcs.concat(defaultColors, ['merge']).forEach(k => {
+        assert.equal(typeof this.adapter.log[k], 'function');
+      });
+    });
+    it('if params.ignoreDefaultColors is true, default colors are ignored', function () {
+      this.adapter.log = createLog({
+        colors: {merge: 'yellow'}, ignoreDefaultColors: true});
+      defaultColors.forEach(k => {
+        assert.equal(typeof this.adapter.log[k], 'undefined');
+      });
+      ['merge'].forEach(k => {
+        assert.equal(typeof this.adapter.log[k], 'function');
+      });
     });
   });
 });
