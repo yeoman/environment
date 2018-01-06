@@ -164,15 +164,5 @@ describe('TerminalAdapter', () => {
         assert.equal(typeof this.adapter.log[k], 'function');
       });
     });
-    it('if params.ignoreDefaultColors is true, default colors are ignored', function () {
-      this.adapter.log = createLog({
-        colors: {merge: 'yellow'}, ignoreDefaultColors: true});
-      defaultColors.forEach(k => {
-        assert.equal(typeof this.adapter.log[k], 'undefined');
-      });
-      ['merge'].forEach(k => {
-        assert.equal(typeof this.adapter.log[k], 'function');
-      });
-    });
   });
 });
