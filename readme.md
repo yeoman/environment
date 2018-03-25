@@ -10,7 +10,7 @@ It provides a high-level API to discover, create and run generators, as well as 
 ## Install
 
 ```
-$ npm install --save yeoman-environment
+$ npm install yeoman-environment
 ```
 
 
