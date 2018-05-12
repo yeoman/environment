@@ -13,7 +13,7 @@ describe('TerminalAdapter', () => {
 
   describe('#prompt()', () => {
     beforeEach(function () {
-      this.sandbox = sinon.sandbox.create();
+      this.sandbox = sinon.createSandbox();
       this.fakePromise = {then: sinon.spy()};
       this.stub = sinon.stub().returns(this.fakePromise);
       this.sandbox.stub(inquirer, 'createPromptModule').returns(this.stub);
@@ -80,13 +80,13 @@ describe('TerminalAdapter', () => {
     it('boolean values', function () {
       this.adapter.log(true);
       assert(this.spyerror.withArgs(true).calledOnce);
-      assert.equal(logMessage, 'true\n');
+      assert.equal(logMessage, '\u001b[33mtrue\u001b[39m\n');
     });
 
     it('#write() numbers', function () {
       this.adapter.log(42);
       assert(this.spyerror.withArgs(42).calledOnce);
-      assert.equal(logMessage, 42);
+      assert.equal(logMessage, '\u001b[33m42\u001b[39m\n');
     });
 
     it('#write() objects', function () {
@@ -97,7 +97,10 @@ describe('TerminalAdapter', () => {
 
       this.adapter.log(outputObject);
       assert(this.spyerror.withArgs(outputObject).calledOnce);
-      assert.equal(logMessage, '{ something: 72, another: 12 }\n');
+      assert.equal(
+        logMessage,
+        '{ something: \u001b[33m72\u001b[39m, another: \u001b[33m12\u001b[39m }\n'
+      );
     });
   });
 

@@ -4,14 +4,13 @@ const fs = require('fs');
 const path = require('path');
 const util = require('util');
 const sinon = require('sinon');
-const sinonTest = require('sinon-test');
+const sinonTestFactory = require('sinon-test');
 const Generator = require('yeoman-generator');
 const assert = require('yeoman-assert');
 const TerminalAdapter = require('../lib/adapter');
 const Environment = require('../lib/environment');
 
-sinon.test = sinonTest.configureTest(sinon);
-sinon.testCase = sinonTest.configureTestCase(sinon);
+const sinonTest = sinonTestFactory(sinon);
 
 describe('Environment', () => {
   beforeEach(function () {
@@ -86,7 +85,8 @@ describe('Environment', () => {
 
   describe('#create()', () => {
     beforeEach(function () {
-      this.Generator = Generator.extend();
+      class NewGenerator extends Generator {}
+      this.Generator = NewGenerator;
       this.env.registerStub(this.Generator, 'stub');
       this.env.registerStub(this.Generator, 'stub:foo:bar');
       this.env.registerStub(this.Generator, '@scope/stub');
@@ -454,7 +454,7 @@ describe('Environment', () => {
       assert.equal(this.env.get('mocha:generator:C:\\foo\\bar'), this.generator);
     });
 
-    it('works with Windows\' absolute paths', sinon.test(function () {
+    it('works with Windows\' absolute paths', sinonTest(function () {
       const absolutePath = 'C:\\foo\\bar';
 
       const envMock = this.mock(this.env);
