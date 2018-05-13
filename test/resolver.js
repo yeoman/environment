@@ -71,7 +71,8 @@ describe('Environment Resolver', function () {
     }
 
     it('local generators prioritized over global', function () {
-      assert.ok(this.env.get('dummy:app').resolved.indexOf('lookup-project') !== -1);
+      const resolved = this.env.get('dummy:app').resolved;
+      assert.ok(resolved.indexOf('lookup-project') !== -1, `Couldn't find 'lookup-project' in ${resolved}`);
     });
 
     globalLookupTest('register global generators', function () {
@@ -101,7 +102,8 @@ describe('Environment Resolver', function () {
       });
 
       it('local generators are prioritized over ancestor', function () {
-        assert.ok(this.env.get('dummy:app').resolved.indexOf('subdir') !== -1);
+        const resolved = this.env.get('dummy:app').resolved;
+        assert.ok(resolved.indexOf('subdir') !== -1, `Couldn't find 'subdir' in ${resolved}`);
       });
     });
   });
