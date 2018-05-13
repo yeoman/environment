@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
-const shell = require('shelljs');
+const spawn = require('cross-spawn');
 const Environment = require('../lib/environment');
 
 const globalLookupTest = process.env.NODE_PATH ? it : xit;
@@ -17,9 +17,9 @@ describe('Environment Resolver', function () {
     before(function () {
       this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
       process.chdir(this.projectRoot);
-      shell.exec('npm install --no-package-lock', {silent: true});
-      shell.exec('npm install generator-jquery --no-package-lock', {silent: true});
-      shell.exec('npm install -g generator-dummytest generator-dummy --no-package-lock', {silent: true});
+      spawn.sync('npm', ['install', '--no-package-lock']);
+      spawn.sync('npm', ['install', 'generator-jquery', '--no-package-lock']);
+      spawn.sync('npm', ['install', '-g', 'generator-dummytest', 'generator-dummy', '--no-package-lock']);
 
       fs.symlinkSync(
 				path.resolve('../generator-extend'),
@@ -87,7 +87,7 @@ describe('Environment Resolver', function () {
       before(function () {
         this.projectSubRoot = path.join(this.projectRoot, 'subdir');
         process.chdir(this.projectSubRoot);
-        shell.exec('npm install --no-package-lock', {silent: true});
+        spawn.sync('npm', ['install', '--no-package-lock']);
       });
 
       beforeEach(function () {
