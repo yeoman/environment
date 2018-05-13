@@ -44,6 +44,7 @@
     "lodash": "^4.17.10",
     "log-symbols": "^2.1.0",
     "mem-fs": "^1.1.0",
+    "strip-ansi": "^4.0.0",
     "text-table": "^0.2.0",
     "untildify": "^3.0.2"
   },

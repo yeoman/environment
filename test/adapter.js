@@ -3,6 +3,7 @@ const assert = require('yeoman-assert');
 const inquirer = require('inquirer');
 const sinon = require('sinon');
 const logSymbols = require('log-symbols');
+const stripAnsi = require('strip-ansi');
 const TerminalAdapter = require('../lib/adapter');
 const createLog = require('../lib/util/log');
 
@@ -37,7 +38,7 @@ describe('TerminalAdapter', () => {
   describe('#diff()', () => {
     it('returns properly colored diffs', function () {
       const diff = this.adapter.diff('var', 'let');
-      assert.textEqual(diff, '\n\u001B[41mremoved\u001B[49m \u001B[30m\u001B[42madded\u001B[49m\u001B[39m\n\n\u001B[41mvar\u001B[49m\u001B[30m\u001B[42mlet\u001B[49m\u001B[39m\n');
+      assert.textEqual(stripAnsi(diff), '\nremoved added\n\nvarlet\n');
     });
   });
 
@@ -68,25 +69,25 @@ describe('TerminalAdapter', () => {
         reps: 'reps'
       });
       assert(this.spyerror.withArgs('has many reps').calledOnce);
-      assert.equal(logMessage, 'has many reps\n');
+      assert.equal(stripAnsi(logMessage), 'has many reps\n');
     });
 
     it('substitutes strings correctly when context argument is falsey', function () {
       this.adapter.log('Zero = %d, One = %s', 0, 1);
       assert(this.spyerror.calledOnce);
-      assert.equal(logMessage, 'Zero = 0, One = 1\n');
+      assert.equal(stripAnsi(logMessage), 'Zero = 0, One = 1\n');
     });
 
     it('boolean values', function () {
       this.adapter.log(true);
       assert(this.spyerror.withArgs(true).calledOnce);
-      assert.equal(logMessage, '\u001b[33mtrue\u001b[39m\n');
+      assert.equal(stripAnsi(logMessage), 'true\n');
     });
 
     it('#write() numbers', function () {
       this.adapter.log(42);
       assert(this.spyerror.withArgs(42).calledOnce);
-      assert.equal(logMessage, '\u001b[33m42\u001b[39m\n');
+      assert.equal(stripAnsi(logMessage), '42\n');
     });
 
     it('#write() objects', function () {
@@ -98,8 +99,8 @@ describe('TerminalAdapter', () => {
       this.adapter.log(outputObject);
       assert(this.spyerror.withArgs(outputObject).calledOnce);
       assert.equal(
-        logMessage,
-        '{ something: \u001b[33m72\u001b[39m, another: \u001b[33m12\u001b[39m }\n'
+        stripAnsi(logMessage),
+        '{ something: 72, another: 12 }\n'
       );
     });
   });

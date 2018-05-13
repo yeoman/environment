@@ -14,7 +14,7 @@ describe('Environment Resolver', function () {
     const scopedFolder = path.resolve('node_modules/@dummyscope');
     const scopedGenerator = path.join(scopedFolder, 'generator-scoped');
 
-    before(async function () {
+    before(function () {
       this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
       process.chdir(this.projectRoot);
       spawn.sync('npm', ['install', '--no-package-lock']);
