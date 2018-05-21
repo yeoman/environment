@@ -258,6 +258,12 @@ describe('Environment', () => {
       });
       this.env.run('@dummyscope/package');
     });
+
+    it('runs a module generator', function () {
+      this.env
+        .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
+      this.env.run('fixtures:generator-module');
+    });
   });
 
   describe('#registerModulePath()', () => {
@@ -480,6 +486,13 @@ describe('Environment', () => {
     it('returns undefined if namespace is not found', function () {
       assert.equal(this.env.get('not:there'), undefined);
       assert.equal(this.env.get(), undefined);
+    });
+
+    it('works with modules', function () {
+      const generator = require('./fixtures/generator-module/generators/app');
+      this.env
+        .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
+      assert.equal(this.env.get('fixtures:generator-module'), generator);
     });
   });
 
