@@ -16,7 +16,7 @@ describe('Store', () => {
 
     describe('storing as module', () => {
       beforeEach(function () {
-        this.store.add('foo:module', this.module);
+        this.store.add('foo:module', this.module, '/foo/path');
         this.outcome = this.store.get('foo:module');
       });
 
@@ -26,10 +26,7 @@ describe('Store', () => {
 
       it('assign meta data to the module', function () {
         assert.equal(this.outcome.namespace, 'foo:module');
-      });
-
-      it('assign dummy resolved value (can\'t determine the path of an instantiated)', function () {
-        assert.ok(this.outcome.resolved.length > 0);
+        assert.equal(this.outcome.resolved, '/foo/path');
       });
     });
 

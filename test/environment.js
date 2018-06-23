@@ -322,15 +322,21 @@ describe('Environment', () => {
   describe('#registerStub()', () => {
     beforeEach(function () {
       this.simpleDummy = sinon.spy();
+      this.resolvedDummy = sinon.spy();
       this.completeDummy = function () {};
       util.inherits(this.completeDummy, Generator);
       this.env
         .registerStub(this.simpleDummy, 'dummy:simple')
-        .registerStub(this.completeDummy, 'dummy:complete');
+        .registerStub(this.completeDummy, 'dummy:complete')
+        .registerStub(this.resolvedDummy, 'dummy:resolved', 'dummy/path');
     });
 
     it('register a function under a namespace', function () {
       assert.equal(this.completeDummy, this.env.get('dummy:complete'));
+    });
+
+    it('registers the resolved path', function () {
+      assert.equal('dummy/path', this.env.get('dummy:resolved').resolved);
     });
 
     it('throws if invalid generator', function () {
