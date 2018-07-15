@@ -177,8 +177,16 @@ describe('Environment', () => {
         exec() {}
       };
 
+      this.FailingStub = class extends Generator {
+
+        exec() {
+          return Promise.reject(new Error('some error'));
+        }
+      };
+
       this.runMethod = sinon.spy(Generator.prototype, 'run');
       this.env.registerStub(this.Stub, 'stub:run');
+      this.env.registerStub(this.FailingStub, 'failingstub:run');
     });
 
     afterEach(function () {
@@ -246,6 +254,15 @@ describe('Environment', () => {
         done();
       });
       this.env.run('some:unknown:generator');
+    });
+
+    it('generator error calls callback properly', function (done) {
+      this.env.run('failingstub:run', err => {
+        assert.ok(this.runMethod.calledOnce);
+        assert.ok(err instanceof Error);
+        assert.equal(err.message, 'some error');
+        done();
+      });
     });
 
     it('returns the generator', function () {
