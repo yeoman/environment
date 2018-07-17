@@ -177,16 +177,24 @@ describe('Environment', () => {
         exec() {}
       };
 
-      this.FailingStub = class extends Generator {
+      this.PromiseFailingStub = class extends Generator {
 
-        exec() {
+        install() {
           return Promise.reject(new Error('some error'));
+        }
+      };
+
+      this.EventFailingStub = class extends Generator {
+
+        install() {
+          return this.emit('error', new Error('some error'));
         }
       };
 
       this.runMethod = sinon.spy(Generator.prototype, 'run');
       this.env.registerStub(this.Stub, 'stub:run');
-      this.env.registerStub(this.FailingStub, 'failingstub:run');
+      this.env.registerStub(this.PromiseFailingStub, 'promisefailingstub:run');
+      this.env.registerStub(this.EventFailingStub, 'eventfailingstub:run');
     });
 
     afterEach(function () {
@@ -256,8 +264,28 @@ describe('Environment', () => {
       this.env.run('some:unknown:generator');
     });
 
-    it('generator error calls callback properly', function (done) {
-      this.env.run('failingstub:run', err => {
+    it('generator promise error calls callback properly', function (done) {
+      this.env.run('promisefailingstub:run', err => {
+        assert.ok(this.runMethod.calledOnce);
+        assert.ok(err instanceof Error);
+        assert.equal(err.message, 'some error');
+        done();
+      });
+    });
+
+    it('generator error event calls callback properly', function (done) {
+      this.env.run('eventfailingstub:run', err => {
+        assert.ok(this.runMethod.calledOnce);
+        assert.ok(err instanceof Error);
+        assert.equal(err.message, 'some error');
+        done();
+      });
+    });
+
+    it('generator error event emits error event when no callback passed', function (done) {
+      const generator = this.env.run('eventfailingstub:run');
+      assert.equal(generator.listenerCount('error'), 0);
+      generator.on('error', err => {
         assert.ok(this.runMethod.calledOnce);
         assert.ok(err instanceof Error);
         assert.equal(err.message, 'some error');
