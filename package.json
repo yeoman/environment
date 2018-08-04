@@ -28,7 +28,6 @@
     "test": "nyc mocha",
     "doc": "jsdoc -c ./jsdoc.json ./readme.md",
     "benchmark": "matcha benchmark/**",
-    "prepublish": "nsp check",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {
@@ -53,7 +52,6 @@
     "jsdoc": "^3.5.5",
     "matcha": "^0.7.0",
     "mocha": "^5.2.0",
-    "nsp": "^3.2.1",
     "nyc": "^11.9.0",
     "sinon": "^5.1.1",
     "sinon-test": "^2.2.1",
