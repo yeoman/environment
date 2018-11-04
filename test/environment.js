@@ -162,6 +162,18 @@ describe('Environment', () => {
     it('adds the namespace as called on the options', function () {
       assert.equal(this.env.create('stub:foo:bar').options.namespace, 'stub:foo:bar');
     });
+
+    it('adds the namespace from a module generator on the options', function () {
+      this.env
+        .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
+      assert.equal(this.env.create('fixtures:generator-module').options.namespace, 'fixtures:generator-module');
+    });
+
+    it('adds the Generator resolved path from a module generator on the options', function () {
+      this.env
+        .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
+      assert.equal(this.env.create('fixtures:generator-module').options.resolved, this.env.get('fixtures:generator-module').resolved);
+    });
   });
 
   describe('#run()', () => {
