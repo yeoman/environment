@@ -233,7 +233,7 @@ describe('Environment Resolver', function () {
       });
     });
 
-    describe('when localsOnly argument is true', () => {
+    describe('when localOnly argument is true', () => {
       afterEach(() => {
         delete process.env.NODE_PATH;
         delete process.env.NVM_PATH;
