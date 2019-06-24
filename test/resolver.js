@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
+const sinon = require('sinon');
 const spawn = require('cross-spawn');
 const Environment = require('../lib/environment');
 
@@ -22,9 +23,9 @@ describe('Environment Resolver', function () {
       spawn.sync('npm', ['install', '-g', 'generator-dummytest', 'generator-dummy', '--no-package-lock']);
 
       fs.symlinkSync(
-				path.resolve('../generator-extend'),
-				path.resolve('node_modules/generator-extend'),
-				'dir'
+        path.resolve('../generator-extend'),
+        path.resolve('node_modules/generator-extend'),
+        'dir'
       );
 
       if (!fs.existsSync(scopedFolder)) {
@@ -33,9 +34,9 @@ describe('Environment Resolver', function () {
 
       if (!fs.existsSync(scopedGenerator)) {
         fs.symlinkSync(
-					path.resolve('../generator-scoped'),
-					scopedGenerator,
-					'dir'
+          path.resolve('../generator-scoped'),
+          scopedGenerator,
+          'dir'
         );
       }
     });
@@ -200,6 +201,19 @@ describe('Environment Resolver', function () {
       it('append best bet if NVM_PATH is unset', function () {
         assert(this.env.getNpmPaths().indexOf(path.join(this.bestBet, 'node_modules')) >= 0);
         assert(this.env.getNpmPaths().indexOf(this.bestBet2) >= 0);
+      });
+    });
+
+    describe('with npm global prefix', () => {
+      it('append npm modules path depending on your OS', function () {
+        const npmPrefix = '/npm_prefix';
+        const spawnStub = sinon.stub(spawn, 'sync').returns({stdout: npmPrefix});
+        if (process.platform === 'win32') {
+          assert(this.env.getNpmPaths().indexOf(path.resolve(npmPrefix, 'node_modules')) > 0);
+        } else {
+          assert(this.env.getNpmPaths().indexOf(path.resolve(npmPrefix, 'lib/node_modules')) > 0);
+        }
+        spawnStub.restore();
       });
     });
   });
