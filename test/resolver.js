@@ -107,6 +107,36 @@ describe('Environment Resolver', function () {
         assert.ok(resolved.indexOf('subdir') !== -1, `Couldn't find 'subdir' in ${resolved}`);
       });
     });
+
+    describe('when localOnly argument is true', () => {
+      beforeEach(function () {
+        this.env = new Environment();
+        assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
+        this.env.lookup(true);
+      });
+
+      it('register local generators', function () {
+        assert.ok(this.env.get('dummy:app'));
+        assert.ok(this.env.get('dummy:yo'));
+      });
+
+      it('register generators in scoped packages', function () {
+        assert.ok(this.env.get('@dummyscope/scoped:app'));
+      });
+
+      it('register non-dependency local generator', function () {
+        assert.ok(this.env.get('jquery:app'));
+      });
+
+      it('register symlinked generators', function () {
+        assert.ok(this.env.get('extend:support'));
+      });
+
+      globalLookupTest('does not register global generators', function () {
+        assert.ok(!this.env.get('dummytest:app'));
+        assert.ok(!this.env.get('dummytest:controller'));
+      });
+    });
   });
 
   describe('#getNpmPaths()', () => {
@@ -201,6 +231,41 @@ describe('Environment Resolver', function () {
       it('append best bet if NVM_PATH is unset', function () {
         assert(this.env.getNpmPaths().indexOf(path.join(this.bestBet, 'node_modules')) >= 0);
         assert(this.env.getNpmPaths().indexOf(this.bestBet2) >= 0);
+      });
+    });
+
+    describe('when localOnly argument is true', () => {
+      afterEach(() => {
+        delete process.env.NODE_PATH;
+        delete process.env.NVM_PATH;
+      });
+
+      it('walk up the CWD lookups dir', function () {
+        const paths = this.env.getNpmPaths();
+        assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
+        assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
+      });
+
+      it('does not append NODE_PATH', function () {
+        process.env.NODE_PATH = '/some/dummy/path';
+        assert(this.env.getNpmPaths(true).indexOf(process.env.NODE_PATH) === -1);
+      });
+
+      it('does not append NVM_PATH', function () {
+        process.env.NVM_PATH = '/some/dummy/path';
+        assert(this.env.getNpmPaths(true).indexOf(path.join(path.dirname(process.env.NVM_PATH), 'node_modules')) === -1);
+      });
+
+      it('does not append best bet', function () {
+        assert(this.env.getNpmPaths(true).indexOf(this.bestBet) === -1);
+      });
+
+      it('does not append default NPM dir depending on your OS', function () {
+        if (process.platform === 'win32') {
+          assert(this.env.getNpmPaths(true).indexOf(path.join(process.env.APPDATA, 'npm/node_modules')) === -1);
+        } else {
+          assert(this.env.getNpmPaths(true).indexOf('/usr/lib/node_modules') === -1);
+        }
       });
     });
 
