@@ -323,4 +323,32 @@ describe('Environment Resolver', function () {
       });
     });
   });
+
+  describe('Enviroment with a generator extended by environment lookup', () => {
+    before(function () {
+      this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
+      process.chdir(this.projectRoot);
+
+      fs.symlinkSync(
+        path.resolve('../generator-environment-extend'),
+        path.resolve('node_modules/generator-environment-extend'),
+        'dir'
+      );
+    });
+
+    after(function () {
+      fs.unlinkSync(path.join(this.projectRoot, 'node_modules/generator-environment-extend'));
+      process.chdir(__dirname);
+    });
+
+    describe('Find generator', () => {
+      it('Generator extended by environment lookup', () => {
+        this.env = new Environment();
+        assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
+        this.env.lookup();
+        assert.ok(this.env.get('environment-extend:app'));
+        assert.ok(this.env.create('environment-extend:app'));
+      });
+    });
+  });
 });
