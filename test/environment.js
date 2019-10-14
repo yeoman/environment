@@ -377,6 +377,24 @@ describe('Environment', () => {
     });
   });
 
+  describe('#getPackagePath and #getPackagePaths()', () => {
+    beforeEach(function () {
+      this.simpleDummy = sinon.spy();
+      this.simplePath = path.join(__dirname, 'fixtures/generator-simple');
+      assert.equal(this.env.namespaces().length, 0, 'env should be empty');
+      this.env
+        .register(this.simplePath, 'fixtures:generator-simple', this.simplePath)
+        .registerStub(this.simpleDummy, 'fixtures:dummy-simple', 'dummy/path', 'dummy/packagePath')
+        .register(this.simplePath, 'fixtures:generator-simple2', 'new-path');
+    });
+
+    it('determine registered Generator namespace and resolved path', function () {
+      assert.equal(this.env.getPackagePath('fixtures:generator-simple'), this.simplePath);
+      assert.deepEqual(this.env.getPackagePaths('fixtures'), ['new-path', 'dummy/packagePath', this.simplePath]);
+      assert.equal(this.env.getPackagePath('fixtures'), 'new-path');
+    });
+  });
+
   describe('#registerStub()', () => {
     beforeEach(function () {
       this.simpleDummy = sinon.spy();
