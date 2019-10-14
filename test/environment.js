@@ -386,15 +386,16 @@ describe('Environment', () => {
       this.env
         .registerStub(this.simpleDummy, 'dummy:simple')
         .registerStub(this.completeDummy, 'dummy:complete')
-        .registerStub(this.resolvedDummy, 'dummy:resolved', 'dummy/path');
+        .registerStub(this.resolvedDummy, 'dummy:resolved', 'dummy/path', 'dummy/packagePath');
     });
 
     it('register a function under a namespace', function () {
       assert.equal(this.completeDummy, this.env.get('dummy:complete'));
     });
 
-    it('registers the resolved path', function () {
+    it('registers the resolved path and package path', function () {
       assert.equal('dummy/path', this.env.get('dummy:resolved').resolved);
+      assert.equal('dummy/packagePath', this.env.get('dummy:resolved').packagePath);
     });
 
     it('throws if invalid generator', function () {
