@@ -16,6 +16,7 @@ describe('Environment Resolver', function () {
     const scopedGenerator = path.join(scopedFolder, 'generator-scoped');
 
     before(function () {
+      this.timeout(500000);
       this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
       process.chdir(this.projectRoot);
       spawn.sync('npm', ['install', '--no-package-lock']);
