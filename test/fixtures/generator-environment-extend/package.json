@@ -1,0 +1,11 @@
+{
+  "author": "",
+  "name": "generator-environment-extend",
+  "version": "0.0.0",
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}

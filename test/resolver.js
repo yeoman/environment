@@ -283,4 +283,73 @@ describe('Environment Resolver', function () {
       });
     });
   });
+
+  describe('#lookupGenerator()', () => {
+    const scopedFolder = path.resolve('node_modules/@dummyscope');
+    const scopedGenerator = path.join(scopedFolder, 'generator-scoped');
+
+    before(function () {
+      this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
+      process.chdir(this.projectRoot);
+
+      if (!fs.existsSync(scopedFolder)) {
+        fs.mkdirSync(scopedFolder);
+      }
+
+      if (!fs.existsSync(scopedGenerator)) {
+        fs.symlinkSync(
+          path.resolve('../generator-scoped'),
+          scopedGenerator,
+          'dir'
+        );
+      }
+    });
+
+    after(() => {
+      fs.unlinkSync(scopedGenerator);
+      fs.rmdirSync(scopedFolder);
+      process.chdir(__dirname);
+    });
+
+    describe('Find generator', () => {
+      it('Scoped lookup', () => {
+        const modulePath = Environment.lookupGenerator('@dummyscope/scoped:app');
+        assert.ok(modulePath.endsWith('node_modules/@dummyscope/generator-scoped/app/index.js'));
+      });
+      it('Lookup', () => {
+        const modulePath = Environment.lookupGenerator('dummy:app');
+        const modulePath2 = Environment.lookupGenerator('dummy:yo');
+        assert.ok(modulePath.endsWith('node_modules/generator-dummy/app/index.js'));
+        assert.ok(modulePath2.endsWith('node_modules/generator-dummy/yo/index.js'));
+      });
+    });
+  });
+
+  describe('Enviroment with a generator extended by environment lookup', () => {
+    before(function () {
+      this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
+      process.chdir(this.projectRoot);
+
+      fs.symlinkSync(
+        path.resolve('../generator-environment-extend'),
+        path.resolve('node_modules/generator-environment-extend'),
+        'dir'
+      );
+    });
+
+    after(function () {
+      fs.unlinkSync(path.join(this.projectRoot, 'node_modules/generator-environment-extend'));
+      process.chdir(__dirname);
+    });
+
+    describe('Find generator', () => {
+      it('Generator extended by environment lookup', () => {
+        this.env = new Environment();
+        assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
+        this.env.lookup();
+        assert.ok(this.env.get('environment-extend:app'));
+        assert.ok(this.env.create('environment-extend:app'));
+      });
+    });
+  });
 });
