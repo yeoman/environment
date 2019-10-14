@@ -630,10 +630,11 @@ describe('Environment', () => {
     });
 
     it('alias removing prefix- from namespaces', function () {
-      this.env.alias(/^prefix-(.*)$/, '$1');
+      this.env.alias(/^(@.*\/)?prefix-(.*)$/, '$1$2');
       assert.equal(this.env.alias('prefix-foo'), 'foo:app');
       assert.equal(this.env.alias('prefix-mocha:generator'), 'mocha:generator');
       assert.equal(this.env.alias('prefix-fixtures:generator-mocha'), 'fixtures:generator-mocha');
+      assert.equal(this.env.alias('@scoped/prefix-fixtures:generator-mocha'), '@scoped/fixtures:generator-mocha');
     });
   });
 
