@@ -621,6 +621,30 @@ describe('Environment', () => {
     it('alias empty namespace to `:app` by default', function () {
       assert.equal(this.env.alias('foo'), 'foo:app');
     });
+
+    it('alias removing prefix- from namespaces', function () {
+      this.env.alias(/^prefix-(.*)$/, '$1');
+      assert.equal(this.env.alias('prefix-foo'), 'foo:app');
+      assert.equal(this.env.alias('prefix-mocha:generator'), 'mocha:generator');
+      assert.equal(this.env.alias('prefix-fixtures:generator-mocha'), 'fixtures:generator-mocha');
+    });
+  });
+
+  describe('#get() with #alias()', () => {
+    beforeEach(function () {
+      this.generator = require('./fixtures/generator-mocha');
+      this.env.alias(/^prefix-(.*)$/, '$1');
+      this.env
+        .register(path.join(__dirname, './fixtures/generator-mocha'), 'fixtures:generator-mocha')
+        .register(path.join(__dirname, './fixtures/generator-mocha'), 'mocha:generator');
+    });
+
+    it('get a specific generator', function () {
+      assert.equal(this.env.get('prefix-mocha:generator'), this.generator);
+      assert.equal(this.env.get('mocha:generator'), this.generator);
+      assert.equal(this.env.get('prefix-fixtures:generator-mocha'), this.generator);
+      assert.equal(this.env.get('fixtures:generator-mocha'), this.generator);
+    });
   });
 
   describe('.enforceUpdate()', () => {
