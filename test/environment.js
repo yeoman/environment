@@ -343,7 +343,7 @@ describe('Environment', () => {
       this.extendPath = path.join(__dirname, './fixtures/generator-extend/support');
       assert.equal(this.env.namespaces().length, 0, 'env should be empty');
       this.env
-        .register(this.simplePath, 'fixtures:generator-simple')
+        .register(this.simplePath, 'fixtures:generator-simple', this.simplePath)
         .register(this.extendPath, 'scaffold');
     });
 
@@ -356,6 +356,7 @@ describe('Environment', () => {
       assert.equal(typeof simple, 'function');
       assert.ok(simple.namespace, 'fixtures:generator-simple');
       assert.ok(simple.resolved, path.resolve(this.simplePath));
+      assert.ok(simple.packagePath, this.simplePath);
 
       const extend = this.env.get('scaffold');
       assert.equal(typeof extend, 'function');
