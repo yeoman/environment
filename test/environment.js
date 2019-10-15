@@ -343,7 +343,7 @@ describe('Environment', () => {
       this.extendPath = path.join(__dirname, './fixtures/generator-extend/support');
       assert.equal(this.env.namespaces().length, 0, 'env should be empty');
       this.env
-        .register(this.simplePath, 'fixtures:generator-simple')
+        .register(this.simplePath, 'fixtures:generator-simple', this.simplePath)
         .register(this.extendPath, 'scaffold');
     });
 
@@ -356,6 +356,7 @@ describe('Environment', () => {
       assert.equal(typeof simple, 'function');
       assert.ok(simple.namespace, 'fixtures:generator-simple');
       assert.ok(simple.resolved, path.resolve(this.simplePath));
+      assert.ok(simple.packagePath, this.simplePath);
 
       const extend = this.env.get('scaffold');
       assert.equal(typeof extend, 'function');
@@ -376,6 +377,31 @@ describe('Environment', () => {
     });
   });
 
+  describe('#getPackagePath and #getPackagePaths()', () => {
+    beforeEach(function () {
+      this.env.alias(/^prefix-(.*)$/, '$1');
+      this.simpleDummy = sinon.spy();
+      this.simplePath = path.join(__dirname, 'fixtures/generator-simple');
+      assert.equal(this.env.namespaces().length, 0, 'env should be empty');
+      this.env
+        .register(this.simplePath, 'fixtures:generator-simple', this.simplePath)
+        .register(this.simplePath, 'fixtures2', this.simplePath)
+        .registerStub(this.simpleDummy, 'fixtures:dummy-simple', 'dummy/path', 'dummy/packagePath')
+        .register(this.simplePath, 'fixtures:generator-simple2', 'new-path');
+    });
+
+    it('determine registered Generator namespace and resolved path', function () {
+      assert.equal(this.env.getPackagePath('fixtures:generator-simple'), this.simplePath);
+      assert.equal(this.env.getPackagePath('fixtures'), 'new-path');
+      assert.deepEqual(this.env.getPackagePaths('fixtures'), ['new-path', 'dummy/packagePath', this.simplePath]);
+
+      // With alias
+      assert.equal(this.env.getPackagePath('prefix-fixtures:generator-simple'), this.env.getPackagePath('fixtures:generator-simple'));
+      assert.equal(this.env.getPackagePath('prefix-fixtures'), this.env.getPackagePath('fixtures'));
+      assert.deepEqual(this.env.getPackagePaths('prefix-fixtures'), this.env.getPackagePaths('fixtures'));
+    });
+  });
+
   describe('#registerStub()', () => {
     beforeEach(function () {
       this.simpleDummy = sinon.spy();
@@ -385,15 +411,16 @@ describe('Environment', () => {
       this.env
         .registerStub(this.simpleDummy, 'dummy:simple')
         .registerStub(this.completeDummy, 'dummy:complete')
-        .registerStub(this.resolvedDummy, 'dummy:resolved', 'dummy/path');
+        .registerStub(this.resolvedDummy, 'dummy:resolved', 'dummy/path', 'dummy/packagePath');
     });
 
     it('register a function under a namespace', function () {
       assert.equal(this.completeDummy, this.env.get('dummy:complete'));
     });
 
-    it('registers the resolved path', function () {
+    it('registers the resolved path and package path', function () {
       assert.equal('dummy/path', this.env.get('dummy:resolved').resolved);
+      assert.equal('dummy/packagePath', this.env.get('dummy:resolved').packagePath);
     });
 
     it('throws if invalid generator', function () {
@@ -600,6 +627,31 @@ describe('Environment', () => {
 
     it('alias empty namespace to `:app` by default', function () {
       assert.equal(this.env.alias('foo'), 'foo:app');
+    });
+
+    it('alias removing prefix- from namespaces', function () {
+      this.env.alias(/^(@.*\/)?prefix-(.*)$/, '$1$2');
+      assert.equal(this.env.alias('prefix-foo'), 'foo:app');
+      assert.equal(this.env.alias('prefix-mocha:generator'), 'mocha:generator');
+      assert.equal(this.env.alias('prefix-fixtures:generator-mocha'), 'fixtures:generator-mocha');
+      assert.equal(this.env.alias('@scoped/prefix-fixtures:generator-mocha'), '@scoped/fixtures:generator-mocha');
+    });
+  });
+
+  describe('#get() with #alias()', () => {
+    beforeEach(function () {
+      this.generator = require('./fixtures/generator-mocha');
+      this.env.alias(/^prefix-(.*)$/, '$1');
+      this.env
+        .register(path.join(__dirname, './fixtures/generator-mocha'), 'fixtures:generator-mocha')
+        .register(path.join(__dirname, './fixtures/generator-mocha'), 'mocha:generator');
+    });
+
+    it('get a specific generator', function () {
+      assert.equal(this.env.get('prefix-mocha:generator'), this.generator);
+      assert.equal(this.env.get('mocha:generator'), this.generator);
+      assert.equal(this.env.get('prefix-fixtures:generator-mocha'), this.generator);
+      assert.equal(this.env.get('fixtures:generator-mocha'), this.generator);
     });
   });
 

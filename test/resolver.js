@@ -58,6 +58,9 @@ describe('Environment Resolver', function () {
     it('register local generators', function () {
       assert.ok(this.env.get('dummy:app'));
       assert.ok(this.env.get('dummy:yo'));
+
+      assert.ok(this.env.get('dummy:app').packagePath.endsWith('node_modules/generator-dummy'));
+      assert.ok(this.env.get('dummy:app').packagePath.endsWith('node_modules/generator-dummy'));
     });
 
     it('register generators in scoped packages', function () {
