@@ -315,12 +315,19 @@ describe('Environment Resolver', function () {
       it('Scoped lookup', () => {
         const modulePath = Environment.lookupGenerator('@dummyscope/scoped:app');
         assert.ok(modulePath.endsWith('node_modules/@dummyscope/generator-scoped/app/index.js'));
+        const packagePath = Environment.lookupGenerator('@dummyscope/scoped:app', {packagePath: true});
+        assert.ok(packagePath.endsWith('node_modules/@dummyscope/generator-scoped'));
       });
       it('Lookup', () => {
         const modulePath = Environment.lookupGenerator('dummy:app');
         const modulePath2 = Environment.lookupGenerator('dummy:yo');
         assert.ok(modulePath.endsWith('node_modules/generator-dummy/app/index.js'));
         assert.ok(modulePath2.endsWith('node_modules/generator-dummy/yo/index.js'));
+
+        const packagePath = Environment.lookupGenerator('dummy:app', {packagePath: true});
+        const packagePath2 = Environment.lookupGenerator('dummy:yo', {packagePath: true});
+        assert.ok(packagePath.endsWith('node_modules/generator-dummy'));
+        assert.ok(packagePath2.endsWith('node_modules/generator-dummy'));
       });
     });
   });
