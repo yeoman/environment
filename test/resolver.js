@@ -290,6 +290,7 @@ describe('Environment Resolver', function () {
   describe('#lookupGenerator()', () => {
     const scopedFolder = path.resolve('node_modules/@dummyscope');
     const scopedGenerator = path.join(scopedFolder, 'generator-scoped');
+    const moduleGenerator = path.resolve('node_modules/generator-module');
 
     before(function () {
       this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
@@ -306,9 +307,18 @@ describe('Environment Resolver', function () {
           'dir'
         );
       }
+
+      if (!fs.existsSync(moduleGenerator)) {
+        fs.symlinkSync(
+          path.resolve('../generator-module'),
+          moduleGenerator,
+          'dir'
+        );
+      }
     });
 
     after(() => {
+      fs.unlinkSync(moduleGenerator);
       fs.unlinkSync(scopedGenerator);
       fs.rmdirSync(scopedFolder);
       process.chdir(__dirname);
@@ -331,6 +341,16 @@ describe('Environment Resolver', function () {
         const packagePath2 = Environment.lookupGenerator('dummy:yo', {packagePath: true});
         assert.ok(packagePath.endsWith('node_modules/generator-dummy'));
         assert.ok(packagePath2.endsWith('node_modules/generator-dummy'));
+      });
+      it('Module Lookup', () => {
+        const modulePath = Environment.lookupGenerator('module:app');
+        assert.ok(modulePath.endsWith('node_modules/generator-module/generators/app/index.js'));
+
+        const packagePath = Environment.lookupGenerator('module:app', {packagePath: true});
+        assert.ok(packagePath.endsWith('node_modules/generator-module'));
+
+        const generatorPath = Environment.lookupGenerator('module:app', {generatorPath: true});
+        assert.ok(generatorPath.endsWith('node_modules/generator-module/generators'));
       });
     });
   });
