@@ -355,6 +355,62 @@ describe('Environment Resolver', function () {
     });
   });
 
+  describe('#lookupGenerator() with multiple option', () => {
+    const projectRoot = path.join(__dirname, 'fixtures/lookup-project/');
+    const moduleGenerator = path.join(projectRoot, 'node_modules/generator-module');
+    const chdirRoot = path.join(__dirname, 'fixtures/lookup-project/node_modules/foo');
+    const chdirRootNodeModule = path.join(chdirRoot, 'node_modules');
+    const multipleModuleGenerator = path.join(chdirRoot, 'node_modules/generator-module');
+
+    before(() => {
+      if (!fs.existsSync(chdirRoot)) {
+        fs.mkdirSync(chdirRoot);
+      }
+
+      if (!fs.existsSync(moduleGenerator)) {
+        fs.symlinkSync(
+          path.resolve('fixtures/generator-module'),
+          moduleGenerator,
+          'dir'
+        );
+      }
+
+      if (!fs.existsSync(chdirRootNodeModule)) {
+        fs.mkdirSync(chdirRootNodeModule);
+      }
+
+      if (!fs.existsSync(multipleModuleGenerator)) {
+        fs.symlinkSync(
+          path.resolve('fixtures/generator-module'),
+          multipleModuleGenerator,
+          'dir'
+        );
+      }
+
+      process.chdir(chdirRoot);
+    });
+
+    after(() => {
+      fs.unlinkSync(multipleModuleGenerator);
+      fs.rmdirSync(chdirRootNodeModule);
+      fs.rmdirSync(chdirRoot);
+
+      fs.unlinkSync(moduleGenerator);
+      process.chdir(__dirname);
+    });
+
+    describe('Find generator', () => {
+      it('Module Lookup', () => {
+        const modulePath = Environment.lookupGenerator('module:app');
+        assert.ok(modulePath.endsWith('node_modules/generator-module/generators/app/index.js'));
+
+        const multiplePath = Environment.lookupGenerator('module:app', {multiple: true});
+        assert.ok(multiplePath[0].endsWith('lookup-project/node_modules/generator-module/generators/app/index.js'));
+        assert.ok(multiplePath[1].endsWith('lookup-project/node_modules/foo/node_modules/generator-module/generators/app/index.js'));
+      });
+    });
+  });
+
   describe('Enviroment with a generator extended by environment lookup', () => {
     before(function () {
       this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
