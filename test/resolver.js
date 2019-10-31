@@ -23,11 +23,13 @@ describe('Environment Resolver', function () {
       spawn.sync('npm', ['install', 'generator-jquery', '--no-package-lock']);
       spawn.sync('npm', ['install', '-g', 'generator-dummytest', 'generator-dummy', '--no-package-lock']);
 
-      fs.symlinkSync(
-        path.resolve('../generator-extend'),
-        path.resolve('node_modules/generator-extend'),
-        'dir'
-      );
+      if (!fs.existsSync(path.resolve('node_modules/generator-extend'))) {
+        fs.symlinkSync(
+          path.resolve('../generator-extend'),
+          path.resolve('node_modules/generator-extend'),
+          'dir'
+        );
+      }
 
       if (!fs.existsSync(scopedFolder)) {
         fs.mkdirSync(scopedFolder);
