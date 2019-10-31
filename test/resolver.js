@@ -141,6 +141,36 @@ describe('Environment Resolver', function () {
         assert.ok(!this.env.get('dummytest:controller'));
       });
     });
+
+    describe('when options.localOnly argument is true', () => {
+      beforeEach(function () {
+        this.env = new Environment();
+        assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
+        this.env.lookup({localOnly: true});
+      });
+
+      it('register local generators', function () {
+        assert.ok(this.env.get('dummy:app'));
+        assert.ok(this.env.get('dummy:yo'));
+      });
+
+      it('register generators in scoped packages', function () {
+        assert.ok(this.env.get('@dummyscope/scoped:app'));
+      });
+
+      it('register non-dependency local generator', function () {
+        assert.ok(this.env.get('jquery:app'));
+      });
+
+      it('register symlinked generators', function () {
+        assert.ok(this.env.get('extend:support'));
+      });
+
+      globalLookupTest('does not register global generators', function () {
+        assert.ok(!this.env.get('dummytest:app'));
+        assert.ok(!this.env.get('dummytest:controller'));
+      });
+    });
   });
 
   describe('#getNpmPaths()', () => {
