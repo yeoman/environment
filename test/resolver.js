@@ -322,6 +322,7 @@ describe('Environment Resolver', function () {
   describe('#lookupGenerator()', () => {
     const scopedFolder = path.resolve('node_modules/@dummyscope');
     const scopedGenerator = path.join(scopedFolder, 'generator-scoped');
+    const moduleGenerator = path.resolve('node_modules/generator-module');
 
     before(function () {
       this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
@@ -338,9 +339,18 @@ describe('Environment Resolver', function () {
           'dir'
         );
       }
+
+      if (!fs.existsSync(moduleGenerator)) {
+        fs.symlinkSync(
+          path.resolve('../generator-module'),
+          moduleGenerator,
+          'dir'
+        );
+      }
     });
 
     after(() => {
+      fs.unlinkSync(moduleGenerator);
       fs.unlinkSync(scopedGenerator);
       fs.rmdirSync(scopedFolder);
       process.chdir(__dirname);
@@ -363,6 +373,72 @@ describe('Environment Resolver', function () {
         const packagePath2 = Environment.lookupGenerator('dummy:yo', {packagePath: true});
         assert.ok(packagePath.endsWith('node_modules/generator-dummy'));
         assert.ok(packagePath2.endsWith('node_modules/generator-dummy'));
+      });
+      it('Module Lookup', () => {
+        const modulePath = Environment.lookupGenerator('module:app');
+        assert.ok(modulePath.endsWith('node_modules/generator-module/generators/app/index.js'));
+
+        const packagePath = Environment.lookupGenerator('module:app', {packagePath: true});
+        assert.ok(packagePath.endsWith('node_modules/generator-module'));
+
+        const generatorPath = Environment.lookupGenerator('module:app', {generatorPath: true});
+        assert.ok(generatorPath.endsWith('node_modules/generator-module/generators'));
+      });
+    });
+  });
+
+  describe('#lookupGenerator() with multiple option', () => {
+    const projectRoot = path.join(__dirname, 'fixtures/lookup-project/');
+    const moduleGenerator = path.join(projectRoot, 'node_modules/generator-module');
+    const chdirRoot = path.join(__dirname, 'fixtures/lookup-project/node_modules/foo');
+    const chdirRootNodeModule = path.join(chdirRoot, 'node_modules');
+    const multipleModuleGenerator = path.join(chdirRoot, 'node_modules/generator-module');
+
+    before(() => {
+      if (!fs.existsSync(chdirRoot)) {
+        fs.mkdirSync(chdirRoot);
+      }
+
+      if (!fs.existsSync(moduleGenerator)) {
+        fs.symlinkSync(
+          path.resolve('fixtures/generator-module'),
+          moduleGenerator,
+          'dir'
+        );
+      }
+
+      if (!fs.existsSync(chdirRootNodeModule)) {
+        fs.mkdirSync(chdirRootNodeModule);
+      }
+
+      if (!fs.existsSync(multipleModuleGenerator)) {
+        fs.symlinkSync(
+          path.resolve('fixtures/generator-module'),
+          multipleModuleGenerator,
+          'dir'
+        );
+      }
+
+      process.chdir(chdirRoot);
+    });
+
+    after(() => {
+      fs.unlinkSync(multipleModuleGenerator);
+      fs.rmdirSync(chdirRootNodeModule);
+      fs.rmdirSync(chdirRoot);
+
+      fs.unlinkSync(moduleGenerator);
+      process.chdir(__dirname);
+    });
+
+    describe('Find generator', () => {
+      it('Module Lookup', () => {
+        const modulePath = Environment.lookupGenerator('module:app');
+        assert.ok(modulePath.endsWith('node_modules/generator-module/generators/app/index.js'));
+
+        const multiplePath = Environment.lookupGenerator('module:app', {multiple: true});
+        assert.ok(multiplePath[0].endsWith('lookup-project/node_modules/generator-module/generators/app/index.js'));
+        assert.ok(multiplePath[1].endsWith('lookup-project/node_modules/foo/node_modules/generator-module/generators/app/index.js'));
       });
     });
   });
