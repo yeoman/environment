@@ -7,6 +7,9 @@ const sinon = require('sinon');
 const sinonTestFactory = require('sinon-test');
 const Generator = require('yeoman-generator');
 const assert = require('yeoman-assert');
+const GroupedQueue = require('grouped-queue');
+const _ = require('lodash');
+
 const TerminalAdapter = require('../lib/adapter');
 const Environment = require('../lib/environment');
 
@@ -676,6 +679,47 @@ describe('Environment', () => {
     it('add a shared mem-fs instance', function () {
       Environment.enforceUpdate(this.env);
       assert(this.env.sharedFs);
+    });
+  });
+
+  describe('#enforceUpdate() with new queues', () => {
+    beforeEach(function () {
+      this.oldQueueNames = [
+        'initializing',
+        'prompting',
+        'configuring',
+        'default',
+        'writing',
+        'conflicts',
+        'install',
+        'end'
+      ];
+      this.env = new Environment();
+      this.env.runLoop = new GroupedQueue(this.oldQueueNames);
+
+      // Make sure addSubQueue doesn't exits.
+      const oldPrototype = Object.assign({}, Object.getPrototypeOf(this.env.runLoop));
+      if (oldPrototype.addSubQueue) {
+        delete oldPrototype.addSubQueue;
+        Object.setPrototypeOf(this.env.runLoop, oldPrototype);
+      }
+    });
+
+    it('add integrating queueName', function () {
+      // Using _.uniq to workaround grouped-queue bug https://github.com/SBoudrias/grouped-queue/commit/128594ae1500f66b22695fdc96c0012685411d3d
+      assert(_.isEqual(this.env.runLoop.queueNames, _.uniq(this.oldQueueNames)));
+
+      assert(!this.env.runLoop.__queues__.integrating);
+      assert(!this.env.runLoop.__queues__.transforming);
+      assert(!this.env.runLoop.addSubQueue);
+
+      Environment.enforceUpdate(this.env);
+
+      assert(_.isEqual(this.env.runLoop.queueNames, Environment.queues));
+
+      assert(this.env.runLoop.__queues__.integrating);
+      assert(this.env.runLoop.__queues__.transforming);
+      assert(this.env.runLoop.addSubQueue);
     });
   });
 
