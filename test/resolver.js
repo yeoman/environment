@@ -220,8 +220,10 @@ describe('Environment Resolver', function () {
       });
 
       it('append best bet if NODE_PATH is unset', function () {
-        assert(this.env.getNpmPaths().indexOf(this.bestBet) >= 0);
+        assert(this.env.getNpmPaths({filterPaths: false}).indexOf(this.bestBet) >= 0);
+        assert(this.env.getNpmPaths().indexOf(this.bestBet) === -1);
         assert(this.env.getNpmPaths().indexOf(this.bestBet2) >= 0);
+        assert(this.bestBet2.endsWith('node_modules'));
       });
 
       it('append default NPM dir depending on your OS', function () {
@@ -267,6 +269,7 @@ describe('Environment Resolver', function () {
       it('append best bet if NVM_PATH is unset', function () {
         assert(this.env.getNpmPaths().indexOf(path.join(this.bestBet, 'node_modules')) >= 0);
         assert(this.env.getNpmPaths().indexOf(this.bestBet2) >= 0);
+        assert(this.bestBet2.endsWith('node_modules'));
       });
     });
 
@@ -293,7 +296,8 @@ describe('Environment Resolver', function () {
       });
 
       it('does not append best bet', function () {
-        assert(this.env.getNpmPaths(true).indexOf(this.bestBet) === -1);
+        assert(this.env.getNpmPaths({localOnly: true, filterPaths: false}).indexOf(this.bestBet) === -1);
+        assert(this.env.getNpmPaths({localOnly: false, filterPaths: true}).indexOf(this.bestBet) === -1);
       });
 
       it('does not append default NPM dir depending on your OS', function () {
