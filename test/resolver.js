@@ -19,8 +19,7 @@ describe('Environment Resolver', function () {
       this.timeout(500000);
       this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
       process.chdir(this.projectRoot);
-      spawn.sync('npm', ['install', '--no-package-lock']);
-      spawn.sync('npm', ['install', 'generator-jquery', '--no-package-lock']);
+      spawn.sync('npm', ['ci']);
       spawn.sync('npm', ['install', '-g', 'generator-dummytest', 'generator-dummy', '--no-package-lock']);
 
       if (!fs.existsSync(path.resolve('node_modules/generator-extend'))) {
