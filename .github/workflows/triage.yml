@@ -1,0 +1,12 @@
+name: Triage issues
+on:
+  issues: { types: opened }
+jobs:
+  apply-label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@0.3.0
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.issues.addLabels({...context.issue, labels: ['needs triage']})
