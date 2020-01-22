@@ -123,6 +123,7 @@ describe('Environment Resolver', function () {
       it('register local generators', function () {
         assert.ok(this.env.get('dummy:app'));
         assert.ok(this.env.get('dummy:yo'));
+        assert.ok(this.env.isPackageRegistered('dummy'));
       });
 
       it('register generators in scoped packages', function () {
