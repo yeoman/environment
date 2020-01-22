@@ -49,10 +49,10 @@
   },
   "devDependencies": {
     "coveralls": "^3.0.2",
-    "jsdoc": "^3.5.5",
+    "jsdoc": "^3.6.3",
     "matcha": "^0.7.0",
     "mocha": "^5.2.0",
-    "nyc": "^11.9.0",
+    "nyc": "^15.0.0",
     "sinon": "^5.1.1",
     "sinon-test": "^2.2.1",
     "xo": "^0.18.2",
