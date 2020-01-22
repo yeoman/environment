@@ -393,8 +393,10 @@ describe('Environment Resolver', function () {
 
         const packagePath = Environment.lookupGenerator('dummy:app', {packagePath: true});
         const packagePath2 = Environment.lookupGenerator('dummy:yo', {packagePath: true});
+        const packagePath3 = Environment.lookupGenerator('dummy', {packagePath: true});
         assert.ok(packagePath.endsWith('node_modules/generator-dummy'));
         assert.ok(packagePath2.endsWith('node_modules/generator-dummy'));
+        assert.ok(packagePath3.endsWith('node_modules/generator-dummy'));
       });
       it('Module Lookup', () => {
         const modulePath = Environment.lookupGenerator('module:app');
@@ -458,9 +460,13 @@ describe('Environment Resolver', function () {
         const modulePath = Environment.lookupGenerator('module:app');
         assert.ok(modulePath.endsWith('node_modules/generator-module/generators/app/index.js'));
 
-        const multiplePath = Environment.lookupGenerator('module:app', {singleResult: false});
+        const multiplePath = Environment.lookupGenerator('module:app', {multiple: true});
         assert.ok(multiplePath[0].endsWith('lookup-project/node_modules/generator-module/generators/app/index.js'));
         assert.ok(multiplePath[1].endsWith('lookup-project/node_modules/foo/node_modules/generator-module/generators/app/index.js'));
+
+        const multiplePath2 = Environment.lookupGenerator('module:app', {singleResult: false});
+        assert.ok(multiplePath2[0].endsWith('lookup-project/node_modules/generator-module/generators/app/index.js'));
+        assert.ok(multiplePath2[1].endsWith('lookup-project/node_modules/foo/node_modules/generator-module/generators/app/index.js'));
       });
     });
   });
