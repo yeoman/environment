@@ -435,7 +435,7 @@ describe('Environment Resolver', function () {
         const modulePath = Environment.lookupGenerator('module:app');
         assert.ok(modulePath.endsWith('node_modules/generator-module/generators/app/index.js'));
 
-        const multiplePath = Environment.lookupGenerator('module:app', {multiple: true});
+        const multiplePath = Environment.lookupGenerator('module:app', {singleResult: false});
         assert.ok(multiplePath[0].endsWith('lookup-project/node_modules/generator-module/generators/app/index.js'));
         assert.ok(multiplePath[1].endsWith('lookup-project/node_modules/foo/node_modules/generator-module/generators/app/index.js'));
       });
