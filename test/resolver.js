@@ -175,6 +175,141 @@ describe('Environment Resolver', function () {
     });
   });
 
+  describe('#lookup() with options', () => {
+    before(function () {
+      this.projectRoot = path.join(__dirname, 'fixtures/lookup-custom');
+      process.chdir(this.projectRoot);
+
+      this.npmPath = path.join(this.projectRoot, 'node_modules');
+      if (!fs.existsSync(this.npmPath)) {
+        fs.mkdirSync(this.npmPath);
+      }
+
+      this.generatorScope = path.join(this.npmPath, '@scoped');
+      if (!fs.existsSync(this.generatorScope)) {
+        fs.mkdirSync(this.generatorScope);
+      }
+
+      this.generatorScopedPath = path.join(this.generatorScope, 'generator-scoped');
+      if (!fs.existsSync(this.generatorScopedPath)) {
+        fs.symlinkSync(
+          path.resolve('../generator-scoped'),
+          this.generatorScopedPath,
+          'dir'
+        );
+      }
+
+      this.generatorLibGenPath = path.join(this.npmPath, 'generator-module-lib-gen');
+      if (!fs.existsSync(this.generatorLibGenPath)) {
+        fs.symlinkSync(
+          path.resolve('../generator-module-lib-gen'),
+          this.generatorLibGenPath,
+          'dir'
+        );
+      }
+
+      this.generatorPath = path.join(this.npmPath, 'generator-module');
+      if (!fs.existsSync(this.generatorPath)) {
+        fs.symlinkSync(
+          path.resolve('../generator-module'),
+          this.generatorPath,
+          'dir'
+        );
+      }
+
+      this.generatorRootPath = path.join(this.npmPath, 'generator-module-root');
+      if (!fs.existsSync(this.generatorRootPath)) {
+        fs.symlinkSync(
+          path.resolve('../generator-module-root'),
+          this.generatorRootPath,
+          'dir'
+        );
+      }
+    });
+
+    beforeEach(function () {
+      this.env = new Environment();
+    });
+
+    after(function () {
+      fs.unlinkSync(this.generatorPath);
+      fs.unlinkSync(this.generatorLibGenPath);
+      fs.unlinkSync(this.generatorRootPath);
+
+      fs.unlinkSync(this.generatorScopedPath);
+      fs.rmdirSync(this.generatorScope);
+
+      fs.rmdirSync(this.npmPath);
+
+      process.chdir(__dirname);
+    });
+
+    it('with packagePaths', function () {
+      this.env.lookup({packagePaths: [
+        'node_modules/generator-module'
+      ]});
+      assert.ok(this.env.get('module:app'));
+      assert.ok(this.env.getRegisteredPackages().length === 1);
+    });
+
+    it('with 2 packagePaths', function () {
+      this.env.lookup({packagePaths: [
+        'node_modules/generator-module',
+        'node_modules/generator-module-root'
+      ]});
+      assert.ok(this.env.get('module:app'));
+      assert.ok(this.env.get('module-root:app'));
+      assert.ok(this.env.getRegisteredPackages().length === 2);
+    });
+
+    it('with 3 packagePaths', function () {
+      this.env.lookup({packagePaths: [
+        'node_modules/generator-module',
+        'node_modules/generator-module-root',
+        'node_modules/generator-module-lib-gen'
+      ]});
+      assert.ok(this.env.get('module:app'));
+      assert.ok(this.env.get('module-root:app'));
+      assert.ok(this.env.get('module-lib-gen:app'));
+      assert.ok(this.env.getRegisteredPackages().length === 3);
+    });
+
+    it('with scoped packagePaths', function () {
+      this.env.lookup({packagePaths: [
+        'node_modules/generator-module',
+        'node_modules/generator-module-root',
+        'node_modules/generator-module-lib-gen',
+        'node_modules/@scoped/generator-scoped'
+      ]});
+      assert.ok(this.env.get('module:app'));
+      assert.ok(this.env.get('module-root:app'));
+      assert.ok(this.env.get('module-lib-gen:app'));
+      assert.ok(this.env.get('@scoped/scoped:app'));
+      assert.ok(this.env.getRegisteredPackages().length === 4);
+    });
+
+    it('with npmPaths', function () {
+      this.env.lookup({npmPaths: ['node_modules']});
+      assert.ok(this.env.get('module:app'));
+      assert.ok(this.env.get('module-root:app'));
+      assert.ok(this.env.get('module-lib-gen:app'));
+      assert.ok(this.env.get('@scoped/scoped:app'));
+      assert.ok(this.env.getRegisteredPackages().length === 4);
+    });
+
+    it('with sub-sub-generators filePatterns', function () {
+      this.env.lookup({npmPaths: ['node_modules'], filePatterns: ['*/*/index.js']});
+      assert.ok(this.env.get('@scoped/scoped:app:scaffold'));
+    });
+
+    it('with packagePatterns', function () {
+      this.env.lookup({npmPaths: ['node_modules'], packagePatterns: ['generator-module', 'generator-module-root']});
+      assert.ok(this.env.get('module:app'));
+      assert.ok(this.env.get('module-root:app'));
+      assert.ok(this.env.getRegisteredPackages().length === 2);
+    });
+  });
+
   describe('#getNpmPaths()', () => {
     beforeEach(function () {
       this.NODE_PATH = process.env.NODE_PATH;
@@ -327,8 +462,6 @@ describe('Environment Resolver', function () {
     describe('when root path is a valid generator', () => {
       it('pass through root directory', function () {
         const dummyGenerator = 'fixtures/generator-simple';
-        assert(this.env.findGeneratorsIn([dummyGenerator], {skipRepositoryScan: true}).length === 1);
-        assert(this.env.findGeneratorsIn([dummyGenerator, `${dummyGenerator}-2`], {skipScan: true}).length === 2);
         assert(this.env.findGeneratorsIn([dummyGenerator])[0].endsWith(dummyGenerator));
       });
     });
@@ -336,7 +469,6 @@ describe('Environment Resolver', function () {
     describe('when root path is not a valid generator', () => {
       it('pass through root directory', function () {
         const dummyGenerator = 'fixtures/lookup-project/node_modules';
-        assert(this.env.findGeneratorsIn([dummyGenerator], {skipRepositoryScan: true}).length === 0);
         assert(this.env.findGeneratorsIn([dummyGenerator]).length === 3);
       });
     });
