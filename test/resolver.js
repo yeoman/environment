@@ -319,6 +319,104 @@ describe('Environment Resolver', function () {
     });
   });
 
+  describe('#lookupNamespaces()', () => {
+    before(function () {
+      this.projectRoot = path.join(__dirname, 'fixtures/lookup-custom');
+      process.chdir(this.projectRoot);
+
+      this.npmPath = path.join(this.projectRoot, 'node_modules');
+      if (!fs.existsSync(this.npmPath)) {
+        fs.mkdirSync(this.npmPath);
+      }
+
+      this.generatorScope = path.join(this.npmPath, '@scoped');
+      if (!fs.existsSync(this.generatorScope)) {
+        fs.mkdirSync(this.generatorScope);
+      }
+
+      this.generatorScopedPath = path.join(this.generatorScope, 'generator-scoped');
+      if (!fs.existsSync(this.generatorScopedPath)) {
+        fs.symlinkSync(
+          path.resolve('../generator-scoped'),
+          this.generatorScopedPath,
+          'dir'
+        );
+      }
+
+      this.generatorLibGenPath = path.join(this.npmPath, 'generator-module-lib-gen');
+      if (!fs.existsSync(this.generatorLibGenPath)) {
+        fs.symlinkSync(
+          path.resolve('../generator-module-lib-gen'),
+          this.generatorLibGenPath,
+          'dir'
+        );
+      }
+
+      this.generatorPath = path.join(this.npmPath, 'generator-module');
+      if (!fs.existsSync(this.generatorPath)) {
+        fs.symlinkSync(
+          path.resolve('../generator-module'),
+          this.generatorPath,
+          'dir'
+        );
+      }
+
+      this.generatorRootPath = path.join(this.npmPath, 'generator-module-root');
+      if (!fs.existsSync(this.generatorRootPath)) {
+        fs.symlinkSync(
+          path.resolve('../generator-module-root'),
+          this.generatorRootPath,
+          'dir'
+        );
+      }
+    });
+
+    beforeEach(function () {
+      this.env = new Environment([], {experimental: true});
+    });
+
+    after(function () {
+      fs.unlinkSync(this.generatorPath);
+      fs.unlinkSync(this.generatorLibGenPath);
+      fs.unlinkSync(this.generatorRootPath);
+
+      fs.unlinkSync(this.generatorScopedPath);
+      fs.rmdirSync(this.generatorScope);
+
+      fs.rmdirSync(this.npmPath);
+
+      process.chdir(__dirname);
+    });
+
+    it('with 1 namespace', function () {
+      this.env.lookupNamespaces('module:app', {npmPaths: [
+        'node_modules'
+      ]});
+      assert.ok(this.env.get('module:app'));
+      assert.ok(this.env.getRegisteredPackages().length === 1);
+    });
+
+    it('with 2 namespaces', function () {
+      this.env.lookupNamespaces(
+        [
+          'module:app',
+          'module-root:app'
+        ], {npmPaths: ['node_modules']}
+      );
+      assert.ok(this.env.get('module:app'));
+      assert.ok(this.env.get('module-root:app'));
+      assert.ok(this.env.getRegisteredPackages().length === 2);
+    });
+
+    it('with sub-sub-generators', function () {
+      this.env.lookupNamespaces('@scoped/scoped:app:scaffold', {npmPaths: [
+        'node_modules'
+      ]});
+      assert.ok(this.env.get('@scoped/scoped:app:scaffold'));
+      assert.ok(this.env.getRegisteredPackages().length === 1);
+    });
+  });
+
   describe('#getNpmPaths()', () => {
     beforeEach(function () {
       this.NODE_PATH = process.env.NODE_PATH;
