@@ -349,9 +349,10 @@ describe('Environment', () => {
       assert.ok(runRet instanceof Generator || runRet instanceof Promise);
     });
 
-    it('correctly append scope in generator hint', function () {
+    it('correctly append scope in generator hint', function (done) {
       this.env.on('error', err => {
         assert.ok(err.message.includes('@dummyscope/generator-package'));
+        done();
       });
       this.env.run('@dummyscope/package');
     });
