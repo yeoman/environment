@@ -295,7 +295,8 @@ describe('Environment', () => {
     });
 
     it('generator error event emits error event when no callback passed', function (done) {
-      const generator = this.env.run('eventfailingstub:run');
+      const generator = this.env.create('eventfailingstub:run');
+      this.env.runGenerator(generator);
       assert.equal(generator.listenerCount('error'), 0);
       generator.on('error', err => {
         assert.ok(this.runMethod.calledOnce);
@@ -306,7 +307,8 @@ describe('Environment', () => {
     });
 
     it('returns the generator', function () {
-      assert.ok(this.env.run('stub:run') instanceof Generator);
+      const runRet = this.env.run('stub:run');
+      assert.ok(runRet instanceof Generator || runRet instanceof Promise);
     });
 
     it('correctly append scope in generator hint', function () {
