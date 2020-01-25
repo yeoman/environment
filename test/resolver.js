@@ -580,12 +580,12 @@ describe('Environment Resolver', function () {
     });
 
     after(() => {
+      process.chdir(__dirname);
+
       fs.unlinkSync(multipleModuleGenerator);
       fs.rmdirSync(chdirRootNodeModule);
       fs.rmdirSync(chdirRoot);
-
       fs.unlinkSync(moduleGenerator);
-      process.chdir(__dirname);
     });
 
     describe('Find generator', () => {
