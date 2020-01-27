@@ -459,13 +459,6 @@ describe('Environment Resolver', function () {
       this.env = new Environment();
     });
 
-    describe('when root path is a valid generator', () => {
-      it('pass through root directory', function () {
-        const dummyGenerator = 'fixtures/generator-simple';
-        assert(this.env.findGeneratorsIn([dummyGenerator])[0].endsWith(dummyGenerator));
-      });
-    });
-
     describe('when root path is not a valid generator', () => {
       it('pass through root directory', function () {
         const dummyGenerator = 'fixtures/lookup-project/node_modules';
