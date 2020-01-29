@@ -14,7 +14,7 @@ const sinonTest = sinonTestFactory(sinon);
 
 describe('Environment', () => {
   beforeEach(function () {
-    this.env = new Environment([], {'skip-install': true});
+    this.env = new Environment([], {'skip-install': true, sharedOptions: {sharedConstructorData: {}}});
   });
 
   afterEach(function () {
@@ -135,12 +135,27 @@ describe('Environment', () => {
     it('pass options.options', function () {
       const opts = {foo: 'bar'};
       const generator = this.env.create('stub', {options: opts});
-      assert.equal(generator.options, opts);
+      assert.equal(generator.options.foo, 'bar');
     });
 
     it('default options to `env.options` content', function () {
       this.env.options = {foo: 'bar'};
       assert.equal(this.env.create('stub').options.foo, 'bar');
+    });
+
+    it('spread sharedOptions', function () {
+      const opts = {foo: 'bar'};
+      const generator = this.env.create('stub', {options: opts});
+      const generator2 = this.env.create('stub');
+      assert.equal(generator.options.foo, 'bar');
+      assert.equal(generator.options.sharedData, generator2.options.sharedData);
+
+      generator.options.sharedData.foo = 'bar';
+      assert.equal(generator2.options.sharedData.foo, 'bar');
+
+      assert.equal(generator.options.sharedConstructorData, generator2.options.sharedConstructorData);
+      generator.options.sharedConstructorData.bar = 'foo';
+      assert.equal(generator2.options.sharedConstructorData.bar, 'foo');
     });
 
     it('throws if Generator is not registered', function () {
@@ -226,7 +241,7 @@ describe('Environment', () => {
       this.env.run(args, options, () => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'module');
-        assert.equal(this.args[1], options);
+        assert.equal(this.args[1]['skip-install'], true);
         done();
       });
     });
@@ -237,7 +252,8 @@ describe('Environment', () => {
       this.env.run(args, () => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'foo');
-        assert.equal(this.args[1], this.env.options);
+        assert.equal(this.args[1]['skip-install'], this.env.options['skip-install']);
+        assert.equal(this.args[1].some, this.env.options.some);
         done();
       });
     });
@@ -248,7 +264,7 @@ describe('Environment', () => {
       this.env.run(() => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'my-args');
-        assert.equal(this.args[1], this.env.options);
+        assert.equal(this.args[1]['skip-install'], true);
         done();
       });
     });
