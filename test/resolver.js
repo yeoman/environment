@@ -526,13 +526,13 @@ describe('Environment Resolver', function () {
       });
       it('Module Lookup', () => {
         const modulePath = Environment.lookupGenerator('module:app');
-        assert.ok(modulePath.endsWith('node_modules/generator-module/generators/app/index.js'));
+        assert.ok(modulePath.endsWith('node_modules/generator-module/generators/app/index.js'), modulePath);
 
         const packagePath = Environment.lookupGenerator('module:app', {packagePath: true});
-        assert.ok(packagePath.endsWith('node_modules/generator-module'));
+        assert.ok(packagePath.endsWith('node_modules/generator-module'), packagePath);
 
         const generatorPath = Environment.lookupGenerator('module:app', {generatorPath: true});
-        assert.ok(generatorPath.endsWith('node_modules/generator-module/generators'));
+        assert.ok(generatorPath.endsWith(path.normalize('node_modules/generator-module/generators')), generatorPath);
       });
     });
   });

@@ -352,6 +352,10 @@ describe('Environment', () => {
       assert.equal(specifiedJS, this.env.resolveModulePath(specifiedJS));
       assert.equal(specifiedJSON, this.env.resolveModulePath(specifiedJSON));
       assert.equal(specifiedNode, this.env.resolveModulePath(specifiedNode));
+
+      const aModulePath = path.join(__dirname, 'fixtures/generator-scoped/app');
+      const aSpecifiedJS = path.join(__dirname, 'fixtures/generator-scoped/app/index.js');
+      assert.equal(aSpecifiedJS, this.env.resolveModulePath(aModulePath));
     });
   });
 
