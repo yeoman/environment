@@ -2,23 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: env/util</title>
+    <title>Module: env/util | yeoman-environment</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
     <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
 </head>
-
 <body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 127px; height: 14px">
+        
+            <img src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png" width="100%" height="100%">
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">yeoman-environment</a></h1>
+        
+            <span class="version">v2.7.0</span>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+    <div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-env_log.html">env/log</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:env/log_sub"></div></li><li><a href="module-env_util.html">env/util</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:env/util_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="module-env_util.html#.log">log</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="module-env_util.html#.duplicateEnv">duplicateEnv</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Environment.html">Environment</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Environment_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Environment.html#.util">util</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Environment.html#.createEnv">createEnv</a></li><li><a href="Environment.html#.enforceUpdate">enforceUpdate</a></li><li><a href="Environment.html#.lookupGenerator">lookupGenerator</a></li><li><a href="Environment.html#.namespaceToName">namespaceToName</a></li><li><a href="Environment.html#alias">alias</a></li><li><a href="Environment.html#alias">alias</a></li><li><a href="Environment.html#create">create</a></li><li><a href="Environment.html#error">error</a></li><li><a href="Environment.html#findGeneratorsIn">findGeneratorsIn</a></li><li><a href="Environment.html#findGeneratorsIn">findGeneratorsIn</a></li><li><a href="Environment.html#get">get</a></li><li><a href="Environment.html#getByPath">getByPath</a></li><li><a href="Environment.html#getGeneratorNames">getGeneratorNames</a></li><li><a href="Environment.html#getGeneratorsMeta">getGeneratorsMeta</a></li><li><a href="Environment.html#getNpmPaths">getNpmPaths</a></li><li><a href="Environment.html#getNpmPaths">getNpmPaths</a></li><li><a href="Environment.html#getPackagePath">getPackagePath</a></li><li><a href="Environment.html#getPackagePaths">getPackagePaths</a></li><li><a href="Environment.html#getRegisteredPackages">getRegisteredPackages</a></li><li><a href="Environment.html#help">help</a></li><li><a href="Environment.html#instantiate">instantiate</a></li><li><a href="Environment.html#isPackageRegistered">isPackageRegistered</a></li><li><a href="Environment.html#lookup">lookup</a></li><li><a href="Environment.html#lookup">lookup</a></li><li><a href="Environment.html#namespace">namespace</a></li><li><a href="Environment.html#namespaces">namespaces</a></li><li><a href="Environment.html#register">register</a></li><li><a href="Environment.html#registerStub">registerStub</a></li><li><a href="Environment.html#resolveModulePath">resolveModulePath</a></li><li><a href="Environment.html#run">run</a></li><li><a href="Environment.html#runGenerator">runGenerator</a></li></ul></div></li><li><a href="TerminalAdapter.html">TerminalAdapter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="TerminalAdapter_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="TerminalAdapter.html#log">log</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="TerminalAdapter.html#diff">diff</a></li><li><a href="TerminalAdapter.html#prompt">prompt</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Mixins</h3><ul><li><a href="env_resolver.html">env/resolver</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="env/resolver_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="env_resolver.html#.alias">alias</a></li><li><a href="env_resolver.html#.findGeneratorsIn">findGeneratorsIn</a></li><li><a href="env_resolver.html#.getNpmPaths">getNpmPaths</a></li><li><a href="env_resolver.html#.lookup">lookup</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Global</h3><ul><li><a href="global.html#callbackWrapper">callbackWrapper</a></li><li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li><li><a href="global.html#splitArgsFromString">splitArgsFromString</a></li></ul></div>
+</nav>
+<div id="resizer"></div>
 
-<div id="main">
-
-    <h1 class="page-title">Module: env/util</h1>
-
+<div class="main" id="main">
     
 
 
@@ -28,47 +48,65 @@
 
 <header>
     
+        <h2>env/util</h2>
         
     
 </header>
 
 <article>
-    <div class="container-overview">
     
+        <div class="container-overview">
         
+            
 
+            
         
-    
-    </div>
-
+        </div>
     
 
     
 
     
 
-     
+    
+
+    
+
+    
 
     
 
     
         <h3 class="subsection-title">Members</h3>
 
-        
+        <dl>
             
-<h4 class="name" id=".log"><span class="type-signature">(static) </span>log<span class="type-signature"></span></h4>
+
+<dt>
+<h4 class="name" id=".log">
+    <span class="type-signature"><span class="icon green">static</span> </span>log<span class="type-signature"></span>
+    
+    <div class="container-source members">
+        <code><a href="util_util.js.html">util/util.js</a></code>,
+        <code><a href="util_util.js.html#line27">line 27</a></code>
+    </div>
+    
+</h4>
 
 
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Log utility</p>
+    </div>
+    
 
+    <!--
+    
+    -->
 
-<div class="description">
-    <p>Log utility</p>
-</div>
-
-
-
-
-
+    
 
 
 <dl class="details">
@@ -98,13 +136,6 @@
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_util.js.html">util/util.js</a>, <a href="util_util.js.html#line29">line 29</a>
-    </li></ul></dd>
-    
-
-    
 
     
     <dt class="tag-see">See:</dt>
@@ -119,45 +150,58 @@
 </dl>
 
 
+    
 
+    
+</dd>
 
-
-
-        
+        </dl>
     
 
     
         <h3 class="subsection-title">Methods</h3>
 
-        
+        <dl>
+                
+
+<dt>
+    
+        <h4 class="name" id=".duplicateEnv">
             
+                <span class="type-signature"><span class="icon green">static</span> </span>duplicateEnv<span class="signature">(initialEnv)</span><span class="type-signature"> &rarr; {<a href="Environment.html">Environment</a>}</span>
+                
+            
+            <div class="container-source members">
+                <code><a href="util_util.js.html">util/util.js</a></code>,
+                <code><a href="util_util.js.html#line15">line 15</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+</dt>
+<dd>
 
     
-
-    <h4 class="name" id=".duplicateEnv"><span class="type-signature">(static) </span>duplicateEnv<span class="signature">(initialEnv)</span><span class="type-signature"> &rarr; {<a href="Environment.html">Environment</a>}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Create a &quot;sloppy&quot; copy of an initial Environment object. The focus of this method is on
+    <div class="description">
+        <p>Create a &quot;sloppy&quot; copy of an initial Environment object. The focus of this method is on
 performance rather than correctly deep copying every property or recreating a correct
 instance. Use carefully and don't rely on <code>hasOwnProperty</code> of the copied environment.</p>
 <p>Every property are shared except the runLoop which is regenerated.</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
 <table class="params">
     <thead>
     <tr>
@@ -203,9 +247,43 @@ instance. Use carefully and don't rely on <code>hasOwnProperty</code> of the cop
     </tbody>
 </table>
 
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
 
 
 
+<span class="param-type"><a href="Environment.html">Environment</a></span>
+
+
+
+
+
+- <p>sloppy copy of the initial Environment</p>
+
+
+
+
+            
+    </div>
+    
+
+    
 
 
 <dl class="details">
@@ -235,13 +313,6 @@ instance. Use carefully and don't rely on <code>hasOwnProperty</code> of the cop
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_util.js.html">util/util.js</a>, <a href="util_util.js.html#line17">line 17</a>
-    </li></ul></dd>
-    
-
-    
 
     
 
@@ -249,43 +320,11 @@ instance. Use carefully and don't rely on <code>hasOwnProperty</code> of the cop
 </dl>
 
 
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>sloppy copy of the initial Environment</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="Environment.html">Environment</a></span>
-
-
-    </dd>
-</dl>
-
     
 
+</dd>
 
-
-        
+            </dl>
     
 
     
@@ -300,17 +339,24 @@ instance. Use carefully and don't rely on <code>hasOwnProperty</code> of the cop
 
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-env_log.html">env/log</a></li><li><a href="module-env_util.html">env/util</a></li></ul><h3>Classes</h3><ul><li><a href="Environment.html">Environment</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="env_resolver.html">env/resolver</a></li></ul>
-</nav>
-
-<br class="clear">
-
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Feb 12 2016 22:20:15 GMT-0800 (PST)
+    <img class="logo" src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png" style="width: 127px; height: 14px">
+    <div class="footer-text">BSD license Copyright (c) Google</div>
 </footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+    <script>
+        var id = 'module:env/util_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
 </body>
 </html>

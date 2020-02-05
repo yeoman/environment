@@ -1,24 +1,46 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: util/log.js</title>
+    <title>Source: util/log.js | yeoman-environment</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
     <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
 </head>
-
 <body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 127px; height: 14px">
+        
+            <img src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png" width="100%" height="100%">
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">yeoman-environment</a></h1>
+        
+            <span class="version">v2.7.0</span>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+    <div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-env_log.html">env/log</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:env/log_sub"></div></li><li><a href="module-env_util.html">env/util</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:env/util_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="module-env_util.html#.log">log</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="module-env_util.html#.duplicateEnv">duplicateEnv</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Environment.html">Environment</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Environment_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Environment.html#.util">util</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Environment.html#.createEnv">createEnv</a></li><li><a href="Environment.html#.enforceUpdate">enforceUpdate</a></li><li><a href="Environment.html#.lookupGenerator">lookupGenerator</a></li><li><a href="Environment.html#.namespaceToName">namespaceToName</a></li><li><a href="Environment.html#alias">alias</a></li><li><a href="Environment.html#alias">alias</a></li><li><a href="Environment.html#create">create</a></li><li><a href="Environment.html#error">error</a></li><li><a href="Environment.html#findGeneratorsIn">findGeneratorsIn</a></li><li><a href="Environment.html#findGeneratorsIn">findGeneratorsIn</a></li><li><a href="Environment.html#get">get</a></li><li><a href="Environment.html#getByPath">getByPath</a></li><li><a href="Environment.html#getGeneratorNames">getGeneratorNames</a></li><li><a href="Environment.html#getGeneratorsMeta">getGeneratorsMeta</a></li><li><a href="Environment.html#getNpmPaths">getNpmPaths</a></li><li><a href="Environment.html#getNpmPaths">getNpmPaths</a></li><li><a href="Environment.html#getPackagePath">getPackagePath</a></li><li><a href="Environment.html#getPackagePaths">getPackagePaths</a></li><li><a href="Environment.html#getRegisteredPackages">getRegisteredPackages</a></li><li><a href="Environment.html#help">help</a></li><li><a href="Environment.html#instantiate">instantiate</a></li><li><a href="Environment.html#isPackageRegistered">isPackageRegistered</a></li><li><a href="Environment.html#lookup">lookup</a></li><li><a href="Environment.html#lookup">lookup</a></li><li><a href="Environment.html#namespace">namespace</a></li><li><a href="Environment.html#namespaces">namespaces</a></li><li><a href="Environment.html#register">register</a></li><li><a href="Environment.html#registerStub">registerStub</a></li><li><a href="Environment.html#resolveModulePath">resolveModulePath</a></li><li><a href="Environment.html#run">run</a></li><li><a href="Environment.html#runGenerator">runGenerator</a></li></ul></div></li><li><a href="TerminalAdapter.html">TerminalAdapter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="TerminalAdapter_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="TerminalAdapter.html#log">log</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="TerminalAdapter.html#diff">diff</a></li><li><a href="TerminalAdapter.html#prompt">prompt</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Mixins</h3><ul><li><a href="env_resolver.html">env/resolver</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="env/resolver_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="env_resolver.html#.alias">alias</a></li><li><a href="env_resolver.html#.findGeneratorsIn">findGeneratorsIn</a></li><li><a href="env_resolver.html#.getNpmPaths">getNpmPaths</a></li><li><a href="env_resolver.html#.lookup">lookup</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Global</h3><ul><li><a href="global.html#callbackWrapper">callbackWrapper</a></li><li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li><li><a href="global.html#splitArgsFromString">splitArgsFromString</a></li></ul></div>
+</nav>
+<div id="resizer"></div>
 
-<div id="main">
-
-    <h1 class="page-title">Source: util/log.js</h1>
-
+<div class="main" id="main">
     
 
 
@@ -28,40 +50,28 @@
         <article>
             <pre class="prettyprint source linenums"><code>/** @module env/log */
 'use strict';
+const util = require('util');
+const EventEmitter = require('events');
+const _ = require('lodash');
+const table = require('text-table');
+const chalk = require('chalk');
+const logSymbols = require('log-symbols');
 
-var util = require('util');
-var events = require('events');
-var _ = require('lodash');
-var table = require('text-table');
-var chalk = require('chalk');
-var logSymbols = require('log-symbols');
-
-// padding step
-var step = '  ';
-var padding = ' ';
-
-// color -> status mappings
-var colors = {
-  skip: 'yellow',
-  force: 'yellow',
-  create: 'green',
-  invoke: 'bold',
-  conflict: 'red',
-  identical: 'cyan',
-  info: 'gray'
-};
+// Padding step
+const step = '  ';
+let padding = ' ';
 
 function pad(status) {
-  var max = 'identical'.length;
-  var delta = max - status.length;
-  return delta ? new Array(delta + 1).join(' ') + status : status;
+  const max = 'identical'.length;
+  const delta = max - status.length;
+  return delta ? ' '.repeat(delta) + status : status;
 }
 
-// borrowed from https://github.com/mikeal/logref/blob/master/main.js#L6-15
+// Borrowed from https://github.com/mikeal/logref/blob/master/main.js#L6-15
 function formatter(msg, ctx) {
   while (msg.indexOf('%') !== -1) {
-    var start = msg.indexOf('%');
-    var end = msg.indexOf(' ', start);
+    const start = msg.indexOf('%');
+    let end = msg.indexOf(' ', start);
 
     if (end === -1) {
       end = msg.length;
@@ -73,7 +83,24 @@ function formatter(msg, ctx) {
   return msg;
 }
 
-module.exports = function logger() {
+const getDefaultColors = () => ({
+  skip: 'yellow',
+  force: 'yellow',
+  create: 'green',
+  invoke: 'bold',
+  conflict: 'red',
+  identical: 'cyan',
+  info: 'gray'
+});
+
+const initParams = params => {
+  params = params || {};
+  return Object.assign(
+    {}, params, {
+      colors: Object.assign(getDefaultColors(), params.colors || {})});
+};
+
+module.exports = params => {
   // `this.log` is a [logref](https://github.com/mikeal/logref)
   // compatible logger, with an enhanced API.
   //
@@ -90,6 +117,9 @@ module.exports = function logger() {
   // - msg      - The message to show up
   // - context  - The optional context to escape the message against
   //
+  // @param {Object} params
+  // @param {Object} params.colors status mappings
+  //
   // Returns the logger
   function log(msg, ctx) {
     msg = msg || '';
@@ -103,7 +133,9 @@ module.exports = function logger() {
     return log;
   }
 
-  _.extend(log, events.EventEmitter.prototype);
+  _.extend(log, EventEmitter.prototype);
+
+  params = initParams(params);
 
   // A simple write method, with formatted message.
   //
@@ -133,15 +165,17 @@ module.exports = function logger() {
     return this;
   };
 
-  log.on('up', function () {
-    padding = padding + step;
+  log.on('up', () => {
+    padding += step;
   });
 
-  log.on('down', function () {
+  log.on('down', () => {
     padding = padding.replace(step, '');
   });
 
-  Object.keys(colors).forEach(function (status) {
+  /* eslint-disable no-loop-func */
+  // TODO: Fix this ESLint warning
+  for (const status of Object.keys(params.colors)) {
     // Each predefined status has its logging method utility, handling
     // status color and padding before the usual `.write()`
     //
@@ -155,7 +189,7 @@ module.exports = function logger() {
     //      .write()
     //      .ok('This is ok');
     //
-    // The list of status and mapping colors
+    // The list of default status and mapping colors
     //
     //    skip       yellow
     //    force      yellow
@@ -167,12 +201,13 @@ module.exports = function logger() {
     //
     // Returns the logger
     log[status] = function () {
-      var color = colors[status];
+      const color = params.colors[status];
       this.write(chalk[color](pad(status))).write(padding);
       this.write(util.format.apply(util, arguments) + '\n');
       return this;
     };
-  });
+  }
+  /* eslint-enable no-loop-func */
 
   // A basic wrapper around `cli-table` package, resetting any single
   // char to empty strings, this is used for aligning options and
@@ -182,15 +217,15 @@ module.exports = function logger() {
   //          table.
   //
   // Returns the table reprensetation
-  log.table = function (opts) {
-    var tableData = [];
+  log.table = opts => {
+    const tableData = [];
 
-    opts = Array.isArray(opts) ? { rows: opts } : opts;
+    opts = Array.isArray(opts) ? {rows: opts} : opts;
     opts.rows = opts.rows || [];
 
-    opts.rows.forEach(function (row) {
+    for (const row of opts.rows) {
       tableData.push(row);
-    });
+    }
 
     return table(tableData);
   };
@@ -206,17 +241,24 @@ module.exports = function logger() {
 
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-env_log.html">env/log</a></li><li><a href="module-env_util.html">env/util</a></li></ul><h3>Classes</h3><ul><li><a href="Environment.html">Environment</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="env_resolver.html">env/resolver</a></li></ul>
-</nav>
-
-<br class="clear">
-
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Feb 12 2016 22:20:15 GMT-0800 (PST)
+    <img class="logo" src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png" style="width: 127px; height: 14px">
+    <div class="footer-text">BSD license Copyright (c) Google</div>
 </footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
 </body>
 </html>
