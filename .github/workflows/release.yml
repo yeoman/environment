@@ -30,7 +30,8 @@ jobs:
           asset_name: ${{ steps.generate_package.outputs.FILE }}
           asset_content_type: application/gzip
 
-      #- name: Publish to npmjs
-      #  run: npm publish ${{ steps.generate_package.outputs.FILE }}
-      #  env:
-      #    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish to npmjs
+        if: secrets.NPM_TOKEN
+        run: npm publish ${{ steps.generate_package.outputs.FILE }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
