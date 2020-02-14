@@ -8,7 +8,7 @@ jobs:
   build:
     name: Release Milestone
     runs-on: ubuntu-latest
-    if: startsWith(github.event.milestone.title, 'v')
+    if: startsWith(github.event.milestone.title, 'v') && startsWith(github.event.milestone.description, 'Do release')
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
