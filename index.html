@@ -2,23 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>Home | yeoman-environment</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
     <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
 </head>
-
 <body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 127px; height: 14px">
+        
+            <img src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png" width="100%" height="100%">
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">yeoman-environment</a></h1>
+        
+            <span class="version">v2.8.0</span>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+    <div class="lnb-api hidden"><h3>Modules</h3><ul><li><a href="module-env_log.html">env/log</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:env/log_sub"></div></li><li><a href="module-env_util.html">env/util</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="module:env/util_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="module-env_util.html#.log">log</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="module-env_util.html#.duplicateEnv">duplicateEnv</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Environment.html">Environment</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="Environment_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Environment.html#.util">util</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Environment.html#.createEnv">createEnv</a></li><li><a href="Environment.html#.enforceUpdate">enforceUpdate</a></li><li><a href="Environment.html#.lookupGenerator">lookupGenerator</a></li><li><a href="Environment.html#.namespaceToName">namespaceToName</a></li><li><a href="Environment.html#alias">alias</a></li><li><a href="Environment.html#alias">alias</a></li><li><a href="Environment.html#create">create</a></li><li><a href="Environment.html#error">error</a></li><li><a href="Environment.html#findGeneratorsIn">findGeneratorsIn</a></li><li><a href="Environment.html#findGeneratorsIn">findGeneratorsIn</a></li><li><a href="Environment.html#get">get</a></li><li><a href="Environment.html#getByPath">getByPath</a></li><li><a href="Environment.html#getGeneratorNames">getGeneratorNames</a></li><li><a href="Environment.html#getGeneratorsMeta">getGeneratorsMeta</a></li><li><a href="Environment.html#getNpmPaths">getNpmPaths</a></li><li><a href="Environment.html#getNpmPaths">getNpmPaths</a></li><li><a href="Environment.html#getPackagePath">getPackagePath</a></li><li><a href="Environment.html#getPackagePaths">getPackagePaths</a></li><li><a href="Environment.html#getRegisteredPackages">getRegisteredPackages</a></li><li><a href="Environment.html#help">help</a></li><li><a href="Environment.html#instantiate">instantiate</a></li><li><a href="Environment.html#isPackageRegistered">isPackageRegistered</a></li><li><a href="Environment.html#lookup">lookup</a></li><li><a href="Environment.html#lookup">lookup</a></li><li><a href="Environment.html#namespace">namespace</a></li><li><a href="Environment.html#namespaces">namespaces</a></li><li><a href="Environment.html#register">register</a></li><li><a href="Environment.html#registerStub">registerStub</a></li><li><a href="Environment.html#resolveModulePath">resolveModulePath</a></li><li><a href="Environment.html#run">run</a></li><li><a href="Environment.html#runGenerator">runGenerator</a></li></ul></div></li><li><a href="TerminalAdapter.html">TerminalAdapter</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="TerminalAdapter_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="TerminalAdapter.html#log">log</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="TerminalAdapter.html#diff">diff</a></li><li><a href="TerminalAdapter.html#prompt">prompt</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Mixins</h3><ul><li><a href="env_resolver.html">env/resolver</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="env/resolver_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="env_resolver.html#.alias">alias</a></li><li><a href="env_resolver.html#.findGeneratorsIn">findGeneratorsIn</a></li><li><a href="env_resolver.html#.getNpmPaths">getNpmPaths</a></li><li><a href="env_resolver.html#.lookup">lookup</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Global</h3><ul><li><a href="global.html#callbackWrapper">callbackWrapper</a></li><li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li><li><a href="global.html#splitArgsFromString">splitArgsFromString</a></li></ul></div>
+</nav>
+<div id="resizer"></div>
 
-<div id="main">
-
-    <h1 class="page-title">Home</h1>
-
+<div class="main" id="main">
     
 
 
@@ -26,10 +46,6 @@
     
 
 
-    <h3> </h3>
-
-
-
 
 
 
@@ -38,27 +54,34 @@
 
 
     
-
-
 
 
     <section>
-        <article><h1>Yeoman Environment <a href="http://badge.fury.io/js/yeoman-environment"><img src="https://badge.fury.io/js/yeoman-environment.svg" alt="npm"></a> <a href="https://travis-ci.org/yeoman/environment"><img src="https://travis-ci.org/yeoman/generator.svg?branch=master" alt="Build Status"></a> <a href="https://coveralls.io/github/yeoman/environment?branch=master"><img src="https://coveralls.io/repos/yeoman/environment/badge.svg?branch=master&amp;service=github" alt="Coverage Status"></a></h1><blockquote>
+        <article class="readme"><h1>Yeoman Environment</h1>
+<p><a href="http://badge.fury.io/js/yeoman-environment"><img src="https://badge.fury.io/js/yeoman-environment.svg" alt="npm"></a> <a href="https://travis-ci.org/yeoman/environment"><img src="https://travis-ci.org/yeoman/generator.svg?branch=master" alt="Build Status"></a> <a href="https://coveralls.io/github/yeoman/environment?branch=master"><img src="https://coveralls.io/repos/github/yeoman/environment/badge.svg?branch=master" alt="Coverage Status"></a> <a href="https://gitter.im/yeoman/yeoman"><img src="https://img.shields.io/badge/Gitter-Join_the_Yeoman_chat_%E2%86%92-00d06f.svg" alt="Gitter"></a></p>
+<blockquote>
 <p>Handles the lifecycle and bootstrapping of generators in a specific environment</p>
 </blockquote>
 <p>It provides a high-level API to discover, create and run generators, as well as further tuning of where and how a generator is resolved.</p>
-<h2>Install</h2><pre class="prettyprint source"><code>$ npm install --save yeoman-environment</code></pre><h2>Usage</h2><p>Full documentation available at http://yeoman.io/authoring/integrating-yeoman.html</p>
-<pre class="prettyprint source lang-js"><code>var yeoman = require('yeoman-environment');
-var env = yeoman.createEnv();
+<h2>Install</h2>
+<pre class="prettyprint source"><code>$ npm install yeoman-environment
+</code></pre>
+<h2>Usage</h2>
+<p>Full documentation available <a href="http://yeoman.io/authoring/integrating-yeoman.html">here</a>.</p>
+<pre class="prettyprint source lang-js"><code>const yeoman = require('yeoman-environment');
+const env = yeoman.createEnv();
 
-// The #lookup() method will search the user computer for installed generators.
-// The search if done from the current working directory.
-env.lookup(function () {
-  env.run('angular', {'skip-install': true}, function (err) {
+// The #lookup() method will search the user computer for installed generators
+// The search if done from the current working directory
+env.lookup(() => {
+  env.run('angular', {'skip-install': true}, err => {
     console.log('done');
   });
-});</code></pre><p>For advance usage, see <a href="http://yeoman.github.io/environment">our API documentation</a>.</p>
-<h2>License</h2><p>BSD © Yeoman</p></article>
+});
+</code></pre>
+<p>For advance usage, see <a href="http://yeoman.github.io/environment">our API documentation</a>.</p>
+<h2>License</h2>
+<p>BSD-2-Clause © Yeoman</p></article>
     </section>
 
 
@@ -68,17 +91,24 @@ env.lookup(function () {
 
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-env_log.html">env/log</a></li><li><a href="module-env_util.html">env/util</a></li></ul><h3>Classes</h3><ul><li><a href="Environment.html">Environment</a></li><li><a href="TerminalAdapter.html">TerminalAdapter</a></li></ul><h3>Mixins</h3><ul><li><a href="env_resolver.html">env/resolver</a></li></ul>
-</nav>
-
-<br class="clear">
-
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Fri Feb 12 2016 22:20:15 GMT-0800 (PST)
+    <img class="logo" src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png" style="width: 127px; height: 14px">
+    <div class="footer-text">BSD license Copyright (c) Google</div>
 </footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+    <script>
+        var id = 'package:yeoman-environment_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
 </body>
 </html>
