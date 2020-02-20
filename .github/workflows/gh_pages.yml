@@ -1,5 +1,8 @@
 name: Update api docs
 on:
+  push:
+    branches:
+      - docs
   release:
     types: [published]
 
@@ -9,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-node@v1
-      - run: npm install -g jsdoc
+      - run: npm install -g jsdoc prettier
       - uses: actions/checkout@v2
         with:
           path: source
@@ -23,6 +26,7 @@ jobs:
           npm ci
           jsdoc -c jsdoc.json -d ../out
           cd ../out
+          prettier * --write
           git add .
           git config --local user.email ""
           git config --local user.name "Github Actions"
