@@ -36,4 +36,3 @@ jobs:
           body: ${{github.event.milestone.description}}
           draft: true
           prerelease: false
-          
