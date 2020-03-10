@@ -1,4 +1,4 @@
-/* global suite, bench */
+/* global bench */
 'use strict';
 const yeoman = require('..');
 
