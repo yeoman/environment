@@ -67,7 +67,11 @@
       "mocha"
     ],
     "rules": {
-      "import/no-dynamic-require": "off"
+      "import/no-dynamic-require": "off",
+      "prefer-spread": "off",
+      "padding-line-between-statements": "off",
+      "unicorn/no-hex-escape": "off",
+      "unicorn/prefer-reflect-apply": "off"
     }
   }
 }
