@@ -33,6 +33,27 @@ describe('TerminalAdapter', () => {
       sinon.assert.calledWith(this.fakePromise.then, func);
       assert.equal(ret, this.fakePromise);
     });
+
+    it('pass its arguments with answers to inquirer', function () {
+      const questions = [];
+      const answers = {};
+      const func = () => {};
+      const ret = this.adapter.prompt(questions, answers, func);
+      sinon.assert.calledWith(this.stub, questions, answers);
+      sinon.assert.calledWith(this.fakePromise.then, func);
+      assert.equal(ret, this.fakePromise);
+    });
+  });
+
+  describe('#prompt() with answers', () => {
+    it('pass its arguments to inquirer', function (done) {
+      const questions = [];
+      const answers = {prompt1: 'foo'};
+      this.adapter.prompt(questions, answers).then(ret => {
+        assert.equal(ret.prompt1, answers.prompt1);
+        done();
+      });
+    });
   });
 
   describe('#diff()', () => {
