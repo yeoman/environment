@@ -26,6 +26,7 @@
   "scripts": {
     "pretest": "xo",
     "test": "nyc mocha",
+    "test-base": "nyc mocha test/environment*.js test/store.js test/util.js test/adapter.js",
     "doc": "jsdoc -c ./jsdoc.json ./readme.md",
     "benchmark": "matcha benchmark/**",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
