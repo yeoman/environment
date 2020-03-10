@@ -67,9 +67,9 @@ describe('Environment', () => {
 
   describe('#getVersion()', () => {
     it('output the version number', function () {
-        const version = this.env.getVersion();
-        assert.ok(version);
-        assert.textEqual(version, ENVIRONMENT_VERSION);
+      const version = this.env.getVersion();
+      assert.ok(version);
+      assert.textEqual(version, ENVIRONMENT_VERSION);
     });
 
     it('output the inquirer version number', function () {
