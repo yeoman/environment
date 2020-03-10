@@ -155,7 +155,8 @@ describe('TerminalAdapter', () => {
   describe('#log', () => {
     const funcs = ['write', 'writeln', 'ok', 'error', 'table'];
     const defaultColors = [
-      'skip', 'force', 'create', 'invoke', 'conflict', 'identical', 'info'];
+      'skip', 'force', 'create', 'invoke', 'conflict', 'identical', 'info'
+    ];
     it('log has functions', function () {
       this.adapter.log = createLog();
       funcs.concat(defaultColors).forEach(k => {

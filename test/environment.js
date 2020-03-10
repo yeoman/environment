@@ -205,14 +205,12 @@ describe('Environment', () => {
       };
 
       this.PromiseFailingStub = class extends Generator {
-
         install() {
           return Promise.reject(new Error('some error'));
         }
       };
 
       this.EventFailingStub = class extends Generator {
-
         install() {
           return this.emit('error', new Error('some error'));
         }
@@ -286,7 +284,7 @@ describe('Environment', () => {
 
     it('launch error if generator is not found', function (done) {
       this.env.on('error', err => {
-        assert.ok(err.message.indexOf('some:unknown:generator') >= 0);
+        assert.ok(err.message.includes('some:unknown:generator'));
         done();
       });
       this.env.run('some:unknown:generator');
@@ -329,7 +327,7 @@ describe('Environment', () => {
 
     it('correctly append scope in generator hint', function () {
       this.env.on('error', err => {
-        assert.ok(err.message.indexOf('@dummyscope/generator-package') >= 0);
+        assert.ok(err.message.includes('@dummyscope/generator-package'));
       });
       this.env.run('@dummyscope/package');
     });
@@ -578,10 +576,10 @@ describe('Environment', () => {
       const envMock = this.mock(this.env);
 
       envMock
-          .expects('getByPath')
-          .once()
-          .withExactArgs(absolutePath)
-          .returns(null);
+        .expects('getByPath')
+        .once()
+        .withExactArgs(absolutePath)
+        .returns(null);
 
       this.env.get(absolutePath);
 
