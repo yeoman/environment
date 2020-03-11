@@ -10,6 +10,10 @@ const assert = require('yeoman-assert');
 const TerminalAdapter = require('../lib/adapter');
 const Environment = require('../lib/environment');
 
+const ENVIRONMENT_VERSION = require('../package.json').version;
+const INQUIRER_VERSION = require('inquirer/package.json').version;
+const GROUPED_QUEUE_VERSION = require('grouped-queue/package.json').version;
+
 const sinonTest = sinonTestFactory(sinon);
 
 describe('Environment', () => {
@@ -58,6 +62,27 @@ describe('Environment', () => {
     it('takes multi-word arguments', () => {
       const args = 'foo bar "foo bar" baz "bar foo"';
       assert.deepEqual(new Environment(args).arguments, ['foo', 'bar', 'foo bar', 'baz', 'bar foo']);
+    });
+  });
+
+  describe('#getVersion()', () => {
+    it('output the version number', function () {
+      const version = this.env.getVersion();
+      assert.ok(version);
+      assert.textEqual(version, ENVIRONMENT_VERSION);
+    });
+
+    it('output the inquirer version number', function () {
+      const version = this.env.getVersion('inquirer');
+      assert.ok(version);
+      console.log(version);
+      assert.textEqual(version, INQUIRER_VERSION);
+    });
+
+    it('output the grouped-queue version number', function () {
+      const version = this.env.getVersion('grouped-queue');
+      assert.ok(version);
+      assert.textEqual(version, GROUPED_QUEUE_VERSION);
     });
   });
 
