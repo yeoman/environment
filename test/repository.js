@@ -38,11 +38,23 @@ describe('repository', () => {
   });
 
   describe('#createEnvWithVersion()', () => {
-    it('returns env', function () {
-      this.timeout(500000);
-      const env = Env.createEnvWithVersion('2.3.0');
-      assert.ok(env);
-      assert.ok(!(env instanceof Env));
+    describe('with semver valid range', () => {
+      it('returns env', function () {
+        this.timeout(500000);
+        const env = Env.createEnvWithVersion('~2.3.0');
+        assert.ok(env);
+        assert.ok(!(env instanceof Env));
+      });
+    });
+
+    describe('with git repository', () => {
+      it('returns env', function () {
+        this.timeout(500000);
+        const env = Env.createEnvWithVersion('yeoman/environment#v2.8.1');
+        assert.equal(repository.getPackageVersion('yeoman-environment'), '2.8.1');
+        assert.ok(env);
+        assert.ok(!(env instanceof Env));
+      });
     });
   });
 
