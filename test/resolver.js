@@ -2,9 +2,9 @@
 const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
-const sinon = require('sinon');
 const spawn = require('cross-spawn');
 const Environment = require('../lib/environment');
+const {execaOutput} = require('../lib/util/util');
 
 const globalLookupTest = process.env.NODE_PATH ? it : xit;
 
@@ -442,14 +442,12 @@ describe('Environment Resolver', function () {
 
     describe('with npm global prefix', () => {
       it('append npm modules path depending on your OS', function () {
-        const npmPrefix = '/npm_prefix';
-        const spawnStub = sinon.stub(spawn, 'sync').returns({stdout: npmPrefix});
+        const npmPrefix = execaOutput('npm', ['prefix', '-g']);
         if (process.platform === 'win32') {
           assert(this.env.getNpmPaths().indexOf(path.resolve(npmPrefix, 'node_modules')) > 0);
         } else {
           assert(this.env.getNpmPaths().indexOf(path.resolve(npmPrefix, 'lib/node_modules')) > 0);
         }
-        spawnStub.restore();
       });
     });
   });
