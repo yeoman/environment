@@ -19,6 +19,23 @@ describe('repository', () => {
     assert.equal(Env.repository, repository);
   });
 
+  describe('Environment#installLocalGenerators', () => {
+    before(function () {
+      this.timeout(100000);
+      this.env = Env.createEnv();
+      this.env.installLocalGenerators({'generator-dummytest': '0.1.3'});
+    });
+
+    after(() => {
+      repository.cleanupPackageCache('generator-dummytest', true);
+    });
+
+    it('installs and register the generator', function () {
+      this.timeout(10000);
+      assert(this.env.get('dummytest:app'));
+    });
+  });
+
   describe('#repositoryPath', () => {
     it('returns the repository path', () => {
       assert.equal(repository.repositoryPath, path.resolve('.yo-repository'));
