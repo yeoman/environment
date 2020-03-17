@@ -9,7 +9,9 @@ const Env = require('..');
 describe('repository', () => {
   afterEach(function () {
     this.timeout(20000);
-    fs.removeSync(repository.repositoryPath);
+    if (fs.existsSync(repository.repositoryPath)) {
+      fs.removeSync(repository.repositoryPath);
+    }
     repository.cleanupPackageCache('yeoman-environment', true);
   });
 
