@@ -7,6 +7,12 @@ const repository = require('../lib/util/repository');
 const Env = require('..');
 
 describe('repository', () => {
+  before(() => {
+    if (fs.existsSync(repository.repositoryPath)) {
+      fs.removeSync(repository.repositoryPath);
+    }
+  });
+
   afterEach(function () {
     this.timeout(20000);
     if (fs.existsSync(repository.repositoryPath)) {
