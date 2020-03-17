@@ -27,6 +27,7 @@
     "pretest": "xo",
     "test": "nyc mocha",
     "test-base": "nyc mocha test/environment*.js test/store.js test/util.js test/adapter.js",
+    "test-environment": "nyc mocha test/environment.js",
     "test-repository": "nyc mocha test/repository.js",
     "test-resolver": "nyc mocha test/resolver.js",
     "doc": "jsdoc -c ./jsdoc.json ./readme.md",

@@ -574,6 +574,11 @@ describe('Environment', () => {
         'example:app'
       );
     });
+
+    it('handles namespaces', function () {
+      assert.equal(this.env.namespace('backbone:app'), 'backbone:app');
+      assert.equal(this.env.namespace('foo'), 'foo');
+    });
   });
 
   describe('#get()', () => {
