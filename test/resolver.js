@@ -11,6 +11,15 @@ const globalLookupTest = process.env.NODE_PATH ? it : xit;
 describe('Environment Resolver', function () {
   this.timeout(100000);
 
+  before(function () {
+    this.cwd = process.cwd();
+    process.chdir(__dirname);
+  });
+
+  after(function () {
+    process.chdir(this.cwd);
+  });
+
   describe('#lookup()', () => {
     const scopedFolder = path.resolve('node_modules/@dummyscope');
     const scopedGenerator = path.join(scopedFolder, 'generator-scoped');
