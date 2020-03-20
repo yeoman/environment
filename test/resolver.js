@@ -307,7 +307,7 @@ describe('Environment Resolver', function () {
     });
 
     it('with sub-sub-generators filePatterns', function () {
-      this.env.lookup({npmPaths: ['node_modules'], filePatterns: ['*/*/index.js']});
+      this.env.lookup({npmPaths: ['node_modules'], filePatterns: ['*/*/index.js'], globbyDeep: 2});
       assert.ok(this.env.get('@scoped/scoped:app:scaffold'));
     });
 
