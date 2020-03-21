@@ -539,7 +539,7 @@ describe('Environment Resolver', function () {
         assert.ok(packagePath.endsWith('node_modules/generator-module'), packagePath);
 
         const generatorPath = Environment.lookupGenerator('module:app', {generatorPath: true});
-        assert.ok(generatorPath.endsWith(path.normalize('node_modules/generator-module/generators')), generatorPath);
+        assert.ok(generatorPath.endsWith('node_modules/generator-module/generators/'), generatorPath);
       });
     });
   });
