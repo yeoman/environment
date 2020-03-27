@@ -651,7 +651,7 @@ describe('Environment', () => {
       const generator = require('./fixtures/generator-module/generators/app');
       this.env
         .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
-      assert.equal(this.env.get('fixtures:generator-module'), generator);
+      assert.equal(this.env.get('fixtures:generator-module'), generator.default);
     });
   });
 
