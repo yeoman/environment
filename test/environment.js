@@ -364,6 +364,25 @@ describe('Environment', () => {
     });
   });
 
+  describe('#run() with ts generator', () => {
+    beforeEach(function () {
+      this.env
+        .register(path.join(__dirname, './fixtures/generator-ts/generators/app/index.ts'), 'ts:app');
+      this.runMethod = sinon.spy(this.env.get('ts:app').prototype, 'exec');
+    });
+
+    afterEach(function () {
+      this.runMethod.restore();
+    });
+
+    it('runs a registered generator', function (done) {
+      this.env.run(['ts:app'], () => {
+        assert.ok(this.runMethod.calledOnce);
+        done();
+      });
+    });
+  });
+
   describe('#registerModulePath()', () => {
     it('resolves to a directory if no file type specified', function () {
       const modulePath = path.join(__dirname, 'fixtures/generator-scoped/package');

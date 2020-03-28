@@ -50,6 +50,22 @@ describe('Environment Resolver', function () {
           'dir'
         );
       }
+
+      if (!fs.existsSync(path.resolve('node_modules/generator-ts'))) {
+        fs.symlinkSync(
+          path.resolve('../generator-ts'),
+          path.resolve('node_modules/generator-ts'),
+          'dir'
+        );
+      }
+
+      if (!fs.existsSync(path.resolve('node_modules/generator-ts-js'))) {
+        fs.symlinkSync(
+          path.resolve('../generator-ts-js'),
+          path.resolve('node_modules/generator-ts-js'),
+          'dir'
+        );
+      }
     });
 
     after(function () {
@@ -71,6 +87,15 @@ describe('Environment Resolver', function () {
 
       assert.ok(this.env.get('dummy:app').packagePath.endsWith('node_modules/generator-dummy'));
       assert.ok(this.env.get('dummy:app').packagePath.endsWith('node_modules/generator-dummy'));
+    });
+
+    it('registers local ts generators', function () {
+      assert.ok(this.env.get('ts:app'));
+    });
+
+    it('js generators takes precedence', function () {
+      // eslint-disable-next-line unicorn/import-index
+      assert.equal(this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
     });
 
     it('register generators in scoped packages', function () {
@@ -567,7 +592,7 @@ describe('Environment Resolver', function () {
     describe('when root path is not a valid generator', () => {
       it('pass through root directory', function () {
         const dummyGenerator = 'fixtures/lookup-project/node_modules';
-        assert(this.env.findGeneratorsIn([dummyGenerator]).length === 3);
+        assert.equal(this.env.findGeneratorsIn([dummyGenerator]).length, 5);
       });
     });
   });
