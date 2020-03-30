@@ -68,7 +68,7 @@ describe('TerminalAdapter', () => {
     const stderrWriteBackup = process.stderr.write;
 
     beforeEach(function () {
-      this.spyerror = sinon.spy(console, 'error');
+      this.spyerror = sinon.spy(this.adapter.console, 'error');
 
       logMessage = '';
       process.stderr.write = (() => {
@@ -78,8 +78,8 @@ describe('TerminalAdapter', () => {
       })(process.stderr.write);
     });
 
-    afterEach(() => {
-      console.error.restore();
+    afterEach(function () {
+      this.adapter.console.error.restore();
       process.stderr.write = stderrWriteBackup;
     });
 
