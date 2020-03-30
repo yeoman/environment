@@ -7,7 +7,8 @@ const repository = require('../lib/util/repository');
 const Env = require('..');
 
 describe('repository', () => {
-  before(() => {
+  before(function () {
+    this.timeout(20000);
     if (fs.existsSync(repository.repositoryPath)) {
       fs.removeSync(repository.repositoryPath);
     }
@@ -27,7 +28,7 @@ describe('repository', () => {
 
   describe('Environment#installLocalGenerators', () => {
     before(function () {
-      this.timeout(100000);
+      this.timeout(200000);
       this.env = Env.createEnv();
       this.env.installLocalGenerators({'generator-dummytest': '0.1.3'});
     });
@@ -64,11 +65,16 @@ describe('repository', () => {
 
   describe('#createEnvWithVersion()', () => {
     describe('with semver valid range', () => {
-      it('returns env', function () {
+      let env;
+      beforeEach(function () {
         this.timeout(500000);
-        const env = Env.createEnvWithVersion('~2.3.0');
+        env = Env.createEnvWithVersion('~2.3.0');
+      });
+
+      it('returns env and #cleanup without force fails', () => {
         assert.ok(env);
         assert.ok(!(env instanceof Env));
+        assert.throws(() => repository.cleanupPackageCache('yeoman-environment'));
       });
     });
 
