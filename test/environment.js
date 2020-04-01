@@ -746,6 +746,11 @@ describe('Environment', () => {
       Environment.enforceUpdate(this.env);
       assert(this.env.sharedFs);
     });
+
+    it('add a shared fs instance', function () {
+      Environment.enforceUpdate(this.env);
+      assert(this.env.fs);
+    });
   });
 
   describe('.createEnv()', () => {
