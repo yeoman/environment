@@ -314,7 +314,7 @@ describe('Environment', () => {
       this.env.run('some:unknown:generator');
     });
 
-    it('generator promise error calls callback properly', function (done) {
+    it('promise error calls callback properly', function (done) {
       this.env.run('promisefailingstub:run', err => {
         assert.ok(this.runMethod.calledOnce);
         assert.ok(err instanceof Error);
@@ -347,6 +347,18 @@ describe('Environment', () => {
     it('returns the generator', function () {
       const runRet = this.env.run('stub:run');
       assert.ok(runRet instanceof Generator || runRet instanceof Promise);
+    });
+
+    it('correctly rejects promise on generator not found error', function (done) {
+      this.env.run('@dummyscope/package').catch(() => {
+        done();
+      });
+    });
+
+    it('correctly rejects promise on missing args error', function (done) {
+      this.env.run().catch(() => {
+        done();
+      });
     });
 
     it('correctly append scope in generator hint', function (done) {
