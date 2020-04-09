@@ -54,7 +54,7 @@
     "strip-ansi": "^4.0.0",
     "text-table": "^0.2.0",
     "untildify": "^3.0.3",
-    "yeoman-generator": "^4.7.2"
+    "yeoman-generator": "^4.8.0"
   },
   "devDependencies": {
     "coveralls": "^3.0.2",
