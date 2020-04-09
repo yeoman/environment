@@ -20,7 +20,7 @@
   </head>
   <body>
     <nav class="lnb" id="lnb">
-      <div class="logo" style="width: 127px; height: 14px">
+      <div class="logo" style="width: 127px; height: 14px;">
         <img
           src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
           width="100%"
@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.8.1</span>
+        <span class="version">v2.9.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -46,6 +46,13 @@
               <span class="glyphicon glyphicon-plus"></span>
             </button>
             <div class="hidden" id="module:env/log_sub"></div>
+          </li>
+          <li>
+            <a href="module-env_repository.html">env/repository</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="module:env/repository_sub"></div>
           </li>
           <li>
             <a href="module-env_util.html">env/util</a
@@ -83,6 +90,11 @@
               <div class="member-type">Methods</div>
               <ul class="inner">
                 <li><a href="Environment.html#.createEnv">createEnv</a></li>
+                <li>
+                  <a href="Environment.html#.createEnvWithVersion"
+                    >createEnvWithVersion</a
+                  >
+                </li>
                 <li>
                   <a href="Environment.html#.enforceUpdate">enforceUpdate</a>
                 </li>
@@ -128,6 +140,7 @@
                     >getRegisteredPackages</a
                   >
                 </li>
+                <li><a href="Environment.html#getVersion">getVersion</a></li>
                 <li><a href="Environment.html#help">help</a></li>
                 <li><a href="Environment.html#instantiate">instantiate</a></li>
                 <li>
@@ -160,10 +173,6 @@
               <span class="glyphicon glyphicon-plus"></span>
             </button>
             <div class="hidden" id="TerminalAdapter_sub">
-              <div class="member-type">Members</div>
-              <ul class="inner">
-                <li><a href="TerminalAdapter.html#log">log</a></li>
-              </ul>
               <div class="member-type">Methods</div>
               <ul class="inner">
                 <li><a href="TerminalAdapter.html#diff">diff</a></li>
@@ -176,6 +185,38 @@
       <div class="lnb-api hidden">
         <h3>Mixins</h3>
         <ul>
+          <li>
+            <a href="env_composability.html">env/composability</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="env/composability_sub"></div>
+          </li>
+          <li>
+            <a href="env_generators.html">env/generators</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="env/generators_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="env_generators.html#.getInstance">getInstance</a>
+                </li>
+                <li>
+                  <a href="env_generators.html#.rootGenerator">rootGenerator</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="env_namespace-composability.html"
+              >env/namespace-composability</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="env/namespace-composability_sub"></div>
+          </li>
           <li>
             <a href="env_resolver.html">env/resolver</a
             ><button type="button" class="hidden toggle-subnav btn btn-link">
@@ -202,7 +243,6 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
-          <li><a href="global.html#callbackWrapper">callbackWrapper</a></li>
           <li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li>
           <li>
             <a href="global.html#splitArgsFromString">splitArgsFromString</a>
@@ -269,7 +309,7 @@ class Store {
     });
   }
 
-  _storeAsModule(namespace, Generator, resolved = 'unknown', packagePath) {
+  _storeAsModule(namespace, Generator, resolved, packagePath) {
     this._meta[namespace] = {
       resolved,
       namespace,
@@ -371,7 +411,7 @@ module.exports = Store;
       <img
         class="logo"
         src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
-        style="width: 127px; height: 14px"
+        style="width: 127px; height: 14px;"
       />
       <div class="footer-text">BSD license Copyright (c) Google</div>
     </footer>
