@@ -20,7 +20,7 @@
   </head>
   <body>
     <nav class="lnb" id="lnb">
-      <div class="logo" style="width: 127px; height: 14px">
+      <div class="logo" style="width: 127px; height: 14px;">
         <img
           src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
           width="100%"
@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.8.1</span>
+        <span class="version">v2.9.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -46,6 +46,13 @@
               <span class="glyphicon glyphicon-plus"></span>
             </button>
             <div class="hidden" id="module:env/log_sub"></div>
+          </li>
+          <li>
+            <a href="module-env_repository.html">env/repository</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="module:env/repository_sub"></div>
           </li>
           <li>
             <a href="module-env_util.html">env/util</a
@@ -83,6 +90,11 @@
               <div class="member-type">Methods</div>
               <ul class="inner">
                 <li><a href="Environment.html#.createEnv">createEnv</a></li>
+                <li>
+                  <a href="Environment.html#.createEnvWithVersion"
+                    >createEnvWithVersion</a
+                  >
+                </li>
                 <li>
                   <a href="Environment.html#.enforceUpdate">enforceUpdate</a>
                 </li>
@@ -128,6 +140,7 @@
                     >getRegisteredPackages</a
                   >
                 </li>
+                <li><a href="Environment.html#getVersion">getVersion</a></li>
                 <li><a href="Environment.html#help">help</a></li>
                 <li><a href="Environment.html#instantiate">instantiate</a></li>
                 <li>
@@ -160,10 +173,6 @@
               <span class="glyphicon glyphicon-plus"></span>
             </button>
             <div class="hidden" id="TerminalAdapter_sub">
-              <div class="member-type">Members</div>
-              <ul class="inner">
-                <li><a href="TerminalAdapter.html#log">log</a></li>
-              </ul>
               <div class="member-type">Methods</div>
               <ul class="inner">
                 <li><a href="TerminalAdapter.html#diff">diff</a></li>
@@ -176,6 +185,38 @@
       <div class="lnb-api hidden">
         <h3>Mixins</h3>
         <ul>
+          <li>
+            <a href="env_composability.html">env/composability</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="env/composability_sub"></div>
+          </li>
+          <li>
+            <a href="env_generators.html">env/generators</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="env/generators_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="env_generators.html#.getInstance">getInstance</a>
+                </li>
+                <li>
+                  <a href="env_generators.html#.rootGenerator">rootGenerator</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="env_namespace-composability.html"
+              >env/namespace-composability</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="env/namespace-composability_sub"></div>
+          </li>
           <li>
             <a href="env_resolver.html">env/resolver</a
             ><button type="button" class="hidden toggle-subnav btn btn-link">
@@ -202,7 +243,6 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
-          <li><a href="global.html#callbackWrapper">callbackWrapper</a></li>
           <li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li>
           <li>
             <a href="global.html#splitArgsFromString">splitArgsFromString</a>
@@ -221,16 +261,27 @@ const fs = require('fs');
 const _ = require('lodash');
 const globby = require('globby');
 const debug = require('debug')('yeoman:environment');
-const spawn = require('cross-spawn');
+const {execaOutput} = require('./util/util');
 
 const win32 = process.platform === 'win32';
 const nvm = process.env.NVM_HOME;
+
+const PROJECT_ROOT = path.join(__dirname, '..');
+
+const PACKAGE_NAME = require(path.join(PROJECT_ROOT, 'package.json')).name;
+
+const packageLookup = {};
 
 /**
  * @mixin
  * @alias env/resolver
  */
 const resolver = module.exports;
+
+/**
+ * @private
+ */
+resolver.packageLookup = packageLookup;
 
 /**
  * Search for generators and their sub generators.
@@ -252,11 +303,13 @@ const resolver = module.exports;
  * @param {string|Array} [options.npmPaths] - Repository paths to look for generators packages.
  * @param {string|Array} [options.filePatterns='*\/index.js'] - File pattern to look for.
  * @param {string|Array} [options.packagePatterns='generator-*'] - Package pattern to look for.
+ * @param {boolean}      [options.singleResult=false] - Set true to stop lookup on the first match.
+ * @param {Number}       [options.globbyDeep] - Deep option to be passed to globby.
  * @param {function} cb - Callback called once the lookup is done. Take err as first
  *                        parameter.
- * @return {Array} List of generators
+ * @return {Object[]} List of generators
  */
-resolver.lookup = function (options = {localOnly: false}, cb) {
+resolver.lookup = function (options = {localOnly: false}, cb = undefined) {
   // Resolve signature where options is omitted.
   if (typeof options === 'function') {
     cb = options;
@@ -266,25 +319,27 @@ resolver.lookup = function (options = {localOnly: false}, cb) {
     options = {localOnly: options};
   }
 
-  options.filePatterns = options.filePatterns || this.lookups.map(prefix => path.join(prefix, '*/index.js'));
+  const lookups = options.lookups || this.lookups;
+  // Js generators should be after, last will override registered one.
+  options.filePatterns = options.filePatterns ||
+    lookups.reduce((acc, prefix) => acc.concat([path.join(prefix, '*/index.ts'), path.join(prefix, '*/index.js')]), []);
 
-  if (options.packagePaths) {
-    options.packagePaths = Array.isArray(options.packagePaths) ? options.packagePaths : [options.packagePaths];
-  } else {
-    options.npmPaths = options.npmPaths || this.getNpmPaths(options).reverse();
-    options.packagePaths = this.findGeneratorsIn(options.npmPaths, options);
-  }
-
-  debug('Running lookup with options %o', options);
+  // Backward compatibility
+  options.filterPaths = options.filterPaths === undefined ? false : options.filterPaths;
+  options.packagePatterns = options.packagePatterns || 'generator-*';
+  options.globbyDeep = options.globbyDeep === undefined ? 1 : options.globbyDeep;
+  // We want to register high priorities packages after.
+  options.reverse = options.reverse === undefined ? !options.singleResult : options.reverse;
 
   const generators = [];
-  for (const packagePath of options.packagePaths) {
-    for (const generatorPath of globby.sync(options.filePatterns, {cwd: packagePath, absolute: true, deep: 1})) {
-      const namespace = this.namespace(generatorPath);
-      const registered = this._tryRegistering(generatorPath, packagePath, namespace);
-      generators.push({generatorPath, packagePath, namespace, registered});
-    }
-  }
+  this.packageLookup.sync(options, module => {
+    const generatorPath = module.filePath;
+    const packagePath = module.packagePath;
+    const namespace = this.namespace(generatorPath);
+    const registered = this._tryRegistering(generatorPath, packagePath, namespace);
+    generators.push({generatorPath, packagePath, namespace, registered});
+    return options.singleResult &amp;&amp; registered;
+  });
 
   if (typeof cb === 'function') {
     return cb(null);
@@ -293,9 +348,65 @@ resolver.lookup = function (options = {localOnly: false}, cb) {
 };
 
 /**
+ * Search for npm packages.
+ *
+ * @private
+ * @method
+ *
+ * @param {boolean|Object} [options]
+ * @param {boolean} [options.localOnly = false] - Set true to skip lookups of
+ *                                               globally-installed generators.
+ * @param {string|Array} [options.packagePaths] - Paths to look for generators.
+ * @param {string|Array} [options.npmPaths] - Repository paths to look for generators packages.
+ * @param {string|Array} [options.filePatterns='*\/index.js'] - File pattern to look for.
+ * @param {string|Array} [options.packagePatterns='lookup'] - Package pattern to look for.
+ * @param {boolean} [options.reverse = false] - Set true reverse npmPaths/packagePaths order
+ * @param {function}     [find]  Executed for each match, return true to stop lookup.
+ */
+packageLookup.sync = function (options = {}, find = module => module) {
+  debug('Running lookup with options: %o', options);
+  options.filePatterns = options.filePatterns || 'package.json';
+  options.globbyDeep = options.globbyDeep === undefined ? 0 : options.globbyDeep;
+
+  if (options.packagePaths) {
+    options.packagePaths = Array.isArray(options.packagePaths) ? options.packagePaths : [options.packagePaths];
+    if (options.reverse) {
+      options.packagePaths = options.packagePaths.reverse();
+    }
+  } else {
+    options.npmPaths = options.npmPaths || this.getNpmPaths(options);
+    options.npmPaths = Array.isArray(options.npmPaths) ? options.npmPaths : [options.npmPaths];
+    if (options.reverse) {
+      options.npmPaths = options.npmPaths.reverse();
+    }
+    options.packagePaths = this.findPackagesIn(options.npmPaths, options);
+  }
+
+  debug('Lookup calculated options: %o', options);
+
+  const modules = [];
+  for (const packagePath of options.packagePaths) {
+    if (!fs.existsSync(packagePath) || !fs.statSync(packagePath).isDirectory()) {
+      continue;
+    }
+    for (const filePath of globby.sync(options.filePatterns, {cwd: packagePath, absolute: true, deep: options.globbyDeep})) {
+      const module = {filePath, packagePath};
+      if (find(module)) {
+        return [module];
+      }
+      modules.push(module);
+    }
+  }
+  return modules;
+};
+
+/**
  * Search npm for every available generators.
  * Generators are npm packages who's name start with `generator-` and who're placed in the
  * top level `node_module` path. They can be installed globally or locally.
+ *
+ * @deprecated
+ * @method
  *
  * @param {Array}  List of search paths
  * @param {Object}  [options]
@@ -310,18 +421,40 @@ resolver.findGeneratorsIn = function (searchPaths, options = {}) {
   options.packagePatterns = options.packagePatterns || 'generator-*';
   searchPaths = Array.isArray(searchPaths) ? searchPaths : [searchPaths];
 
+  return this.packageLookup.findPackagesIn(searchPaths, options);
+};
+
+/**
+ * Search npm for every available generators.
+ * Generators are npm packages who's name start with `generator-` and who're placed in the
+ * top level `node_module` path. They can be installed globally or locally.
+ *
+ * @method
+ * @private
+ *
+ * @param {Array} searchPaths List of search paths
+ * @param {Object}  [options]
+ * @param {boolean} [options.packagePatterns='generator-*'] - Pattern pattern.
+ * @return {Array} List of the generator modules path
+ */
+packageLookup.findPackagesIn = function (searchPaths, options = {}) {
+  options.packagePatterns = options.packagePatterns || PACKAGE_NAME;
+
   // Remove undefined values and convert paths to absolute
   searchPaths = searchPaths.filter(npmPath => npmPath).map(npmPath => path.resolve(npmPath));
 
   let modules = [];
   for (const root of searchPaths) {
+    if (!fs.existsSync(root) || !fs.lstatSync(root).isDirectory()) {
+      continue;
+    }
     // Some folders might not be readable to the current user. For those, we add a try
     // catch to handle the error gracefully as globby doesn't have an option to skip
     // restricted folders.
     try {
       modules = modules.concat(globby.sync(
         options.packagePatterns,
-        {cwd: root, onlyFiles: false, absolute: true, deep: 0}
+        {cwd: root, onlyDirectories: true, absolute: true, deep: 0}
       ));
 
       // To limit recursive lookups into non-namespace folders within globby,
@@ -329,17 +462,17 @@ resolver.findGeneratorsIn = function (searchPaths, options = {}) {
       // for generator modules
       const scopes = globby.sync(
         ['@*'],
-        {cwd: root, onlyFiles: false, absolute: true, deep: 0}
+        {cwd: root, onlyDirectories: true, absolute: true, deep: 0}
       );
 
       for (const scope of scopes) {
         modules = modules.concat(globby.sync(
           options.packagePatterns,
-          {cwd: scope, onlyFiles: false, absolute: true, deep: 0}
+          {cwd: scope, onlyDirectories: true, absolute: true, deep: 0}
         ));
       }
-    } catch (err) {
-      debug('Could not access %s (%s)', root, err);
+    } catch (error) {
+      debug('Could not access %s (%s)', root, error);
     }
   }
 
@@ -348,7 +481,9 @@ resolver.findGeneratorsIn = function (searchPaths, options = {}) {
 
 /**
  * Try registering a Generator to this environment.
+ *
  * @private
+ *
  * @param  {String} generatorReference A generator reference, usually a file path.
  * @param  {String} [packagePath] - Generator's package path.
  * @param  {String} [namespace] - namespace of the generator.
@@ -366,14 +501,17 @@ resolver._tryRegistering = function (generatorReference, packagePath, namespace)
 
     this.register(realPath, namespace, packagePath);
     return true;
-  } catch (err) {
-    console.error('Unable to register %s (Error: %s)', generatorReference, err.message);
+  } catch (error) {
+    console.error('Unable to register %s (Error: %s)', generatorReference, error.message);
     return false;
   }
 };
 
 /**
  * Get the npm lookup directories (`node_modules/`)
+ *
+ * @deprecated
+ *
  * @param {boolean|Object} [options]
  * @param {boolean} [options.localOnly = false] - Set true to skip lookups of
  *                                               globally-installed generators.
@@ -382,6 +520,31 @@ resolver._tryRegistering = function (generatorReference, packagePath, namespace)
  * @return {Array} lookup paths
  */
 resolver.getNpmPaths = function (options = {}) {
+  // Resolve signature where options is boolean (localOnly).
+  if (typeof options === 'boolean') {
+    options = {localOnly: options};
+  }
+
+  // Backward compatibility
+  options.filterPaths = options.filterPaths === undefined ? false : options.filterPaths;
+
+  return this.packageLookup.getNpmPaths(options);
+};
+
+/**
+ * Get the npm lookup directories (`node_modules/`)
+ *
+ * @method
+ * @private
+ *
+ * @param {boolean|Object} [options]
+ * @param {boolean} [options.localOnly = false] - Set true to skip lookups of
+ *                                               globally-installed generators.
+ * @param {boolean} [options.filterPaths = false] - Remove paths that don't ends
+ *                       with a supported path (don't touch at NODE_PATH paths).
+ * @return {Array} lookup paths
+ */
+packageLookup.getNpmPaths = function (options = {}) {
   // Resolve signature where options is boolean (localOnly).
   if (typeof options === 'boolean') {
     options = {localOnly: options};
@@ -402,7 +565,7 @@ resolver.getNpmPaths = function (options = {}) {
  * @private
  * @return {Array} lookup paths
  */
-resolver._getLocalNpmPaths = function () {
+packageLookup._getLocalNpmPaths = function () {
   const paths = [];
 
   // Walk up the CWD and add `node_modules/` folder lookup on each level
@@ -425,7 +588,7 @@ resolver._getLocalNpmPaths = function () {
  * @private
  * @return {Array} lookup paths
  */
-resolver._getGlobalNpmPaths = function (filterPaths = false) {
+packageLookup._getGlobalNpmPaths = function (filterPaths = true) {
   let paths = [];
 
   // Node.js will search in the following list of GLOBAL_FOLDERS:
@@ -433,7 +596,7 @@ resolver._getGlobalNpmPaths = function (filterPaths = false) {
   // 2: $HOME/.node_libraries
   // 3: $PREFIX/lib/node
   const filterValidNpmPath = function (path, ignore = false) {
-    return ignore ? path : ['/node_modules', '/.node_modules', '/.node_libraries', '/node'].find(dir => path.endsWith(dir)) ? path : undefined;
+    return ignore ? path : (['/node_modules', '/.node_modules', '/.node_libraries', '/node'].find(dir => path.endsWith(dir)) ? path : undefined);
   };
 
   // Default paths for each system
@@ -461,23 +624,20 @@ resolver._getGlobalNpmPaths = function (filterPaths = false) {
 
   // Global node_modules should be 4 or 2 directory up this one (most of the time)
   // Ex: /usr/another_global/node_modules/yeoman-denerator/node_modules/yeoman-environment/lib (1 level dependency)
-  paths.push(filterValidNpmPath(path.join(__dirname, '../../../..'), !filterPaths));
+  paths.push(filterValidNpmPath(path.join(PROJECT_ROOT, '../../..'), !filterPaths));
   // Ex: /usr/another_global/node_modules/yeoman-environment/lib (installed directly)
-  paths.push(path.join(__dirname, '../..'));
+  paths.push(path.join(PROJECT_ROOT, '..'));
 
   // Get yarn global directory and infer the module paths from there
-  const testYarn = spawn.sync('yarn', ['global', 'dir'], {encoding: 'utf8'});
-  if (!testYarn.error) {
-    const yarnBase = testYarn.stdout.trim();
+  const yarnBase = execaOutput('yarn', ['global', 'dir'], {encoding: 'utf8'});
+  if (yarnBase) {
     paths.push(path.resolve(yarnBase, 'node_modules'));
     paths.push(path.resolve(yarnBase, '../link/'));
   }
 
   // Get npm global prefix and infer the module paths from there
-  const testNpm = spawn.sync('npm', ['-g', 'prefix'], {encoding: 'utf8'});
-  if (!testNpm.error) {
-    const npmBase = testNpm.stdout.trim();
-    const globalInstall = win32 ? `${npmBase}/node_modules` : `${npmBase}/lib/node_modules`;
+  const globalInstall = execaOutput('npm', ['root', '-g'], {encoding: 'utf8'});
+  if (globalInstall) {
     paths.push(path.resolve(globalInstall));
   }
 
@@ -546,7 +706,7 @@ resolver.alias = function (match, value) {
       <img
         class="logo"
         src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
-        style="width: 127px; height: 14px"
+        style="width: 127px; height: 14px;"
       />
       <div class="footer-text">BSD license Copyright (c) Google</div>
     </footer>

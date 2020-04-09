@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Source: util/util.js | yeoman-environment</title>
+    <title>Source: generators.js | yeoman-environment</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -255,45 +255,50 @@
     <div class="main" id="main">
       <section>
         <article>
-          <pre class="prettyprint source linenums"><code>/** @module env/util */
-'use strict';
-const execa = require('execa');
-const GroupedQueue = require('grouped-queue');
+          <pre class="prettyprint source linenums"><code>'use strict';
 
 /**
- * Create a "sloppy" copy of an initial Environment object. The focus of this method is on
- * performance rather than correctly deep copying every property or recreating a correct
- * instance. Use carefully and don't rely on `hasOwnProperty` of the copied environment.
- *
- * Every property are shared except the runLoop which is regenerated.
- *
- * @param {Environment} initialEnv - an Environment instance
- * @return {Environment} sloppy copy of the initial Environment
+ * @mixin
+ * @alias env/generators
  */
-exports.duplicateEnv = initialEnv => {
-  const queues = require('../environment').queues;
-  // Hack: Create a clone of the environment with a new instance of `runLoop`
-  const env = Object.create(initialEnv);
-  env.runLoop = new GroupedQueue(queues);
-  return env;
+const generators = module.exports;
+
+/**
+ * Get an instance of the generator if it already got instantiated.
+ *
+ * @param  {namespace} Namespace of the instantiated generator.
+ * @return {Object} generator - Generator
+ */
+generators.getInstance = function (namespace) {
+  namespace = this.requireNamespace(namespace);
+  return this._generators[namespace.id] || this._generators[this.alias(namespace.id)];
 };
 
-exports.execaOutput = (cmg, args, options) => {
-  try {
-    const result = execa.sync(cmg, args, options);
-    if (!result.failed) {
-      return result.stdout;
-    }
-  } catch (_) {
+generators.nextInstanceId = function (namespace) {
+  namespace = this.requireNamespace(namespace);
+  while (this._generators[namespace.id]) {
+    namespace.bumpId();
   }
-  return undefined;
+  return namespace;
+};
+
+generators.registerInstance = function (namespace, generator) {
+  if (!generator) {
+    generator = namespace;
+    namespace = generator.options.id || generator.options.namespace;
+  }
+  namespace = this.requireNamespace(namespace);
+  this._generators[namespace.id] = generator;
 };
 
 /**
- * Log utility
- * @see {@link env/log}
+ * Get the generator instance that was called at Environment.run().
+ *
+ * @return {Object} generator - Generator
  */
-exports.log = require('./log');
+generators.rootGenerator = function () {
+  return this._rootGenerator;
+};
 </code></pre>
         </article>
       </section>
