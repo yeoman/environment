@@ -2,7 +2,7 @@ var Generator = require('yeoman-generator');
 
 class NewGenerator extends Generator {
   default() {
-    console.log('Executing generator with', this.arguments, this.options);
+    console.log('Executing NewGenerator generator', this.arguments);
   }
 };
 

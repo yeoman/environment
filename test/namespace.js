@@ -380,5 +380,35 @@ describe('Namespace', () => {
         semver: '>=1.2.3 <2.0.0'
       }));
     });
+
+    it('method test', () => {
+      const parsed = namespace.requireNamespace('foo-bar#test');
+      assert(equalsNamespace(parsed, {
+        complete: 'foo-bar',
+        generatorHint: 'generator-foo-bar',
+        versionedHint: 'generator-foo-bar',
+        namespace: 'foo-bar',
+        unscoped: 'foo-bar',
+        id: 'foo-bar',
+        packageNamespace: 'foo-bar',
+        method: 'test',
+        methodName: 'test'
+      }));
+    });
+
+    it('method snake-case', () => {
+      const parsed = namespace.requireNamespace('foo-bar#snake-case');
+      assert(equalsNamespace(parsed, {
+        complete: 'foo-bar',
+        generatorHint: 'generator-foo-bar',
+        versionedHint: 'generator-foo-bar',
+        namespace: 'foo-bar',
+        unscoped: 'foo-bar',
+        id: 'foo-bar',
+        packageNamespace: 'foo-bar',
+        method: 'snake-case',
+        methodName: 'snakeCase#'
+      }));
+    });
   });
 });
