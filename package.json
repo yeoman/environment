@@ -43,7 +43,7 @@
     "escape-string-regexp": "^1.0.2",
     "execa": "^4.0.0",
     "globby": "^8.0.1",
-    "grouped-queue": "^1.0.0",
+    "grouped-queue": "^1.1.0",
     "inquirer": "^7.1.0",
     "is-scoped": "^1.0.0",
     "lodash": "^4.17.10",
