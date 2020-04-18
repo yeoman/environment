@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.9.1</span>
+        <span class="version">v2.9.2</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -459,6 +459,7 @@ class Environment extends EventEmitter {
    *
    * @constructor
    * @mixes env/resolver
+   * @mixes env/composability
    * @param {String|Array}          args
    * @param {Object}                opts
    * @param {Boolean} [opts.experimental]
@@ -499,13 +500,16 @@ class Environment extends EventEmitter {
 
     // Used sharedOptions from options if exists.
     this.sharedOptions = this.options.sharedOptions || {};
-    // Create a default sharedData.
-    this.sharedOptions.sharedData = this.sharedOptions.sharedData || {};
-    // Pass forwardErrorToEnvironment=true to generators by default.
-    this.sharedOptions.forwardErrorToEnvironment =
-      this.sharedOptions.forwardErrorToEnvironment === undefined ? true : this.sharedOptions.forwardErrorToEnvironment;
     // Remove Unecessary sharedOptions from options
     delete this.options.sharedOptions;
+
+    // Create a default sharedData.
+    this.sharedOptions.sharedData = this.sharedOptions.sharedData || {};
+
+    const {newErrorHandler = false} = this.options;
+    // Pass forwardErrorToEnvironment to generators.
+    this.sharedOptions.forwardErrorToEnvironment =
+      this.sharedOptions.forwardErrorToEnvironment === undefined ? newErrorHandler : this.sharedOptions.forwardErrorToEnvironment;
 
     this.repository = Object.assign({}, repository);
     if (this.options.yeomanRepository) {
@@ -1000,12 +1004,26 @@ class Environment extends EventEmitter {
    * @param {Function}     [done]
    */
   runGenerator(generator, done) {
+    const {newErrorHandler} = this.options;
     const promise = new Promise((resolve, reject) => {
-      // Listen to errors and reject if emmited.
-      this.on('error', error => {
-        // Make sure runLoop is stopped.
-        this.runLoop.pause();
-        reject(error);
+      // Old behavior throws an exception directly to node.js due to scheduled throw.
+      // https://nodejs.org/api/events.html#events_error_events
+      if (newErrorHandler) {
+        // Listen to errors and reject if emmited.
+        this.on('error', error => {
+          // Make sure runLoop is stopped.
+          this.runLoop.pause();
+          reject(error);
+        });
+      }
+
+      // Root generator always forwarded to reject.
+      generator.on('error', reject);
+
+      // If runLoop has ended, the environment has ended too.
+      this.runLoop.on('end', () => {
+        resolve();
+        this.emit('end');
       });
 
       /*
@@ -1013,13 +1031,12 @@ class Environment extends EventEmitter {
        * On reject cb(err) is called.
        * yeoman-generator 2.0.5 returns self.
        * yeoman-generator > 3.0.0 returns a Promise.
-       * Returned promise does't rejects on 'error' event, so listen to it.
+       * Returned promise doesn't rejects on 'error' event, so listen to it.
        */
       const generatorCallback = err => {
-        return err === undefined ? resolve(err) : reject(err);
+        return err === undefined ? resolve() : reject(err);
       };
-      this.runLoop.on('end', resolve);
-      generator.on('error', reject);
+
       const genPromise = generator.run(generatorCallback);
       if (genPromise instanceof Promise) {
         genPromise.then(resolve, reject);
