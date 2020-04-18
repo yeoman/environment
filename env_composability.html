@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.9.2</span>
+        <span class="version">v2.9.3</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -142,6 +142,11 @@
                 </li>
                 <li><a href="Environment.html#getVersion">getVersion</a></li>
                 <li><a href="Environment.html#help">help</a></li>
+                <li>
+                  <a href="Environment.html#installLocalGenerators"
+                    >installLocalGenerators</a
+                  >
+                </li>
                 <li><a href="Environment.html#instantiate">instantiate</a></li>
                 <li>
                   <a href="Environment.html#isPackageRegistered"
@@ -149,6 +154,11 @@
                   >
                 </li>
                 <li><a href="Environment.html#lookup">lookup</a></li>
+                <li>
+                  <a href="Environment.html#lookupLocalPackages"
+                    >lookupLocalPackages</a
+                  >
+                </li>
                 <li><a href="Environment.html#namespace">namespace</a></li>
                 <li><a href="Environment.html#namespaces">namespaces</a></li>
                 <li><a href="Environment.html#register">register</a></li>
@@ -190,7 +200,21 @@
             ><button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
             </button>
-            <div class="hidden" id="env/composability_sub"></div>
+            <div class="hidden" id="env/composability_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="env_composability.html#.installLocalGenerators"
+                    >installLocalGenerators</a
+                  >
+                </li>
+                <li>
+                  <a href="env_composability.html#.lookupLocalPackages"
+                    >lookupLocalPackages</a
+                  >
+                </li>
+              </ul>
+            </div>
           </li>
           <li>
             <a href="env_generators.html">env/generators</a
@@ -262,6 +286,152 @@
           <div class="container-overview">
             <dl class="details"></dl>
           </div>
+
+          <h3 class="subsection-title">Methods</h3>
+
+          <dl>
+            <dt>
+              <h4 class="name" id=".installLocalGenerators">
+                <span class="type-signature"
+                  ><span class="icon green">static</span> </span
+                >installLocalGenerators<span class="signature">(packages)</span
+                ><span class="type-signature"> &rarr; {Boolean}</span>
+
+                <div class="container-source members">
+                  <code
+                    ><a href="composability.js.html">composability.js</a></code
+                  >,
+                  <code
+                    ><a href="composability.js.html#line26">line 26</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>
+                  Install generators at the custom local repository and
+                  register.
+                </p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>packages</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="description last">
+                        <p>
+                          packages to install key(packageName):
+                          value(versionRange).
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">Boolean</span>
+
+                -
+                <ul>
+                  <li>true if the install succeeded.</li>
+                </ul>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id=".lookupLocalPackages">
+                <span class="type-signature"
+                  ><span class="icon green">static</span> </span
+                >lookupLocalPackages<span class="signature"
+                  >(packagesToLookup<span class="signature-attributes">opt</span
+                  >)</span
+                ><span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code
+                    ><a href="composability.js.html">composability.js</a></code
+                  >,
+                  <code
+                    ><a href="composability.js.html#line48">line 48</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>
+                  Lookup and register generators from the custom local
+                  repository.
+                </p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th>Attributes</th>
+
+                      <th>Default</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>packagesToLookup</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Array.&lt;String></span>
+                      </td>
+
+                      <td class="attributes">&lt;optional><br /></td>
+
+                      <td class="default">
+                        'generator-*'
+                      </td>
+
+                      <td class="description last">
+                        <p>packages to lookup.</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+          </dl>
         </article>
       </section>
     </div>
