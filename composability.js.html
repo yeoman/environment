@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.9.2</span>
+        <span class="version">v2.9.3</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -142,6 +142,11 @@
                 </li>
                 <li><a href="Environment.html#getVersion">getVersion</a></li>
                 <li><a href="Environment.html#help">help</a></li>
+                <li>
+                  <a href="Environment.html#installLocalGenerators"
+                    >installLocalGenerators</a
+                  >
+                </li>
                 <li><a href="Environment.html#instantiate">instantiate</a></li>
                 <li>
                   <a href="Environment.html#isPackageRegistered"
@@ -149,6 +154,11 @@
                   >
                 </li>
                 <li><a href="Environment.html#lookup">lookup</a></li>
+                <li>
+                  <a href="Environment.html#lookupLocalPackages"
+                    >lookupLocalPackages</a
+                  >
+                </li>
                 <li><a href="Environment.html#namespace">namespace</a></li>
                 <li><a href="Environment.html#namespaces">namespaces</a></li>
                 <li><a href="Environment.html#register">register</a></li>
@@ -190,7 +200,21 @@
             ><button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
             </button>
-            <div class="hidden" id="env/composability_sub"></div>
+            <div class="hidden" id="env/composability_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="env_composability.html#.installLocalGenerators"
+                    >installLocalGenerators</a
+                  >
+                </li>
+                <li>
+                  <a href="env_composability.html#.lookupLocalPackages"
+                    >lookupLocalPackages</a
+                  >
+                </li>
+              </ul>
+            </div>
           </li>
           <li>
             <a href="env_generators.html">env/generators</a
@@ -277,7 +301,6 @@ composability.requireGenerator = function (namespace) {
 /**
  * Install generators at the custom local repository and register.
  *
- * @private
  * @param  {Object} packages - packages to install key(packageName): value(versionRange).
  * @return  {Boolean} - true if the install succeeded.
  */
@@ -301,7 +324,6 @@ composability.installLocalGenerators = function (packages) {
 /**
  * Lookup and register generators from the custom local repository.
  *
- * @private
  * @param  {String[]} [packagesToLookup='generator-*'] - packages to lookup.
  */
 composability.lookupLocalPackages = function (packagesToLookup = 'generator-*') {
