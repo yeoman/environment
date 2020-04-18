@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.9.0</span>
+        <span class="version">v2.9.1</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -501,6 +501,9 @@ class Environment extends EventEmitter {
     this.sharedOptions = this.options.sharedOptions || {};
     // Create a default sharedData.
     this.sharedOptions.sharedData = this.sharedOptions.sharedData || {};
+    // Pass forwardErrorToEnvironment=true to generators by default.
+    this.sharedOptions.forwardErrorToEnvironment =
+      this.sharedOptions.forwardErrorToEnvironment === undefined ? true : this.sharedOptions.forwardErrorToEnvironment;
     // Remove Unecessary sharedOptions from options
     delete this.options.sharedOptions;
 
@@ -999,7 +1002,11 @@ class Environment extends EventEmitter {
   runGenerator(generator, done) {
     const promise = new Promise((resolve, reject) => {
       // Listen to errors and reject if emmited.
-      this.on('error', reject);
+      this.on('error', error => {
+        // Make sure runLoop is stopped.
+        this.runLoop.pause();
+        reject(error);
+      });
 
       /*
        * On success cb() is called.
