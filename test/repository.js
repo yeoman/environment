@@ -5,6 +5,8 @@ const path = require('path');
 
 const repository = require('../lib/util/repository');
 const Env = require('..');
+const execa = require('execa');
+const sinon = require('sinon');
 
 describe('repository', () => {
   before(function () {
@@ -24,6 +26,54 @@ describe('repository', () => {
 
   it('is exposed on the Environment object', () => {
     assert.equal(Env.repository, repository);
+  });
+
+  describe('#runPackageManager', () => {
+    describe('install command', () => {
+      const options = {};
+      before(function () {
+        sinon.stub(execa, 'sync');
+        this.env = Env.createEnv();
+        this.env.repository.runPackageManager('install', ['foo', 'bar'], options);
+      });
+      after(() => {
+        execa.sync.restore();
+      });
+      it('calls npm with correct parameters', () => {
+        assert(execa.sync.calledOnce);
+        assert(execa.sync.getCalls()[0].args[0] === 'npm');
+        assert(execa.sync.getCalls()[0].args[1][0] === 'install');
+        assert(execa.sync.getCalls()[0].args[1][1] === '-g');
+        assert(execa.sync.getCalls()[0].args[1][2] === '--prefix');
+        assert(execa.sync.getCalls()[0].args[1][4] === '--loglevel');
+        assert(execa.sync.getCalls()[0].args[1][5] === 'error');
+        assert(execa.sync.getCalls()[0].args[1][6] === '--no-optional');
+        assert(execa.sync.getCalls()[0].args[1][7] === 'foo');
+        assert(execa.sync.getCalls()[0].args[1][8] === 'bar');
+        assert(execa.sync.getCalls()[0].args[2] === options);
+      });
+    });
+    describe('root command', () => {
+      const options = {};
+      before(function () {
+        sinon.stub(execa, 'sync');
+        this.env = Env.createEnv();
+        this.env.repository.runPackageManager('root', undefined, options);
+      });
+      after(() => {
+        execa.sync.restore();
+      });
+      it('calls npm with correct parameters', () => {
+        assert(execa.sync.calledOnce);
+        assert(execa.sync.getCalls()[0].args[0] === 'npm');
+        assert(execa.sync.getCalls()[0].args[1][0] === 'root');
+        assert(execa.sync.getCalls()[0].args[1][1] === '-g');
+        assert(execa.sync.getCalls()[0].args[1][2] === '--prefix');
+        assert(execa.sync.getCalls()[0].args[1][4] === '--loglevel');
+        assert(execa.sync.getCalls()[0].args[1][5] === 'error');
+        assert(execa.sync.getCalls()[0].args[2] === options);
+      });
+    });
   });
 
   describe('Environment#installLocalGenerators', () => {
