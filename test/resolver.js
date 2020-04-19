@@ -1,5 +1,5 @@
 'use strict';
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const assert = require('assert');
 const spawn = require('cross-spawn');
@@ -131,6 +131,10 @@ describe('Environment Resolver', function () {
         spawn.sync('npm', ['install', '--no-package-lock']);
       });
 
+      after(function () {
+        process.chdir(this.projectRoot);
+      });
+
       beforeEach(function () {
         this.env = new Environment();
         assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
@@ -144,6 +148,75 @@ describe('Environment Resolver', function () {
       it('local generators are prioritized over ancestor', function () {
         const resolved = this.env.get('dummy:app').resolved;
         assert.ok(resolved.includes('subdir'), `Couldn't find 'subdir' in ${resolved}`);
+      });
+    });
+
+    describe('when node_modules is a symlink', () => {
+      before(() => {
+        if (!fs.existsSync(path.resolve('orig'))) {
+          fs.ensureDirSync(path.resolve('orig'));
+          fs.moveSync(
+            path.resolve('node_modules'),
+            path.resolve('orig/node_modules')
+          );
+          fs.ensureSymlinkSync(
+            path.resolve('orig/node_modules'),
+            path.resolve('node_modules')
+          );
+        }
+      });
+      after(() => {
+        if (fs.existsSync(path.resolve('orig'))) {
+          fs.removeSync(path.resolve('node_modules'));
+          fs.moveSync(
+            path.resolve('orig/node_modules'),
+            path.resolve('node_modules')
+          );
+          fs.removeSync(path.resolve('orig'));
+        }
+      });
+
+      it('register local generators', function () {
+        assert.ok(this.env.get('dummy:app'));
+        assert.ok(this.env.get('dummy:yo'));
+
+        assert.ok(this.env.get('dummy:app').packagePath.endsWith('node_modules/generator-dummy'));
+        assert.ok(this.env.get('dummy:app').packagePath.endsWith('node_modules/generator-dummy'));
+      });
+
+      it('registers local ts generators', function () {
+        assert.ok(this.env.get('ts:app'));
+      });
+
+      it('js generators takes precedence', function () {
+        // eslint-disable-next-line unicorn/import-index
+        assert.equal(this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
+      });
+
+      it('register generators in scoped packages', function () {
+        assert.ok(this.env.get('@dummyscope/scoped:app'));
+      });
+
+      it('register non-dependency local generator', function () {
+        assert.ok(this.env.get('jquery:app'));
+      });
+
+      if (!process.env.NODE_PATH) {
+        console.log('Skipping tests for global generators. Please setup `NODE_PATH` environment variable to run it.');
+      }
+
+      it('local generators prioritized over global', function () {
+        const resolved = this.env.get('dummy:app').resolved;
+        assert.ok(resolved.includes('lookup-project'), `Couldn't find 'lookup-project' in ${resolved}`);
+      });
+
+      globalLookupTest('register global generators', function () {
+        assert.ok(this.env.get('dummytest:app'));
+        assert.ok(this.env.get('dummytest:controller'));
+      });
+
+      it('register symlinked generators', function () {
+        assert.ok(this.env.get('extend:support'));
       });
     });
 
