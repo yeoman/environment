@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.9.3</span>
+        <span class="version">v2.9.4</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -410,7 +410,7 @@ packageLookup.sync = function (options = {}, find = module => module) {
 
   const modules = [];
   for (const packagePath of options.packagePaths) {
-    if (!fs.existsSync(packagePath) || !fs.statSync(packagePath).isDirectory()) {
+    if (!fs.existsSync(packagePath) || (!fs.lstatSync(packagePath).isDirectory() &amp;&amp; !fs.lstatSync(packagePath).isSymbolicLink())) {
       continue;
     }
     for (const filePath of globby.sync(options.filePatterns, {cwd: packagePath, absolute: true, deep: options.globbyDeep})) {
@@ -469,7 +469,7 @@ packageLookup.findPackagesIn = function (searchPaths, options = {}) {
 
   let modules = [];
   for (const root of searchPaths) {
-    if (!fs.existsSync(root) || !fs.lstatSync(root).isDirectory()) {
+    if (!fs.existsSync(root) || (!fs.lstatSync(root).isDirectory() &amp;&amp; !fs.lstatSync(root).isSymbolicLink())) {
       continue;
     }
     // Some folders might not be readable to the current user. For those, we add a try
