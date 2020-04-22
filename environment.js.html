@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.9.4</span>
+        <span class="version">v2.9.5</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -1035,8 +1035,11 @@ class Environment extends EventEmitter {
       if (newErrorHandler) {
         // Listen to errors and reject if emmited.
         this.on('error', error => {
-          // Make sure runLoop is stopped.
-          this.runLoop.pause();
+          /* Pause disabled due to grouped-queue default behavior.
+           * Multiple runLoop.run is scheduled by default, this causes a paused queue
+           * to continue right after it have been paused.
+           */
+          // this.runLoop.pause();
           reject(error);
         });
       }
