@@ -21,13 +21,16 @@ describe('Environment Resolver', function () {
   });
 
   describe('#lookup()', () => {
-    const scopedFolder = path.resolve('node_modules/@dummyscope');
-    const scopedGenerator = path.join(scopedFolder, 'generator-scoped');
+    let scopedFolder;
+    let scopedGenerator;
+    let lookupOptions;
 
     before(function () {
       this.timeout(500000);
       this.projectRoot = path.join(__dirname, 'fixtures/lookup-project');
       process.chdir(this.projectRoot);
+      scopedFolder = path.resolve('node_modules/@dummyscope');
+      scopedGenerator = path.join(scopedFolder, 'generator-scoped');
       spawn.sync('npm', ['ci']);
       spawn.sync('npm', ['install', '-g', 'generator-dummytest', 'generator-dummy', '--no-package-lock']);
 
@@ -73,12 +76,13 @@ describe('Environment Resolver', function () {
       fs.unlinkSync(scopedGenerator);
       fs.rmdirSync(scopedFolder);
       process.chdir(__dirname);
+      console.log(__dirname);
     });
 
-    beforeEach(function (done) {
+    beforeEach(function () {
       this.env = new Environment();
       assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-      this.env.lookup(done);
+      this.env.lookup(lookupOptions);
     });
 
     it('register local generators', function () {
@@ -213,6 +217,65 @@ describe('Environment Resolver', function () {
       globalLookupTest('register global generators', function () {
         assert.ok(this.env.get('dummytest:app'));
         assert.ok(this.env.get('dummytest:controller'));
+      });
+
+      it('register symlinked generators', function () {
+        assert.ok(this.env.get('extend:support'));
+      });
+    });
+
+    describe('when modules repository is not called node_modules', () => {
+      let lookupOptionsBackup;
+      let customRepositoryPath;
+      before(() => {
+        customRepositoryPath = path.resolve('orig');
+        lookupOptionsBackup = lookupOptions;
+        lookupOptions = {npmPaths: [customRepositoryPath]};
+        if (!fs.existsSync(customRepositoryPath)) {
+          fs.moveSync(
+            path.resolve('node_modules'),
+            customRepositoryPath
+          );
+        }
+      });
+      after(() => {
+        lookupOptions = lookupOptionsBackup;
+        if (fs.existsSync(path.resolve('orig'))) {
+          fs.moveSync(
+            customRepositoryPath,
+            path.resolve('node_modules')
+          );
+        }
+      });
+
+      it('register local generators', function () {
+        assert.ok(this.env.get('dummy:app'));
+        assert.ok(this.env.get('dummy:yo'));
+
+        assert.ok(this.env.get('dummy:app').packagePath.endsWith('/generator-dummy'));
+        assert.ok(this.env.get('dummy:app').packagePath.endsWith('/generator-dummy'));
+      });
+
+      it('registers local ts generators', function () {
+        assert.ok(this.env.get('ts:app'));
+      });
+
+      it('js generators takes precedence', function () {
+        // eslint-disable-next-line unicorn/import-index
+        assert.equal(this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
+      });
+
+      it('register generators in scoped packages', function () {
+        assert.ok(this.env.get('@dummyscope/scoped:app'));
+      });
+
+      if (!process.env.NODE_PATH) {
+        console.log('Skipping tests for global generators. Please setup `NODE_PATH` environment variable to run it.');
+      }
+
+      it('local generators prioritized over global', function () {
+        const resolved = this.env.get('dummy:app').resolved;
+        assert.ok(resolved.includes('orig'), `Couldn't find 'lookup-project' in ${resolved}`);
       });
 
       it('register symlinked generators', function () {
