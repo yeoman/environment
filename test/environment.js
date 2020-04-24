@@ -558,6 +558,8 @@ describe('Environment', () => {
       assert.equal(this.env.namespace('generator-mocha/backbone/model/index.js'), 'mocha:backbone:model');
       assert.equal(this.env.namespace('generator-mocha/backbone/model.js'), 'mocha:backbone:model');
       assert.equal(this.env.namespace('node_modules/generator-mocha/backbone/model.js'), 'mocha:backbone:model');
+      assert.equal(this.env.namespace('../node_modules/generator-mocha/backbone/model.js'), 'mocha:backbone:model');
+      assert.equal(this.env.namespace('../generator-mocha/backbone/model.js'), 'mocha:backbone:model');
     });
 
     it('create namespace from scoped path', function () {
