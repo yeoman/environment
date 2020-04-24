@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.9.5</span>
+        <span class="version">v2.9.6</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -359,7 +359,12 @@ resolver.lookup = function (options = {localOnly: false}, cb = undefined) {
   this.packageLookup.sync(options, module => {
     const generatorPath = module.filePath;
     const packagePath = module.packagePath;
-    const namespace = this.namespace(generatorPath);
+    let repositoryPath = path.join(packagePath, '..');
+    if (path.basename(repositoryPath).startsWith('@')) {
+      // Scoped package
+      repositoryPath = path.join(repositoryPath, '..');
+    }
+    const namespace = this.namespace(path.relative(repositoryPath, generatorPath), lookups);
     const registered = this._tryRegistering(generatorPath, packagePath, namespace);
     generators.push({generatorPath, packagePath, namespace, registered});
     return options.singleResult &amp;&amp; registered;
