@@ -248,7 +248,19 @@ describe('Namespace', () => {
     });
 
     it('returns with semver and instanceId', () => {
-      assert.throws(() => namespace.requireNamespace('foo-bar@>=1.2.3 <2.0.0@#1'));
+      const complete = 'foo-bar@>=1.2.3 <2.0.0@#1';
+      const parsed = namespace.requireNamespace(complete);
+      assert(equalsNamespace(parsed, {
+        complete,
+        generatorHint: 'generator-foo-bar',
+        versionedHint: 'generator-foo-bar@">=1.2.3 <2.0.0"',
+        namespace: 'foo-bar',
+        unscoped: 'foo-bar',
+        id: 'foo-bar#1',
+        instanceId: '1',
+        packageNamespace: 'foo-bar',
+        semver: '>=1.2.3 <2.0.0'
+      }));
     });
 
     it('returns method update', () => {
