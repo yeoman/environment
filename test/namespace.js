@@ -292,7 +292,7 @@ describe('Namespace', () => {
     });
 
     it('returns with semver', () => {
-      const complete = 'foo-bar@1.0.0-beta+exp.sha.5114f85@';
+      const complete = 'foo-bar@1.0.0-beta+exp.sha.5114f85';
       const parsed = namespace.requireNamespace(complete);
       assert(equalsNamespace(parsed, {
         complete,
@@ -307,7 +307,7 @@ describe('Namespace', () => {
     });
 
     it('returns with semver +', () => {
-      const complete = 'foo-bar@1.0.0-beta+exp.sha.5114f85@';
+      const complete = 'foo-bar@1.0.0-beta+exp.sha.5114f85';
       const parsed = namespace.requireNamespace(complete);
       assert(equalsNamespace(parsed, {
         complete,
@@ -322,7 +322,7 @@ describe('Namespace', () => {
     });
 
     it('returns with semver ^', () => {
-      const complete = 'foo-bar@^1.0.4@';
+      const complete = 'foo-bar@^1.0.4';
       const parsed = namespace.requireNamespace(complete);
       assert(equalsNamespace(parsed, {
         complete,
@@ -337,7 +337,7 @@ describe('Namespace', () => {
     });
 
     it('returns with semver *', () => {
-      const complete = 'foo-bar@*@';
+      const complete = 'foo-bar@*';
       const parsed = namespace.requireNamespace(complete);
       assert(equalsNamespace(parsed, {
         complete,
@@ -352,7 +352,7 @@ describe('Namespace', () => {
     });
 
     it('semver space', () => {
-      const complete = 'foo-bar@1.0.0 - 1.2.0@';
+      const complete = 'foo-bar@1.0.0 - 1.2.0';
       const parsed = namespace.requireNamespace(complete);
       assert(equalsNamespace(parsed, {
         complete,
@@ -367,7 +367,7 @@ describe('Namespace', () => {
     });
 
     it('returns with semver <=>', () => {
-      const complete = 'foo-bar@>=1.2.3 <2.0.0@';
+      const complete = 'foo-bar@>=1.2.3 <2.0.0';
       const parsed = namespace.requireNamespace(complete);
       assert(equalsNamespace(parsed, {
         complete,
@@ -376,6 +376,22 @@ describe('Namespace', () => {
         namespace: 'foo-bar',
         unscoped: 'foo-bar',
         id: 'foo-bar',
+        packageNamespace: 'foo-bar',
+        semver: '>=1.2.3 <2.0.0'
+      }));
+    });
+
+    it('returns with semver and instanceId', () => {
+      const complete = 'foo-bar@>=1.2.3 <2.0.0@+1';
+      const parsed = namespace.requireNamespace(complete);
+      assert(equalsNamespace(parsed, {
+        complete,
+        generatorHint: 'generator-foo-bar',
+        versionedHint: 'generator-foo-bar@">=1.2.3 <2.0.0"',
+        namespace: 'foo-bar',
+        unscoped: 'foo-bar',
+        id: 'foo-bar+1',
+        instanceId: '1',
         packageNamespace: 'foo-bar',
         semver: '>=1.2.3 <2.0.0'
       }));
