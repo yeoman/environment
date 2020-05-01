@@ -76,7 +76,6 @@ describe('Environment Resolver', function () {
       fs.unlinkSync(scopedGenerator);
       fs.rmdirSync(scopedFolder);
       process.chdir(__dirname);
-      console.log(__dirname);
     });
 
     beforeEach(function () {
