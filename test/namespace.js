@@ -9,10 +9,9 @@ const fields = [
   'packageNamespace',
   'id',
   'instanceId',
+  'methods',
   'generatorHint',
   'flags',
-  'load',
-  'install',
   'optional',
   'instanceId',
   'semver',
@@ -20,7 +19,7 @@ const fields = [
 ];
 
 const equalsNamespace = function (namespace, expected) {
-  fields.forEach(field => assert.equal(
+  fields.forEach(field => assert.deepStrictEqual(
     namespace[field], expected[field],
     `Field ${field} differs: ${namespace[field]} === ${expected[field]}`
   ));
@@ -92,62 +91,44 @@ describe('Namespace', () => {
     });
 
     it('returns namespace with id', () => {
-      const parsed = namespace.requireNamespace('foo-bar+1');
+      const parsed = namespace.requireNamespace('foo-bar#1');
       assert(equalsNamespace(parsed, {
-        complete: 'foo-bar+1',
+        complete: 'foo-bar#1',
         unscoped: 'foo-bar',
         generatorHint: 'generator-foo-bar',
         versionedHint: 'generator-foo-bar',
         namespace: 'foo-bar',
-        id: 'foo-bar+1',
+        id: 'foo-bar#1',
         instanceId: '1',
         packageNamespace: 'foo-bar'
       }));
     });
 
     it('returns namespace with generator and id', () => {
-      const parsed = namespace.requireNamespace('foo-bar:app+1');
+      const parsed = namespace.requireNamespace('foo-bar:app#1');
       assert(equalsNamespace(parsed, {
-        complete: 'foo-bar:app+1',
+        complete: 'foo-bar:app#1',
         unscoped: 'foo-bar',
         generatorHint: 'generator-foo-bar',
         versionedHint: 'generator-foo-bar',
         namespace: 'foo-bar:app',
-        id: 'foo-bar:app+1',
+        id: 'foo-bar:app#1',
         instanceId: '1',
         packageNamespace: 'foo-bar',
         generator: 'app'
       }));
     });
 
-    it('returns namespace with scope, generator, id and load', () => {
-      const parsed = namespace.requireNamespace('@scope/foo-bar:app+1!?');
-      assert(equalsNamespace(parsed, {
-        complete: '@scope/foo-bar:app+1!?',
-        unscoped: 'foo-bar',
-        generatorHint: '@scope/generator-foo-bar',
-        versionedHint: '@scope/generator-foo-bar',
-        namespace: '@scope/foo-bar:app',
-        id: '@scope/foo-bar:app+1',
-        instanceId: '1',
-        scope: '@scope',
-        packageNamespace: '@scope/foo-bar',
-        generator: 'app',
-        flags: '!?',
-        load: true
-      }));
-    });
-
     it('returns namespace with scope, generator, id and optional', () => {
-      const parsed = namespace.requireNamespace('@scope/foo-bar:app+1?');
+      const parsed = namespace.requireNamespace('@scope/foo-bar:app#1?');
       assert(equalsNamespace(parsed, {
-        complete: '@scope/foo-bar:app+1?',
+        complete: '@scope/foo-bar:app#1?',
         scope: '@scope',
         unscoped: 'foo-bar',
         generatorHint: '@scope/generator-foo-bar',
         versionedHint: '@scope/generator-foo-bar',
         namespace: '@scope/foo-bar:app',
-        id: '@scope/foo-bar:app+1',
+        id: '@scope/foo-bar:app#1',
         instanceId: '1',
         packageNamespace: '@scope/foo-bar',
         generator: 'app',
@@ -157,137 +138,22 @@ describe('Namespace', () => {
     });
 
     it('throws exception with namespace with scope, generator, id and invalid flags', () => {
-      assert.throws(() => namespace.requireNamespace('@scope/foo-bar:app+1!$'));
+      assert.throws(() => namespace.requireNamespace('@scope/foo-bar:app#1!$'));
     });
 
     it('returns namespace with scope, multiples generator and id', () => {
-      const parsed = namespace.requireNamespace('@scope/foo-bar:app:client+1');
+      const parsed = namespace.requireNamespace('@scope/foo-bar:app:client#1');
       assert(equalsNamespace(parsed, {
-        complete: '@scope/foo-bar:app:client+1',
+        complete: '@scope/foo-bar:app:client#1',
         scope: '@scope',
         unscoped: 'foo-bar',
         generatorHint: '@scope/generator-foo-bar',
         versionedHint: '@scope/generator-foo-bar',
         namespace: '@scope/foo-bar:app:client',
-        id: '@scope/foo-bar:app:client+1',
+        id: '@scope/foo-bar:app:client#1',
         instanceId: '1',
         packageNamespace: '@scope/foo-bar',
         generator: 'app:client'
-      }));
-    });
-
-    it('bumps id', () => {
-      const parsed = namespace.requireNamespace('@scope/foo-bar:app:client?');
-      assert(equalsNamespace(parsed, {
-        complete: '@scope/foo-bar:app:client?',
-        scope: '@scope',
-        unscoped: 'foo-bar',
-        generatorHint: '@scope/generator-foo-bar',
-        versionedHint: '@scope/generator-foo-bar',
-        namespace: '@scope/foo-bar:app:client',
-        id: '@scope/foo-bar:app:client',
-        instanceId: undefined,
-        packageNamespace: '@scope/foo-bar',
-        generator: 'app:client',
-        flags: '?',
-        optional: true
-      }));
-
-      parsed.bumpId();
-      assert(equalsNamespace(parsed, {
-        complete: '@scope/foo-bar:app:client+1?',
-        scope: '@scope',
-        unscoped: 'foo-bar',
-        generatorHint: '@scope/generator-foo-bar',
-        versionedHint: '@scope/generator-foo-bar',
-        namespace: '@scope/foo-bar:app:client',
-        id: '@scope/foo-bar:app:client+1',
-        instanceId: '1',
-        packageNamespace: '@scope/foo-bar',
-        generator: 'app:client',
-        flags: '?',
-        optional: true
-      }));
-
-      parsed.bumpId();
-      assert(equalsNamespace(parsed, {
-        complete: '@scope/foo-bar:app:client+2?',
-        scope: '@scope',
-        unscoped: 'foo-bar',
-        generatorHint: '@scope/generator-foo-bar',
-        versionedHint: '@scope/generator-foo-bar',
-        namespace: '@scope/foo-bar:app:client',
-        id: '@scope/foo-bar:app:client+2',
-        instanceId: '2',
-        packageNamespace: '@scope/foo-bar',
-        generator: 'app:client',
-        flags: '?',
-        optional: true
-      }));
-    });
-
-    it('bumps id with another id', () => {
-      const parsed = namespace.requireNamespace('@scope/foo-bar:app:client+angular?');
-      assert(equalsNamespace(parsed, {
-        complete: '@scope/foo-bar:app:client+angular?',
-        scope: '@scope',
-        unscoped: 'foo-bar',
-        generatorHint: '@scope/generator-foo-bar',
-        versionedHint: '@scope/generator-foo-bar',
-        namespace: '@scope/foo-bar:app:client',
-        id: '@scope/foo-bar:app:client+angular',
-        instanceId: 'angular',
-        packageNamespace: '@scope/foo-bar',
-        generator: 'app:client',
-        flags: '?',
-        optional: true
-      }));
-
-      parsed.bumpId();
-      assert(equalsNamespace(parsed, {
-        complete: '@scope/foo-bar:app:client+angular+1?',
-        scope: '@scope',
-        unscoped: 'foo-bar',
-        generatorHint: '@scope/generator-foo-bar',
-        versionedHint: '@scope/generator-foo-bar',
-        namespace: '@scope/foo-bar:app:client',
-        id: '@scope/foo-bar:app:client+angular+1',
-        instanceId: 'angular+1',
-        packageNamespace: '@scope/foo-bar',
-        generator: 'app:client',
-        flags: '?',
-        optional: true
-      }));
-
-      parsed.bumpId();
-      assert(equalsNamespace(parsed, {
-        complete: '@scope/foo-bar:app:client+angular+2?',
-        scope: '@scope',
-        unscoped: 'foo-bar',
-        generatorHint: '@scope/generator-foo-bar',
-        versionedHint: '@scope/generator-foo-bar',
-        namespace: '@scope/foo-bar:app:client',
-        id: '@scope/foo-bar:app:client+angular+2',
-        instanceId: 'angular+2',
-        packageNamespace: '@scope/foo-bar',
-        generator: 'app:client',
-        flags: '?',
-        optional: true
-      }));
-    });
-
-    it('returns with install', () => {
-      const parsed = namespace.requireNamespace('foo-bar!');
-      assert(equalsNamespace(parsed, {
-        complete: 'foo-bar!',
-        generatorHint: 'generator-foo-bar',
-        versionedHint: 'generator-foo-bar',
-        namespace: 'foo-bar',
-        unscoped: 'foo-bar',
-        id: 'foo-bar',
-        packageNamespace: 'foo-bar',
-        flags: '!',
-        install: true
       }));
     });
 
@@ -382,23 +248,11 @@ describe('Namespace', () => {
     });
 
     it('returns with semver and instanceId', () => {
-      const complete = 'foo-bar@>=1.2.3 <2.0.0@+1';
-      const parsed = namespace.requireNamespace(complete);
-      assert(equalsNamespace(parsed, {
-        complete,
-        generatorHint: 'generator-foo-bar',
-        versionedHint: 'generator-foo-bar@">=1.2.3 <2.0.0"',
-        namespace: 'foo-bar',
-        unscoped: 'foo-bar',
-        id: 'foo-bar+1',
-        instanceId: '1',
-        packageNamespace: 'foo-bar',
-        semver: '>=1.2.3 <2.0.0'
-      }));
+      assert.throws(() => namespace.requireNamespace('foo-bar@>=1.2.3 <2.0.0@#1'));
     });
 
-    it('method test', () => {
-      const parsed = namespace.requireNamespace('foo-bar#test');
+    it('returns method update', () => {
+      const parsed = namespace.requireNamespace('foo-bar+update');
       assert(equalsNamespace(parsed, {
         complete: 'foo-bar',
         generatorHint: 'generator-foo-bar',
@@ -407,13 +261,12 @@ describe('Namespace', () => {
         unscoped: 'foo-bar',
         id: 'foo-bar',
         packageNamespace: 'foo-bar',
-        method: 'test',
-        methodName: 'test'
+        methods: ['update']
       }));
     });
 
-    it('method snake-case', () => {
-      const parsed = namespace.requireNamespace('foo-bar#snake-case');
+    it('returns method update and done', () => {
+      const parsed = namespace.requireNamespace('foo-bar+update+done');
       assert(equalsNamespace(parsed, {
         complete: 'foo-bar',
         generatorHint: 'generator-foo-bar',
@@ -422,8 +275,50 @@ describe('Namespace', () => {
         unscoped: 'foo-bar',
         id: 'foo-bar',
         packageNamespace: 'foo-bar',
-        method: 'snake-case',
-        methodName: 'snakeCase#'
+        methods: ['update', 'done']
+      }));
+    });
+
+    it('accepts upper case methods', () => {
+      const parsed = namespace.requireNamespace('foo-bar+UPDATE+done');
+      assert(equalsNamespace(parsed, {
+        complete: 'foo-bar',
+        generatorHint: 'generator-foo-bar',
+        versionedHint: 'generator-foo-bar',
+        namespace: 'foo-bar',
+        unscoped: 'foo-bar',
+        id: 'foo-bar',
+        packageNamespace: 'foo-bar',
+        methods: ['UPDATE', 'done']
+      }));
+    });
+
+    it('returns instanceId with methods update and done', () => {
+      const parsed = namespace.requireNamespace('foo-bar#foo+update+done');
+      assert(equalsNamespace(parsed, {
+        complete: 'foo-bar#foo',
+        generatorHint: 'generator-foo-bar',
+        versionedHint: 'generator-foo-bar',
+        namespace: 'foo-bar',
+        unscoped: 'foo-bar',
+        id: 'foo-bar#foo',
+        instanceId: 'foo',
+        packageNamespace: 'foo-bar',
+        methods: ['update', 'done']
+      }));
+    });
+
+    it('returns instanceId *', () => {
+      const parsed = namespace.requireNamespace('foo-bar#*');
+      assert(equalsNamespace(parsed, {
+        complete: 'foo-bar#*',
+        generatorHint: 'generator-foo-bar',
+        versionedHint: 'generator-foo-bar',
+        namespace: 'foo-bar',
+        unscoped: 'foo-bar',
+        id: 'foo-bar#*',
+        instanceId: '*',
+        packageNamespace: 'foo-bar'
       }));
     });
   });
