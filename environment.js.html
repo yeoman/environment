@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.9.6</span>
+        <span class="version">v2.10.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -217,23 +217,6 @@
             </div>
           </li>
           <li>
-            <a href="env_generators.html">env/generators</a
-            ><button type="button" class="hidden toggle-subnav btn btn-link">
-              <span class="glyphicon glyphicon-plus"></span>
-            </button>
-            <div class="hidden" id="env/generators_sub">
-              <div class="member-type">Methods</div>
-              <ul class="inner">
-                <li>
-                  <a href="env_generators.html#.getInstance">getInstance</a>
-                </li>
-                <li>
-                  <a href="env_generators.html#.rootGenerator">rootGenerator</a>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li>
             <a href="env_namespace-composability.html"
               >env/namespace-composability</a
             ><button type="button" class="hidden toggle-subnav btn btn-link">
@@ -327,8 +310,6 @@ function getGeneratorHint(namespace) {
   }
   return `generator-${namespace}`;
 }
-
-let experimental = false;
 
 class Environment extends EventEmitter {
   static get UNKNOWN_NAMESPACE() {
@@ -540,12 +521,18 @@ class Environment extends EventEmitter {
       this.repository.repositoryPath = this.options.yeomanRepository;
     }
 
-    experimental = this.options.experimental === true;
+    if (!this.options.experimental) {
+      process.argv.forEach(val => {
+        if (val === '--experimental') {
+          this.options.experimental = true;
+          debug('Set environment as experimental');
+        }
+      });
+    }
 
-    if (experimental) {
+    if (this.options.experimental) {
       Object.assign(this, require('./namespace'));
       Object.assign(this, require('./namespace-composability'));
-      Object.assign(this, require('./generators'));
     }
 
     this._generators = {};
@@ -793,14 +780,7 @@ class Environment extends EventEmitter {
 
     const parsed = this.toNamespace ? this.toNamespace(namespaceOrPath) : undefined;
     if (parsed &amp;&amp; this.getByNamespace) {
-      let generator = this.getByNamespace(parsed);
-
-      if (!generator &amp;&amp; parsed.flags) {
-        this.prepareEnvironment(parsed);
-        generator = this.getByNamespace(parsed);
-      }
-
-      return generator;
+      return this.getByNamespace(parsed);
     }
 
     let namespace = namespaceOrPath;
@@ -875,7 +855,6 @@ class Environment extends EventEmitter {
    *
    * @param {String} namespaceOrPath
    * @param {Object} options
-   * @param {boolean} [skipRegister=false] Skip registering the generator instance.
    */
   create(namespaceOrPath, options) {
     options = options || {};
@@ -928,7 +907,6 @@ class Environment extends EventEmitter {
    * @param {Object}       [options]
    * @param {Array|String} [options.arguments] Arguments to pass the instance
    * @param {Object}       [options.options]   Options to pass the instance
-   * @param {boolean}      [options.skipRegister=false] Skip registering the generator instance.
    */
   instantiate(Generator, options) {
     options = options || {};
@@ -938,19 +916,11 @@ class Environment extends EventEmitter {
 
     const opts = options.options || this.options;
 
-    let genNamespaceId;
-    if (!options.skipRegister &amp;&amp; this.toNamespace &amp;&amp; this.nextInstanceId) {
-      const namespace = this.toNamespace(options.namespaceId || Generator.namespace || Environment.UNKNOWN_NAMESPACE);
-      if (namespace) {
-        genNamespaceId = this.nextInstanceId(namespace);
-      }
-    }
-
     const environmentOptions = {
       env: this,
       resolved: Generator.resolved || Environment.UNKNOWN_RESOLVED,
       namespace: Generator.namespace,
-      namespaceId: genNamespaceId ? genNamespaceId.id : options.namespaceId
+      namespaceId: options.namespaceId
     };
     const generator = new Generator(args, {
       ...this.sharedOptions,
@@ -963,9 +933,6 @@ class Environment extends EventEmitter {
       ...environmentOptions
     };
 
-    if (this.registerInstance &amp;&amp; !options.skipRegister &amp;&amp; genNamespaceId) {
-      this.registerInstance(genNamespaceId, generator);
-    }
     return generator;
   }
 
@@ -994,7 +961,7 @@ class Environment extends EventEmitter {
     }
 
     args = Array.isArray(args) ? args : splitArgsFromString(args);
-    options = options || this.options;
+    options = {...options} || {...this.options};
 
     const name = args.shift();
     if (!name) {
@@ -1003,21 +970,42 @@ class Environment extends EventEmitter {
       );
     }
 
-    const generator = this.create(name, {
-      args,
-      options,
-      verifyListener: true
-    });
+    const instantiateAndRun = () => {
+      const generator = this.create(name, {
+        args,
+        options,
+        verifyListener: true
+      });
 
-    if (generator instanceof Error) {
-      return Promise.reject(generator);
+      if (generator instanceof Error) {
+        return Promise.reject(generator);
+      }
+
+      if (options.help) {
+        return console.log(generator.help());
+      }
+
+      return this.runGenerator(generator, done);
+    };
+
+    if (this.options.experimental) {
+      this.compose = this.createCompose(this.cwd);
+      options.compose = this.compose;
     }
 
-    if (options.help) {
-      return console.log(generator.help());
+    if (this.options.experimental &amp;&amp; !this.get(name)) {
+      debug(`Generator ${name} was not found, trying to install it`);
+      return this.prepareEnvironment(name).then(() => {
+        const generator = this.create(name, {
+          args,
+          options,
+          verifyListener: true
+        });
+        return this.runGenerator(generator, done);
+      }).catch(() => instantiateAndRun());
     }
 
-    return this.runGenerator(generator, done);
+    return instantiateAndRun();
   }
 
   /**
@@ -1073,9 +1061,6 @@ class Environment extends EventEmitter {
       return promise.then(done, done);
     }
     this._rootGenerator = this._rootGenerator || generator;
-    if (this.registerInstance) {
-      this.registerInstance(generator);
-    }
 
     return promise;
   }
