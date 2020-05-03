@@ -421,6 +421,16 @@ describe('Environment Resolver', function () {
       assert.ok(this.env.getRegisteredPackages().length === 1);
     });
 
+    it('with scope and packagePaths', function () {
+      this.env.lookup({packagePaths: [
+        'node_modules/generator-module',
+        'node_modules/@scoped/generator-scoped'
+      ], registerToScope: 'test'});
+      assert.ok(this.env.get('@test/module:app'));
+      assert.ok(this.env.get('@scoped/scoped:app'));
+      assert.ok(this.env.getRegisteredPackages().length === 2);
+    });
+
     it('with 2 packagePaths', function () {
       this.env.lookup({packagePaths: [
         'node_modules/generator-module',
