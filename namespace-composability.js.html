@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.9.6</span>
+        <span class="version">v2.10.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -217,23 +217,6 @@
             </div>
           </li>
           <li>
-            <a href="env_generators.html">env/generators</a
-            ><button type="button" class="hidden toggle-subnav btn btn-link">
-              <span class="glyphicon glyphicon-plus"></span>
-            </button>
-            <div class="hidden" id="env/generators_sub">
-              <div class="member-type">Methods</div>
-              <ul class="inner">
-                <li>
-                  <a href="env_generators.html#.getInstance">getInstance</a>
-                </li>
-                <li>
-                  <a href="env_generators.html#.rootGenerator">rootGenerator</a>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li>
             <a href="env_namespace-composability.html"
               >env/namespace-composability</a
             ><button type="button" class="hidden toggle-subnav btn btn-link">
@@ -280,8 +263,13 @@
       <section>
         <article>
           <pre class="prettyprint source linenums"><code>'use strict';
+const debug = require('debug')('yeoman:environment:compose');
+const _ = require('lodash');
+const NpmApi = require('npm-api');
 const path = require('path');
-const debug = require('debug')('yeoman:environment');
+const semver = require('semver');
+
+const npm = new NpmApi();
 
 /**
  * @mixin
@@ -299,60 +287,6 @@ composability.getByNamespace = function (namespace) {
   const ns = this.requireNamespace(namespace).namespace;
   const Generator = this.store.get(ns) || this.store.get(this.alias(ns));
   return this._findGeneratorClass(Generator);
-};
-
-/**
- * Lookup and register generators from the custom local repository.
- *
- * @private
- * @param  {YeomanNamespace[]} namespacesToLookup - namespaces to lookup.
- * @return {Object[]} List of generators
- */
-composability.lookupLocalNamespaces = function (namespacesToLookup) {
-  if (!namespacesToLookup) {
-    return [];
-  }
-  namespacesToLookup = Array.isArray(namespacesToLookup) ? namespacesToLookup : [namespacesToLookup];
-  namespacesToLookup = namespacesToLookup.map(ns => this.requireNamespace(ns));
-  // Keep only those packages that has a compatible version.
-  namespacesToLookup = namespacesToLookup.filter(ns => {
-    return this.repository.verifyInstalledVersion(ns.generatorHint, ns.semver) !== undefined;
-  });
-  return this.lookupLocalPackages(namespacesToLookup.map(ns => ns.generatorHint));
-};
-
-/**
- * Install generators at the custom local repository and register.
- *
- * @private
- * @param  {Object} packages - packages to install key(packageName): value(versionRange).
- * @return  {Boolean} - true if the install succeeded.
- */
-composability.installLocalGenerators = function (packages) {
-  const entries = Object.entries(packages).filter(([packageName, version]) => !this.repository.verifyInstalledVersion(packageName, version));
-  if (entries.length === 0) {
-    return true;
-  }
-  const toInstall = {};
-  entries.forEach(([packageName, version]) => {
-    toInstall[packageName] = version;
-  });
-  if (this.repository.installPackages(toInstall)) {
-    const packagesToLookup = entries.map(([packageName, _]) => packageName);
-    this.lookupLocalPackages(packagesToLookup);
-    return true;
-  }
-  return false;
-};
-
-/**
- * Lookup and register generators from the custom local repository.
- *
- * @private
- * @param  {String[]} [packagesToLookup='generator-*'] - packages to lookup.
- */
-composability.lookupLocalPackages = function (packagesToLookup = 'generator-*') {
-  this.lookup({packagePatterns: packagesToLookup, npmPaths: this.repository.nodeModulesPath});
 };
 
 /**
@@ -417,14 +351,14 @@ composability.lookupNamespaces = function (namespaces, options = {}) {
  * @param  {String|Array} - namespaces
  * @return  {boolean} - true if every required namespace was found.
  */
-composability.prepareEnvironment = function (namespaces) {
+composability.prepareEnvironment = async function (namespaces) {
   debug('Preparing %o', namespaces);
   namespaces = Array.isArray(namespaces) ? namespaces : [namespaces];
   let missing = namespaces.map(ns => this.requireNamespace(ns));
 
   const updateMissing = () => {
     // Remove already loaded namespaces
-    missing = namespaces.filter(ns => !this.getByNamespace(ns));
+    missing = missing.filter(ns => !this.getByNamespace(ns));
     return missing;
   };
 
@@ -436,45 +370,204 @@ composability.prepareEnvironment = function (namespaces) {
 
   updateMissing();
 
-  // Remove optionals
-  missing = missing.filter(ns => !ns.optional);
-
-  // Keep only ns with load and install flags
-  const failed = missing.filter(ns => !ns.load &amp;&amp; !ns.install);
-
-  // Fail for required ns without load or install flags
-  assertMissing(failed);
-
-  // Lookup at custom repository
-  this.lookupLocalNamespaces(missing);
-  if (updateMissing().length === 0) {
-    return true;
-  }
-
-  // Lookup local and global for load flag.
-  this.lookupNamespaces(missing.filter(ns => ns.load));
-  if (updateMissing().length === 0) {
-    return true;
-  }
-
-  // Fail if ns with load flag failed to load.
-  assertMissing(missing.filter(ns => ns.load));
-
   // Install missing
   const toInstall = {};
-  missing.forEach(ns => {
-    toInstall[ns.generatorHint] = ns.semver;
-  });
+
+  const addPeerGenerators = async (packageName, packageRange) => {
+    const npmRepo = npm.repo(packageName);
+    let packageJson;
+    try {
+      packageJson = await npmRepo.package('all');
+      if (packageJson.error) {
+        throw new Error(packageJson.error);
+      }
+    } catch (error) {
+      debug(`Could not find npm package for ${packageJson}`, error);
+      return false;
+    }
+
+    const version = semver.maxSatisfying(Object.keys(packageJson.versions), packageRange);
+    if (packageJson.versions[version].peerDependencies) {
+      for (const peerPackageName in packageJson.peerDependecies) {
+        if (peerPackageName.startsWith('generator-') &amp;&amp; !toInstall[peerPackageName]) {
+          const packageRange = packageJson.peerDependecies[peerPackageName];
+          toInstall[peerPackageName] = packageRange;
+          if (this.repository.verifyInstalledVersion(packageName, packageRange)) {
+            continue;
+          }
+          // eslint-disable-next-line no-await-in-loop
+          await addPeerGenerators(peerPackageName, packageRange);
+        }
+      }
+    }
+    return true;
+  };
+
+  const toLookup = [];
+  // eslint-disable-next-line guard-for-in
+  for (const i in missing) {
+    const ns = missing[i];
+    const packageName = ns.generatorHint;
+    const packageRange = ns.semver;
+    if (packageRange &amp;&amp; !semver.validRange(packageRange)) {
+      continue;
+    }
+    if (this.repository.verifyInstalledVersion(packageName, packageRange)) {
+      continue;
+    }
+    // eslint-disable-next-line no-await-in-loop
+    if (await addPeerGenerators(packageName, packageRange)) {
+      toInstall[ns.generatorHint] = ns.semver;
+    } else {
+      toLookup.push(ns);
+    }
+  }
+
   debug('Installing %o', toInstall);
   this.installLocalGenerators(toInstall);
   if (updateMissing().length === 0) {
     return true;
   }
   // At last, try to lookup if install failed.
-  this.lookupNamespaces(missing);
+  this.lookupNamespaces(missing.concat(toLookup));
 
   assertMissing(updateMissing());
   return true;
+};
+
+class YeomanCompose {
+  constructor(env, destinationRoot, options) {
+    this.env = env;
+    this._destinationRoot = destinationRoot;
+    this._options = {...options, compose: this};
+    this._generators = {};
+    this._childs = {};
+    this._namespaceOptions = {};
+  }
+
+  getChild(id, destinationPath, options) {
+    this._childs[id] = new YeomanCompose(this.env, destinationPath, options);
+    return this._childs[id];
+  }
+
+  _getGenerator(namespace) {
+    namespace = this.env.requireNamespace(namespace);
+    const generator = this._generators[namespace.id];
+    if (!generator &amp;&amp; !namespace.optional) {
+      throw new Error(`Generator with namespace ${namespace.id} was not found`);
+    }
+    return generator;
+  }
+
+  setOptions(namespace, options) {
+    namespace = this.env.requireNamespace(namespace);
+    if (!namespace.generator) {
+      throw new Error(`Namespace with generator is required: ${namespace.id}`);
+    }
+    if (this._getGenerator[namespace.id]) {
+      throw new Error(`Generator ${namespace.id} has already started`);
+    }
+    this._namespaceOptions[namespace] = options;
+  }
+
+  bootstrapConfig(namespace, config = {}) {
+    namespace = this.env.requireNamespace(namespace);
+    const yoRc = path.join(this._destinationRoot, '.yo-rc.json');
+    if (namespace.instanceId) {
+      config = {[namespace.instanceName]: config};
+      config = {[namespace.generatorName]: config};
+    }
+    this.env.fs.extendJSON(yoRc, {[namespace.generatorHint]: config});
+  }
+
+  getConfig(namespace, generatorConfig = false) {
+    namespace = this.env.requireNamespace(namespace);
+    const yoRc = path.join(this._destinationRoot, '.yo-rc.json');
+    let configToReturn = this.env.fs.readJSON(yoRc, {})[namespace.generatorHint] || {};
+    if (generatorConfig || namespace.instanceId) {
+      configToReturn = configToReturn[namespace.generatorName] || {};
+    }
+    if (namespace.instanceId) {
+      configToReturn = configToReturn[namespace.instanceName] || {};
+    }
+    return configToReturn;
+  }
+
+  getInstanceNames(namespace) {
+    const generatorConfig = this.getConfig(namespace, true);
+    return Object.keys(generatorConfig).filter(instanceName => instanceName);
+  }
+
+  with(namespace, generatorOptions) {
+    debug(`Loading generator ${namespace} at ${this._destinationRoot}`);
+    if (Array.isArray(namespace)) {
+      namespace.forEach(each => this.with(each));
+      return;
+    }
+    namespace = this.env.requireNamespace(namespace);
+    if (!namespace.generator) {
+      throw new Error(`Namespace with generator is required: ${namespace.id}`);
+    }
+    if (namespace.instanceId &amp;&amp; namespace.instanceId === '*') {
+      this.getInstanceNames(namespace.namespace).forEach(idName => {
+        const childNamespace = namespace.with({instanceId: idName.slice(1)});
+        this.with(childNamespace, generatorOptions);
+      });
+      return;
+    }
+
+    const runMethods = generator => {
+      if (namespace.methods &amp;&amp; namespace.methods.length > 0) {
+        namespace.methods.forEach(methodName => {
+          methodName = `#${methodName}`;
+          generator[methodName](generatorOptions);
+        });
+        return true;
+      }
+      return false;
+    };
+
+    let generator = this._generators[namespace.id];
+    if (generator) {
+      runMethods(generator);
+      return;
+    }
+
+    generator = this.env.create(namespace, {
+      arguments: [namespace.instanceId],
+      options: {
+        destinationRoot: this._destinationRoot,
+        ...this._options,
+        ...this._namespaceOptions[namespace.id],
+        ...generatorOptions
+      }
+    });
+
+    this._generators[namespace.id] = generator;
+    const propertyNames = Object.getOwnPropertyNames(Object.getPrototypeOf(generator));
+
+    const generatorApi = {config: generator.config};
+    const generatorObjectName = `${_.camelCase(namespace.unscoped)}`;
+    if (namespace.instanceId) {
+      this[generatorObjectName] = this[generatorObjectName] || {};
+      this[generatorObjectName][namespace.instanceId] = generatorApi;
+    } else {
+      this[generatorObjectName] = generatorApi;
+    }
+    propertyNames.forEach(property => {
+      if (!property.startsWith('#')) {
+        return;
+      }
+      const propertyValue = generator[property];
+      generatorApi[property.slice(1)] = propertyValue.bind(generator);
+    });
+    generator.queueOwnTasks();
+    runMethods(generator);
+  }
+}
+
+composability.createCompose = function (destinationRoot, options = {}) {
+  return new YeomanCompose(this, destinationRoot, options);
 };
 </code></pre>
         </article>
