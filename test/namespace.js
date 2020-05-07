@@ -266,7 +266,7 @@ describe('Namespace', () => {
     it('returns method update', () => {
       const parsed = namespace.requireNamespace('foo-bar+update');
       assert(equalsNamespace(parsed, {
-        complete: 'foo-bar',
+        complete: 'foo-bar+update',
         generatorHint: 'generator-foo-bar',
         versionedHint: 'generator-foo-bar',
         namespace: 'foo-bar',
@@ -280,7 +280,7 @@ describe('Namespace', () => {
     it('returns method update and done', () => {
       const parsed = namespace.requireNamespace('foo-bar+update+done');
       assert(equalsNamespace(parsed, {
-        complete: 'foo-bar',
+        complete: 'foo-bar+update+done',
         generatorHint: 'generator-foo-bar',
         versionedHint: 'generator-foo-bar',
         namespace: 'foo-bar',
@@ -294,7 +294,7 @@ describe('Namespace', () => {
     it('accepts upper case methods', () => {
       const parsed = namespace.requireNamespace('foo-bar+UPDATE+done');
       assert(equalsNamespace(parsed, {
-        complete: 'foo-bar',
+        complete: 'foo-bar+UPDATE+done',
         generatorHint: 'generator-foo-bar',
         versionedHint: 'generator-foo-bar',
         namespace: 'foo-bar',
@@ -308,7 +308,7 @@ describe('Namespace', () => {
     it('returns instanceId with methods update and done', () => {
       const parsed = namespace.requireNamespace('foo-bar#foo+update+done');
       assert(equalsNamespace(parsed, {
-        complete: 'foo-bar#foo',
+        complete: 'foo-bar#foo+update+done',
         generatorHint: 'generator-foo-bar',
         versionedHint: 'generator-foo-bar',
         namespace: 'foo-bar',
