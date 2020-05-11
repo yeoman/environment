@@ -487,6 +487,16 @@ describe('Environment Resolver', function () {
       assert.ok(this.env.get('module-root:app'));
       assert.ok(this.env.getRegisteredPackages().length === 2);
     });
+
+    it('with sub-sub-generators and packagePaths', function () {
+      this.env.lookup({packagePaths: ['node_modules/@scoped/generator-scoped'], filePatterns: ['*/*/index.js'], globbyDeep: 2});
+      assert.ok(this.env.get('@scoped/scoped:app:scaffold'));
+    });
+
+    it('with sub-sub-generators and packagePatterns', function () {
+      this.env.lookup({npmPaths: ['node_modules'], packagePatterns: ['generator-scoped'], filePatterns: ['*/*/index.js'], globbyDeep: 2});
+      assert.ok(this.env.get('@scoped/scoped:app:scaffold'));
+    });
   });
 
   describe('#lookupNamespaces()', () => {
