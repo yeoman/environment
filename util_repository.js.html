@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.10.0</span>
+        <span class="version">v2.10.1</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -170,6 +170,9 @@
                     >resolveModulePath</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#rootGenerator">rootGenerator</a>
+                </li>
                 <li><a href="Environment.html#run">run</a></li>
                 <li>
                   <a href="Environment.html#runGenerator">runGenerator</a>
@@ -276,8 +279,15 @@ const logger = require('./log');
 
 const REPOSITORY_FOLDER = '.yo-repository';
 
-module.exports = {
-  log: logger(),
+/**
+ * @private
+ */
+class YeomanRepository {
+  constructor(repositoryPath = REPOSITORY_FOLDER) {
+    this.log = logger();
+
+    this._repositoryPath = path.resolve(repositoryPath);
+  }
 
   /**
    * @private
@@ -285,16 +295,13 @@ module.exports = {
    * Repository absolute path (npm --prefix).
    */
   get repositoryPath() {
-    if (!this._repositoryPath) {
-      this.repositoryPath = REPOSITORY_FOLDER;
-    }
     return this._repositoryPath;
-  },
+  }
 
   set repositoryPath(repositoryPath) {
     this._repositoryPath = path.resolve(repositoryPath);
     delete this._nodeModulesPath;
-  },
+  }
 
   /**
    * @private
@@ -306,7 +313,7 @@ module.exports = {
       this._nodeModulesPath = this.runPackageManager('root').stdout;
     }
     return this._nodeModulesPath;
-  },
+  }
 
   /**
    * @private
@@ -317,7 +324,7 @@ module.exports = {
     if (!fs.existsSync(this.repositoryPath)) {
       fs.mkdirSync(this.repositoryPath);
     }
-  },
+  }
 
   /**
    * @private
@@ -332,7 +339,7 @@ module.exports = {
       return path.join(packageName, modulePath);
     }
     return path.join(this.nodeModulesPath, packageName, modulePath);
-  },
+  }
 
   /**
    * @private
@@ -358,7 +365,7 @@ module.exports = {
     toCleanup.forEach(cache => {
       delete require.cache[cache];
     });
-  },
+  }
 
   /**
    * @private
@@ -378,7 +385,7 @@ module.exports = {
     }
     debug('Running npm with args %o', allArgs);
     return execa.sync('npm', allArgs, options);
-  },
+  }
 
   /**
    * @private
@@ -399,7 +406,7 @@ module.exports = {
       installed = semver.validRange(versionRange) &amp;&amp; semver.satisfies(installedVersion, versionRange);
     }
     return installed ? installedVersion : undefined;
-  },
+  }
 
   /**
    * @private
@@ -424,7 +431,7 @@ module.exports = {
     }
     debug(`Package ${packageName} sucessfully installed`);
     return this.resolvePackagePath(packageName);
-  },
+  }
 
   /**
    * @private
@@ -455,7 +462,7 @@ module.exports = {
       }
     });
     return success;
-  },
+  }
 
   /**
    * @private
@@ -471,7 +478,7 @@ module.exports = {
     } catch (_) {
       return undefined;
     }
-  },
+  }
 
   /**
    * @private
@@ -496,7 +503,9 @@ module.exports = {
     debug('Loading module at %s', absolutePath);
     return require(absolutePath);
   }
-};
+}
+
+module.exports = YeomanRepository;
 </code></pre>
         </article>
       </section>
