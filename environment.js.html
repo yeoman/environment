@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.10.0</span>
+        <span class="version">v2.10.1</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -170,6 +170,9 @@
                     >resolveModulePath</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#rootGenerator">rootGenerator</a>
+                </li>
                 <li><a href="Environment.html#run">run</a></li>
                 <li>
                   <a href="Environment.html#runGenerator">runGenerator</a>
@@ -281,7 +284,7 @@ const Store = require('./store');
 const composability = require('./composability');
 const resolver = require('./resolver');
 const TerminalAdapter = require('./adapter');
-const repository = require('./util/repository');
+const YeomanRepository = require('./util/repository');
 
 /**
  * Two-step argument splitting function that first splits arguments in quotes,
@@ -516,10 +519,7 @@ class Environment extends EventEmitter {
     this.sharedOptions.forwardErrorToEnvironment =
       this.sharedOptions.forwardErrorToEnvironment === undefined ? newErrorHandler : this.sharedOptions.forwardErrorToEnvironment;
 
-    this.repository = Object.assign({}, repository);
-    if (this.options.yeomanRepository) {
-      this.repository.repositoryPath = this.options.yeomanRepository;
-    }
+    this.repository = new YeomanRepository(this.options.yeomanRepository);
 
     if (!this.options.experimental) {
       process.argv.forEach(val => {
@@ -531,6 +531,9 @@ class Environment extends EventEmitter {
     }
 
     if (this.options.experimental) {
+      if (this.sharedOptions.skipLocalCache === undefined) {
+        this.sharedOptions.skipLocalCache = true;
+      }
       Object.assign(this, require('./namespace'));
       Object.assign(this, require('./namespace-composability'));
     }
@@ -949,6 +952,13 @@ class Environment extends EventEmitter {
   run(args, options, done) {
     args = args || this.arguments;
 
+    if (typeof options === 'object' &amp;&amp; this.options.experimental) {
+      const {skipInstall, skipCache, forceInstall, skipLocalCache} = options;
+      _.defaults(this.sharedOptions, {
+        skipInstall, skipCache, forceInstall, skipLocalCache
+      });
+    }
+
     if (typeof options === 'function') {
       done = options;
       options = this.options;
@@ -1057,12 +1067,22 @@ class Environment extends EventEmitter {
         genPromise.then(resolve, reject);
       }
     });
+
+    this._rootGenerator = this._rootGenerator || generator;
     if (done) {
       return promise.then(done, done);
     }
-    this._rootGenerator = this._rootGenerator || generator;
 
     return promise;
+  }
+
+  /**
+   * Get the first generator that was queued to run in this environment.
+   *
+   * @return {Generator} generator queued to run in this environment.
+   */
+  rootGenerator() {
+    return this._rootGenerator;
   }
 
   /**
@@ -1166,7 +1186,7 @@ Environment.util = require('./util/util');
  * @see {@link env/repository}
  * @private
  */
-Environment.repository = repository;
+Environment.repository = new YeomanRepository();
 
 module.exports = Environment;
 </code></pre>
