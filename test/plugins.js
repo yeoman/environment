@@ -18,6 +18,7 @@ describe('Generators plugin', () => {
   });
 
   after(function () {
+    this.timeout(20000);
     process.chdir(this.cwd);
     fs.removeSync(tmpdir);
   });

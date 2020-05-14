@@ -3,12 +3,14 @@ const assert = require('assert');
 const fs = require('fs-extra');
 const path = require('path');
 
-const repository = require('../lib/util/repository');
+const YeomanRepository = require('../lib/util/repository');
 const Env = require('..');
 const execa = require('execa');
 const sinon = require('sinon');
 
 describe('repository', () => {
+  const repository = Env.repository;
+
   before(function () {
     this.timeout(20000);
     if (fs.existsSync(repository.repositoryPath)) {
@@ -25,7 +27,7 @@ describe('repository', () => {
   });
 
   it('is exposed on the Environment object', () => {
-    assert.equal(Env.repository, repository);
+    assert(Env.repository instanceof YeomanRepository);
   });
 
   describe('#runPackageManager', () => {
