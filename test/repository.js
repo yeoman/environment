@@ -8,6 +8,7 @@ const Env = require('..');
 const execa = require('execa');
 const sinon = require('sinon');
 
+/* eslint-disable max-nested-callbacks */
 describe('repository', () => {
   const repository = Env.repository;
 
@@ -157,3 +158,5 @@ describe('repository', () => {
     });
   });
 });
+/* eslint-enable max-nested-callbacks */
+
