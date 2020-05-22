@@ -25,6 +25,7 @@
   "repository": "yeoman/environment",
   "scripts": {
     "pretest": "xo",
+    "fix": "xo --fix",
     "test": "nyc mocha",
     "test-base": "nyc mocha test/environment*.js test/store.js test/util.js test/adapter.js",
     "test-environment": "nyc mocha test/environment.js",
