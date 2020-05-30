@@ -244,6 +244,7 @@ describe('Environment', () => {
       this.env.registerStub(this.Stub, 'stub:run');
       this.env.registerStub(this.PromiseFailingStub, 'promisefailingstub:run');
       this.env.registerStub(this.EventFailingStub, 'eventfailingstub:run');
+      this.env.register(path.join(__dirname, './fixtures', 'generator-no-constructor', 'generators', 'app'));
     });
 
     afterEach(function () {
@@ -312,6 +313,14 @@ describe('Environment', () => {
         done();
       });
       this.env.run('some:unknown:generator');
+    });
+
+    it('launch error if generator doesn\'t have a constructor', function (done) {
+      this.env.on('error', err => {
+        assert.ok(err.message.includes('provides a constructor'));
+        done();
+      });
+      this.env.run('no-constructor:app');
     });
 
     it('promise error calls callback properly', function (done) {
