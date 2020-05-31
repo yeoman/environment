@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.10.2</span>
+        <span class="version">v2.10.3</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -846,6 +846,9 @@ class Environment extends EventEmitter {
       Gen.namespace = Generator.namespace;
       return Gen;
     }
+    if (typeof Generator !== 'function') {
+      throw new TypeError('The generator doesn\'t provides a constructor.');
+    }
     return Generator;
   }
 
@@ -867,9 +870,18 @@ class Environment extends EventEmitter {
     if (namespace &amp;&amp; this.getByNamespace) {
       options.namespaceId = namespace;
       Generator = this.getByNamespace(namespace);
+      if (!Generator) {
+        this.lookupLocalNamespaces(namespace);
+        Generator = this.getByNamespace(namespace);
+      }
     }
 
-    Generator = Generator || this.get(namespaceOrPath);
+    try {
+      Generator = Generator || this.get(namespaceOrPath);
+    } catch (error) {
+      return this.error(error);
+    }
+
     if (namespace &amp;&amp; Generator &amp;&amp; Generator.namespace &amp;&amp; Generator.namespace !== Environment.UNKNOWN_NAMESPACE) {
       // Update namespace object in case of aliased namespace.
       namespace.namespace = Generator.namespace;
@@ -1006,12 +1018,7 @@ class Environment extends EventEmitter {
     if (this.options.experimental &amp;&amp; !this.get(name)) {
       debug(`Generator ${name} was not found, trying to install it`);
       return this.prepareEnvironment(name).then(() => {
-        const generator = this.create(name, {
-          args,
-          options,
-          verifyListener: true
-        });
-        return this.runGenerator(generator, done);
+        return instantiateAndRun();
       }).catch(() => instantiateAndRun());
     }
 
