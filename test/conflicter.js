@@ -151,7 +151,7 @@ describe('Conflicter', () => {
       });
       conflicter.collision(
         {
-          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
           contents: `initial
                  content
       `
@@ -183,7 +183,7 @@ describe('Conflicter', () => {
       });
       conflicter.collision(
         {
-          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
           contents: `initial
                  content
       `
@@ -217,7 +217,7 @@ describe('Conflicter', () => {
       });
       conflicter.collision(
         {
-          path: path.join(__dirname, 'fixtures/foo.js'),
+          path: path.join(__dirname, 'fixtures/conflicter/foo.js'),
           contents: null
         },
         status => {
@@ -234,7 +234,7 @@ describe('Conflicter', () => {
       });
       conflicter.collision(
         {
-          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
           contents: `initial
                  content
       `
@@ -253,7 +253,7 @@ describe('Conflicter', () => {
 
       conflicter.collision(
         {
-          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
           contents: `initial
            content
 `
@@ -273,7 +273,7 @@ describe('Conflicter', () => {
 
       conflicter.collision(
         {
-          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
           contents: `initial
            content
 `
@@ -290,7 +290,7 @@ describe('Conflicter', () => {
 
       conflicter.collision(
         {
-          path: path.join(__dirname, 'fixtures/file-conflict.txt'),
+          path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
           contents: `initial
            content
 `
@@ -305,8 +305,10 @@ describe('Conflicter', () => {
     it('does not give a conflict on same binary files', function(done) {
       this.conflicter.collision(
         {
-          path: path.join(__dirname, 'fixtures/yeoman-logo.png'),
-          contents: fs.readFileSync(path.join(__dirname, 'fixtures/yeoman-logo.png'))
+          path: path.join(__dirname, 'fixtures/conflicter/yeoman-logo.png'),
+          contents: fs.readFileSync(
+            path.join(__dirname, 'fixtures/conflicter/yeoman-logo.png')
+          )
         },
         status => {
           assert.equal(status, 'identical');
@@ -339,8 +341,10 @@ describe('Conflicter', () => {
 
       conflicter.collision(
         {
-          path: path.join(__dirname, 'fixtures/foo.js'),
-          contents: fs.readFileSync(path.join(__dirname, 'fixtures/foo-template.js'))
+          path: path.join(__dirname, 'fixtures/conflicter/foo.js'),
+          contents: fs.readFileSync(
+            path.join(__dirname, 'fixtures/conflicter/foo-template.js')
+          )
         },
         () => {
           sinon.assert.neverCalledWithMatch(
@@ -359,7 +363,7 @@ describe('Conflicter', () => {
 
       conflicter.collision(
         {
-          path: path.join(__dirname, 'fixtures/foo.js'),
+          path: path.join(__dirname, 'fixtures/conflicter/foo.js'),
           contents: null
         },
         () => {
@@ -379,8 +383,10 @@ describe('Conflicter', () => {
 
       conflicter.collision(
         {
-          path: path.join(__dirname, 'fixtures/yeoman-logo.png'),
-          contents: fs.readFileSync(path.join(__dirname, 'fixtures/testFile.tar.gz'))
+          path: path.join(__dirname, 'fixtures/conflicter/yeoman-logo.png'),
+          contents: fs.readFileSync(
+            path.join(__dirname, 'fixtures/conflicter/testFile.tar.gz')
+          )
         },
         () => {
           sinon.assert.calledWithMatch(
@@ -399,7 +405,7 @@ describe('Conflicter', () => {
 
       conflicter.collision(
         {
-          path: path.join(__dirname, 'fixtures/yeoman-logo.png'),
+          path: path.join(__dirname, 'fixtures/conflicter/yeoman-logo.png'),
           contents: null
         },
         () => {
