@@ -34,7 +34,6 @@
     "test-repository": "nyc mocha test/repository.js",
     "test-resolver": "nyc mocha test/resolver.js",
     "doc": "jsdoc -c ./jsdoc.json ./readme.md",
-    "benchmark": "matcha benchmark/**",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {
@@ -63,7 +62,6 @@
     "cross-spawn": "^7.0.1",
     "fs-extra": "^8.1.0",
     "jsdoc": "^3.6.3",
-    "matcha": "^0.7.0",
     "mocha": "^5.2.0",
     "nyc": "^15.0.0",
     "sinon": "^5.1.1",
