@@ -37,20 +37,27 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {
+    "async": "^3.2.0",
     "chalk": "^2.4.1",
+    "cli-table": "^0.3.1",
+    "dateformat": "^3.0.3",
     "debug": "^3.1.0",
-    "diff": "^3.5.0",
+    "diff": "^4.0.2",
+    "error": "^7.2.1",
     "escape-string-regexp": "^1.0.2",
     "execa": "^4.0.0",
     "globby": "^8.0.1",
     "grouped-queue": "^1.1.0",
     "inquirer": "^7.1.0",
     "is-scoped": "^1.0.0",
+    "istextorbinary": "^2.6.0",
     "lodash": "^4.17.10",
     "log-symbols": "^2.2.0",
     "mem-fs": "^1.1.0",
     "mem-fs-editor": "^7.0.1",
     "npm-api": "^1.0.0",
+    "pretty-bytes": "^5.3.0",
+    "read-chunk": "^3.2.0",
     "semver": "^7.1.3",
     "strip-ansi": "^4.0.0",
     "text-table": "^0.2.0",
@@ -68,7 +75,8 @@
     "sinon-test": "^2.2.1",
     "tui-jsdoc-template": "^1.2.2",
     "xo": "^0.27.2",
-    "yeoman-assert": "^3.1.1"
+    "yeoman-assert": "^3.1.1",
+    "yeoman-test": "^2.6.0"
   },
   "xo": {
     "space": true,
