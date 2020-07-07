@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const sinon = require('sinon');
-const { TestAdapter } = require('yeoman-test/lib/adapter');
+const {TestAdapter} = require('yeoman-test/lib/adapter');
 const Conflicter = require('../lib/util/conflicter');
 
 const createActions = actions => {
@@ -17,12 +17,12 @@ const createActions = actions => {
 };
 
 describe('Conflicter', () => {
-  beforeEach(function() {
+  beforeEach(function () {
     this.conflicter = new Conflicter(new TestAdapter());
   });
 
   describe('#checkForCollision()', () => {
-    it('correctly pushes to conflicts', function() {
+    it('correctly pushes to conflicts', function () {
       const spy = sinon.spy();
       const contents = fs.readFileSync(__filename, 'utf8');
       this.conflicter.checkForCollision(__filename, contents, spy);
@@ -33,11 +33,11 @@ describe('Conflicter', () => {
       assert.deepEqual(conflict.callback, spy);
     });
 
-    it('handles predefined status', function() {
+    it('handles predefined status', function () {
       const spy = sinon.spy();
       const contents = fs.readFileSync(__filename, 'utf8');
       this.conflicter.checkForCollision(
-        { path: __filename, contents, conflicter: 'someStatus' },
+        {path: __filename, contents, conflicter: 'someStatus'},
         spy
       );
       spy.calledWith(null, 'someStatus');
@@ -45,11 +45,11 @@ describe('Conflicter', () => {
   });
 
   describe('#resolve()', () => {
-    it('without conflict', function(done) {
+    it('without conflict', function (done) {
       this.conflicter.resolve(done);
     });
 
-    it('with a conflict', function(done) {
+    it('with a conflict', function (done) {
       const spy = sinon.spy();
 
       this.conflicter.force = true;
@@ -68,11 +68,11 @@ describe('Conflicter', () => {
   });
 
   describe('#collision()', () => {
-    beforeEach(function() {
-      this.conflictingFile = { path: __filename, contents: '' };
+    beforeEach(function () {
+      this.conflictingFile = {path: __filename, contents: ''};
     });
 
-    it('identical status', function(done) {
+    it('identical status', function (done) {
       const me = fs.readFileSync(__filename, 'utf8');
 
       this.conflicter.collision(
@@ -87,7 +87,7 @@ describe('Conflicter', () => {
       );
     });
 
-    it('create status', function(done) {
+    it('create status', function (done) {
       this.conflicter.collision(
         {
           path: 'file-who-does-not-exist.js',
@@ -100,8 +100,8 @@ describe('Conflicter', () => {
       );
     });
 
-    it('user choose "yes"', function(done) {
-      const conflicter = new Conflicter(new TestAdapter({ action: 'write' }));
+    it('user choose "yes"', function (done) {
+      const conflicter = new Conflicter(new TestAdapter({action: 'write'}));
 
       conflicter.collision(this.conflictingFile, status => {
         assert.equal(status, 'force');
@@ -109,8 +109,8 @@ describe('Conflicter', () => {
       });
     });
 
-    it('user choose "skip"', function(done) {
-      const conflicter = new Conflicter(new TestAdapter({ action: 'skip' }));
+    it('user choose "skip"', function (done) {
+      const conflicter = new Conflicter(new TestAdapter({action: 'skip'}));
 
       conflicter.collision(this.conflictingFile, status => {
         assert.equal(status, 'skip');
@@ -118,8 +118,8 @@ describe('Conflicter', () => {
       });
     });
 
-    it('user choose "force"', function(done) {
-      const conflicter = new Conflicter(new TestAdapter({ action: 'force' }));
+    it('user choose "force"', function (done) {
+      const conflicter = new Conflicter(new TestAdapter({action: 'force'}));
 
       conflicter.collision(this.conflictingFile, status => {
         assert.equal(status, 'force');
@@ -127,7 +127,7 @@ describe('Conflicter', () => {
       });
     });
 
-    it('force conflict status', function(done) {
+    it('force conflict status', function (done) {
       this.conflicter.force = true;
       this.conflicter.collision(this.conflictingFile, status => {
         assert.equal(status, 'force');
@@ -135,7 +135,7 @@ describe('Conflicter', () => {
       });
     });
 
-    it('abort on first conflict', function(done) {
+    it('abort on first conflict', function (done) {
       this.timeout(4000);
       const conflicter = new Conflicter(new TestAdapter(), false, true);
       assert.throws(
@@ -145,7 +145,7 @@ describe('Conflicter', () => {
       done();
     });
 
-    it('abort on first conflict with whitespace changes', function(done) {
+    it('abort on first conflict with whitespace changes', done => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         bail: true
       });
@@ -163,7 +163,7 @@ describe('Conflicter', () => {
       );
     });
 
-    it('abort on create new file', function(done) {
+    it('abort on create new file', done => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         bail: true
       });
@@ -177,7 +177,7 @@ describe('Conflicter', () => {
       done();
     });
 
-    it('skip file changes with dryRun', function(done) {
+    it('skip file changes with dryRun', done => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         dryRun: true
       });
@@ -195,7 +195,7 @@ describe('Conflicter', () => {
       );
     });
 
-    it('skip new file with dryRun', function(done) {
+    it('skip new file with dryRun', done => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         dryRun: true
       });
@@ -211,7 +211,7 @@ describe('Conflicter', () => {
       );
     });
 
-    it('skip deleted file with dryRun', function(done) {
+    it('skip deleted file with dryRun', done => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         dryRun: true
       });
@@ -227,7 +227,7 @@ describe('Conflicter', () => {
       );
     });
 
-    it('skip whitespace changes with dryRun', function(done) {
+    it('skip whitespace changes with dryRun', done => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         dryRun: true,
         ignoreWhitespace: true
@@ -246,7 +246,7 @@ describe('Conflicter', () => {
       );
     });
 
-    it('does not give a conflict with ignoreWhitespace', function(done) {
+    it('does not give a conflict with ignoreWhitespace', done => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         ignoreWhitespace: true
       });
@@ -265,7 +265,7 @@ describe('Conflicter', () => {
       );
     });
 
-    it('skip rewrite with ignoreWhitespace and skipRegenerate', function(done) {
+    it('skip rewrite with ignoreWhitespace and skipRegenerate', done => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         ignoreWhitespace: true,
         skipRegenerate: true
@@ -285,8 +285,8 @@ describe('Conflicter', () => {
       );
     });
 
-    it('does give a conflict without ignoreWhitespace', function(done) {
-      const conflicter = new Conflicter(new TestAdapter({ action: 'skip' }));
+    it('does give a conflict without ignoreWhitespace', done => {
+      const conflicter = new Conflicter(new TestAdapter({action: 'skip'}));
 
       conflicter.collision(
         {
@@ -302,7 +302,7 @@ describe('Conflicter', () => {
       );
     });
 
-    it('does not give a conflict on same binary files', function(done) {
+    it('does not give a conflict on same binary files', function (done) {
       this.conflicter.collision(
         {
           path: path.join(__dirname, 'fixtures/conflicter/yeoman-logo.png'),
@@ -318,7 +318,7 @@ describe('Conflicter', () => {
     });
 
     it('does not provide a diff option for directory', done => {
-      const conflicter = new Conflicter(new TestAdapter({ action: 'write' }));
+      const conflicter = new Conflicter(new TestAdapter({action: 'write'}));
       const spy = sinon.spy(conflicter.adapter, 'prompt');
       conflicter.collision(
         {
@@ -327,7 +327,7 @@ describe('Conflicter', () => {
         },
         () => {
           assert.equal(
-            _.filter(spy.firstCall.args[0][0].choices, { value: 'diff' }).length,
+            _.filter(spy.firstCall.args[0][0].choices, {value: 'diff'}).length,
             0
           );
           done();
