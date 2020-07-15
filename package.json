@@ -93,7 +93,10 @@
       "prefer-spread": "off",
       "padding-line-between-statements": "off",
       "unicorn/no-hex-escape": "off",
-      "unicorn/prefer-reflect-apply": "off"
+      "unicorn/prefer-reflect-apply": "off",
+      "prefer-rest-params": "off",
+      "node/prefer-promises/fs": "off",
+      "promise/prefer-await-to-then": "off"
     }
   }
 }

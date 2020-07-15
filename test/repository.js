@@ -10,7 +10,7 @@ const sinon = require('sinon');
 
 /* eslint-disable max-nested-callbacks */
 describe('repository', () => {
-  const repository = Env.repository;
+  const {repository} = Env;
 
   before(function () {
     this.timeout(20000);
