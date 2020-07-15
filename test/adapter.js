@@ -27,20 +27,16 @@ describe('TerminalAdapter', () => {
 
     it('pass its arguments to inquirer', function () {
       const questions = [];
-      const func = () => {};
-      const ret = this.adapter.prompt(questions, func);
+      const ret = this.adapter.prompt(questions);
       sinon.assert.calledWith(this.stub, questions);
-      sinon.assert.calledWith(this.fakePromise.then, func);
       assert.equal(ret, this.fakePromise);
     });
 
     it('pass its arguments with answers to inquirer', function () {
       const questions = [];
       const answers = {};
-      const func = () => {};
-      const ret = this.adapter.prompt(questions, answers, func);
+      const ret = this.adapter.prompt(questions, answers);
       sinon.assert.calledWith(this.stub, questions, answers);
-      sinon.assert.calledWith(this.fakePromise.then, func);
       assert.equal(ret, this.fakePromise);
     });
   });
