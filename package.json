@@ -53,7 +53,7 @@
     "grouped-queue": "^1.1.0",
     "inquirer": "^7.1.0",
     "is-scoped": "^2.1.0",
-    "istextorbinary": "^2.6.0",
+    "istextorbinary": "^5.7.0",
     "lodash": "^4.17.10",
     "log-symbols": "^4.0.0",
     "mem-fs": "^1.1.0",
