@@ -477,7 +477,7 @@ describe('Environment Resolver', function () {
     });
 
     it('with sub-sub-generators filePatterns', function () {
-      this.env.lookup({npmPaths: ['node_modules'], filePatterns: ['*/*/index.js'], globbyDeep: 2});
+      this.env.lookup({npmPaths: ['node_modules'], filePatterns: ['*/*/index.js']});
       assert.ok(this.env.get('@scoped/scoped:app:scaffold'));
     });
 
@@ -489,12 +489,12 @@ describe('Environment Resolver', function () {
     });
 
     it('with sub-sub-generators and packagePaths', function () {
-      this.env.lookup({packagePaths: ['node_modules/@scoped/generator-scoped'], filePatterns: ['*/*/index.js'], globbyDeep: 2});
+      this.env.lookup({packagePaths: ['node_modules/@scoped/generator-scoped'], filePatterns: ['*/*/index.js']});
       assert.ok(this.env.get('@scoped/scoped:app:scaffold'));
     });
 
     it('with sub-sub-generators and packagePatterns', function () {
-      this.env.lookup({npmPaths: ['node_modules'], packagePatterns: ['generator-scoped'], filePatterns: ['*/*/index.js'], globbyDeep: 2});
+      this.env.lookup({npmPaths: ['node_modules'], packagePatterns: ['generator-scoped'], filePatterns: ['*/*/index.js']});
       assert.ok(this.env.get('@scoped/scoped:app:scaffold'));
     });
   });
@@ -735,6 +735,32 @@ describe('Environment Resolver', function () {
         } else {
           assert(this.env.getNpmPaths().indexOf(path.resolve(npmPrefix, 'lib/node_modules')) > 0);
         }
+      });
+    });
+  });
+
+  describe('#findPackagesIn()', () => {
+    beforeEach(function () {
+      this.env = new Environment();
+    });
+
+    describe('when passing package patterns without scope', () => {
+      it('finds it', function () {
+        const dummyGenerator = 'fixtures/lookup-project/node_modules';
+        const packageToFind = 'generator-dummy';
+        const actual = this.env.packageLookup.findPackagesIn([dummyGenerator], {packagePatterns: [packageToFind]});
+        assert.equal(actual.length, 1);
+        assert.ok(actual[0].endsWith(packageToFind));
+      });
+    });
+
+    describe('when passing package patterns with scope', () => {
+      it('finds it', function () {
+        const dummyGenerator = 'fixtures/lookup-project/node_modules';
+        const packageToFind = '@dummyscope/generator-scoped';
+        const actual = this.env.packageLookup.findPackagesIn([dummyGenerator], {packagePatterns: [packageToFind]});
+        assert.equal(actual.length, 1);
+        assert.ok(actual[0].endsWith(packageToFind));
       });
     });
   });
