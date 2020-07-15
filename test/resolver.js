@@ -114,7 +114,7 @@ describe('Environment Resolver', function () {
     }
 
     it('local generators prioritized over global', function () {
-      const resolved = this.env.get('dummy:app').resolved;
+      const {resolved} = this.env.get('dummy:app');
       assert.ok(resolved.includes('lookup-project'), `Couldn't find 'lookup-project' in ${resolved}`);
     });
 
@@ -149,7 +149,7 @@ describe('Environment Resolver', function () {
       });
 
       it('local generators are prioritized over ancestor', function () {
-        const resolved = this.env.get('dummy:app').resolved;
+        const {resolved} = this.env.get('dummy:app');
         assert.ok(resolved.includes('subdir'), `Couldn't find 'subdir' in ${resolved}`);
       });
     });
@@ -209,7 +209,7 @@ describe('Environment Resolver', function () {
       }
 
       it('local generators prioritized over global', function () {
-        const resolved = this.env.get('dummy:app').resolved;
+        const {resolved} = this.env.get('dummy:app');
         assert.ok(resolved.includes('lookup-project'), `Couldn't find 'lookup-project' in ${resolved}`);
       });
 
@@ -273,7 +273,7 @@ describe('Environment Resolver', function () {
       }
 
       it('local generators prioritized over global', function () {
-        const resolved = this.env.get('dummy:app').resolved;
+        const {resolved} = this.env.get('dummy:app');
         assert.ok(resolved.includes('orig'), `Couldn't find 'lookup-project' in ${resolved}`);
       });
 
