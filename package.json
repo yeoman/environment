@@ -65,7 +65,7 @@
     "strip-ansi": "^4.0.0",
     "text-table": "^0.2.0",
     "through2": "^4.0.2",
-    "untildify": "^3.0.3",
+    "untildify": "^4.0.0",
     "yeoman-generator": "^4.8.2"
   },
   "devDependencies": {
