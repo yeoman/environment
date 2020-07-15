@@ -739,19 +739,6 @@ describe('Environment Resolver', function () {
     });
   });
 
-  describe('#findGeneratorsIn()', () => {
-    beforeEach(function () {
-      this.env = new Environment();
-    });
-
-    describe('when root path is not a valid generator', () => {
-      it('pass through root directory', function () {
-        const dummyGenerator = 'fixtures/lookup-project/node_modules';
-        assert.equal(this.env.findGeneratorsIn([dummyGenerator]).length, 5);
-      });
-    });
-  });
-
   describe('#lookupGenerator()', () => {
     const scopedFolder = path.resolve('node_modules/@dummyscope');
     const scopedGenerator = path.join(scopedFolder, 'generator-scoped');
