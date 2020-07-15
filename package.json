@@ -23,6 +23,9 @@
   ],
   "license": "BSD-2-Clause",
   "repository": "yeoman/environment",
+  "engines": {
+    "node": ">=12.10.0"
+  },
   "scripts": {
     "pretest": "xo",
     "fix": "xo --fix",
