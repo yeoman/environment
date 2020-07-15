@@ -44,8 +44,8 @@ describe('Environment', () => {
     });
 
     it('take options parameter', () => {
-      const opts = {foo: 'bar'};
-      assert.equal(new Environment(null, opts).options, opts);
+      const options = {foo: 'bar'};
+      assert.equal(new Environment(null, options).options, options);
     });
 
     it('instantiates a TerminalAdapter if none provided', function () {
@@ -160,8 +160,8 @@ describe('Environment', () => {
     });
 
     it('pass options.options', function () {
-      const opts = {foo: 'bar'};
-      const generator = this.env.create('stub', {options: opts});
+      const options = {foo: 'bar'};
+      const generator = this.env.create('stub', {options});
       assert.equal(generator.options.foo, 'bar');
     });
 
@@ -171,8 +171,8 @@ describe('Environment', () => {
     });
 
     it('spread sharedOptions', function () {
-      const opts = {foo: 'bar'};
-      const generator = this.env.create('stub', {options: opts});
+      const options = {foo: 'bar'};
+      const generator = this.env.create('stub', {options});
       const generator2 = this.env.create('stub');
       assert.equal(generator.options.foo, 'bar');
       assert.equal(generator.options.sharedData, generator2.options.sharedData);
@@ -223,9 +223,9 @@ describe('Environment', () => {
       const self = this;
 
       this.Stub = class extends Generator {
-        constructor(args, opts) {
-          super(args, opts);
-          self.args = [args, opts];
+        constructor(args, options) {
+          super(args, options);
+          self.args = [args, options];
         }
 
         exec() {}
@@ -335,8 +335,8 @@ describe('Environment', () => {
     });
 
     it('returns the generator', function () {
-      const runRet = this.env.run('stub:run');
-      assert.ok(runRet instanceof Generator || runRet instanceof Promise);
+      const runReturnValue = this.env.run('stub:run');
+      assert.ok(runReturnValue instanceof Generator || runReturnValue instanceof Promise);
     });
 
     it('correctly rejects promise on generator not found error', function (done) {
@@ -686,7 +686,7 @@ describe('Environment', () => {
     });
 
     it('apply multiple regex', function () {
-      this.env.alias(/^([a-zA-Z0-9:*]+)$/, 'generator-$1');
+      this.env.alias(/^([a-zA-Z\d:*]+)$/, 'generator-$1');
       this.env.alias(/^([^:]+)$/, '$1:app');
       assert.equal(this.env.alias('foo'), 'generator-foo:app');
     });
