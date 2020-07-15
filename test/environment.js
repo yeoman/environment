@@ -6,7 +6,10 @@ const util = require('util');
 const sinon = require('sinon');
 const sinonTestFactory = require('sinon-test');
 const Generator = require('yeoman-generator');
+const generatorPackageJson = require('yeoman-generator/package.json');
 const assert = require('yeoman-assert');
+
+const semver = require('semver');
 const TerminalAdapter = require('../lib/adapter');
 const Environment = require('../lib/environment');
 
@@ -240,7 +243,8 @@ describe('Environment', () => {
         }
       };
 
-      this.runMethod = sinon.spy(Generator.prototype, 'run');
+      const runName = semver.satisfies(generatorPackageJson.version, '>=5.0.0-beta0') ? 'queueTasks' : 'run';
+      this.runMethod = sinon.spy(Generator.prototype, runName);
       this.env.registerStub(this.Stub, 'stub:run');
       this.env.registerStub(this.PromiseFailingStub, 'promisefailingstub:run');
       this.env.registerStub(this.EventFailingStub, 'eventfailingstub:run');
@@ -251,60 +255,55 @@ describe('Environment', () => {
       this.runMethod.restore();
     });
 
-    it('runs a registered generator', function (done) {
-      this.env.run(['stub:run'], () => {
+    it('runs a registered generator', function () {
+      return this.env.run(['stub:run']).then(() => {
         assert.ok(this.runMethod.calledOnce);
-        done();
       });
     });
 
-    it('pass args and options to the runned generator', function (done) {
+    it('pass args and options to the runned generator', function () {
       const args = ['stub:run', 'module'];
       const options = {'skip-install': true};
-      this.env.run(args, options, () => {
+      return this.env.run(args, options).then(() => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'module');
         assert.equal(this.args[1]['skip-install'], true);
-        done();
       });
     });
 
-    it('without options, it default to env.options', function (done) {
-      const args = ['stub:run', 'foo'];
+    it('without options, it default to env.options', function () {
+      const args = ['stub:run'];
+      this.env.arguments = undefined;
       this.env.options = {some: 'stuff', 'skip-install': true};
-      this.env.run(args, () => {
+      return this.env.run(args).then(() => {
         assert.ok(this.runMethod.calledOnce);
-        assert.equal(this.args[0], 'foo');
         assert.equal(this.args[1]['skip-install'], this.env.options['skip-install']);
         assert.equal(this.args[1].some, this.env.options.some);
-        done();
       });
     });
 
-    it('without args, it default to env.arguments', function (done) {
+    it('without args, it default to env.arguments', function () {
       this.env.arguments = ['stub:run', 'my-args'];
       this.env.options = {'skip-install': true};
-      this.env.run(() => {
+      return this.env.run().then(() => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'my-args');
-        assert.equal(this.args[1]['skip-install'], true);
-        done();
       });
     });
 
-    it('can take string as args', function (done) {
+    it('can take string as args', function () {
       const args = 'stub:run module';
-      this.env.run(args, () => {
+      return this.env.run(args).then(() => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'module');
-        done();
       });
     });
 
     it('can take no arguments', function () {
       this.env.arguments = ['stub:run'];
-      this.env.run();
-      assert.ok(this.runMethod.calledOnce);
+      return this.env.run().then(() => {
+        assert.ok(this.runMethod.calledOnce);
+      });
     });
 
     it('launch error if generator is not found', function (done) {
@@ -321,24 +320,6 @@ describe('Environment', () => {
         done();
       });
       this.env.run('no-constructor:app');
-    });
-
-    it('promise error calls callback properly', function (done) {
-      this.env.run('promisefailingstub:run', err => {
-        assert.ok(this.runMethod.calledOnce);
-        assert.ok(err instanceof Error);
-        assert.equal(err.message, 'some error');
-        done();
-      });
-    });
-
-    it('generator error event calls callback properly', function (done) {
-      this.env.run('eventfailingstub:run', err => {
-        assert.ok(this.runMethod.calledOnce);
-        assert.ok(err instanceof Error);
-        assert.equal(err.message, 'some error');
-        done();
-      });
     });
 
     it('generator error event emits error event when no callback passed', function (done) {
@@ -381,7 +362,7 @@ describe('Environment', () => {
     it('runs a module generator', function () {
       this.env
         .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
-      this.env.run('fixtures:generator-module');
+      return this.env.run('fixtures:generator-module');
     });
   });
 
@@ -396,10 +377,9 @@ describe('Environment', () => {
       this.runMethod.restore();
     });
 
-    it('runs a registered generator', function (done) {
-      this.env.run(['ts:app'], () => {
+    it('runs a registered generator', function () {
+      return this.env.run(['ts:app']).then(() => {
         assert.ok(this.runMethod.calledOnce);
-        done();
       });
     });
   });
