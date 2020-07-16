@@ -49,6 +49,7 @@ jobs:
         npm test
 
     - name: Run yeoman-generator test
+      if: always()
       run: |
         cd $GITHUB_WORKSPACE/yeoman-generator
         npm ci
@@ -57,6 +58,7 @@ jobs:
         npm test
 
     - name: Run yeoman-environment test
+      if: always()
       run: |
         cd $GITHUB_WORKSPACE/yeoman-environment
         npm ci
