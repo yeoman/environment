@@ -62,8 +62,10 @@ describe('Environment Resolver', function () {
     }
 
     process.chdir(projectRoot);
-    spawn.sync('npm', ['ci']);
-    spawn.sync('npm', ['install', '-g', 'generator-dummytest', 'generator-dummy', '--no-package-lock']);
+    if (!fs.existsSync(path.join(projectRoot, 'node_modules'))) {
+      spawn.sync('npm', ['ci']);
+      spawn.sync('npm', ['install', '-g', 'generator-dummytest', 'generator-dummy', '--no-package-lock']);
+    }
   });
 
   after(function () {
@@ -673,7 +675,7 @@ describe('Environment Resolver', function () {
     describe('when passing package patterns without scope', () => {
       it('finds it', function () {
         const packageToFind = 'generator-dummy';
-        const actual = this.env.packageLookup.findPackagesIn(['node_modules'], {packagePatterns: [packageToFind]});
+        const actual = this.env.packageLookup.findPackagesIn(['node_modules'], [packageToFind]);
         assert.equal(actual.length, 1);
         assert.ok(actual[0].endsWith(packageToFind));
       });
@@ -682,7 +684,7 @@ describe('Environment Resolver', function () {
     describe('when passing package patterns with scope', () => {
       it('finds it', function () {
         const packageToFind = '@dummyscope/generator-scoped';
-        const actual = this.env.packageLookup.findPackagesIn(['node_modules'], {packagePatterns: [packageToFind]});
+        const actual = this.env.packageLookup.findPackagesIn(['node_modules'], [packageToFind]);
         assert.equal(actual.length, 1);
         assert.ok(actual[0].endsWith(packageToFind));
       });
