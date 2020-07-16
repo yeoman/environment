@@ -306,20 +306,16 @@ describe('Environment', () => {
       });
     });
 
-    it('launch error if generator is not found', function (done) {
-      this.env.on('error', err => {
-        assert.ok(err.message.includes('some:unknown:generator'));
-        done();
+    it('launch error if generator is not found', function () {
+      return this.env.run('some:unknown:generator').then(() => assert.fail(), error => {
+        assert.ok(error.message.includes('some:unknown:generator'));
       });
-      this.env.run('some:unknown:generator');
     });
 
-    it('launch error if generator doesn\'t have a constructor', function (done) {
-      this.env.on('error', err => {
-        assert.ok(err.message.includes('provides a constructor'));
-        done();
+    it('launch error if generator doesn\'t have a constructor', function () {
+      return this.env.run('no-constructor:app').then(() => assert.fail(), error => {
+        assert.ok(error.message.includes('provides a constructor'));
       });
-      this.env.run('no-constructor:app');
     });
 
     it('generator error event emits error event when no callback passed', function (done) {
@@ -351,12 +347,10 @@ describe('Environment', () => {
       });
     });
 
-    it('correctly append scope in generator hint', function (done) {
-      this.env.on('error', err => {
-        assert.ok(err.message.includes('@dummyscope/generator-package'));
-        done();
+    it('correctly append scope in generator hint', function () {
+      return this.env.run('@dummyscope/package').then(() => assert.fail(), error => {
+        assert.ok(error.message.includes('@dummyscope/generator-package'));
       });
-      this.env.run('@dummyscope/package');
     });
 
     it('runs a module generator', function () {
@@ -659,23 +653,8 @@ describe('Environment', () => {
   });
 
   describe('#error()', () => {
-    it('delegate error handling to the listener', function (done) {
-      const error = new Error('foo bar');
-      this.env.on('error', err => {
-        assert.equal(error, err);
-        done();
-      });
-      this.env.error(error);
-    });
-
-    it('throws error if no listener is set', function () {
-      assert.throws(this.env.error.bind(this.env, new Error()));
-    });
-
-    it('returns the error', function () {
-      const error = new Error('foo bar');
-      this.env.on('error', () => {});
-      assert.equal(this.env.error(error), error);
+    it('always throws error', function () {
+      assert.throws(() => this.env.error(new Error()));
     });
   });
 
