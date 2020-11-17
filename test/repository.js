@@ -81,7 +81,7 @@ describe('repository', () => {
 
   describe('Environment#installLocalGenerators', () => {
     before(function () {
-      this.timeout(200000);
+      this.timeout(500000);
       this.env = Env.createEnv();
       this.env.installLocalGenerators({'generator-dummytest': '0.1.3'});
     });
