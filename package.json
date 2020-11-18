@@ -82,7 +82,7 @@
     "xo": "^0.32.1",
     "yeoman-assert": "^3.1.1",
     "yeoman-generator": "^4.8.2",
-    "yeoman-test": "^3.0.0"
+    "yeoman-test": "^4.0.0"
   },
   "peerDependencies": {
     "yeoman-generator": "^4.8.2"
