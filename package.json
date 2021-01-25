@@ -67,7 +67,7 @@
     "sinon": "^5.1.1",
     "sinon-test": "^2.2.1",
     "tui-jsdoc-template": "^1.2.2",
-    "xo": "^0.27.2",
+    "xo": "^0.37.1",
     "yeoman-assert": "^3.1.1"
   },
   "xo": {
