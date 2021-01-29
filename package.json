@@ -49,7 +49,7 @@
     "diff": "^4.0.2",
     "error": "^7.2.1",
     "escape-string-regexp": "^4.0.0",
-    "execa": "^4.0.0",
+    "execa": "^5.0.0",
     "globby": "^11.0.1",
     "grouped-queue": "^2.0.0",
     "inquirer": "^7.1.0",
