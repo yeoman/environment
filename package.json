@@ -47,7 +47,6 @@
     "dateformat": "^4.5.0",
     "debug": "^4.1.1",
     "diff": "^4.0.2",
-    "error": "^7.2.1",
     "escape-string-regexp": "^4.0.0",
     "execa": "^5.0.0",
     "globby": "^11.0.1",
