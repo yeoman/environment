@@ -27,21 +27,17 @@ describe('TerminalAdapter', () => {
 
     it('pass its arguments to inquirer', function () {
       const questions = [];
-      const func = () => {};
-      const ret = this.adapter.prompt(questions, func);
+      const returnValue = this.adapter.prompt(questions);
       sinon.assert.calledWith(this.stub, questions);
-      sinon.assert.calledWith(this.fakePromise.then, func);
-      assert.equal(ret, this.fakePromise);
+      assert.equal(returnValue, this.fakePromise);
     });
 
     it('pass its arguments with answers to inquirer', function () {
       const questions = [];
       const answers = {};
-      const func = () => {};
-      const ret = this.adapter.prompt(questions, answers, func);
+      const returnValue = this.adapter.prompt(questions, answers);
       sinon.assert.calledWith(this.stub, questions, answers);
-      sinon.assert.calledWith(this.fakePromise.then, func);
-      assert.equal(ret, this.fakePromise);
+      assert.equal(returnValue, this.fakePromise);
     });
   });
 
@@ -49,8 +45,8 @@ describe('TerminalAdapter', () => {
     it('pass its arguments to inquirer', function (done) {
       const questions = [];
       const answers = {prompt1: 'foo'};
-      this.adapter.prompt(questions, answers).then(ret => {
-        assert.equal(ret.prompt1, answers.prompt1);
+      this.adapter.prompt(questions, answers).then(returnValue => {
+        assert.equal(returnValue.prompt1, answers.prompt1);
         done();
       });
     });
@@ -72,8 +68,8 @@ describe('TerminalAdapter', () => {
 
       logMessage = '';
       process.stderr.write = (() => {
-        return str => {
-          logMessage = str;
+        return string => {
+          logMessage = string;
         };
       })(process.stderr.write);
     });

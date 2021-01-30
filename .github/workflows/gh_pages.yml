@@ -11,7 +11,7 @@ jobs:
     name: Update api docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2.1.2
       - run: npm install -g jsdoc prettier
       - uses: actions/checkout@v2
         with:
@@ -24,6 +24,7 @@ jobs:
         run: |
           cd source
           npm ci
+          npm install tui-jsdoc-template --no-package-lock
           jsdoc -c jsdoc.json -d ../out
       - name: Run prettier
         run: |

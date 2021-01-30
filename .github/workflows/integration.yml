@@ -1,6 +1,12 @@
 name: Integration Build
 
-on: [push, pull_request]
+on:
+  push:
+    branches-ignore:
+      - 'dependabot/**'
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
   build:
@@ -10,7 +16,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node-version: [12.x]
+        node-version: [14.x]
 
     steps:
     - name: Checkout yeoman-test
@@ -30,30 +36,34 @@ jobs:
       with:
         path: yeoman-environment
 
-    - uses: actions/setup-node@v1
+    - uses: actions/setup-node@v2.1.2
       with:
         node-version: ${{ matrix.node-version }}
+
+    - run: npm install -g npm@^7.0.0
 
     - name: Run yeoman-test test
       run: |
         cd $GITHUB_WORKSPACE/yeoman-test
         npm ci
-        npm install yeoman/generator#master
-        npm install ${{ github.repository }}#$GITHUB_SHA
+        npm install yeoman/generator#main
+        npm install ${{ github.repository }}#$GITHUB_REF
         npm test
 
     - name: Run yeoman-generator test
+      if: always()
       run: |
         cd $GITHUB_WORKSPACE/yeoman-generator
         npm ci
-        npm install yeoman/yeoman-test#master
-        npm install ${{ github.repository }}#$GITHUB_SHA
+        npm install yeoman/yeoman-test#main
+        npm install ${{ github.repository }}#$GITHUB_REF
         npm test
 
     - name: Run yeoman-environment test
+      if: always()
       run: |
         cd $GITHUB_WORKSPACE/yeoman-environment
         npm ci
-        npm install yeoman/yeoman-test#master
-        npm install yeoman/generator#master
+        npm install yeoman/yeoman-test#main
+        npm install yeoman/generator#main
         npm test

@@ -6,7 +6,10 @@ const util = require('util');
 const sinon = require('sinon');
 const sinonTestFactory = require('sinon-test');
 const Generator = require('yeoman-generator');
+const generatorPackageJson = require('yeoman-generator/package.json');
 const assert = require('yeoman-assert');
+
+const semver = require('semver');
 const TerminalAdapter = require('../lib/adapter');
 const Environment = require('../lib/environment');
 
@@ -41,8 +44,8 @@ describe('Environment', () => {
     });
 
     it('take options parameter', () => {
-      const opts = {foo: 'bar'};
-      assert.equal(new Environment(null, opts).options, opts);
+      const options = {foo: 'bar'};
+      assert.equal(new Environment(null, options).options, options);
     });
 
     it('instantiates a TerminalAdapter if none provided', function () {
@@ -157,8 +160,8 @@ describe('Environment', () => {
     });
 
     it('pass options.options', function () {
-      const opts = {foo: 'bar'};
-      const generator = this.env.create('stub', {options: opts});
+      const options = {foo: 'bar'};
+      const generator = this.env.create('stub', {options});
       assert.equal(generator.options.foo, 'bar');
     });
 
@@ -168,8 +171,8 @@ describe('Environment', () => {
     });
 
     it('spread sharedOptions', function () {
-      const opts = {foo: 'bar'};
-      const generator = this.env.create('stub', {options: opts});
+      const options = {foo: 'bar'};
+      const generator = this.env.create('stub', {options});
       const generator2 = this.env.create('stub');
       assert.equal(generator.options.foo, 'bar');
       assert.equal(generator.options.sharedData, generator2.options.sharedData);
@@ -220,9 +223,9 @@ describe('Environment', () => {
       const self = this;
 
       this.Stub = class extends Generator {
-        constructor(args, opts) {
-          super(args, opts);
-          self.args = [args, opts];
+        constructor(args, options) {
+          super(args, options);
+          self.args = [args, options];
         }
 
         exec() {}
@@ -240,7 +243,8 @@ describe('Environment', () => {
         }
       };
 
-      this.runMethod = sinon.spy(Generator.prototype, 'run');
+      const runName = semver.satisfies(generatorPackageJson.version, '>=5.0.0-beta0') ? 'queueTasks' : 'run';
+      this.runMethod = sinon.spy(Generator.prototype, runName);
       this.env.registerStub(this.Stub, 'stub:run');
       this.env.registerStub(this.PromiseFailingStub, 'promisefailingstub:run');
       this.env.registerStub(this.EventFailingStub, 'eventfailingstub:run');
@@ -251,93 +255,66 @@ describe('Environment', () => {
       this.runMethod.restore();
     });
 
-    it('runs a registered generator', function (done) {
-      this.env.run(['stub:run'], () => {
+    it('runs a registered generator', function () {
+      return this.env.run(['stub:run']).then(() => {
         assert.ok(this.runMethod.calledOnce);
-        done();
       });
     });
 
-    it('pass args and options to the runned generator', function (done) {
+    it('pass args and options to the runned generator', function () {
       const args = ['stub:run', 'module'];
       const options = {'skip-install': true};
-      this.env.run(args, options, () => {
+      return this.env.run(args, options).then(() => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'module');
         assert.equal(this.args[1]['skip-install'], true);
-        done();
       });
     });
 
-    it('without options, it default to env.options', function (done) {
-      const args = ['stub:run', 'foo'];
+    it('without options, it default to env.options', function () {
+      const args = ['stub:run'];
+      this.env.arguments = undefined;
       this.env.options = {some: 'stuff', 'skip-install': true};
-      this.env.run(args, () => {
+      return this.env.run(args).then(() => {
         assert.ok(this.runMethod.calledOnce);
-        assert.equal(this.args[0], 'foo');
         assert.equal(this.args[1]['skip-install'], this.env.options['skip-install']);
         assert.equal(this.args[1].some, this.env.options.some);
-        done();
       });
     });
 
-    it('without args, it default to env.arguments', function (done) {
+    it('without args, it default to env.arguments', function () {
       this.env.arguments = ['stub:run', 'my-args'];
       this.env.options = {'skip-install': true};
-      this.env.run(() => {
+      return this.env.run().then(() => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'my-args');
-        assert.equal(this.args[1]['skip-install'], true);
-        done();
       });
     });
 
-    it('can take string as args', function (done) {
+    it('can take string as args', function () {
       const args = 'stub:run module';
-      this.env.run(args, () => {
+      return this.env.run(args).then(() => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'module');
-        done();
       });
     });
 
     it('can take no arguments', function () {
       this.env.arguments = ['stub:run'];
-      this.env.run();
-      assert.ok(this.runMethod.calledOnce);
-    });
-
-    it('launch error if generator is not found', function (done) {
-      this.env.on('error', err => {
-        assert.ok(err.message.includes('some:unknown:generator'));
-        done();
-      });
-      this.env.run('some:unknown:generator');
-    });
-
-    it('launch error if generator doesn\'t have a constructor', function (done) {
-      this.env.on('error', err => {
-        assert.ok(err.message.includes('provides a constructor'));
-        done();
-      });
-      this.env.run('no-constructor:app');
-    });
-
-    it('promise error calls callback properly', function (done) {
-      this.env.run('promisefailingstub:run', err => {
+      return this.env.run().then(() => {
         assert.ok(this.runMethod.calledOnce);
-        assert.ok(err instanceof Error);
-        assert.equal(err.message, 'some error');
-        done();
       });
     });
 
-    it('generator error event calls callback properly', function (done) {
-      this.env.run('eventfailingstub:run', err => {
-        assert.ok(this.runMethod.calledOnce);
-        assert.ok(err instanceof Error);
-        assert.equal(err.message, 'some error');
-        done();
+    it('launch error if generator is not found', function () {
+      return this.env.run('some:unknown:generator').then(() => assert.fail(), error => {
+        assert.ok(error.message.includes('some:unknown:generator'));
+      });
+    });
+
+    it('launch error if generator doesn\'t have a constructor', function () {
+      return this.env.run('no-constructor:app').then(() => assert.fail(), error => {
+        assert.ok(error.message.includes('provides a constructor'));
       });
     });
 
@@ -354,8 +331,8 @@ describe('Environment', () => {
     });
 
     it('returns the generator', function () {
-      const runRet = this.env.run('stub:run');
-      assert.ok(runRet instanceof Generator || runRet instanceof Promise);
+      const runReturnValue = this.env.run('stub:run');
+      assert.ok(runReturnValue instanceof Generator || runReturnValue instanceof Promise);
     });
 
     it('correctly rejects promise on generator not found error', function (done) {
@@ -370,18 +347,16 @@ describe('Environment', () => {
       });
     });
 
-    it('correctly append scope in generator hint', function (done) {
-      this.env.on('error', err => {
-        assert.ok(err.message.includes('@dummyscope/generator-package'));
-        done();
+    it('correctly append scope in generator hint', function () {
+      return this.env.run('@dummyscope/package').then(() => assert.fail(), error => {
+        assert.ok(error.message.includes('@dummyscope/generator-package'));
       });
-      this.env.run('@dummyscope/package');
     });
 
     it('runs a module generator', function () {
       this.env
         .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
-      this.env.run('fixtures:generator-module');
+      return this.env.run('fixtures:generator-module');
     });
   });
 
@@ -396,10 +371,9 @@ describe('Environment', () => {
       this.runMethod.restore();
     });
 
-    it('runs a registered generator', function (done) {
-      this.env.run(['ts:app'], () => {
+    it('runs a registered generator', function () {
+      return this.env.run(['ts:app']).then(() => {
         assert.ok(this.runMethod.calledOnce);
-        done();
       });
     });
   });
@@ -679,23 +653,8 @@ describe('Environment', () => {
   });
 
   describe('#error()', () => {
-    it('delegate error handling to the listener', function (done) {
-      const error = new Error('foo bar');
-      this.env.on('error', err => {
-        assert.equal(error, err);
-        done();
-      });
-      this.env.error(error);
-    });
-
-    it('throws error if no listener is set', function () {
-      assert.throws(this.env.error.bind(this.env, new Error()));
-    });
-
-    it('returns the error', function () {
-      const error = new Error('foo bar');
-      this.env.on('error', () => {});
-      assert.equal(this.env.error(error), error);
+    it('always throws error', function () {
+      assert.throws(() => this.env.error(new Error()));
     });
   });
 
@@ -706,7 +665,7 @@ describe('Environment', () => {
     });
 
     it('apply multiple regex', function () {
-      this.env.alias(/^([a-zA-Z0-9:*]+)$/, 'generator-$1');
+      this.env.alias(/^([a-zA-Z\d:*]+)$/, 'generator-$1');
       this.env.alias(/^([^:]+)$/, '$1:app');
       assert.equal(this.env.alias('foo'), 'generator-foo:app');
     });
