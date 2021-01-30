@@ -695,11 +695,13 @@ describe('Environment Resolver', function () {
     before(() => {
       process.chdir(customProjectRoot);
 
+      linkGenerator('generator-extend');
       linkGenerator('generator-scoped', '@dummyscope');
       linkGenerator('generator-module');
     });
 
     after(() => {
+      unlinkGenerator('generator-extend');
       unlinkGenerator('generator-scoped', '@dummyscope');
       unlinkGenerator('generator-module');
 
@@ -715,17 +717,13 @@ describe('Environment Resolver', function () {
         assert.ok(packagePath.endsWith('node_modules/@dummyscope/generator-scoped'));
       });
       it('Lookup', () => {
-        const modulePath = Environment.lookupGenerator('dummy:app');
-        const modulePath2 = Environment.lookupGenerator('dummy:yo');
-        assert.ok(modulePath.endsWith('node_modules/generator-dummy/app/index.js'));
-        assert.ok(modulePath2.endsWith('node_modules/generator-dummy/yo/index.js'));
+        const modulePath = Environment.lookupGenerator('extend:support');
+        assert.ok(modulePath.endsWith('node_modules/generator-extend/support/index.js'));
 
-        const packagePath = Environment.lookupGenerator('dummy:app', {packagePath: true});
-        const packagePath2 = Environment.lookupGenerator('dummy:yo', {packagePath: true});
-        const packagePath3 = Environment.lookupGenerator('dummy', {packagePath: true});
-        assert.ok(packagePath.endsWith('node_modules/generator-dummy'));
-        assert.ok(packagePath2.endsWith('node_modules/generator-dummy'));
-        assert.ok(packagePath3.endsWith('node_modules/generator-dummy'));
+        const packagePath = Environment.lookupGenerator('extend:support', {packagePath: true});
+        const packagePath3 = Environment.lookupGenerator('extend', {packagePath: true});
+        assert.ok(packagePath.endsWith('node_modules/generator-extend'));
+        assert.ok(packagePath3.endsWith('node_modules/generator-extend'));
       });
       it('Module Lookup', () => {
         const modulePath = Environment.lookupGenerator('module:app');
