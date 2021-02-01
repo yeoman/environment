@@ -26,7 +26,7 @@ jobs:
           npm ci
           npm install tui-jsdoc-template prettier@latest --no-package-lock
           npm run doc
-          sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' ../yeoman-generator-doc/global.html
+          sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' ../yeoman-environment-doc/global.html
           npm run doc:prettier
       - name: Create commit
         working-directory: yeoman-environment-doc
