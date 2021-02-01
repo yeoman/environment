@@ -36,7 +36,8 @@
     "test-namespace": "nyc mocha test/namespace.js test/flags.js",
     "test-repository": "nyc mocha test/repository.js",
     "test-resolver": "nyc mocha test/resolver.js",
-    "doc": "jsdoc -c ./jsdoc.json ./readme.md",
+    "doc": "jsdoc -c jsdoc.json -d ../yeoman-environment-doc",
+    "doc:prettier": "prettier ../yeoman-environment-doc --write --ignore-path .prettierignore-doc",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {

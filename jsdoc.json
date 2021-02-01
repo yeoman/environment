@@ -1,4 +1,14 @@
 {
+  "source": {
+    "include": ["readme.md", "lib"],
+    "includePattern": ".+\\.js(doc)?$"
+  },
+  "opts": {
+    "recurse": true,
+    "destination": "../yeoman-environment-doc",
+    "template": "node_modules/tui-jsdoc-template",
+    "package": "package.json"
+  },
   "templates": {
     "logo": {
       "url": "https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png",
@@ -10,16 +20,6 @@
     "default": {
       "includeDate": false
     }
-  },
-  "source": {
-    "include": ["readme.md", "lib"],
-    "includePattern": ".+\\.js(doc)?$"
-  },
-  "opts": {
-    "recurse": true,
-    "destination": "../out/",
-    "template": "node_modules/tui-jsdoc-template",
-    "package": "package.json"
   },
   "plugins": ["plugins/markdown"]
 }
