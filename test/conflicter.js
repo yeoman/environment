@@ -22,399 +22,358 @@ describe('Conflicter', () => {
   });
 
   describe('#checkForCollision()', () => {
-    it('correctly pushes to conflicts', function () {
-      const spy = sinon.spy();
-      const contents = fs.readFileSync(__filename, 'utf8');
-      this.conflicter.checkForCollision(__filename, contents, spy);
-      const conflict = this.conflicter.conflicts.pop();
-
-      assert.deepEqual(conflict.file.path, __filename);
-      assert.deepEqual(conflict.file.contents, fs.readFileSync(__filename, 'utf8'));
-      assert.deepEqual(conflict.callback, spy);
-    });
-
-    it('handles predefined status', function () {
-      const spy = sinon.spy();
-      const contents = fs.readFileSync(__filename, 'utf8');
-      this.conflicter.checkForCollision(
-        {path: __filename, contents, conflicter: 'someStatus'},
-        spy
-      );
-      spy.calledWith(null, 'someStatus');
-    });
-  });
-
-  describe('#resolve()', () => {
-    it('without conflict', function (done) {
-      this.conflicter.resolve(done);
-    });
-
-    it('with a conflict', function (done) {
-      const spy = sinon.spy();
-
-      this.conflicter.force = true;
-      this.conflicter.checkForCollision(__filename, fs.readFileSync(__filename), spy);
-      this.conflicter.checkForCollision('foo.js', 'var foo = "foo";\n', spy);
-      this.conflicter.resolve(() => {
-        assert.equal(spy.callCount, 2);
-        assert.equal(
-          this.conflicter.conflicts.length,
-          0,
-          'Expected conflicter to be empty after running'
-        );
-        done();
-      });
-    });
-  });
-
-  describe('#collision()', () => {
     beforeEach(function () {
       this.conflictingFile = {path: __filename, contents: ''};
     });
 
-    it('identical status', function (done) {
+    it('handles predefined status', function () {
+      const contents = fs.readFileSync(__filename, 'utf8');
+      return this.conflicter.checkForCollision(
+        {path: __filename, contents, conflicter: 'someStatus'}
+      ).then(file => {
+        assert.equal(file.conflicter, 'someStatus');
+      });
+    });
+
+    it('identical status', function () {
       const me = fs.readFileSync(__filename, 'utf8');
 
-      this.conflicter.collision(
+      return this.conflicter.checkForCollision(
         {
           path: __filename,
           contents: me
-        },
-        status => {
-          assert.equal(status, 'identical');
-          done();
+        }
+      ).then(
+        file => {
+          assert.equal(file.conflicter, 'identical');
         }
       );
     });
 
-    it('create status', function (done) {
-      this.conflicter.collision(
+    it('create status', function () {
+      return this.conflicter.checkForCollision(
         {
           path: 'file-who-does-not-exist.js',
           contents: ''
-        },
-        status => {
-          assert.equal(status, 'create');
-          done();
+        }
+      ).then(
+        file => {
+          assert.equal(file.conflicter, 'create');
         }
       );
     });
 
-    it('user choose "yes"', function (done) {
+    it('user choose "yes"', function () {
       const conflicter = new Conflicter(new TestAdapter({action: 'write'}));
 
-      conflicter.collision(this.conflictingFile, status => {
-        assert.equal(status, 'force');
-        done();
+      return conflicter.checkForCollision(this.conflictingFile).then(file => {
+        assert.equal(file.conflicter, 'force');
       });
     });
 
-    it('user choose "skip"', function (done) {
+    it('user choose "skip"', function () {
       const conflicter = new Conflicter(new TestAdapter({action: 'skip'}));
 
-      conflicter.collision(this.conflictingFile, status => {
-        assert.equal(status, 'skip');
-        done();
+      return conflicter.checkForCollision(this.conflictingFile).then(file => {
+        assert.equal(file.conflicter, 'skip');
       });
     });
 
-    it('user choose "force"', function (done) {
+    it('user choose "force"', function () {
       const conflicter = new Conflicter(new TestAdapter({action: 'force'}));
 
-      conflicter.collision(this.conflictingFile, status => {
-        assert.equal(status, 'force');
-        done();
+      return conflicter.checkForCollision(this.conflictingFile).then(file => {
+        assert.equal(file.conflicter, 'force');
       });
     });
 
-    it('force conflict status', function (done) {
+    it('force conflict status', function () {
       this.conflicter.force = true;
-      this.conflicter.collision(this.conflictingFile, status => {
-        assert.equal(status, 'force');
-        done();
+      return this.conflicter.checkForCollision(this.conflictingFile).then(file => {
+        assert.equal(file.conflicter, 'force');
       });
     });
 
-    it('abort on first conflict', function (done) {
+    it('abort on first conflict', function () {
       this.timeout(4000);
       const conflicter = new Conflicter(new TestAdapter(), false, true);
-      assert.throws(
-        conflicter.collision.bind(conflicter, this.conflictingFile),
-        /^ConflicterConflictError: Process aborted by conflict$/
-      );
-      done();
+      return conflicter.checkForCollision(this.conflictingFile).then(
+        () => assert.fail('was not supposed to succeed')
+      ).catch(error => {
+        assert.equal(error.message, 'Process aborted by conflict');
+      });
     });
 
-    it('abort on first conflict with whitespace changes', done => {
+    it('abort on first conflict with whitespace changes', () => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         bail: true
       });
-      conflicter.collision(
+      return conflicter.checkForCollision(
         {
           path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
           contents: `initial
                  content
       `
-        },
-        status => {
-          assert.equal(status, 'skip');
-          done();
+        }
+      ).then(
+        file => {
+          assert.equal(file.conflicter, 'skip');
         }
       );
     });
 
-    it('abort on create new file', done => {
+    it('abort on create new file', () => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         bail: true
       });
-      assert.throws(
-        conflicter.collision.bind(conflicter, {
-          path: 'file-who-does-not-exist2.js',
-          contents: ''
-        }),
-        /^ConflicterConflictError: Process aborted by conflict$/
-      );
-      done();
+      return conflicter.checkForCollision({
+        path: 'file-who-does-not-exist2.js',
+        contents: ''
+      }).then(
+        () => assert.fail('was not supposed to succeed')
+      ).catch(error => {
+        assert.equal(error.message, 'Process aborted by conflict');
+      });
     });
 
-    it('skip file changes with dryRun', done => {
+    it('skip file changes with dryRun', () => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         dryRun: true
       });
-      conflicter.collision(
+      return conflicter.checkForCollision(
         {
           path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
           contents: `initial
                  content
       `
-        },
-        status => {
-          assert.equal(status, 'skip');
-          done();
+        }
+      ).then(
+        file => {
+          assert.equal(file.conflicter, 'skip');
         }
       );
     });
 
-    it('skip new file with dryRun', done => {
+    it('skip new file with dryRun', () => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         dryRun: true
       });
-      conflicter.collision(
+      return conflicter.checkForCollision(
         {
           path: 'file-who-does-not-exist2.js',
           contents: ''
-        },
-        status => {
-          assert.equal(status, 'skip');
-          done();
+        }
+      ).then(
+        file => {
+          assert.equal(file.conflicter, 'skip');
         }
       );
     });
 
-    it('skip deleted file with dryRun', done => {
+    it('skip deleted file with dryRun', () => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         dryRun: true
       });
-      conflicter.collision(
+      return conflicter.checkForCollision(
         {
           path: path.join(__dirname, 'fixtures/conflicter/foo.js'),
           contents: null
-        },
-        status => {
-          assert.equal(status, 'skip');
-          done();
+        }
+      ).then(
+        file => {
+          assert.equal(file.conflicter, 'skip');
         }
       );
     });
 
-    it('skip whitespace changes with dryRun', done => {
+    it('skip whitespace changes with dryRun', () => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         dryRun: true,
         ignoreWhitespace: true
       });
-      conflicter.collision(
+      return conflicter.checkForCollision(
         {
           path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
           contents: `initial
                  content
       `
-        },
-        status => {
-          assert.equal(status, 'skip');
-          done();
+        }
+      ).then(
+        file => {
+          assert.equal(file.conflicter, 'skip');
         }
       );
     });
 
-    it('does not give a conflict with ignoreWhitespace', done => {
+    it('does not give a conflict with ignoreWhitespace', () => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         ignoreWhitespace: true
       });
 
-      conflicter.collision(
+      return conflicter.checkForCollision(
         {
           path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
           contents: `initial
            content
 `
-        },
-        status => {
-          assert.equal(status, 'identical');
-          done();
+        }
+      ).then(
+        file => {
+          assert.equal(file.conflicter, 'identical');
         }
       );
     });
 
-    it('skip rewrite with ignoreWhitespace and skipRegenerate', done => {
+    it('skip rewrite with ignoreWhitespace and skipRegenerate', () => {
       const conflicter = new Conflicter(new TestAdapter(), false, {
         ignoreWhitespace: true,
         skipRegenerate: true
       });
 
-      conflicter.collision(
+      return conflicter.checkForCollision(
         {
           path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
           contents: `initial
            content
 `
-        },
-        status => {
-          assert.equal(status, 'skip');
-          done();
+        }
+      ).then(
+        file => {
+          assert.equal(file.conflicter, 'skip');
         }
       );
     });
 
-    it('does give a conflict without ignoreWhitespace', done => {
+    it('does give a conflict without ignoreWhitespace', () => {
       const conflicter = new Conflicter(new TestAdapter({action: 'skip'}));
 
-      conflicter.collision(
+      return conflicter.checkForCollision(
         {
           path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
           contents: `initial
            content
 `
-        },
-        status => {
-          assert.equal(status, 'skip');
-          done();
+        }
+      ).then(
+        file => {
+          assert.equal(file.conflicter, 'skip');
         }
       );
     });
 
-    it('does not give a conflict on same binary files', function (done) {
-      this.conflicter.collision(
+    it('does not give a conflict on same binary files', function () {
+      return this.conflicter.checkForCollision(
         {
           path: path.join(__dirname, 'fixtures/conflicter/yeoman-logo.png'),
           contents: fs.readFileSync(
             path.join(__dirname, 'fixtures/conflicter/yeoman-logo.png')
           )
-        },
-        status => {
-          assert.equal(status, 'identical');
-          done();
+        }
+      ).then(
+        file => {
+          assert.equal(file.conflicter, 'identical');
         }
       );
     });
 
-    it('does not provide a diff option for directory', done => {
+    it('does not provide a diff option for directory', () => {
       const conflicter = new Conflicter(new TestAdapter({action: 'write'}));
       const spy = sinon.spy(conflicter.adapter, 'prompt');
-      conflicter.collision(
+      return conflicter.checkForCollision(
         {
           path: __dirname,
           contents: null
-        },
+        }
+      ).then(
         () => {
           assert.equal(
             _.filter(spy.firstCall.args[0][0].choices, {value: 'diff'}).length,
             0
           );
-          done();
         }
       );
     });
 
-    it('displays default diff for text files', done => {
+    it('displays default diff for text files', () => {
       const testAdapter = new TestAdapter(createActions(['diff', 'write']));
       const conflicter = new Conflicter(testAdapter);
 
-      conflicter.collision(
+      return conflicter.checkForCollision(
         {
           path: path.join(__dirname, 'fixtures/conflicter/foo.js'),
           contents: fs.readFileSync(
             path.join(__dirname, 'fixtures/conflicter/foo-template.js')
           )
-        },
+        }
+      ).then(
         () => {
           sinon.assert.neverCalledWithMatch(
             testAdapter.log.writeln,
             /Existing.*Replacement.*Diff/
           );
           sinon.assert.called(testAdapter.diff);
-          done();
         }
       );
     });
 
-    it('shows old content for deleted text files', done => {
+    it('shows old content for deleted text files', () => {
       const testAdapter = new TestAdapter(createActions(['diff', 'write']));
       const conflicter = new Conflicter(testAdapter);
 
-      conflicter.collision(
+      return conflicter.checkForCollision(
         {
           path: path.join(__dirname, 'fixtures/conflicter/foo.js'),
           contents: null
-        },
+        }
+      ).then(
         () => {
           sinon.assert.neverCalledWithMatch(
             testAdapter.log.writeln,
             /Existing.*Replacement.*Diff/
           );
           sinon.assert.called(testAdapter.diff);
-          done();
         }
       );
     });
 
-    it('displays custom diff for binary files', done => {
+    it('displays custom diff for binary files', () => {
       const testAdapter = new TestAdapter(createActions(['diff', 'write']));
       const conflicter = new Conflicter(testAdapter);
 
-      conflicter.collision(
+      return conflicter.checkForCollision(
         {
           path: path.join(__dirname, 'fixtures/conflicter/yeoman-logo.png'),
           contents: fs.readFileSync(
             path.join(__dirname, 'fixtures/conflicter/testFile.tar.gz')
           )
-        },
+        }
+      ).then(
         () => {
           sinon.assert.calledWithMatch(
             testAdapter.log.writeln,
             /Existing.*Replacement.*Diff/
           );
           sinon.assert.notCalled(testAdapter.diff);
-          done();
         }
       );
     });
 
-    it('displays custom diff for deleted binary files', done => {
+    it('displays custom diff for deleted binary files', () => {
       const testAdapter = new TestAdapter(createActions(['diff', 'write']));
       const conflicter = new Conflicter(testAdapter);
 
-      conflicter.collision(
+      return conflicter.checkForCollision(
         {
           path: path.join(__dirname, 'fixtures/conflicter/yeoman-logo.png'),
           contents: null
-        },
+        }
+      ).then(
         () => {
           sinon.assert.calledWithMatch(
             testAdapter.log.writeln,
             /Existing.*Replacement.*Diff/
           );
           sinon.assert.notCalled(testAdapter.diff);
-          done();
         }
       );
     });
