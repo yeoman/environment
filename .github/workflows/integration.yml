@@ -40,8 +40,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - run: npm install -g npm@^7.0.0
-
+    - run: npm install -g npm@latest
     - name: Run yeoman-test test
       run: |
         cd $GITHUB_WORKSPACE/yeoman-test
