@@ -62,6 +62,7 @@
     "mem-fs-editor": "^8.0.0",
     "minimatch": "^3.0.4",
     "npm-api": "^1.0.0",
+    "pipeline-pipe": "^0.1.5",
     "pretty-bytes": "^5.3.0",
     "read-chunk": "^3.2.0",
     "semver": "^7.1.3",
