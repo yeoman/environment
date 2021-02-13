@@ -108,7 +108,6 @@ describe('Environment Resolver', function () {
     });
 
     it('js generators takes precedence', function () {
-      // eslint-disable-next-line unicorn/import-index
       assert.equal(this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
     });
 
@@ -203,7 +202,6 @@ describe('Environment Resolver', function () {
       });
 
       it('js generators takes precedence', function () {
-        // eslint-disable-next-line unicorn/import-index
         assert.equal(this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
       });
 
@@ -271,7 +269,6 @@ describe('Environment Resolver', function () {
       });
 
       it('js generators takes precedence', function () {
-        // eslint-disable-next-line unicorn/import-index
         assert.equal(this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
       });
 

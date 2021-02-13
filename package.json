@@ -82,7 +82,7 @@
     "sinon": "^9.0.2",
     "sinon-test": "^3.0.0",
     "tui-jsdoc-template": "^1.2.2",
-    "xo": "^0.32.1",
+    "xo": "^0.37.1",
     "yeoman-assert": "^3.1.1",
     "yeoman-generator": "^4.8.2",
     "yeoman-test": "^4.0.0"
@@ -105,7 +105,8 @@
       "prefer-rest-params": "off",
       "node/prefer-promises/fs": "off",
       "promise/prefer-await-to-then": "off",
-      "unicorn/no-reduce": "off"
+      "unicorn/no-array-reduce": "off",
+      "unicorn/import-style": "off"
     }
   }
 }

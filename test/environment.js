@@ -321,10 +321,10 @@ describe('Environment', () => {
     it('generator error event emits error event when no callback passed', function (done) {
       const generator = this.env.create('eventfailingstub:run');
       assert.equal(generator.listenerCount('error'), 0);
-      generator.on('error', err => {
+      generator.on('error', error => {
         assert.ok(this.runMethod.calledOnce);
-        assert.ok(err instanceof Error);
-        assert.equal(err.message, 'some error');
+        assert.ok(error instanceof Error);
+        assert.equal(error.message, 'some error');
         done();
       });
       this.env.runGenerator(generator);
@@ -654,7 +654,7 @@ describe('Environment', () => {
 
   describe('#error()', () => {
     it('always throws error', function () {
-      assert.throws(() => this.env.error(new Error()));
+      assert.throws(() => this.env.error(new Error('Some error')));
     });
   });
 
