@@ -243,7 +243,7 @@ describe('Environment', () => {
         }
       };
 
-      const runName = semver.satisfies(generatorPackageJson.version, '>=5.0.0-beta0') ? 'queueTasks' : 'run';
+      const runName = semver.satisfies(generatorPackageJson.version, '>=5.0.0-beta.1') ? 'queueTasks' : 'run';
       this.runMethod = sinon.spy(Generator.prototype, runName);
       this.env.registerStub(this.Stub, 'stub:run');
       this.env.registerStub(this.PromiseFailingStub, 'promisefailingstub:run');
