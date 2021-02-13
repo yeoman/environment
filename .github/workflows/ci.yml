@@ -18,7 +18,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: [12.x, 14.x]
-        generator-version: [2.0.5, latest]
+        generator-version: ['2.0.5', '^4', '']
 
     steps:
     - uses: actions/checkout@v2
@@ -28,6 +28,7 @@ jobs:
     - run: npm install -g npm@latest
     - run: npm ci
     - run: npm install yeoman-generator@${{ matrix.generator-version }}
+      if: matrix.generator-version != ''
     - run: npm test
       env:
         CI: true
