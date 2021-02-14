@@ -5,15 +5,14 @@ const path = require('path');
 
 const YeomanRepository = require('../lib/util/repository');
 const Env = require('..');
-const execa = require('execa');
-const sinon = require('sinon');
 
 /* eslint-disable max-nested-callbacks */
 describe('repository', () => {
-  const {repository} = Env;
+  let repository;
 
-  before(function () {
+  beforeEach(function () {
     this.timeout(20000);
+    repository = new YeomanRepository();
     if (fs.existsSync(repository.repositoryPath)) {
       fs.removeSync(repository.repositoryPath);
     }
@@ -21,72 +20,21 @@ describe('repository', () => {
 
   afterEach(function () {
     this.timeout(20000);
+    repository.cleanupPackageCache('yeoman-environment', true);
     if (fs.existsSync(repository.repositoryPath)) {
       fs.removeSync(repository.repositoryPath);
     }
-    repository.cleanupPackageCache('yeoman-environment', true);
-  });
-
-  it('is exposed on the Environment object', () => {
-    assert(Env.repository instanceof YeomanRepository);
-  });
-
-  describe('#runPackageManager', () => {
-    describe('install command', () => {
-      const options = {};
-      before(function () {
-        sinon.stub(execa, 'sync');
-        this.env = Env.createEnv();
-        this.env.repository.runPackageManager('install', ['foo', 'bar'], options);
-      });
-      after(() => {
-        execa.sync.restore();
-      });
-      it('calls npm with correct parameters', () => {
-        assert(execa.sync.calledOnce);
-        assert(execa.sync.getCalls()[0].args[0] === 'npm');
-        assert(execa.sync.getCalls()[0].args[1][0] === 'install');
-        assert(execa.sync.getCalls()[0].args[1][1] === '-g');
-        assert(execa.sync.getCalls()[0].args[1][2] === '--prefix');
-        assert(execa.sync.getCalls()[0].args[1][4] === '--loglevel');
-        assert(execa.sync.getCalls()[0].args[1][5] === 'error');
-        assert(execa.sync.getCalls()[0].args[1][6] === '--no-optional');
-        assert(execa.sync.getCalls()[0].args[1][7] === 'foo');
-        assert(execa.sync.getCalls()[0].args[1][8] === 'bar');
-        assert(execa.sync.getCalls()[0].args[2] === options);
-      });
-    });
-    describe('root command', () => {
-      const options = {};
-      before(function () {
-        sinon.stub(execa, 'sync');
-        this.env = Env.createEnv();
-        this.env.repository.runPackageManager('root', undefined, options);
-      });
-      after(() => {
-        execa.sync.restore();
-      });
-      it('calls npm with correct parameters', () => {
-        assert(execa.sync.calledOnce);
-        assert(execa.sync.getCalls()[0].args[0] === 'npm');
-        assert(execa.sync.getCalls()[0].args[1][0] === 'root');
-        assert(execa.sync.getCalls()[0].args[1][1] === '-g');
-        assert(execa.sync.getCalls()[0].args[1][2] === '--prefix');
-        assert(execa.sync.getCalls()[0].args[1][4] === '--loglevel');
-        assert(execa.sync.getCalls()[0].args[1][5] === 'error');
-        assert(execa.sync.getCalls()[0].args[2] === options);
-      });
-    });
+    delete repository.arb;
   });
 
   describe('Environment#installLocalGenerators', () => {
-    before(function () {
+    beforeEach(async function () {
       this.timeout(500000);
       this.env = Env.createEnv();
-      this.env.installLocalGenerators({'generator-dummytest': '0.1.3'});
+      return this.env.installLocalGenerators({'generator-dummytest': '0.1.3'});
     });
 
-    after(() => {
+    afterEach(() => {
       repository.cleanupPackageCache('generator-dummytest', true);
     });
 
@@ -119,9 +67,9 @@ describe('repository', () => {
   describe('#createEnvWithVersion()', () => {
     describe('with semver valid range', () => {
       let env;
-      beforeEach(function () {
+      beforeEach(async function () {
         this.timeout(500000);
-        env = Env.createEnvWithVersion('~2.3.0');
+        env = await Env.createEnvWithVersion('~2.3.0');
       });
 
       it('returns env and #cleanup without force fails', () => {
@@ -132,9 +80,9 @@ describe('repository', () => {
     });
 
     describe('with git repository', () => {
-      it('returns env', function () {
+      it('returns env', async function () {
         this.timeout(500000);
-        const env = Env.createEnvWithVersion('yeoman/environment#v2.8.1');
+        const env = await Env.createEnvWithVersion('yeoman/environment#v2.8.1');
         assert.equal(repository.getPackageVersion('yeoman-environment'), '2.8.1');
         assert.ok(env);
         assert.ok(!(env instanceof Env));
@@ -143,17 +91,18 @@ describe('repository', () => {
   });
 
   describe('repository workflow', () => {
-    it('run the workflow correctly', function () {
+    it('run the workflow correctly', async function () {
       this.timeout(500000);
-      repository.installPackage('yeoman-environment', '2.3.0');
+      await repository.installPackage('yeoman-environment', '2.3.0');
       assert.equal(repository.getPackageVersion('yeoman-environment'), '2.3.0');
 
       // Force install another version
-      repository.installPackage('yeoman-environment', '2.8.1');
+      repository.cleanupPackageCache('yeoman-environment', true);
+      await repository.installPackage('yeoman-environment', '2.8.1');
       assert.equal(repository.getPackageVersion('yeoman-environment'), '2.8.1');
 
       // Instantiate the installed version
-      assert.ok(repository.requireModule('yeoman-environment'));
+      assert.ok(await repository.requireModule('yeoman-environment'));
       assert.equal(repository.getPackageVersion('yeoman-environment'), '2.8.1');
     });
   });

@@ -41,6 +41,7 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {
+    "@npmcli/arborist": "^2.2.2",
     "arrify": "^2.0.1",
     "chalk": "^4.1.0",
     "cli-table": "^0.3.1",

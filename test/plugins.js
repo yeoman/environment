@@ -4,28 +4,32 @@ const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
 const Environment = require('../lib/environment');
+const YeomanRepository = require('../lib/util/repository');
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-environment/light');
 
 describe('Generators plugin', () => {
-  before(function () {
+  let repository;
+
+  beforeEach(function () {
     fs.mkdirpSync(tmpdir);
     this.cwd = process.cwd();
     process.chdir(tmpdir);
-    if (fs.existsSync(Environment.repository.repositoryPath)) {
-      fs.removeSync(Environment.repository.repositoryPath);
+    repository = new YeomanRepository();
+    if (fs.existsSync(repository.repositoryPath)) {
+      fs.removeSync(repository.repositoryPath);
     }
   });
 
-  after(function () {
+  afterEach(function () {
     this.timeout(20000);
     process.chdir(this.cwd);
     fs.removeSync(tmpdir);
   });
 
-  [undefined, '4.7.2', 'super:app'].forEach(extended => {
-    describe('#run', () => {
-      beforeEach(function () {
+  [undefined, 'super:app'].forEach(extended => {
+    describe(`#run ${extended}`, () => {
+      beforeEach(async function () {
         this.timeout(300000);
         delete this.execValue;
 
@@ -47,8 +51,6 @@ describe('Generators plugin', () => {
           };
         }};
         this.env.registerStub(dummy, 'dummy:app');
-        // Pre load the required generator
-        this.env.requireGenerator(extended);
       });
 
       it(`runs generators plugin with requireGenerator value ${extended}`, function () {
