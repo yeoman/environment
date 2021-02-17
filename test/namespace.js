@@ -1,6 +1,6 @@
 'use strict';
 const assert = require('assert');
-const namespace = require('../lib/namespace');
+const NamespaceMixin = require('../lib/namespace')(class {});
 
 const fields = [
   'complete',
@@ -27,6 +27,7 @@ const equalsNamespace = function (namespace, expected) {
 };
 
 describe('Namespace', () => {
+  const namespace = new NamespaceMixin();
   describe('#isNamespace()', () => {
     it('returns true if a YeomanNamespace is passed', () => {
       assert(namespace.isNamespace(namespace.requireNamespace('foo-bar')));
