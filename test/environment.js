@@ -127,6 +127,19 @@ describe('Environment', () => {
       assert.ok(this.env.create('@scope/stub') instanceof this.Generator);
     });
 
+    it('pass args parameter', function () {
+      const args = ['foo', 'bar'];
+      const generator = this.env.create('stub', args);
+      assert.deepEqual(generator.arguments, args);
+    });
+
+    it('pass options parameter', function () {
+      const args = [];
+      const options = {foo: 'bar'};
+      const generator = this.env.create('stub', args, options);
+      assert.equal(generator.options.foo, 'bar');
+    });
+
     it('pass options.arguments', function () {
       const args = ['foo', 'bar'];
       const generator = this.env.create('stub', {arguments: args});
@@ -163,11 +176,6 @@ describe('Environment', () => {
       const options = {foo: 'bar'};
       const generator = this.env.create('stub', {options});
       assert.equal(generator.options.foo, 'bar');
-    });
-
-    it('default options to `env.options` content', function () {
-      this.env.options = {foo: 'bar'};
-      assert.equal(this.env.create('stub').options.foo, 'bar');
     });
 
     it('spread sharedOptions', function () {
@@ -215,6 +223,76 @@ describe('Environment', () => {
       this.env
         .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
       assert.equal(this.env.create('fixtures:generator-module').options.resolved, this.env.get('fixtures:generator-module').resolved);
+    });
+  });
+
+  describe('#composeWith()', () => {
+    beforeEach(function () {
+      class NewGenerator extends Generator {
+        getFeatures() {
+          return {uniqueBy: this.options.namespace};
+        }
+      }
+      this.Generator = NewGenerator;
+      this.env.registerStub(this.Generator, 'stub');
+      this.env.registerStub(this.Generator, 'stub:foo:bar');
+      this.env.registerStub(this.Generator, '@scope/stub');
+    });
+
+    it('should instantiate a generator', function () {
+      assert.ok(this.env.composeWith('stub') instanceof this.Generator);
+    });
+
+    it('should emit a compose event', function (done) {
+      this.env.once('compose', (namespace, generator) => {
+        assert.ok(namespace === 'stub');
+        assert.ok(generator instanceof this.Generator);
+        done();
+      });
+      this.env.composeWith('stub');
+    });
+
+    it('should emit a compose namespace event', function (done) {
+      this.env.once('compose:@scope/stub', generator => {
+        assert.ok(generator instanceof this.Generator);
+        done();
+      });
+      this.env.composeWith('@scope/stub');
+    });
+
+    it('should emit a compose namespace event with scoped generators', function (done) {
+      this.env.once('compose:stub', generator => {
+        assert.ok(generator instanceof this.Generator);
+        done();
+      });
+      this.env.composeWith('stub');
+    });
+
+    describe('when the generator should be a singleton and is already composed', () => {
+      let composed;
+      beforeEach(function (done) {
+        this.env.once('compose', (namespace, generator) => {
+          assert.ok(namespace === 'stub');
+          assert.ok(generator instanceof this.Generator);
+          composed = generator;
+          done();
+        });
+        this.env.composeWith('stub');
+      });
+
+      it('should not emit events', function () {
+        this.env.once('compose', () => {
+          throw new Error('should not happen');
+        });
+        this.env.once('compose:stub', () => {
+          throw new Error('should not happen');
+        });
+        this.env.composeWith('stub');
+      });
+
+      it('should return already composed instance', function () {
+        assert.strictEqual(composed, this.env.composeWith('stub'));
+      });
     });
   });
 
@@ -271,26 +349,6 @@ describe('Environment', () => {
       });
     });
 
-    it('without options, it default to env.options', function () {
-      const args = ['stub:run'];
-      this.env.arguments = undefined;
-      this.env.options = {some: 'stuff', 'skip-install': true};
-      return this.env.run(args).then(() => {
-        assert.ok(this.runMethod.calledOnce);
-        assert.equal(this.args[1]['skip-install'], this.env.options['skip-install']);
-        assert.equal(this.args[1].some, this.env.options.some);
-      });
-    });
-
-    it('without args, it default to env.arguments', function () {
-      this.env.arguments = ['stub:run', 'my-args'];
-      this.env.options = {'skip-install': true};
-      return this.env.run().then(() => {
-        assert.ok(this.runMethod.calledOnce);
-        assert.equal(this.args[0], 'my-args');
-      });
-    });
-
     it('can take string as args', function () {
       const args = 'stub:run module';
       return this.env.run(args).then(() => {
@@ -299,10 +357,13 @@ describe('Environment', () => {
       });
     });
 
-    it('can take no arguments', function () {
+    it('cannot take no arguments', function () {
       this.env.arguments = ['stub:run'];
       return this.env.run().then(() => {
-        assert.ok(this.runMethod.calledOnce);
+        throw new Error('not supposed to happen');
+      }, error => {
+        assert.ok(this.runMethod.notCalled);
+        assert.ok(error.message.includes('Must provide at least one argument, the generator namespace to invoke.'));
       });
     });
 
