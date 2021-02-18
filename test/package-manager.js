@@ -49,13 +49,6 @@ describe('environment (package-manager)', () => {
           return packageManager.packageManagerInstallTask();
         });
 
-        it('should log', () => {
-          assert(packageManager.adapter.log.calledOnce);
-          assert(packageManager.adapter.log.getCall(0).calledWith(`
-Running in generator < 5 compatibility. Package manager install is done by the generator.
-`));
-        });
-
         it('should not call spawnCommand', () => {
           assert(packageManager.spawnCommand.notCalled);
         });
@@ -69,8 +62,7 @@ Running in generator < 5 compatibility. Package manager install is done by the g
         it('should log', () => {
           assert(packageManager.adapter.log.calledOnce);
           assert(packageManager.adapter.log.getCall(0).calledWith(`
-No change to package.json was detected. No package manager install will be executed.
-`));
+No change to package.json was detected. No package manager install will be executed.`));
         });
 
         it('should not call spawnCommand', () => {
@@ -112,8 +104,8 @@ Changes to package.json were detected.`));
             assert(packageManager.adapter.log.calledTwice);
             assert(packageManager.adapter.log.getCall(0).calledWith(`
 Changes to package.json were detected.`));
-            assert(packageManager.adapter.log.getCall(1).calledWith(`Running npm install for you to install the required dependencies.
-`));
+            assert(packageManager.adapter.log.getCall(1).calledWith(`
+Running npm install for you to install the required dependencies.`));
           });
 
           it('should execute npm', () => {
@@ -132,8 +124,8 @@ Changes to package.json were detected.`));
             assert(packageManager.adapter.log.calledTwice);
             assert(packageManager.adapter.log.getCall(0).calledWith(`
 Changes to package.json were detected.`));
-            assert(packageManager.adapter.log.getCall(1).calledWith(`Running yarn install for you to install the required dependencies.
-`));
+            assert(packageManager.adapter.log.getCall(1).calledWith(`
+Running yarn install for you to install the required dependencies.`));
           });
 
           it('should execute yarn', () => {
@@ -152,8 +144,8 @@ Changes to package.json were detected.`));
             assert(packageManager.adapter.log.calledTwice);
             assert(packageManager.adapter.log.getCall(0).calledWith(`
 Changes to package.json were detected.`));
-            assert(packageManager.adapter.log.getCall(1).calledWith(`Running pnpm install for you to install the required dependencies.
-`));
+            assert(packageManager.adapter.log.getCall(1).calledWith(`
+Running pnpm install for you to install the required dependencies.`));
           });
 
           it('should execute pnpm', () => {
