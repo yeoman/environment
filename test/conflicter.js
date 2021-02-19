@@ -97,7 +97,7 @@ describe('Conflicter', () => {
 
     it('abort on first conflict', function () {
       this.timeout(4000);
-      const conflicter = new Conflicter(new TestAdapter(), false, true);
+      const conflicter = new Conflicter(new TestAdapter(), {force: false, bail: true});
       return conflicter.checkForCollision(this.conflictingFile).then(
         () => assert.fail('was not supposed to succeed')
       ).catch(error => {
@@ -106,7 +106,8 @@ describe('Conflicter', () => {
     });
 
     it('abort on first conflict with whitespace changes', () => {
-      const conflicter = new Conflicter(new TestAdapter(), false, {
+      const conflicter = new Conflicter(new TestAdapter(), {
+        force: false,
         bail: true
       });
       return conflicter.checkForCollision(
@@ -124,7 +125,8 @@ describe('Conflicter', () => {
     });
 
     it('abort on create new file', () => {
-      const conflicter = new Conflicter(new TestAdapter(), false, {
+      const conflicter = new Conflicter(new TestAdapter(), {
+        force: false,
         bail: true
       });
       return conflicter.checkForCollision({
@@ -138,7 +140,8 @@ describe('Conflicter', () => {
     });
 
     it('skip file changes with dryRun', () => {
-      const conflicter = new Conflicter(new TestAdapter(), false, {
+      const conflicter = new Conflicter(new TestAdapter(), {
+        force: false,
         dryRun: true
       });
       return conflicter.checkForCollision(
@@ -157,7 +160,8 @@ describe('Conflicter', () => {
     });
 
     it('skip new file with dryRun', () => {
-      const conflicter = new Conflicter(new TestAdapter(), false, {
+      const conflicter = new Conflicter(new TestAdapter(), {
+        force: false,
         dryRun: true
       });
       return conflicter.checkForCollision(
@@ -174,7 +178,8 @@ describe('Conflicter', () => {
     });
 
     it('skip deleted file with dryRun', () => {
-      const conflicter = new Conflicter(new TestAdapter(), false, {
+      const conflicter = new Conflicter(new TestAdapter(), {
+        force: false,
         dryRun: true
       });
       return conflicter.checkForCollision(
@@ -190,7 +195,8 @@ describe('Conflicter', () => {
     });
 
     it('skip whitespace changes with dryRun', () => {
-      const conflicter = new Conflicter(new TestAdapter(), false, {
+      const conflicter = new Conflicter(new TestAdapter(), {
+        force: false,
         dryRun: true,
         ignoreWhitespace: true
       });
@@ -209,7 +215,8 @@ describe('Conflicter', () => {
     });
 
     it('does not give a conflict with ignoreWhitespace', () => {
-      const conflicter = new Conflicter(new TestAdapter(), false, {
+      const conflicter = new Conflicter(new TestAdapter(), {
+        force: false,
         ignoreWhitespace: true
       });
 
@@ -229,7 +236,8 @@ describe('Conflicter', () => {
     });
 
     it('skip rewrite with ignoreWhitespace and skipRegenerate', () => {
-      const conflicter = new Conflicter(new TestAdapter(), false, {
+      const conflicter = new Conflicter(new TestAdapter(), {
+        force: false,
         ignoreWhitespace: true,
         skipRegenerate: true
       });
