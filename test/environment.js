@@ -21,7 +21,7 @@ const sinonTest = sinonTestFactory(sinon);
 
 describe('Environment', () => {
   beforeEach(function () {
-    this.env = new Environment([], {'skip-install': true, sharedOptions: {sharedConstructorData: {}}});
+    this.env = new Environment({'skip-install': true, sharedOptions: {sharedConstructorData: {}}});
   });
 
   afterEach(function () {
@@ -33,19 +33,9 @@ describe('Environment', () => {
   });
 
   describe('constructor', () => {
-    it('take arguments option', () => {
-      const args = ['foo'];
-      assert.equal(new Environment(args).arguments, args);
-    });
-
-    it('take arguments parameter option as string', () => {
-      const args = 'foo bar';
-      assert.deepEqual(new Environment(args).arguments, args.split(' '));
-    });
-
     it('take options parameter', () => {
       const options = {foo: 'bar'};
-      assert.equal(new Environment(null, options).options, options);
+      assert.equal(new Environment(options).options, options);
     });
 
     it('instantiates a TerminalAdapter if none provided', function () {
@@ -54,17 +44,12 @@ describe('Environment', () => {
 
     it('uses the provided object as adapter if any', () => {
       const dummyAdapter = {};
-      const env = new Environment(null, null, dummyAdapter);
+      const env = new Environment(null, dummyAdapter);
       assert.equal(env.adapter, dummyAdapter, 'Not the adapter provided');
     });
 
     it('instantiates a mem-fs instance', function () {
       assert.ok(this.env.sharedFs);
-    });
-
-    it('takes multi-word arguments', () => {
-      const args = 'foo bar "foo bar" baz "bar foo"';
-      assert.deepEqual(new Environment(args).arguments, ['foo', 'bar', 'foo bar', 'baz', 'bar foo']);
     });
   });
 

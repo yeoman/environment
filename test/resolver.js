@@ -472,7 +472,7 @@ describe('Environment Resolver', function () {
     });
 
     beforeEach(function () {
-      this.env = new Environment([], {experimental: true});
+      this.env = new Environment({experimental: true});
     });
 
     after(() => {
