@@ -33,7 +33,7 @@ describe('Generators plugin', () => {
         this.timeout(300000);
         delete this.execValue;
 
-        this.env = new Environment({'skip-install': true, experimental: true});
+        this.env = new Environment({skipInstall: true, experimental: true});
 
         const self = this;
         const superGenerator = {createGenerator(env) {

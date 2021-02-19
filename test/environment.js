@@ -21,7 +21,7 @@ const sinonTest = sinonTestFactory(sinon);
 
 describe('Environment', () => {
   beforeEach(function () {
-    this.env = new Environment({'skip-install': true, sharedOptions: {sharedConstructorData: {}}});
+    this.env = new Environment({skipInstall: true, sharedOptions: {sharedConstructorData: {}}});
   });
 
   afterEach(function () {
@@ -326,11 +326,11 @@ describe('Environment', () => {
 
     it('pass args and options to the runned generator', function () {
       const args = ['stub:run', 'module'];
-      const options = {'skip-install': true};
+      const options = {skipInstall: true};
       return this.env.run(args, options).then(() => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'module');
-        assert.equal(this.args[1]['skip-install'], true);
+        assert.equal(this.args[1].skipInstall, true);
       });
     });
 
