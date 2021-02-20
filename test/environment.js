@@ -367,13 +367,25 @@ describe('Environment', () => {
     it('generator error event emits error event when no callback passed', function (done) {
       const generator = this.env.create('eventfailingstub:run');
       assert.equal(generator.listenerCount('error'), 0);
-      generator.on('error', error => {
+      this.env.on('error', error => {
         assert.ok(this.runMethod.calledOnce);
         assert.ok(error instanceof Error);
         assert.equal(error.message, 'some error');
         done();
       });
-      this.env.runGenerator(generator);
+      this.env.runGenerator(generator).catch(() => {});
+    });
+
+    it('generator failing task emits error', function (done) {
+      const generator = this.env.create('promisefailingstub:run');
+      assert.equal(generator.listenerCount('error'), 0);
+      this.env.on('error', error => {
+        assert.ok(this.runMethod.calledOnce);
+        assert.ok(error instanceof Error);
+        assert.equal(error.message, 'some error');
+        done();
+      });
+      this.env.runGenerator(generator).catch(() => {});
     });
 
     it('returns the generator', function () {

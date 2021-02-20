@@ -3,6 +3,7 @@
 const assert = require('assert');
 const path = require('path');
 const sinon = require('sinon');
+const semver = require('semver');
 
 const Environment = require('..');
 
@@ -126,7 +127,10 @@ describe('environment (command)', () => {
     });
   });
 
-  describe('#run() with arguments', () => {
+  describe('#prepareCommand()', () => {
+    if (!semver.satisfies(require('../node_modules/yeoman-generator/package.json').version, '>=5.0.0-beta.1')) {
+      return;
+    }
     describe('generator with arguments', () => {
       describe('without arguments', () => {
         let generator;
