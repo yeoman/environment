@@ -94,9 +94,8 @@
     "tui-jsdoc-template": "^1.2.2",
     "xo": "^0.37.1",
     "yeoman-assert": "^3.1.1",
-    "yeoman-environment": "^3.0.0",
     "yeoman-generator": "^5.0.0",
-    "yeoman-test": "^4.0.2"
+    "yeoman-test": "^5.0.0"
   },
   "xo": {
     "space": true,
