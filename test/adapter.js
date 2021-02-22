@@ -52,6 +52,17 @@ describe('TerminalAdapter', () => {
     });
   });
 
+  describe('#prompt() with callback for backwards compatibility for generator < 5', () => {
+    it('should call the callback with answers', function (done) {
+      const questions = [];
+      const answers = {prompt1: 'foo'};
+      this.adapter.prompt(questions, answers, returnValue => {
+        assert.equal(returnValue.prompt1, answers.prompt1);
+        done();
+      });
+    });
+  });
+
   describe('#diff()', () => {
     it('returns properly colored diffs', function () {
       const diff = this.adapter.diff('var', 'let');
