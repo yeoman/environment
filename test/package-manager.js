@@ -181,14 +181,16 @@ Changes to package.json were detected.`));
           });
 
           it('should log', async () => {
-            assert(packageManager.adapter.log.calledTwice);
+            assert.equal(packageManager.adapter.log.callCount, 3);
             assert(packageManager.adapter.log.getCall(0).calledWith(`
 Changes to package.json were detected.`));
-            assert(packageManager.adapter.log.getCall(1).calledWith('Error detecting the package manager. Run it by yourself.'));
+            assert(packageManager.adapter.log.getCall(1).calledWith('Error detecting the package manager. Falling back to npm.'));
+            assert(packageManager.adapter.log.getCall(2).calledWith(`
+Running npm install for you to install the required dependencies.`));
           });
 
           it('should not call spawnCommand', () => {
-            assert(packageManager.spawnCommand.notCalled);
+            assert(packageManager.spawnCommand.getCall(0).calledWith('npm', ['install']));
           });
         });
       });
