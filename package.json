@@ -25,6 +25,9 @@
     "yeoman",
     "app"
   ],
+  "config": {
+    "doc_path": "../yeoman-environment-doc"
+  },
   "license": "BSD-2-Clause",
   "repository": "yeoman/environment",
   "engines": {
@@ -40,8 +43,10 @@
     "test-namespace": "nyc mocha test/namespace.js test/flags.js",
     "test-repository": "nyc mocha test/repository.js",
     "test-resolver": "nyc mocha test/resolver.js",
-    "doc": "jsdoc -c jsdoc.json -d ../yeoman-environment-doc",
-    "doc:prettier": "prettier ../yeoman-environment-doc --write --ignore-path .prettierignore-doc",
+    "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
+    "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path",
+    "doc:prettier": "prettier $npm_package_config_doc_path --write --ignore-path .prettierignore-doc",
+    "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path/global.html",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {
