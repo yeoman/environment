@@ -9,6 +9,15 @@ describe('composability', () => {
   });
 
   describe('resolvePackage()', () => {
+    it('should throw on missing packageName', async function () {
+      assert.rejects(async () => this.env.resolvePackage());
+    });
+
+    it('should lookup for latest package version', async function () {
+      const entry = await this.env.resolvePackage('yeoman-generator');
+      assert.ok(entry[1], 'must provide an version');
+    });
+
     it('should return package entry', async function () {
       assert.deepStrictEqual(
         await this.env.resolvePackage('yeoman-generator', '^2'),
