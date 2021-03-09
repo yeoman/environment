@@ -14,6 +14,7 @@ describe('environment (package-manager)', () => {
     packageManager.adapter = {
       log: sinon.stub()
     };
+    packageManager.findGeneratorCustomInstallTask = sinon.stub();
     packageManager.spawnCommand = sinon.stub().returns(Promise.resolve());
     packageManager.options = {};
     packageManager.sharedFs = {get: sinon.stub().returns()};
