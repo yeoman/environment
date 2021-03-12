@@ -36,7 +36,7 @@
   "scripts": {
     "pretest": "xo",
     "fix": "xo --fix",
-    "test": "nyc mocha",
+    "test": "nyc mocha --forbid-only",
     "test-base": "nyc mocha test/environment*.js test/store.js test/util.js test/adapter.js",
     "test-environment": "nyc mocha test/environment.js",
     "test-generators": "nyc mocha test/generators.js",
