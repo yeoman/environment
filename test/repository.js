@@ -11,7 +11,7 @@ describe('repository', () => {
   let repository;
 
   beforeEach(function () {
-    this.timeout(20000);
+    this.timeout(40000);
     repository = new YeomanRepository();
     if (fs.existsSync(repository.repositoryPath)) {
       fs.removeSync(repository.repositoryPath);
@@ -19,7 +19,7 @@ describe('repository', () => {
   });
 
   afterEach(function () {
-    this.timeout(20000);
+    this.timeout(40000);
     repository.cleanupPackageCache('yeoman-environment', true);
     if (fs.existsSync(repository.repositoryPath)) {
       fs.removeSync(repository.repositoryPath);

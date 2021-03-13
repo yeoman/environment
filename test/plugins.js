@@ -22,7 +22,7 @@ describe('Generators plugin', () => {
   });
 
   afterEach(function () {
-    this.timeout(20000);
+    this.timeout(40000);
     process.chdir(this.cwd);
     fs.removeSync(tmpdir);
   });
