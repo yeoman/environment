@@ -206,6 +206,14 @@ describe('environment (generator-features)', () => {
       it('should call customInstallTask', () => {
         assert.equal(customInstallTask.callCount, 1, 'should have been called');
       });
+
+      it('should forward preferred pm', () => {
+        assert.equal(customInstallTask.getCall(0).args[0], null);
+      });
+
+      it('should forward default execution callback', () => {
+        assert.equal(typeof customInstallTask.getCall(0).args[1], 'function');
+      });
     });
   });
 });
