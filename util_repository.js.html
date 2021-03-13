@@ -20,7 +20,7 @@
   </head>
   <body>
     <nav class="lnb" id="lnb">
-      <div class="logo" style="width: 127px; height: 14px;">
+      <div class="logo" style="width: 127px; height: 14px">
         <img
           src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
           width="100%"
@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.10.3</span>
+        <span class="version">v3.2.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -78,6 +78,26 @@
         <h3>Classes</h3>
         <ul>
           <li>
+            <a href="Conflicter.html">Conflicter</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="Conflicter_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="Conflicter.html#_detectConflict">_detectConflict</a>
+                </li>
+                <li><a href="Conflicter.html#_printDiff">_printDiff</a></li>
+                <li>
+                  <a href="Conflicter.html#checkForCollision"
+                    >checkForCollision</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
             <a href="Environment.html">Environment</a
             ><button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
@@ -108,14 +128,19 @@
                     >namespaceToName</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#.prepareCommand">prepareCommand</a>
+                </li>
                 <li><a href="Environment.html#alias">alias</a></li>
+                <li>
+                  <a href="Environment.html#applyTransforms">applyTransforms</a>
+                </li>
+                <li>
+                  <a href="Environment.html#commitSharedFs">commitSharedFs</a>
+                </li>
+                <li><a href="Environment.html#composeWith">composeWith</a></li>
                 <li><a href="Environment.html#create">create</a></li>
                 <li><a href="Environment.html#error">error</a></li>
-                <li>
-                  <a href="Environment.html#findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
                 <li><a href="Environment.html#get">get</a></li>
                 <li><a href="Environment.html#getByPath">getByPath</a></li>
                 <li>
@@ -153,6 +178,16 @@
                     >isPackageRegistered</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#loadEnvironmentOptions"
+                    >loadEnvironmentOptions</a
+                  >
+                </li>
+                <li>
+                  <a href="Environment.html#loadSharedOptions"
+                    >loadSharedOptions</a
+                  >
+                </li>
                 <li><a href="Environment.html#lookup">lookup</a></li>
                 <li>
                   <a href="Environment.html#lookupLocalPackages"
@@ -161,6 +196,17 @@
                 </li>
                 <li><a href="Environment.html#namespace">namespace</a></li>
                 <li><a href="Environment.html#namespaces">namespaces</a></li>
+                <li>
+                  <a href="Environment.html#queueConflicter">queueConflicter</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queueGenerator">queueGenerator</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queuePackageManagerInstall"
+                    >queuePackageManagerInstall</a
+                  >
+                </li>
                 <li><a href="Environment.html#register">register</a></li>
                 <li>
                   <a href="Environment.html#registerStub">registerStub</a>
@@ -171,12 +217,16 @@
                   >
                 </li>
                 <li>
+                  <a href="Environment.html#resolvePackage">resolvePackage</a>
+                </li>
+                <li>
                   <a href="Environment.html#rootGenerator">rootGenerator</a>
                 </li>
                 <li><a href="Environment.html#run">run</a></li>
                 <li>
                   <a href="Environment.html#runGenerator">runGenerator</a>
                 </li>
+                <li><a href="Environment.html#start">start</a></li>
               </ul>
             </div>
           </li>
@@ -216,6 +266,11 @@
                     >lookupLocalPackages</a
                   >
                 </li>
+                <li>
+                  <a href="env_composability.html#.resolvePackage"
+                    >resolvePackage</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -237,14 +292,28 @@
               <ul class="inner">
                 <li><a href="env_resolver.html#.alias">alias</a></li>
                 <li>
-                  <a href="env_resolver.html#.findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
-                <li>
                   <a href="env_resolver.html#.getNpmPaths">getNpmPaths</a>
                 </li>
                 <li><a href="env_resolver.html#.lookup">lookup</a></li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="spawn-command.html">spawn-command</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="spawn-command_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="spawn-command.html#.spawnCommand">spawnCommand</a>
+                </li>
+                <li>
+                  <a href="spawn-command.html#.spawnCommandSync"
+                    >spawnCommandSync</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -253,7 +322,32 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
+          <li>
+            <a href="global.html#createConflicterStatusTransform"
+              >createConflicterStatusTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createEachFileTransform"
+              >createEachFileTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createYoRcTransform">createYoRcTransform</a>
+          </li>
+          <li>
+            <a href="global.html#createYoResolveTransform"
+              >createYoResolveTransform</a
+            >
+          </li>
+          <li><a href="global.html#execute">execute</a></li>
+          <li><a href="global.html#fileIsModified">fileIsModified</a></li>
           <li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li>
+          <li>
+            <a href="global.html#packageManagerInstallTask"
+              >packageManagerInstallTask</a
+            >
+          </li>
           <li>
             <a href="global.html#splitArgsFromString">splitArgsFromString</a>
           </li>
@@ -273,7 +367,7 @@ const fs = require('fs');
 const path = require('path');
 const semver = require('semver');
 const debug = require('debug')('yeoman:environment:repository');
-const execa = require('execa');
+const Arborist = require('@npmcli/arborist');
 
 const logger = require('./log');
 
@@ -285,8 +379,9 @@ const REPOSITORY_FOLDER = '.yo-repository';
 class YeomanRepository {
   constructor(repositoryPath = REPOSITORY_FOLDER) {
     this.log = logger();
+    this.tracker = logger.tracker;
 
-    this._repositoryPath = path.resolve(repositoryPath);
+    this.repositoryPath = repositoryPath;
   }
 
   /**
@@ -300,7 +395,7 @@ class YeomanRepository {
 
   set repositoryPath(repositoryPath) {
     this._repositoryPath = path.resolve(repositoryPath);
-    delete this._nodeModulesPath;
+    this._nodeModulesPath = path.join(this._repositoryPath, 'node_modules');
   }
 
   /**
@@ -309,9 +404,6 @@ class YeomanRepository {
    * Path to the repository's node_modules.
    */
   get nodeModulesPath() {
-    if (!this._nodeModulesPath) {
-      this._nodeModulesPath = this.runPackageManager('root').stdout;
-    }
     return this._nodeModulesPath;
   }
 
@@ -358,7 +450,7 @@ class YeomanRepository {
     debug('Cleaning cache of %s', packageName);
     const packagePath = this.resolvePackagePath(packageName);
     const toCleanup = Object.keys(require.cache).filter(cache => cache.startsWith(packagePath));
-    if (!force &amp;&amp; toCleanup.find(cache => !cache.endsWith('package.json'))) {
+    if (!force &amp;&amp; toCleanup.some(cache => !cache.endsWith('package.json'))) {
       throw new Error(`Package ${packageName} already loaded`);
     }
 
@@ -369,22 +461,15 @@ class YeomanRepository {
 
   /**
    * @private
-   * @method
-   * Run the packageManager.
-   * @param {String} cmd - The command.
-   * @param {String[]} [args] - Additional arguments.
-   * @param {Object} [options] - Config to be passed to execa.
+   * @param {Object} options - options to be passed to arborist reify eg: {add: { dependencies: [ pkgSpec ] }, rm: [ pkgName ]}
    */
-  runPackageManager(cmd, args, options) {
-    const allArgs = [cmd, '-g', '--prefix', this.repositoryPath, '--loglevel', 'error'];
-    if (cmd === 'install') {
-      allArgs.push('--no-optional');
-    }
-    if (args) {
-      allArgs.push(...args);
-    }
-    debug('Running npm with args %o', allArgs);
-    return execa.sync('npm', allArgs, options);
+  async reifyRepository(options) {
+    this.arb = this.arb || new Arborist({
+      path: this.repositoryPath,
+      globalStyle: true,
+      log: this.tracker
+    });
+    return this.arb.reify(options);
   }
 
   /**
@@ -399,13 +484,13 @@ class YeomanRepository {
   verifyInstalledVersion(packageName, versionRange) {
     const packagePath = this.resolvePackagePath(packageName);
     const installedVersion = this.getPackageVersion(packagePath);
-    let installed;
-    if (installedVersion &amp;&amp; !versionRange) {
-      installed = true;
-    } else if (installedVersion) {
-      installed = semver.validRange(versionRange) &amp;&amp; semver.satisfies(installedVersion, versionRange);
+    if (!versionRange || !installedVersion) {
+      return installedVersion;
     }
-    return installed ? installedVersion : undefined;
+    if (semver.validRange(versionRange) &amp;&amp; !semver.satisfies(installedVersion, versionRange)) {
+      return false;
+    }
+    return installedVersion;
   }
 
   /**
@@ -417,7 +502,7 @@ class YeomanRepository {
    * @returns {String} Package path.
    * @throws Error.
    */
-  installPackage(packageName, versionRange) {
+  async installPackage(packageName, versionRange) {
     const pkgs = {};
     if (packageName === 'yeoman-environment' &amp;&amp; versionRange &amp;&amp; (!semver.validRange(versionRange) || semver.lt(semver.minVersion(versionRange), '2.9.0'))) {
       // Workaround buggy dependencies.
@@ -425,8 +510,7 @@ class YeomanRepository {
     }
 
     pkgs[packageName] = versionRange;
-    const success = this.installPackages(pkgs) === true;
-    if (!success) {
+    if (!await this.installPackages(pkgs)) {
       throw new Error(`Error installing package ${packageName}, version ${versionRange}.`);
     }
     debug(`Package ${packageName} sucessfully installed`);
@@ -442,7 +526,7 @@ class YeomanRepository {
    * @example
    * repository.installPackages({ 'yeoman-environment': '2.3.0' });
    */
-  installPackages(packages) {
+  async installPackages(packages) {
     this.createRepositoryFolder();
     debug('Installing packages %o', packages);
     const packagesArgs = Object
@@ -452,16 +536,18 @@ class YeomanRepository {
         return true;
       })
       .map(([packageName, version]) => version ? (semver.validRange(version) ? `${packageName}@${version}` : version) : packageName);
-    const result = this.runPackageManager('install', [...packagesArgs], {stdio: 'inherit'});
-    const success = result.exitCode === 0;
+    try {
+      await this.reifyRepository({add: [...packagesArgs]});
+    } catch (error) {
+      Object.keys(packages).forEach(packageName => {
+        this.log.error(`${packageName} cannot be installed. ${error}`);
+      });
+      return false;
+    }
     Object.keys(packages).forEach(packageName => {
-      if (success) {
-        this.log.ok(`${packageName} installed.`);
-      } else {
-        this.log.error(`${packageName} cannot be installed.`);
-      }
+      this.log.ok(`${packageName} installed.`);
     });
-    return success;
+    return true;
   }
 
   /**
@@ -475,7 +561,7 @@ class YeomanRepository {
     try {
       const packageJson = this.resolvePackagePath(packageName, 'package.json');
       return require(packageJson).version;
-    } catch (_) {
+    } catch {
       return undefined;
     }
   }
@@ -496,8 +582,7 @@ class YeomanRepository {
       debug(`Using ${packageName} installed version ${installedVersion}`);
     } else {
       // Installs the package if no version is installed or the version is provided and don't match the installed version.
-      debug(`Found ${packageName} version ${installedVersion} but requires version ${versionRange}`);
-      this.installPackage(packageName, versionRange);
+      throw new Error(`Found ${packageName} version ${installedVersion} but requires version ${versionRange}`);
     }
     const absolutePath = this.resolvePackagePath(packageName, modulePath);
     debug('Loading module at %s', absolutePath);
@@ -515,7 +600,7 @@ module.exports = YeomanRepository;
       <img
         class="logo"
         src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
-        style="width: 127px; height: 14px;"
+        style="width: 127px; height: 14px"
       />
       <div class="footer-text">BSD license Copyright (c) Google</div>
     </footer>

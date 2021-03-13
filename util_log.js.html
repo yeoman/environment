@@ -20,7 +20,7 @@
   </head>
   <body>
     <nav class="lnb" id="lnb">
-      <div class="logo" style="width: 127px; height: 14px;">
+      <div class="logo" style="width: 127px; height: 14px">
         <img
           src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
           width="100%"
@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.10.3</span>
+        <span class="version">v3.2.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -78,6 +78,26 @@
         <h3>Classes</h3>
         <ul>
           <li>
+            <a href="Conflicter.html">Conflicter</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="Conflicter_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="Conflicter.html#_detectConflict">_detectConflict</a>
+                </li>
+                <li><a href="Conflicter.html#_printDiff">_printDiff</a></li>
+                <li>
+                  <a href="Conflicter.html#checkForCollision"
+                    >checkForCollision</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
             <a href="Environment.html">Environment</a
             ><button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
@@ -108,14 +128,19 @@
                     >namespaceToName</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#.prepareCommand">prepareCommand</a>
+                </li>
                 <li><a href="Environment.html#alias">alias</a></li>
+                <li>
+                  <a href="Environment.html#applyTransforms">applyTransforms</a>
+                </li>
+                <li>
+                  <a href="Environment.html#commitSharedFs">commitSharedFs</a>
+                </li>
+                <li><a href="Environment.html#composeWith">composeWith</a></li>
                 <li><a href="Environment.html#create">create</a></li>
                 <li><a href="Environment.html#error">error</a></li>
-                <li>
-                  <a href="Environment.html#findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
                 <li><a href="Environment.html#get">get</a></li>
                 <li><a href="Environment.html#getByPath">getByPath</a></li>
                 <li>
@@ -153,6 +178,16 @@
                     >isPackageRegistered</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#loadEnvironmentOptions"
+                    >loadEnvironmentOptions</a
+                  >
+                </li>
+                <li>
+                  <a href="Environment.html#loadSharedOptions"
+                    >loadSharedOptions</a
+                  >
+                </li>
                 <li><a href="Environment.html#lookup">lookup</a></li>
                 <li>
                   <a href="Environment.html#lookupLocalPackages"
@@ -161,6 +196,17 @@
                 </li>
                 <li><a href="Environment.html#namespace">namespace</a></li>
                 <li><a href="Environment.html#namespaces">namespaces</a></li>
+                <li>
+                  <a href="Environment.html#queueConflicter">queueConflicter</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queueGenerator">queueGenerator</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queuePackageManagerInstall"
+                    >queuePackageManagerInstall</a
+                  >
+                </li>
                 <li><a href="Environment.html#register">register</a></li>
                 <li>
                   <a href="Environment.html#registerStub">registerStub</a>
@@ -171,12 +217,16 @@
                   >
                 </li>
                 <li>
+                  <a href="Environment.html#resolvePackage">resolvePackage</a>
+                </li>
+                <li>
                   <a href="Environment.html#rootGenerator">rootGenerator</a>
                 </li>
                 <li><a href="Environment.html#run">run</a></li>
                 <li>
                   <a href="Environment.html#runGenerator">runGenerator</a>
                 </li>
+                <li><a href="Environment.html#start">start</a></li>
               </ul>
             </div>
           </li>
@@ -216,6 +266,11 @@
                     >lookupLocalPackages</a
                   >
                 </li>
+                <li>
+                  <a href="env_composability.html#.resolvePackage"
+                    >resolvePackage</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -237,14 +292,28 @@
               <ul class="inner">
                 <li><a href="env_resolver.html#.alias">alias</a></li>
                 <li>
-                  <a href="env_resolver.html#.findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
-                <li>
                   <a href="env_resolver.html#.getNpmPaths">getNpmPaths</a>
                 </li>
                 <li><a href="env_resolver.html#.lookup">lookup</a></li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="spawn-command.html">spawn-command</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="spawn-command_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="spawn-command.html#.spawnCommand">spawnCommand</a>
+                </li>
+                <li>
+                  <a href="spawn-command.html#.spawnCommandSync"
+                    >spawnCommandSync</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -253,7 +322,32 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
+          <li>
+            <a href="global.html#createConflicterStatusTransform"
+              >createConflicterStatusTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createEachFileTransform"
+              >createEachFileTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createYoRcTransform">createYoRcTransform</a>
+          </li>
+          <li>
+            <a href="global.html#createYoResolveTransform"
+              >createYoResolveTransform</a
+            >
+          </li>
+          <li><a href="global.html#execute">execute</a></li>
+          <li><a href="global.html#fileIsModified">fileIsModified</a></li>
           <li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li>
+          <li>
+            <a href="global.html#packageManagerInstallTask"
+              >packageManagerInstallTask</a
+            >
+          </li>
           <li>
             <a href="global.html#splitArgsFromString">splitArgsFromString</a>
           </li>
@@ -273,6 +367,9 @@ const _ = require('lodash');
 const table = require('text-table');
 const chalk = require('chalk');
 const logSymbols = require('log-symbols');
+const npmlog = require('npmlog');
+
+npmlog.level = 'error';
 
 // Padding step
 const step = '  ';
@@ -285,19 +382,19 @@ function pad(status) {
 }
 
 // Borrowed from https://github.com/mikeal/logref/blob/master/main.js#L6-15
-function formatter(msg, ctx) {
-  while (msg.includes('%')) {
-    const start = msg.indexOf('%');
-    let end = msg.indexOf(' ', start);
+function formatter(message, ctx) {
+  while (message.includes('%')) {
+    const start = message.indexOf('%');
+    let end = message.indexOf(' ', start);
 
     if (end === -1) {
-      end = msg.length;
+      end = message.length;
     }
 
-    msg = msg.slice(0, start) + ctx[msg.slice(start + 1, end)] + msg.slice(end);
+    message = message.slice(0, start) + ctx[message.slice(start + 1, end)] + message.slice(end);
   }
 
-  return msg;
+  return message;
 }
 
 const getDefaultColors = () => ({
@@ -310,17 +407,16 @@ const getDefaultColors = () => ({
   info: 'gray'
 });
 
-const initParams = params => {
-  params = params || {};
-  return Object.assign(
-    {}, params, {
-      colors: Object.assign(getDefaultColors(), params.colors || {})});
+const initParameters = parameters => {
+  parameters = parameters || {};
+  return {
+    ...parameters, colors: {...getDefaultColors(), ...parameters.colors}};
 };
 
-module.exports = params => {
-  params = initParams(params);
-  const customConsole = params.console || console;
-  const stderr = params.stderr || params.stdout || process.stderr;
+const log = parameters => {
+  parameters = initParameters(parameters);
+  const customConsole = parameters.console || console;
+  const stderr = parameters.stderr || parameters.stdout || process.stderr;
 
   // `this.log` is a [logref](https://github.com/mikeal/logref)
   // compatible logger, with an enhanced API.
@@ -342,11 +438,11 @@ module.exports = params => {
   // @param {Object} params.colors status mappings
   //
   // Returns the logger
-  function log(msg, ctx) {
-    msg = msg || '';
+  function log(message, ctx) {
+    message = message || '';
 
     if (typeof ctx === 'object' &amp;&amp; !Array.isArray(ctx)) {
-      customConsole.error(formatter(msg, ctx));
+      customConsole.error(formatter(message, ctx));
     } else {
       customConsole.error.apply(customConsole, arguments);
     }
@@ -392,7 +488,7 @@ module.exports = params => {
     padding = padding.replace(step, '');
   });
 
-  for (const status of Object.keys(params.colors)) {
+  for (const status of Object.keys(parameters.colors)) {
     // Each predefined status has its logging method utility, handling
     // status color and padding before the usual `.write()`
     //
@@ -418,7 +514,7 @@ module.exports = params => {
     //
     // Returns the logger
     log[status] = function () {
-      const color = params.colors[status];
+      const color = parameters.colors[status];
       this.write(chalk[color](pad(status))).write(padding);
       this.write(util.format.apply(util, arguments) + '\n');
       return this;
@@ -433,13 +529,13 @@ module.exports = params => {
   //          table.
   //
   // Returns the table reprensetation
-  log.table = opts => {
+  log.table = options => {
     const tableData = [];
 
-    opts = Array.isArray(opts) ? {rows: opts} : opts;
-    opts.rows = opts.rows || [];
+    options = Array.isArray(options) ? {rows: options} : options;
+    options.rows = options.rows || [];
 
-    for (const row of opts.rows) {
+    for (const row of options.rows) {
       tableData.push(row);
     }
 
@@ -448,6 +544,10 @@ module.exports = params => {
 
   return log;
 };
+
+log.tracker = npmlog;
+
+module.exports = log;
 </code></pre>
         </article>
       </section>
@@ -457,7 +557,7 @@ module.exports = params => {
       <img
         class="logo"
         src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
-        style="width: 127px; height: 14px;"
+        style="width: 127px; height: 14px"
       />
       <div class="footer-text">BSD license Copyright (c) Google</div>
     </footer>

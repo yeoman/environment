@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Mixin: env/generators | yeoman-environment</title>
+    <title>Source: util/transform.js | yeoman-environment</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.9.6</span>
+        <span class="version">v3.2.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -78,6 +78,26 @@
         <h3>Classes</h3>
         <ul>
           <li>
+            <a href="Conflicter.html">Conflicter</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="Conflicter_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="Conflicter.html#_detectConflict">_detectConflict</a>
+                </li>
+                <li><a href="Conflicter.html#_printDiff">_printDiff</a></li>
+                <li>
+                  <a href="Conflicter.html#checkForCollision"
+                    >checkForCollision</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
             <a href="Environment.html">Environment</a
             ><button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
@@ -108,14 +128,19 @@
                     >namespaceToName</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#.prepareCommand">prepareCommand</a>
+                </li>
                 <li><a href="Environment.html#alias">alias</a></li>
+                <li>
+                  <a href="Environment.html#applyTransforms">applyTransforms</a>
+                </li>
+                <li>
+                  <a href="Environment.html#commitSharedFs">commitSharedFs</a>
+                </li>
+                <li><a href="Environment.html#composeWith">composeWith</a></li>
                 <li><a href="Environment.html#create">create</a></li>
                 <li><a href="Environment.html#error">error</a></li>
-                <li>
-                  <a href="Environment.html#findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
                 <li><a href="Environment.html#get">get</a></li>
                 <li><a href="Environment.html#getByPath">getByPath</a></li>
                 <li>
@@ -153,6 +178,16 @@
                     >isPackageRegistered</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#loadEnvironmentOptions"
+                    >loadEnvironmentOptions</a
+                  >
+                </li>
+                <li>
+                  <a href="Environment.html#loadSharedOptions"
+                    >loadSharedOptions</a
+                  >
+                </li>
                 <li><a href="Environment.html#lookup">lookup</a></li>
                 <li>
                   <a href="Environment.html#lookupLocalPackages"
@@ -161,6 +196,17 @@
                 </li>
                 <li><a href="Environment.html#namespace">namespace</a></li>
                 <li><a href="Environment.html#namespaces">namespaces</a></li>
+                <li>
+                  <a href="Environment.html#queueConflicter">queueConflicter</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queueGenerator">queueGenerator</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queuePackageManagerInstall"
+                    >queuePackageManagerInstall</a
+                  >
+                </li>
                 <li><a href="Environment.html#register">register</a></li>
                 <li>
                   <a href="Environment.html#registerStub">registerStub</a>
@@ -170,10 +216,17 @@
                     >resolveModulePath</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#resolvePackage">resolvePackage</a>
+                </li>
+                <li>
+                  <a href="Environment.html#rootGenerator">rootGenerator</a>
+                </li>
                 <li><a href="Environment.html#run">run</a></li>
                 <li>
                   <a href="Environment.html#runGenerator">runGenerator</a>
                 </li>
+                <li><a href="Environment.html#start">start</a></li>
               </ul>
             </div>
           </li>
@@ -213,22 +266,10 @@
                     >lookupLocalPackages</a
                   >
                 </li>
-              </ul>
-            </div>
-          </li>
-          <li>
-            <a href="env_generators.html">env/generators</a
-            ><button type="button" class="hidden toggle-subnav btn btn-link">
-              <span class="glyphicon glyphicon-plus"></span>
-            </button>
-            <div class="hidden" id="env/generators_sub">
-              <div class="member-type">Methods</div>
-              <ul class="inner">
                 <li>
-                  <a href="env_generators.html#.getInstance">getInstance</a>
-                </li>
-                <li>
-                  <a href="env_generators.html#.rootGenerator">rootGenerator</a>
+                  <a href="env_composability.html#.resolvePackage"
+                    >resolvePackage</a
+                  >
                 </li>
               </ul>
             </div>
@@ -251,14 +292,28 @@
               <ul class="inner">
                 <li><a href="env_resolver.html#.alias">alias</a></li>
                 <li>
-                  <a href="env_resolver.html#.findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
-                <li>
                   <a href="env_resolver.html#.getNpmPaths">getNpmPaths</a>
                 </li>
                 <li><a href="env_resolver.html#.lookup">lookup</a></li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="spawn-command.html">spawn-command</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="spawn-command_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="spawn-command.html#.spawnCommand">spawnCommand</a>
+                </li>
+                <li>
+                  <a href="spawn-command.html#.spawnCommandSync"
+                    >spawnCommandSync</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -267,7 +322,32 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
+          <li>
+            <a href="global.html#createConflicterStatusTransform"
+              >createConflicterStatusTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createEachFileTransform"
+              >createEachFileTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createYoRcTransform">createYoRcTransform</a>
+          </li>
+          <li>
+            <a href="global.html#createYoResolveTransform"
+              >createYoResolveTransform</a
+            >
+          </li>
+          <li><a href="global.html#execute">execute</a></li>
+          <li><a href="global.html#fileIsModified">fileIsModified</a></li>
           <li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li>
+          <li>
+            <a href="global.html#packageManagerInstallTask"
+              >packageManagerInstallTask</a
+            >
+          </li>
           <li>
             <a href="global.html#splitArgsFromString">splitArgsFromString</a>
           </li>
@@ -278,116 +358,182 @@
 
     <div class="main" id="main">
       <section>
-        <header>
-          <h2>env/generators</h2>
-        </header>
-
         <article>
-          <div class="container-overview">
-            <dl class="details"></dl>
-          </div>
+          <pre class="prettyprint source linenums"><code>'use strict';
 
-          <h3 class="subsection-title">Methods</h3>
+const {WError} = require('error');
+const fs = require('fs');
+const path = require('path');
+const findUp = require('find-up');
+const minimatch = require('minimatch');
+const through = require('through2');
 
-          <dl>
-            <dt>
-              <h4 class="name" id=".getInstance">
-                <span class="type-signature"
-                  ><span class="icon green">static</span> </span
-                >getInstance<span class="signature">(Namespace)</span
-                ><span class="type-signature"> &rarr; {Object}</span>
+class YoResolveError extends WError {}
 
-                <div class="container-source members">
-                  <code><a href="generators.js.html">generators.js</a></code
-                  >,
-                  <code><a href="generators.js.html#line15">line 15</a></code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Get an instance of the generator if it already got
-                  instantiated.
-                </p>
-              </div>
+/**
+ * Detect if the file is modified
+ * See https://github.com/SBoudrias/mem-fs-editor/blob/3ff18e26c52dc30d8f371bcc72c1884f2ea706d6/lib/actions/commit.js#L38
+ *
+ * @param {Object} field - vinyl file
+ */
+function fileIsModified(file) {
+  // New files (don't exists in the disc) that have been deleted won't be committed and is considered unmodified file.
+  return (file.state === 'modified' || (file.state === 'deleted' &amp;&amp; !file.isNew));
+}
 
-              <div class="container-params">
-                <h5>Parameters:</h5>
+/**
+ * Create a for each file stream transform.
+ * @param {Function} forEach - Function to execute for each file
+ * @param {Object} options - Options
+ * @param {boolean} [options.autoForward = true] - Set false to don't add a file to the stream, the function must do it.
+ * @param {boolean} [options.executeUnmodified = false] - Set true to execute the forEach function with a not modified file.
+ * @param {boolean} [options.forwardUmodified = true] - Set false to don't add a not modified file to the stream.
+ * @return {Transform} A Transform https://nodejs.org/api/stream.html#stream_class_stream_transform
+ */
+function createEachFileTransform(forEach, options = {}) {
+  if (typeof forEach !== 'function') {
+    options = forEach;
+    forEach = () => {};
+  }
+  const {forwardUmodified = true, executeUnmodified = false, autoForward = true, autoContinue = true} = options;
+  return through.obj(function (file, enc, cb) {
+    const forward = () => {
+      if (autoForward &amp;&amp; (forwardUmodified || fileIsModified(file))) {
+        this.push(file);
+      }
+      if (autoContinue) {
+        cb();
+      }
+    };
+    if (!executeUnmodified &amp;&amp; !fileIsModified(file)) {
+      forward();
+      return;
+    }
+    const mayBePromise = forEach.call(this, file, enc, autoContinue ? undefined : cb);
+    if (mayBePromise &amp;&amp; mayBePromise.then) {
+      mayBePromise.then(() => forward()).catch(error => cb(error));
+    } else {
+      forward();
+    }
+  });
+}
 
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
+function parseYoAttributesFile(yoAttributeFileName) {
+  let overridesContent;
+  try {
+    overridesContent = fs.readFileSync(yoAttributeFileName, 'utf-8');
+  } catch (error) {
+    throw YoResolveError.wrap('Error loading yo attributes file {yoAttributeFileName}', error, {yoAttributeFileName});
+  }
+  const absoluteDir = path.dirname(yoAttributeFileName);
+  return Object.fromEntries(
+    overridesContent
+      .split(/\r?\n/)
+      .map(override => override.trim())
+      .map(override => override.split('#')[0].trim())
+      .filter(override => override)
+      .map(override => override.split(/[\s+=]/))
+      .map(([pattern, status = 'skip']) => [path.join(absoluteDir, pattern), status])
+  );
+}
 
-                      <th>Type</th>
+function getConflicterStatusForFile(conflicter, filePath, yoAttributeFileName = '.yo-resolve') {
+  const fileDir = path.dirname(filePath);
+  conflicter.yoResolveByFile = conflicter.yoResolveByFile || {};
+  const yoResolveFiles = [];
+  let foundYoAttributesFile = findUp.sync([yoAttributeFileName], {cwd: fileDir});
+  while (foundYoAttributesFile) {
+    yoResolveFiles.push(foundYoAttributesFile);
+    foundYoAttributesFile = findUp.sync([yoAttributeFileName], {cwd: path.join(path.dirname(foundYoAttributesFile), '..')});
+  }
 
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
+  let fileStatus;
+  if (yoResolveFiles) {
+    yoResolveFiles.forEach(yoResolveFile => {
+      if (conflicter.yoResolveByFile[yoResolveFile] === undefined) {
+        conflicter.yoResolveByFile[yoResolveFile] = parseYoAttributesFile(yoResolveFile);
+      }
+    });
+    yoResolveFiles
+      .map(yoResolveFile => conflicter.yoResolveByFile[yoResolveFile])
+      .map(attributes => attributes)
+      .find(yoResolve => {
+        return Object.entries(yoResolve).some(([pattern, status]) => {
+          if (minimatch(filePath, pattern)) {
+            fileStatus = status;
+            return true;
+          }
+          return false;
+        });
+      });
+  }
+  return fileStatus;
+}
 
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>Namespace</code></td>
+/**
+ * Create a yo-resolve transform stream.
+ * Suports pre-defined conflicter actions action based on file glob.
+ * @param {Conflicter} conflicter - Conflicter instance
+ * @param {string} yoResolveFileName - .yo-resolve filename
+ * @return {Transform} A Transform https://nodejs.org/api/stream.html#stream_class_stream_transform
+ */
+function createYoResolveTransform(conflicter, yoResolveFileName) {
+  return createEachFileTransform(file => {
+    file.conflicter = file.conflicter || getConflicterStatusForFile(conflicter, file.path, yoResolveFileName);
+  });
+}
 
-                      <td class="type">
-                        <span class="param-type">namespace</span>
-                      </td>
+/**
+ * Create a force yeoman configs transform stream.
+ * @return {Transform} A Transform https://nodejs.org/api/stream.html#stream_class_stream_transform
+ */
+function createYoRcTransform() {
+  return createEachFileTransform(file => {
+    const filename = path.basename(file.path);
+    // Config file should not be processed by the conflicter. Force override.
+    if (filename === '.yo-rc.json' || filename === '.yo-rc-global.json') {
+      file.conflicter = 'force';
+    }
+  });
+}
 
-                      <td class="description last">
-                        <p>of the instantiated generator.</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+/**
+ * Create a transform to apply conflicter status.
+ * @param {Log} logger - Log reference. See log.js
+ * @return {Transform} A Transform https://nodejs.org/api/stream.html#stream_class_stream_transform
+ */
+function createConflicterStatusTransform() {
+  return createEachFileTransform(function (file) {
+    const action = file.conflicter;
 
-              <div class="container-returns">
-                <h5>Returns:</h5>
+    delete file.conflicter;
+    delete file.binary;
+    delete file.conflicterChanges;
+    delete file.conflicterLog;
 
-                <span class="param-type">Object</span>
+    if (!action) {
+      this.push(file);
+      return;
+    }
 
-                -
-                <p>generator - Generator</p>
-              </div>
+    if (action === 'skip') {
+      delete file.state;
+      delete file.isNew;
+    } else {
+      this.push(file);
+    }
+  }, {autoForward: false});
+}
 
-              <dl class="details"></dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id=".rootGenerator">
-                <span class="type-signature"
-                  ><span class="icon green">static</span> </span
-                >rootGenerator<span class="signature">()</span
-                ><span class="type-signature"> &rarr; {Object}</span>
-
-                <div class="container-source members">
-                  <code><a href="generators.js.html">generators.js</a></code
-                  >,
-                  <code><a href="generators.js.html#line42">line 42</a></code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Get the generator instance that was called at
-                  Environment.run().
-                </p>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">Object</span>
-
-                -
-                <p>generator - Generator</p>
-              </div>
-
-              <dl class="details"></dl>
-            </dd>
-          </dl>
+module.exports = {
+  fileIsModified,
+  getConflicterStatusForFile,
+  createEachFileTransform,
+  createYoResolveTransform,
+  createYoRcTransform,
+  createConflicterStatusTransform
+};
+</code></pre>
         </article>
       </section>
     </div>
@@ -408,7 +554,7 @@
     <script src="scripts/linenumber.js"></script>
 
     <script>
-      var id = "env/generators_sub".replace(/"/g, "_");
+      var id = "_sub".replace(/"/g, "_");
       var selectedApi = document.getElementById(id); // do not use jquery selector
       var $selectedApi = $(selectedApi);
 

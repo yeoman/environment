@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Mixin: env/generators | yeoman-environment</title>
+    <title>Source: util/command.js | yeoman-environment</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.9.6</span>
+        <span class="version">v3.2.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -78,6 +78,26 @@
         <h3>Classes</h3>
         <ul>
           <li>
+            <a href="Conflicter.html">Conflicter</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="Conflicter_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="Conflicter.html#_detectConflict">_detectConflict</a>
+                </li>
+                <li><a href="Conflicter.html#_printDiff">_printDiff</a></li>
+                <li>
+                  <a href="Conflicter.html#checkForCollision"
+                    >checkForCollision</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
             <a href="Environment.html">Environment</a
             ><button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
@@ -108,14 +128,19 @@
                     >namespaceToName</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#.prepareCommand">prepareCommand</a>
+                </li>
                 <li><a href="Environment.html#alias">alias</a></li>
+                <li>
+                  <a href="Environment.html#applyTransforms">applyTransforms</a>
+                </li>
+                <li>
+                  <a href="Environment.html#commitSharedFs">commitSharedFs</a>
+                </li>
+                <li><a href="Environment.html#composeWith">composeWith</a></li>
                 <li><a href="Environment.html#create">create</a></li>
                 <li><a href="Environment.html#error">error</a></li>
-                <li>
-                  <a href="Environment.html#findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
                 <li><a href="Environment.html#get">get</a></li>
                 <li><a href="Environment.html#getByPath">getByPath</a></li>
                 <li>
@@ -153,6 +178,16 @@
                     >isPackageRegistered</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#loadEnvironmentOptions"
+                    >loadEnvironmentOptions</a
+                  >
+                </li>
+                <li>
+                  <a href="Environment.html#loadSharedOptions"
+                    >loadSharedOptions</a
+                  >
+                </li>
                 <li><a href="Environment.html#lookup">lookup</a></li>
                 <li>
                   <a href="Environment.html#lookupLocalPackages"
@@ -161,6 +196,17 @@
                 </li>
                 <li><a href="Environment.html#namespace">namespace</a></li>
                 <li><a href="Environment.html#namespaces">namespaces</a></li>
+                <li>
+                  <a href="Environment.html#queueConflicter">queueConflicter</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queueGenerator">queueGenerator</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queuePackageManagerInstall"
+                    >queuePackageManagerInstall</a
+                  >
+                </li>
                 <li><a href="Environment.html#register">register</a></li>
                 <li>
                   <a href="Environment.html#registerStub">registerStub</a>
@@ -170,10 +216,17 @@
                     >resolveModulePath</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#resolvePackage">resolvePackage</a>
+                </li>
+                <li>
+                  <a href="Environment.html#rootGenerator">rootGenerator</a>
+                </li>
                 <li><a href="Environment.html#run">run</a></li>
                 <li>
                   <a href="Environment.html#runGenerator">runGenerator</a>
                 </li>
+                <li><a href="Environment.html#start">start</a></li>
               </ul>
             </div>
           </li>
@@ -213,22 +266,10 @@
                     >lookupLocalPackages</a
                   >
                 </li>
-              </ul>
-            </div>
-          </li>
-          <li>
-            <a href="env_generators.html">env/generators</a
-            ><button type="button" class="hidden toggle-subnav btn btn-link">
-              <span class="glyphicon glyphicon-plus"></span>
-            </button>
-            <div class="hidden" id="env/generators_sub">
-              <div class="member-type">Methods</div>
-              <ul class="inner">
                 <li>
-                  <a href="env_generators.html#.getInstance">getInstance</a>
-                </li>
-                <li>
-                  <a href="env_generators.html#.rootGenerator">rootGenerator</a>
+                  <a href="env_composability.html#.resolvePackage"
+                    >resolvePackage</a
+                  >
                 </li>
               </ul>
             </div>
@@ -251,14 +292,28 @@
               <ul class="inner">
                 <li><a href="env_resolver.html#.alias">alias</a></li>
                 <li>
-                  <a href="env_resolver.html#.findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
-                <li>
                   <a href="env_resolver.html#.getNpmPaths">getNpmPaths</a>
                 </li>
                 <li><a href="env_resolver.html#.lookup">lookup</a></li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="spawn-command.html">spawn-command</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="spawn-command_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="spawn-command.html#.spawnCommand">spawnCommand</a>
+                </li>
+                <li>
+                  <a href="spawn-command.html#.spawnCommandSync"
+                    >spawnCommandSync</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -267,7 +322,32 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
+          <li>
+            <a href="global.html#createConflicterStatusTransform"
+              >createConflicterStatusTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createEachFileTransform"
+              >createEachFileTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createYoRcTransform">createYoRcTransform</a>
+          </li>
+          <li>
+            <a href="global.html#createYoResolveTransform"
+              >createYoResolveTransform</a
+            >
+          </li>
+          <li><a href="global.html#execute">execute</a></li>
+          <li><a href="global.html#fileIsModified">fileIsModified</a></li>
           <li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li>
+          <li>
+            <a href="global.html#packageManagerInstallTask"
+              >packageManagerInstallTask</a
+            >
+          </li>
           <li>
             <a href="global.html#splitArgsFromString">splitArgsFromString</a>
           </li>
@@ -278,116 +358,115 @@
 
     <div class="main" id="main">
       <section>
-        <header>
-          <h2>env/generators</h2>
-        </header>
-
         <article>
-          <div class="container-overview">
-            <dl class="details"></dl>
-          </div>
+          <pre
+            class="prettyprint source linenums"
+          ><code>const {Command, Option} = require('commander');
 
-          <h3 class="subsection-title">Methods</h3>
+class YeomanCommand extends Command {
+  createCommand(name) {
+    return new YeomanCommand(name);
+  }
 
-          <dl>
-            <dt>
-              <h4 class="name" id=".getInstance">
-                <span class="type-signature"
-                  ><span class="icon green">static</span> </span
-                >getInstance<span class="signature">(Namespace)</span
-                ><span class="type-signature"> &rarr; {Object}</span>
+  /**
+   * Override addOption to register a negative alternative for every option.
+   * @param {Option} option
+   * @return {YeomanCommand} this;
+   */
+  addOption(option) {
+    if (!option.long || option.required || option.optional) {
+      return super.addOption(option);
+    }
+    if (option.negate) {
+      // Add a affirmative option for negative boolean options.
+      // Should be done before, because commander adds a non working affirmative by itself.
+      super.addOption(new Option(option.long.replace(/^--no-/, '--')).hideHelp());
+    }
+    const result = super.addOption(option);
+    if (!option.negate) {
+      // Add a hidden negative option for affirmative boolean options.
+      super.addOption(new Option(option.long.replace(/^--/, '--no-')).hideHelp());
+    }
+    return result;
+  }
 
-                <div class="container-source members">
-                  <code><a href="generators.js.html">generators.js</a></code
-                  >,
-                  <code><a href="generators.js.html#line15">line 15</a></code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Get an instance of the generator if it already got
-                  instantiated.
-                </p>
-              </div>
+  /**
+   * Register arguments using generator._arguments structure.
+   * @param {object[]} generatorArgs
+   * @return {YeomanCommand} this;
+   */
+  addGeneratorArguments(generatorArgs = []) {
+    if (!generatorArgs) {
+      return this;
+    }
+    const args = generatorArgs
+      .map(argument => {
+        const argName = argument.type === Array ? `${argument.name}...` : argument.name;
+        return argument.required ? `&lt;${argName}>` : `[${argName}]`;
+      })
+      .join(' ');
+    this.arguments(args);
+    return this;
+  }
 
-              <div class="container-params">
-                <h5>Parameters:</h5>
+  /**
+   * Register options using generator._options structure.
+   * @param {object} options
+   * @param {string} blueprintOptionDescription - description of the blueprint that adds the option
+   * @return {YeomanCommand} this;
+   */
+  addGeneratorOptions(options) {
+    options = options || {};
+    Object.entries(options).forEach(([key, value]) => {
+      this._addGeneratorOption(key, value);
+    });
+    return this;
+  }
 
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
+  _addGeneratorOption(optionName, optionDefinition, additionalDescription = '') {
+    if (optionName === 'help') {
+      return undefined;
+    }
+    const longOption = `--${optionName}`;
+    const existingOption = this._findOption(longOption);
+    if (this._findOption(longOption)) {
+      return existingOption;
+    }
 
-                      <th>Type</th>
+    let cmdString = '';
+    if (optionDefinition.alias) {
+      cmdString = `-${optionDefinition.alias}, `;
+    }
+    cmdString = `${cmdString}${longOption}`;
+    if (optionDefinition.type === String) {
+      cmdString = optionDefinition.required === false ? `${cmdString} [value]` : `${cmdString} &lt;value>`;
+    } else if (optionDefinition.type === Array) {
+      cmdString = optionDefinition.required === false ? `${cmdString} [value...]` : `${cmdString} &lt;value...>`;
+    }
+    return this.addOption(
+      new Option(cmdString, optionDefinition.description + additionalDescription)
+        .default(optionDefinition.default)
+        .hideHelp(optionDefinition.hide)
+    );
+  }
 
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
+  /**
+   * Override to reject errors instead of throwing and add command to error.
+   * @return promise this
+   */
+  parseAsync(argv, parseOptions) {
+    try {
+      this.parse(argv, parseOptions);
+    } catch (commanderError) {
+      commanderError.command = this;
+      return Promise.reject(commanderError);
+    }
+    return Promise.all(this._actionResults).then(() => this);
+  }
+}
 
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>Namespace</code></td>
-
-                      <td class="type">
-                        <span class="param-type">namespace</span>
-                      </td>
-
-                      <td class="description last">
-                        <p>of the instantiated generator.</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">Object</span>
-
-                -
-                <p>generator - Generator</p>
-              </div>
-
-              <dl class="details"></dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id=".rootGenerator">
-                <span class="type-signature"
-                  ><span class="icon green">static</span> </span
-                >rootGenerator<span class="signature">()</span
-                ><span class="type-signature"> &rarr; {Object}</span>
-
-                <div class="container-source members">
-                  <code><a href="generators.js.html">generators.js</a></code
-                  >,
-                  <code><a href="generators.js.html#line42">line 42</a></code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Get the generator instance that was called at
-                  Environment.run().
-                </p>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">Object</span>
-
-                -
-                <p>generator - Generator</p>
-              </div>
-
-              <dl class="details"></dl>
-            </dd>
-          </dl>
+module.exports = {YeomanCommand};
+</code></pre>
         </article>
       </section>
     </div>
@@ -408,7 +487,7 @@
     <script src="scripts/linenumber.js"></script>
 
     <script>
-      var id = "env/generators_sub".replace(/"/g, "_");
+      var id = "_sub".replace(/"/g, "_");
       var selectedApi = document.getElementById(id); // do not use jquery selector
       var $selectedApi = $(selectedApi);
 

@@ -20,7 +20,7 @@
   </head>
   <body>
     <nav class="lnb" id="lnb">
-      <div class="logo" style="width: 127px; height: 14px;">
+      <div class="logo" style="width: 127px; height: 14px">
         <img
           src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
           width="100%"
@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.10.3</span>
+        <span class="version">v3.2.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -78,6 +78,26 @@
         <h3>Classes</h3>
         <ul>
           <li>
+            <a href="Conflicter.html">Conflicter</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="Conflicter_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="Conflicter.html#_detectConflict">_detectConflict</a>
+                </li>
+                <li><a href="Conflicter.html#_printDiff">_printDiff</a></li>
+                <li>
+                  <a href="Conflicter.html#checkForCollision"
+                    >checkForCollision</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
             <a href="Environment.html">Environment</a
             ><button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
@@ -108,14 +128,19 @@
                     >namespaceToName</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#.prepareCommand">prepareCommand</a>
+                </li>
                 <li><a href="Environment.html#alias">alias</a></li>
+                <li>
+                  <a href="Environment.html#applyTransforms">applyTransforms</a>
+                </li>
+                <li>
+                  <a href="Environment.html#commitSharedFs">commitSharedFs</a>
+                </li>
+                <li><a href="Environment.html#composeWith">composeWith</a></li>
                 <li><a href="Environment.html#create">create</a></li>
                 <li><a href="Environment.html#error">error</a></li>
-                <li>
-                  <a href="Environment.html#findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
                 <li><a href="Environment.html#get">get</a></li>
                 <li><a href="Environment.html#getByPath">getByPath</a></li>
                 <li>
@@ -153,6 +178,16 @@
                     >isPackageRegistered</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#loadEnvironmentOptions"
+                    >loadEnvironmentOptions</a
+                  >
+                </li>
+                <li>
+                  <a href="Environment.html#loadSharedOptions"
+                    >loadSharedOptions</a
+                  >
+                </li>
                 <li><a href="Environment.html#lookup">lookup</a></li>
                 <li>
                   <a href="Environment.html#lookupLocalPackages"
@@ -161,6 +196,17 @@
                 </li>
                 <li><a href="Environment.html#namespace">namespace</a></li>
                 <li><a href="Environment.html#namespaces">namespaces</a></li>
+                <li>
+                  <a href="Environment.html#queueConflicter">queueConflicter</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queueGenerator">queueGenerator</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queuePackageManagerInstall"
+                    >queuePackageManagerInstall</a
+                  >
+                </li>
                 <li><a href="Environment.html#register">register</a></li>
                 <li>
                   <a href="Environment.html#registerStub">registerStub</a>
@@ -171,12 +217,16 @@
                   >
                 </li>
                 <li>
+                  <a href="Environment.html#resolvePackage">resolvePackage</a>
+                </li>
+                <li>
                   <a href="Environment.html#rootGenerator">rootGenerator</a>
                 </li>
                 <li><a href="Environment.html#run">run</a></li>
                 <li>
                   <a href="Environment.html#runGenerator">runGenerator</a>
                 </li>
+                <li><a href="Environment.html#start">start</a></li>
               </ul>
             </div>
           </li>
@@ -216,6 +266,11 @@
                     >lookupLocalPackages</a
                   >
                 </li>
+                <li>
+                  <a href="env_composability.html#.resolvePackage"
+                    >resolvePackage</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -237,14 +292,28 @@
               <ul class="inner">
                 <li><a href="env_resolver.html#.alias">alias</a></li>
                 <li>
-                  <a href="env_resolver.html#.findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
-                <li>
                   <a href="env_resolver.html#.getNpmPaths">getNpmPaths</a>
                 </li>
                 <li><a href="env_resolver.html#.lookup">lookup</a></li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="spawn-command.html">spawn-command</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="spawn-command_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="spawn-command.html#.spawnCommand">spawnCommand</a>
+                </li>
+                <li>
+                  <a href="spawn-command.html#.spawnCommandSync"
+                    >spawnCommandSync</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -253,7 +322,32 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
+          <li>
+            <a href="global.html#createConflicterStatusTransform"
+              >createConflicterStatusTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createEachFileTransform"
+              >createEachFileTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createYoRcTransform">createYoRcTransform</a>
+          </li>
+          <li>
+            <a href="global.html#createYoResolveTransform"
+              >createYoResolveTransform</a
+            >
+          </li>
+          <li><a href="global.html#execute">execute</a></li>
+          <li><a href="global.html#fileIsModified">fileIsModified</a></li>
           <li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li>
+          <li>
+            <a href="global.html#packageManagerInstallTask"
+              >packageManagerInstallTask</a
+            >
+          </li>
           <li>
             <a href="global.html#splitArgsFromString">splitArgsFromString</a>
           </li>
@@ -266,7 +360,6 @@
       <section>
         <article>
           <pre class="prettyprint source linenums"><code>'use strict';
-const _ = require('lodash');
 const inquirer = require('inquirer');
 const diff = require('diff');
 const chalk = require('chalk');
@@ -291,6 +384,7 @@ class TerminalAdapter {
     this.console = options.console || new console.Console(stdout, stderr);
 
     this.log = logger({console: this.console, stdout: options.stdout});
+    this.tracker = logger.tracker;
   }
 
   get _colorDiffAdded() {
@@ -301,8 +395,8 @@ class TerminalAdapter {
     return chalk.bgRed;
   }
 
-  _colorLines(name, str) {
-    return str.split('\n').map(line => this[`_colorDiff${name}`](line)).join('\n');
+  _colorLines(name, string) {
+    return string.split('\n').map(line => this[`_colorDiff${name}`](line)).join('\n');
   }
 
   /**
@@ -316,7 +410,8 @@ class TerminalAdapter {
    *
    * @param {Object|Object[]} questions
    * @param {Object} [answers] Answers to be passed to inquirer
-   * @param {Function} [callback] callback
+   * @param {Function} [cb] Deprecated: callback for backward compatibility.
+   * @return {Object} promise answers
    */
   prompt(questions, answers, cb) {
     if (typeof answers === 'function') {
@@ -324,7 +419,9 @@ class TerminalAdapter {
       answers = undefined;
     }
     const promise = this.promptModule(questions, answers);
-    promise.then(cb || _.noop);
+    if (typeof cb === 'function') {
+      promise.then(answers => cb(answers));
+    }
     return promise;
   }
 
@@ -340,29 +437,29 @@ class TerminalAdapter {
       changes = actual;
     }
     changes = changes || diff.diffLines(actual, expected);
-    let msg = changes.map(str => {
-      if (str.added) {
-        return this._colorLines('Added', str.value);
+    let message = changes.map(string => {
+      if (string.added) {
+        return this._colorLines('Added', string.value);
       }
 
-      if (str.removed) {
-        return this._colorLines('Removed', str.value);
+      if (string.removed) {
+        return this._colorLines('Removed', string.value);
       }
 
-      return str.value;
+      return string.value;
     }).join('');
 
     // Legend
-    msg = '\n' +
+    message = '\n' +
       this._colorDiffRemoved('removed') +
       ' ' +
       this._colorDiffAdded('added') +
       '\n\n' +
-      msg +
+      message +
       '\n';
 
-    this.console.log(msg);
-    return msg;
+    this.console.log(message);
+    return message;
   }
 }
 
@@ -376,7 +473,7 @@ module.exports = TerminalAdapter;
       <img
         class="logo"
         src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
-        style="width: 127px; height: 14px;"
+        style="width: 127px; height: 14px"
       />
       <div class="footer-text">BSD license Copyright (c) Google</div>
     </footer>

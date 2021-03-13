@@ -20,7 +20,7 @@
   </head>
   <body>
     <nav class="lnb" id="lnb">
-      <div class="logo" style="width: 127px; height: 14px;">
+      <div class="logo" style="width: 127px; height: 14px">
         <img
           src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
           width="100%"
@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.10.3</span>
+        <span class="version">v3.2.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -78,6 +78,26 @@
         <h3>Classes</h3>
         <ul>
           <li>
+            <a href="Conflicter.html">Conflicter</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="Conflicter_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="Conflicter.html#_detectConflict">_detectConflict</a>
+                </li>
+                <li><a href="Conflicter.html#_printDiff">_printDiff</a></li>
+                <li>
+                  <a href="Conflicter.html#checkForCollision"
+                    >checkForCollision</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
             <a href="Environment.html">Environment</a
             ><button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
@@ -108,14 +128,19 @@
                     >namespaceToName</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#.prepareCommand">prepareCommand</a>
+                </li>
                 <li><a href="Environment.html#alias">alias</a></li>
+                <li>
+                  <a href="Environment.html#applyTransforms">applyTransforms</a>
+                </li>
+                <li>
+                  <a href="Environment.html#commitSharedFs">commitSharedFs</a>
+                </li>
+                <li><a href="Environment.html#composeWith">composeWith</a></li>
                 <li><a href="Environment.html#create">create</a></li>
                 <li><a href="Environment.html#error">error</a></li>
-                <li>
-                  <a href="Environment.html#findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
                 <li><a href="Environment.html#get">get</a></li>
                 <li><a href="Environment.html#getByPath">getByPath</a></li>
                 <li>
@@ -153,6 +178,16 @@
                     >isPackageRegistered</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#loadEnvironmentOptions"
+                    >loadEnvironmentOptions</a
+                  >
+                </li>
+                <li>
+                  <a href="Environment.html#loadSharedOptions"
+                    >loadSharedOptions</a
+                  >
+                </li>
                 <li><a href="Environment.html#lookup">lookup</a></li>
                 <li>
                   <a href="Environment.html#lookupLocalPackages"
@@ -161,6 +196,17 @@
                 </li>
                 <li><a href="Environment.html#namespace">namespace</a></li>
                 <li><a href="Environment.html#namespaces">namespaces</a></li>
+                <li>
+                  <a href="Environment.html#queueConflicter">queueConflicter</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queueGenerator">queueGenerator</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queuePackageManagerInstall"
+                    >queuePackageManagerInstall</a
+                  >
+                </li>
                 <li><a href="Environment.html#register">register</a></li>
                 <li>
                   <a href="Environment.html#registerStub">registerStub</a>
@@ -171,12 +217,16 @@
                   >
                 </li>
                 <li>
+                  <a href="Environment.html#resolvePackage">resolvePackage</a>
+                </li>
+                <li>
                   <a href="Environment.html#rootGenerator">rootGenerator</a>
                 </li>
                 <li><a href="Environment.html#run">run</a></li>
                 <li>
                   <a href="Environment.html#runGenerator">runGenerator</a>
                 </li>
+                <li><a href="Environment.html#start">start</a></li>
               </ul>
             </div>
           </li>
@@ -216,6 +266,11 @@
                     >lookupLocalPackages</a
                   >
                 </li>
+                <li>
+                  <a href="env_composability.html#.resolvePackage"
+                    >resolvePackage</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -237,14 +292,28 @@
               <ul class="inner">
                 <li><a href="env_resolver.html#.alias">alias</a></li>
                 <li>
-                  <a href="env_resolver.html#.findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
-                <li>
                   <a href="env_resolver.html#.getNpmPaths">getNpmPaths</a>
                 </li>
                 <li><a href="env_resolver.html#.lookup">lookup</a></li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="spawn-command.html">spawn-command</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="spawn-command_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="spawn-command.html#.spawnCommand">spawnCommand</a>
+                </li>
+                <li>
+                  <a href="spawn-command.html#.spawnCommandSync"
+                    >spawnCommandSync</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -253,7 +322,32 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
+          <li>
+            <a href="global.html#createConflicterStatusTransform"
+              >createConflicterStatusTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createEachFileTransform"
+              >createEachFileTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createYoRcTransform">createYoRcTransform</a>
+          </li>
+          <li>
+            <a href="global.html#createYoResolveTransform"
+              >createYoResolveTransform</a
+            >
+          </li>
+          <li><a href="global.html#execute">execute</a></li>
+          <li><a href="global.html#fileIsModified">fileIsModified</a></li>
           <li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li>
+          <li>
+            <a href="global.html#packageManagerInstallTask"
+              >packageManagerInstallTask</a
+            >
+          </li>
           <li>
             <a href="global.html#splitArgsFromString">splitArgsFromString</a>
           </li>
@@ -269,11 +363,8 @@
 const debug = require('debug')('yeoman:environment:compose');
 const EventEmitter = require('events');
 const _ = require('lodash');
-const NpmApi = require('npm-api');
 const path = require('path');
 const semver = require('semver');
-
-const npm = new NpmApi();
 
 /**
  * @mixin
@@ -327,8 +418,8 @@ composability.lookupNamespaces = function (namespaces, options = {}) {
   }
   namespaces = Array.isArray(namespaces) ? namespaces : [namespaces];
   namespaces = namespaces.map(ns => this.requireNamespace(ns));
-  const opts = namespaces.map(ns => {
-    const nsOpts = {packagePatterns: ns.generatorHint};
+  const options_ = namespaces.map(ns => {
+    const nsOptions = {packagePatterns: ns.generatorHint};
     if (ns.generator) {
       // Build filePatterns to look specifically for the namespace.
       const genPath = ns.generator.split(':').join('/');
@@ -340,12 +431,12 @@ composability.lookupNamespaces = function (namespaces, options = {}) {
         (accumulator, currentValue) => accumulator.concat(currentValue),
         []
       );
-      nsOpts.filePatterns = filePatterns;
-      nsOpts.singleResult = true;
+      nsOptions.filePatterns = filePatterns;
+      nsOptions.singleResult = true;
     }
-    return nsOpts;
+    return nsOptions;
   });
-  return opts.map(opt => this.lookup({...opt, ...options})).reduce((acc, cur) => acc.concat(cur), []);
+  return options_.map(opt => this.lookup({...opt, ...options})).reduce((acc, cur) => acc.concat(cur), []);
 };
 
 /**
@@ -367,7 +458,7 @@ composability.prepareEnvironment = async function (namespaces) {
   };
 
   const assertMissing = missing => {
-    if (missing.length !== 0) {
+    if (missing.length > 0) {
       throw new Error(`Error preparing environment for ${missing.map(ns => ns.complete).join()}`);
     }
   };
@@ -377,54 +468,19 @@ composability.prepareEnvironment = async function (namespaces) {
   // Install missing
   const toInstall = {};
 
-  const addPeerGenerators = async (packageName, packageRange = '*') => {
-    const npmRepo = npm.repo(packageName);
-    let packages;
+  const findPackage = async (packageName, packageRange = '*') => {
     try {
-      packages = await npmRepo.package('all');
-      if (packages.error) {
-        throw new Error(packages.error);
-      }
-    } catch (error) {
-      debug(`Could not find npm package for ${packageName}`, error);
+      const manifest = await this.resolvePackage(packageName, packageRange);
+      toInstall[packageName] = manifest.version;
+      return true;
+    } catch {
       return false;
     }
-
-    let version = semver.maxSatisfying(Object.keys(packages.versions), packageRange);
-    if (version === null) {
-      version = semver.maxSatisfying(Object.keys(packages.versions), '*');
-      console.error(`Error looking for ${packageName} version ${packageRange}, using ${version}`);
-    }
-    toInstall[packageName] = version;
-
-    const peerDependencies = packages.versions[version].peerDependencies;
-    if (peerDependencies) {
-      for (const peerPackageName in peerDependencies) {
-        if (!Object.prototype.hasOwnProperty.call(peerDependencies, peerPackageName)) {
-          continue;
-        }
-        const peerNS = this.parseNamespace(peerPackageName);
-        if (!peerNS) {
-          continue;
-        }
-        if (peerNS.unscoped.startsWith('generator-') &amp;&amp; toInstall[peerPackageName] === undefined) {
-          const packageRange = peerDependencies[peerPackageName];
-          if (this.repository.verifyInstalledVersion(peerPackageName, packageRange)) {
-            continue;
-          }
-          // eslint-disable-next-line no-await-in-loop
-          await addPeerGenerators(peerPackageName, packageRange);
-        }
-      }
-    }
-    return true;
   };
 
   debug('Looking for peer dependecies %o', namespaces);
   const toLookup = [];
-  // eslint-disable-next-line guard-for-in
-  for (const i in missing) {
-    const ns = missing[i];
+  for (const ns of missing) {
     const packageName = ns.generatorHint;
     const packageRange = ns.semver;
     if (packageRange &amp;&amp; !semver.validRange(packageRange)) {
@@ -434,7 +490,7 @@ composability.prepareEnvironment = async function (namespaces) {
       continue;
     }
     // eslint-disable-next-line no-await-in-loop
-    if (!await addPeerGenerators(packageName, packageRange)) {
+    if (!await findPackage(packageName, packageRange)) {
       toLookup.push(ns);
     }
   }
@@ -506,7 +562,7 @@ class YeomanWith {
       return promises.length === 1 ? promises[0] : Promise.all(promises);
     };
 
-    this.generatorApis.forEach(runMethods);
+    this.generatorApis.forEach(generatorApi => runMethods(generatorApi));
     return this;
   }
 }
@@ -674,14 +730,9 @@ class YeomanCompose {
     if (!namespace.generator) {
       throw new Error(`Namespace with generator is required: ${namespace.id}`);
     }
-    let namespacesId;
-    if (namespace.instanceId &amp;&amp; namespace.instanceId === '*') {
-      namespacesId = this._getInstanceNames(namespace.namespace).map(instanceId => {
-        return namespace.with({instanceId}).id;
-      });
-    } else {
-      namespacesId = [namespace.id];
-    }
+    const namespacesId = namespace.instanceId &amp;&amp; namespace.instanceId === '*' ? this._getInstanceNames(namespace.namespace).map(instanceId => {
+      return namespace.with({instanceId}).id;
+    }) : [namespace.id];
 
     const withPromise = Promise.all(namespacesId.map(nsId => this.require(nsId, generatorOptions))).then(generatorsApi => new YeomanWith(generatorsApi, this));
     if (namespace.methods &amp;&amp; namespace.methods.length > 0) {
@@ -809,7 +860,7 @@ composability.createCompose = function (destinationRoot, options = {}) {
       <img
         class="logo"
         src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
-        style="width: 127px; height: 14px;"
+        style="width: 127px; height: 14px"
       />
       <div class="footer-text">BSD license Copyright (c) Google</div>
     </footer>

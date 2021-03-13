@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Mixin: env/composability | yeoman-environment</title>
+    <title>Class: Conflicter | yeoman-environment</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -359,30 +359,292 @@
     <div class="main" id="main">
       <section>
         <header>
-          <h2>env/composability</h2>
+          <h2>
+            <span class="attribs"><span class="type-signature"></span></span
+            >Conflicter<span class="signature">(adapter, options, cwd)</span
+            ><span class="type-signature"></span>
+          </h2>
+
+          <div class="class-description">
+            <p>
+              The Conflicter is a module that can be used to detect conflict
+              between files. Each Generator file system helpers pass files
+              through this module to make sure they don't break a user file.
+            </p>
+            <p>
+              When a potential conflict is detected, we prompt the user and ask
+              them for confirmation before proceeding with the actual write.
+            </p>
+          </div>
         </header>
 
         <article>
           <div class="container-overview">
-            <dl class="details"></dl>
+            <dt>
+              <h4 class="name" id="Conflicter">
+                new <span class="type-signature"></span>Conflicter<span
+                  class="signature"
+                  >(adapter, options, cwd)</span
+                ><span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code
+                    ><a href="util_conflicter.js.html"
+                      >util/conflicter.js</a
+                    ></code
+                  >,
+                  <code
+                    ><a href="util_conflicter.js.html#line35">line 35</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>adapter</code></td>
+
+                      <td class="type">
+                        <span class="param-type"
+                          ><a href="TerminalAdapter.html"
+                            >TerminalAdapter</a
+                          ></span
+                        >
+                      </td>
+
+                      <td class="description last">
+                        <p>The generator adapter</p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>options</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="description last">
+                        <p>Conflicter options</p>
+                        <h6>Properties</h6>
+
+                        <table class="params">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+
+                              <th>Type</th>
+
+                              <th>Attributes</th>
+
+                              <th>Default</th>
+
+                              <th class="last">Description</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            <tr>
+                              <td class="name"><code>force</code></td>
+
+                              <td class="type">
+                                <span class="param-type">Boolean</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="default">false</td>
+
+                              <td class="description last">
+                                <p>
+                                  When set to true, we won't check for conflict.
+                                  (the conflicter become a passthrough)
+                                </p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>bail</code></td>
+
+                              <td class="type">
+                                <span class="param-type">Boolean</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="default">false</td>
+
+                              <td class="description last">
+                                <p>
+                                  When set to true, we will abort on first
+                                  conflict. (used for testing reproducibility)
+                                </p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name">
+                                <code>ignoreWhitespace</code>
+                              </td>
+
+                              <td class="type">
+                                <span class="param-type">Boolean</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="default">false</td>
+
+                              <td class="description last">
+                                <p>
+                                  When set to true, whitespace changes should
+                                  not generate a conflict.
+                                </p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>regenerate</code></td>
+
+                              <td class="type">
+                                <span class="param-type">Boolean</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="default">false</td>
+
+                              <td class="description last">
+                                <p>
+                                  When set to true, identical files should be
+                                  written to disc.
+                                </p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>dryRun</code></td>
+
+                              <td class="type">
+                                <span class="param-type">Boolean</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="default">false</td>
+
+                              <td class="description last">
+                                <p>
+                                  When set to true, no write operation will be
+                                  executed.
+                                </p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name"><code>cwd</code></td>
+
+                              <td class="type">
+                                <span class="param-type">Boolean</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="default">process.cwd()</td>
+
+                              <td class="description last">
+                                <p>
+                                  Path to be used as reference for relative
+                                  path.
+                                </p>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>cwd</code></td>
+
+                      <td class="type">
+                        <span class="param-type">string</span>
+                      </td>
+
+                      <td class="description last">
+                        <p>Set cwd for relative logs.</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h5 class="subsection-title">Properties:</h5>
+
+              <table class="props">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+
+                    <th>Type</th>
+
+                    <th class="last">Description</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td class="name"><code>force</code></td>
+
+                    <td class="type">
+                      <span class="param-type">Boolean</span>
+                    </td>
+
+                    <td class="description last">
+                      <p>same as the constructor argument</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <dl class="details"></dl>
+            </dd>
           </div>
 
           <h3 class="subsection-title">Methods</h3>
 
           <dl>
             <dt>
-              <h4 class="name" id=".installLocalGenerators">
-                <span class="type-signature"
-                  ><span class="icon green">static</span> </span
-                >installLocalGenerators<span class="signature">(packages)</span
+              <h4 class="name" id="_detectConflict">
+                <span class="type-signature"></span>_detectConflict<span
+                  class="signature"
+                  >(file)</span
                 ><span class="type-signature"> &rarr; {Boolean}</span>
 
                 <div class="container-source members">
                   <code
-                    ><a href="composability.js.html">composability.js</a></code
+                    ><a href="util_conflicter.js.html"
+                      >util/conflicter.js</a
+                    ></code
                   >,
                   <code
-                    ><a href="composability.js.html#line29">line 29</a></code
+                    ><a href="util_conflicter.js.html#line123"
+                      >line 123</a
+                    ></code
                   >
                 </div>
               </h4>
@@ -390,9 +652,15 @@
             <dd>
               <div class="description">
                 <p>
-                  Install generators at the custom local repository and
-                  register.
+                  Detect conflicts between file contents at
+                  <code>filepath</code> with the <code>contents</code> passed to
+                  the function
                 </p>
+                <p>
+                  If <code>filepath</code> points to a folder, we'll always
+                  return true.
+                </p>
+                <p>Based on detect-conflict module</p>
               </div>
 
               <div class="container-params">
@@ -411,7 +679,7 @@
 
                   <tbody>
                     <tr>
-                      <td class="name"><code>packages</code></td>
+                      <td class="name"><code>file</code></td>
 
                       <td class="type">
                         <span class="param-type">Object</span>
@@ -419,8 +687,8 @@
 
                       <td class="description last">
                         <p>
-                          packages to install key(packageName):
-                          value(versionRange).
+                          File object respecting this interface: { path,
+                          contents }
                         </p>
                       </td>
                     </tr>
@@ -434,29 +702,92 @@
                 <span class="param-type">Boolean</span>
 
                 -
-                <ul>
-                  <li>true if the install succeeded.</li>
-                </ul>
+                <p>
+                  <code>true</code> if there's a conflict,
+                  <code>false</code> otherwise.
+                </p>
               </div>
 
               <dl class="details"></dl>
             </dd>
 
             <dt>
-              <h4 class="name" id=".lookupLocalPackages">
-                <span class="type-signature"
-                  ><span class="icon green">static</span> </span
-                >lookupLocalPackages<span class="signature"
-                  >(packagesToLookup<span class="signature-attributes">opt</span
-                  >)</span
+              <h4 class="name" id="_printDiff">
+                <span class="type-signature"></span>_printDiff<span
+                  class="signature"
+                  >(file)</span
                 ><span class="type-signature"></span>
 
                 <div class="container-source members">
                   <code
-                    ><a href="composability.js.html">composability.js</a></code
+                    ><a href="util_conflicter.js.html"
+                      >util/conflicter.js</a
+                    ></code
                   >,
                   <code
-                    ><a href="composability.js.html#line51">line 51</a></code
+                    ><a href="util_conflicter.js.html#line86">line 86</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Print the file differences to console</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>file</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="description last">
+                        <p>
+                          File object respecting this interface: { path,
+                          contents }
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="checkForCollision">
+                <span class="type-signature"></span>checkForCollision<span
+                  class="signature"
+                  >(file)</span
+                ><span class="type-signature"> &rarr; {Promise}</span>
+
+                <div class="container-source members">
+                  <code
+                    ><a href="util_conflicter.js.html"
+                      >util/conflicter.js</a
+                    ></code
+                  >,
+                  <code
+                    ><a href="util_conflicter.js.html#line181"
+                      >line 181</a
+                    ></code
                   >
                 </div>
               </h4>
@@ -464,9 +795,20 @@
             <dd>
               <div class="description">
                 <p>
-                  Lookup and register generators from the custom local
-                  repository.
+                  Check if a file conflict with the current version on the user
+                  disk
                 </p>
+                <p>
+                  A basic check is done to see if the file exists, if it does:
+                </p>
+                <ol>
+                  <li>Read its content from <code>fs</code></li>
+                  <li>Compare it with the provided content</li>
+                  <li>If identical, mark it as is and skip the check</li>
+                  <li>
+                    If diverged, prepare and show up the file collision menu
+                  </li>
+                </ol>
               </div>
 
               <div class="container-params">
@@ -479,123 +821,34 @@
 
                       <th>Type</th>
 
-                      <th>Attributes</th>
-
-                      <th>Default</th>
-
                       <th class="last">Description</th>
                     </tr>
                   </thead>
 
                   <tbody>
                     <tr>
-                      <td class="name"><code>packagesToLookup</code></td>
+                      <td class="name"><code>file</code></td>
 
                       <td class="type">
-                        <span class="param-type">Array.&lt;String></span>
+                        <span class="param-type">Object</span>
                       </td>
 
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="default">'generator-*'</td>
-
-                      <td class="description last">
-                        <p>packages to lookup.</p>
-                      </td>
+                      <td class="description last"><p>Vinyl file</p></td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
-              <dl class="details"></dl>
-            </dd>
+              <div class="container-returns">
+                <h5>Returns:</h5>
 
-            <dt>
-              <h4 class="name" id=".resolvePackage">
-                <span class="type-signature"
-                  ><span class="icon green">static</span> </span
-                >resolvePackage<span class="signature"
-                  >(packageName, packageVersion<span
-                    class="signature-attributes"
-                    >opt</span
-                  >, Array)</span
-                ><span class="type-signature"></span>
+                <span class="param-type">Promise</span>
 
-                <div class="container-source members">
-                  <code
-                    ><a href="composability.js.html">composability.js</a></code
-                  >,
-                  <code
-                    ><a href="composability.js.html#line62">line 62</a></code
-                  >
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>Resolve a package name with version.</p>
-              </div>
-
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th>Attributes</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>packageName</code></td>
-
-                      <td class="type">
-                        <span class="param-type">string</span>
-                      </td>
-
-                      <td class="attributes"></td>
-
-                      <td class="description last">
-                        <p>package to resolve.</p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>packageVersion</code></td>
-
-                      <td class="type">
-                        <span class="param-type">string</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>version or range to resolve.</p>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>Array</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Array.&lt;string></span>
-                      </td>
-
-                      <td class="attributes"></td>
-
-                      <td class="description last">
-                        <p>of key, value pairs.</p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                -
+                <p>
+                  Promise a status string ('identical', 'create', 'skip',
+                  'force')
+                </p>
               </div>
 
               <dl class="details"></dl>
@@ -621,7 +874,7 @@
     <script src="scripts/linenumber.js"></script>
 
     <script>
-      var id = "env/composability_sub".replace(/"/g, "_");
+      var id = "Conflicter_sub".replace(/"/g, "_");
       var selectedApi = document.getElementById(id); // do not use jquery selector
       var $selectedApi = $(selectedApi);
 

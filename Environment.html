@@ -20,7 +20,7 @@
   </head>
   <body>
     <nav class="lnb" id="lnb">
-      <div class="logo" style="width: 127px; height: 14px;">
+      <div class="logo" style="width: 127px; height: 14px">
         <img
           src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
           width="100%"
@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.10.3</span>
+        <span class="version">v3.2.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -78,6 +78,26 @@
         <h3>Classes</h3>
         <ul>
           <li>
+            <a href="Conflicter.html">Conflicter</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="Conflicter_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="Conflicter.html#_detectConflict">_detectConflict</a>
+                </li>
+                <li><a href="Conflicter.html#_printDiff">_printDiff</a></li>
+                <li>
+                  <a href="Conflicter.html#checkForCollision"
+                    >checkForCollision</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
             <a href="Environment.html">Environment</a
             ><button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
@@ -108,14 +128,19 @@
                     >namespaceToName</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#.prepareCommand">prepareCommand</a>
+                </li>
                 <li><a href="Environment.html#alias">alias</a></li>
+                <li>
+                  <a href="Environment.html#applyTransforms">applyTransforms</a>
+                </li>
+                <li>
+                  <a href="Environment.html#commitSharedFs">commitSharedFs</a>
+                </li>
+                <li><a href="Environment.html#composeWith">composeWith</a></li>
                 <li><a href="Environment.html#create">create</a></li>
                 <li><a href="Environment.html#error">error</a></li>
-                <li>
-                  <a href="Environment.html#findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
                 <li><a href="Environment.html#get">get</a></li>
                 <li><a href="Environment.html#getByPath">getByPath</a></li>
                 <li>
@@ -153,6 +178,16 @@
                     >isPackageRegistered</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#loadEnvironmentOptions"
+                    >loadEnvironmentOptions</a
+                  >
+                </li>
+                <li>
+                  <a href="Environment.html#loadSharedOptions"
+                    >loadSharedOptions</a
+                  >
+                </li>
                 <li><a href="Environment.html#lookup">lookup</a></li>
                 <li>
                   <a href="Environment.html#lookupLocalPackages"
@@ -161,6 +196,17 @@
                 </li>
                 <li><a href="Environment.html#namespace">namespace</a></li>
                 <li><a href="Environment.html#namespaces">namespaces</a></li>
+                <li>
+                  <a href="Environment.html#queueConflicter">queueConflicter</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queueGenerator">queueGenerator</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queuePackageManagerInstall"
+                    >queuePackageManagerInstall</a
+                  >
+                </li>
                 <li><a href="Environment.html#register">register</a></li>
                 <li>
                   <a href="Environment.html#registerStub">registerStub</a>
@@ -171,12 +217,16 @@
                   >
                 </li>
                 <li>
+                  <a href="Environment.html#resolvePackage">resolvePackage</a>
+                </li>
+                <li>
                   <a href="Environment.html#rootGenerator">rootGenerator</a>
                 </li>
                 <li><a href="Environment.html#run">run</a></li>
                 <li>
                   <a href="Environment.html#runGenerator">runGenerator</a>
                 </li>
+                <li><a href="Environment.html#start">start</a></li>
               </ul>
             </div>
           </li>
@@ -216,6 +266,11 @@
                     >lookupLocalPackages</a
                   >
                 </li>
+                <li>
+                  <a href="env_composability.html#.resolvePackage"
+                    >resolvePackage</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -237,14 +292,28 @@
               <ul class="inner">
                 <li><a href="env_resolver.html#.alias">alias</a></li>
                 <li>
-                  <a href="env_resolver.html#.findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
-                <li>
                   <a href="env_resolver.html#.getNpmPaths">getNpmPaths</a>
                 </li>
                 <li><a href="env_resolver.html#.lookup">lookup</a></li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="spawn-command.html">spawn-command</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="spawn-command_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="spawn-command.html#.spawnCommand">spawnCommand</a>
+                </li>
+                <li>
+                  <a href="spawn-command.html#.spawnCommandSync"
+                    >spawnCommandSync</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -253,7 +322,32 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
+          <li>
+            <a href="global.html#createConflicterStatusTransform"
+              >createConflicterStatusTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createEachFileTransform"
+              >createEachFileTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createYoRcTransform">createYoRcTransform</a>
+          </li>
+          <li>
+            <a href="global.html#createYoResolveTransform"
+              >createYoResolveTransform</a
+            >
+          </li>
+          <li><a href="global.html#execute">execute</a></li>
+          <li><a href="global.html#fileIsModified">fileIsModified</a></li>
           <li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li>
+          <li>
+            <a href="global.html#packageManagerInstallTask"
+              >packageManagerInstallTask</a
+            >
+          </li>
           <li>
             <a href="global.html#splitArgsFromString">splitArgsFromString</a>
           </li>
@@ -268,7 +362,7 @@
           <h2>
             <span class="attribs"><span class="type-signature"></span></span
             >Environment<span class="signature"
-              >(args, opts, adaper<span class="signature-attributes">opt</span
+              >(args, opts, adapter<span class="signature-attributes">opt</span
               >)</span
             ><span class="type-signature"></span>
           </h2>
@@ -303,7 +397,7 @@
               <h4 class="name" id="Environment">
                 new <span class="type-signature"></span>Environment<span
                   class="signature"
-                  >(args, opts, adaper<span class="signature-attributes"
+                  >(args, opts, adapter<span class="signature-attributes"
                     >opt</span
                   >)</span
                 ><span class="type-signature"></span>
@@ -312,7 +406,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line216">line 216</a></code
+                    ><a href="environment.js.html#line269">line 269</a></code
                   >
                 </div>
               </h4>
@@ -453,7 +547,7 @@
                     </tr>
 
                     <tr>
-                      <td class="name"><code>adaper</code></td>
+                      <td class="name"><code>adapter</code></td>
 
                       <td class="type">
                         <span class="param-type"
@@ -506,7 +600,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line922">line 922</a></code
+                    ><a href="environment.js.html#line1199">line 1199</a></code
                   >
                 </div>
               </h4>
@@ -538,7 +632,9 @@
               <h4 class="name" id=".createEnv">
                 <span class="type-signature"
                   ><span class="icon green">static</span> </span
-                >createEnv<span class="signature">()</span
+                >createEnv<span class="signature"
+                  >(options<span class="signature-attributes">opt</span>,
+                  adapter<span class="signature-attributes">opt</span>)</span
                 ><span class="type-signature">
                   &rarr; {<a href="Environment.html">Environment</a>}</span
                 >
@@ -547,7 +643,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line110">line 110</a></code
+                    ><a href="environment.js.html#line160">line 160</a></code
                   >
                 </div>
               </h4>
@@ -558,6 +654,52 @@
                   Factory method to create an environment instance. Take same
                   parameters as the Environment constructor.
                 </p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th>Attributes</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>options</code></td>
+
+                      <td class="type">
+                        <span class="param-type">object</span>
+                      </td>
+
+                      <td class="attributes">&lt;optional><br /></td>
+
+                      <td class="description last">
+                        <p>Environment options.</p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>adapter</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Adapter</span>
+                      </td>
+
+                      <td class="attributes">&lt;optional><br /></td>
+
+                      <td class="description last"><p>Terminal adapter.</p></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
 
               <div class="container-returns">
@@ -572,13 +714,10 @@
               </div>
 
               <dl class="details">
-                <dt class="tag-see">See:</dt>
-                <dd class="tag-see">
-                  <ul>
-                    <li>
-                      This method take the same arguments as
-                      <a href="Environment.html">Environment</a> constructor
-                    </li>
+                <dt class="important tag-deprecated">Deprecated:</dt>
+                <dd>
+                  <ul class="dummy">
+                    <li>@param {string[]} [args] - arguments.</li>
                   </ul>
                 </dd>
               </dl>
@@ -587,7 +726,8 @@
             <dt>
               <h4 class="name" id=".createEnvWithVersion">
                 <span class="type-signature"
-                  ><span class="icon green">static</span> </span
+                  ><span class="icon green">async</span>,
+                  <span class="icon green">static</span> </span
                 >createEnvWithVersion<span class="signature"
                   >(version, &hellip;args)</span
                 ><span class="type-signature">
@@ -598,7 +738,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line122">line 122</a></code
+                    ><a href="environment.js.html#line176">line 176</a></code
                   >
                 </div>
               </h4>
@@ -654,8 +794,7 @@
                       <td class="description last">
                         <p>
                           Same arguments as
-                          <a href="Environment.html">Environment</a>
-                          constructor.
+                          <a href="Environment.html">Environment</a>#createEnv.
                         </p>
                       </td>
                     </tr>
@@ -689,7 +828,9 @@
                 <div class="container-source members">
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
-                  <code><a href="environment.js.html#line82">line 82</a></code>
+                  <code
+                    ><a href="environment.js.html#line109">line 109</a></code
+                  >
                 </div>
               </h4>
             </dt>
@@ -759,7 +900,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line149">line 149</a></code
+                    ><a href="environment.js.html#line208">line 208</a></code
                   >
                 </div>
               </h4>
@@ -835,9 +976,7 @@
 
                               <td class="attributes">&lt;optional><br /></td>
 
-                              <td class="default">
-                                false
-                              </td>
+                              <td class="default">false</td>
 
                               <td class="description last">
                                 <p>
@@ -856,9 +995,7 @@
 
                               <td class="attributes">&lt;optional><br /></td>
 
-                              <td class="default">
-                                false
-                              </td>
+                              <td class="default">false</td>
 
                               <td class="description last">
                                 <p>
@@ -877,9 +1014,7 @@
 
                               <td class="attributes">&lt;optional><br /></td>
 
-                              <td class="default">
-                                true
-                              </td>
+                              <td class="default">true</td>
 
                               <td class="description last">
                                 <p>Set false to return multiple values.</p>
@@ -916,7 +1051,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line133">line 133</a></code
+                    ><a href="environment.js.html#line192">line 192</a></code
                   >
                 </div>
               </h4>
@@ -964,6 +1099,39 @@
             </dd>
 
             <dt>
+              <h4 class="name" id=".prepareCommand">
+                <span class="type-signature"
+                  ><span class="icon green">static</span> </span
+                >prepareCommand<span class="signature">()</span
+                ><span class="type-signature"> &rarr; {Promise}</span>
+
+                <div class="container-source members">
+                  <code><a href="environment.js.html">environment.js</a></code
+                  >,
+                  <code
+                    ><a href="environment.js.html#line134">line 134</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Prepare a commander instance for cli support.</p>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">Promise</span>
+
+                -
+                <p>Promise a Environment instance</p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
               <h4 class="name" id="alias">
                 <span class="type-signature"></span>alias<span class="signature"
                   >(match, value)</span
@@ -972,7 +1140,7 @@
                 <div class="container-source members">
                   <code><a href="resolver.js.html">resolver.js</a></code
                   >,
-                  <code><a href="resolver.js.html#line434">line 434</a></code>
+                  <code><a href="resolver.js.html#line400">line 400</a></code>
                 </div>
               </h4>
             </dt>
@@ -1068,17 +1236,254 @@
             </dd>
 
             <dt>
-              <h4 class="name" id="create">
-                <span class="type-signature"></span>create<span
+              <h4 class="name" id="applyTransforms">
+                <span class="type-signature"></span>applyTransforms<span
                   class="signature"
-                  >(namespaceOrPath, options)</span
-                ><span class="type-signature"></span>
+                  >(transformStreams, stream<span class="signature-attributes"
+                    >opt</span
+                  >)</span
+                ><span class="type-signature"> &rarr; {Promise}</span>
 
                 <div class="container-source members">
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line598">line 598</a></code
+                    ><a href="environment.js.html#line1079">line 1079</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Apply transform streams to file in MemFs.</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th>Attributes</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>transformStreams</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Array.&lt;Transform></span>
+                      </td>
+
+                      <td class="attributes"></td>
+
+                      <td class="description last">
+                        <p>transform streams to be applied.</p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>stream</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Stream</span>
+                      </td>
+
+                      <td class="attributes">&lt;optional><br /></td>
+
+                      <td class="description last">
+                        <p>files stream, defaults to this.sharedFs.stream().</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">Promise</span>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="commitSharedFs">
+                <span class="type-signature"></span>commitSharedFs<span
+                  class="signature"
+                  >(stream<span class="signature-attributes">opt</span>)</span
+                ><span class="type-signature"> &rarr; {Promise}</span>
+
+                <div class="container-source members">
+                  <code><a href="environment.js.html">environment.js</a></code
+                  >,
+                  <code
+                    ><a href="environment.js.html#line1119">line 1119</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Commits the MemFs to the disc.</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th>Attributes</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>stream</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Stream</span>
+                      </td>
+
+                      <td class="attributes">&lt;optional><br /></td>
+
+                      <td class="description last">
+                        <p>files stream, defaults to this.sharedFs.stream().</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">Promise</span>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="composeWith">
+                <span class="type-signature"></span>composeWith<span
+                  class="signature"
+                  >(namespaceOrPath, args<span class="signature-attributes"
+                    >opt</span
+                  >, options<span class="signature-attributes">opt</span>)</span
+                ><span class="type-signature"> &rarr; {Generator}</span>
+
+                <div class="container-source members">
+                  <code><a href="environment.js.html">environment.js</a></code
+                  >,
+                  <code
+                    ><a href="environment.js.html#line771">line 771</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Compose with the generator.</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th>Attributes</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>namespaceOrPath</code></td>
+
+                      <td class="type">
+                        <span class="param-type">String</span>
+                      </td>
+
+                      <td class="attributes"></td>
+
+                      <td class="description last"></td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>args</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Array</span>
+                      </td>
+
+                      <td class="attributes">&lt;optional><br /></td>
+
+                      <td class="description last"></td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>options</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="attributes">&lt;optional><br /></td>
+
+                      <td class="description last"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">Generator</span>
+
+                -
+                <p>The instantiated generator or the singleton instance.</p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="create">
+                <span class="type-signature"></span>create<span
+                  class="signature"
+                  >(namespaceOrPath, args<span class="signature-attributes"
+                    >opt</span
+                  >, options<span class="signature-attributes">opt</span>)</span
+                ><span class="type-signature"> &rarr; {Generator}</span>
+
+                <div class="container-source members">
+                  <code><a href="environment.js.html">environment.js</a></code
+                  >,
+                  <code
+                    ><a href="environment.js.html#line678">line 678</a></code
                   >
                 </div>
               </h4>
@@ -1104,6 +1509,8 @@
 
                       <th>Type</th>
 
+                      <th>Attributes</th>
+
                       <th class="last">Description</th>
                     </tr>
                   </thead>
@@ -1116,6 +1523,20 @@
                         <span class="param-type">String</span>
                       </td>
 
+                      <td class="attributes"></td>
+
+                      <td class="description last"></td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>args</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Array</span>
+                      </td>
+
+                      <td class="attributes">&lt;optional><br /></td>
+
                       <td class="description last"></td>
                     </tr>
 
@@ -1126,10 +1547,21 @@
                         <span class="param-type">Object</span>
                       </td>
 
+                      <td class="attributes">&lt;optional><br /></td>
+
                       <td class="description last"></td>
                     </tr>
                   </tbody>
                 </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">Generator</span>
+
+                -
+                <p>The instantiated generator</p>
               </div>
 
               <dl class="details"></dl>
@@ -1138,30 +1570,19 @@
             <dt>
               <h4 class="name" id="error">
                 <span class="type-signature"></span>error<span class="signature"
-                  >(err, verifyListener<span class="signature-attributes"
-                    >opt</span
-                  >)</span
+                  >(err)</span
                 ><span class="type-signature"> &rarr; {Error}</span>
 
                 <div class="container-source members">
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line287">line 287</a></code
+                    ><a href="environment.js.html#line375">line 375</a></code
                   >
                 </div>
               </h4>
             </dt>
             <dd>
-              <div class="description">
-                <p>Error handler taking <code>err</code> instance of Error.</p>
-                <p>
-                  The <code>error</code> event is emitted with the error object,
-                  if no <code>error</code> listener is registered, then we throw
-                  the error.
-                </p>
-              </div>
-
               <div class="container-params">
                 <h5>Parameters:</h5>
 
@@ -1171,8 +1592,6 @@
                       <th>Name</th>
 
                       <th>Type</th>
-
-                      <th>Attributes</th>
 
                       <th class="last">Description</th>
                     </tr>
@@ -1186,23 +1605,7 @@
                         <span class="param-type">Object</span>
                       </td>
 
-                      <td class="attributes"></td>
-
                       <td class="description last"></td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>verifyListener</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Boolean</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <p>Only emit error if a listener is registered.</p>
-                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -1217,142 +1620,15 @@
                 <p>err</p>
               </div>
 
-              <dl class="details"></dl>
-            </dd>
-
-            <dt>
-              <h4 class="name" id="findGeneratorsIn">
-                <span class="type-signature"></span>findGeneratorsIn<span
-                  class="signature"
-                  >(List, options<span class="signature-attributes">opt</span
-                  >)</span
-                ><span class="type-signature"> &rarr; {Array}</span>
-
-                <div class="container-source members">
-                  <code><a href="resolver.js.html">resolver.js</a></code
-                  >,
-                  <code><a href="resolver.js.html#line169">line 169</a></code>
-                </div>
-              </h4>
-            </dt>
-            <dd>
-              <div class="description">
-                <p>
-                  Search npm for every available generators. Generators are npm
-                  packages who's name start with <code>generator-</code> and
-                  who're placed in the top level <code>node_module</code> path.
-                  They can be installed globally or locally.
-                </p>
-              </div>
-
-              <div class="container-params">
-                <h5>Parameters:</h5>
-
-                <table class="params">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-
-                      <th>Type</th>
-
-                      <th>Attributes</th>
-
-                      <th class="last">Description</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td class="name"><code>List</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Array</span>
-                      </td>
-
-                      <td class="attributes"></td>
-
-                      <td class="description last"><p>of search paths</p></td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>options</code></td>
-
-                      <td class="type">
-                        <span class="param-type">Object</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last">
-                        <h6>Properties</h6>
-
-                        <table class="params">
-                          <thead>
-                            <tr>
-                              <th>Name</th>
-
-                              <th>Type</th>
-
-                              <th>Attributes</th>
-
-                              <th>Default</th>
-
-                              <th class="last">Description</th>
-                            </tr>
-                          </thead>
-
-                          <tbody>
-                            <tr>
-                              <td class="name"><code>packagePatterns</code></td>
-
-                              <td class="type">
-                                <span class="param-type">boolean</span>
-                              </td>
-
-                              <td class="attributes">&lt;optional><br /></td>
-
-                              <td class="default">
-                                'generator-*'
-                              </td>
-
-                              <td class="description last">
-                                <p>Pattern pattern.</p>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="container-returns">
-                <h5>Returns:</h5>
-
-                <span class="param-type">Array</span>
-
-                -
-                <p>List of the generator modules path</p>
-              </div>
-
               <dl class="details">
-                <dt class="mixes">Mixes In:</dt>
-
-                <dd class="mixes">
-                  <ul>
-                    <li>
-                      <a href="env_resolver.html#.findGeneratorsIn"
-                        >env/resolver.findGeneratorsIn</a
-                      >
-                    </li>
-                  </ul>
-                </dd>
-
                 <dt class="important tag-deprecated">Deprecated:</dt>
-                <dd class="yes-def tag-deprecated">
+                <dd>
                   <ul class="dummy">
-                    <li>Yes</li>
+                    <li>
+                      Error handler taking `err` instance of Error. The `error`
+                      event is emitted with the error object, if no `error`
+                      listener is registered, then we throw the error.
+                    </li>
                   </ul>
                 </dd>
               </dl>
@@ -1368,7 +1644,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line511">line 511</a></code
+                    ><a href="environment.js.html#line589">line 589</a></code
                   >
                 </div>
               </h4>
@@ -1442,7 +1718,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line552">line 552</a></code
+                    ><a href="environment.js.html#line630">line 630</a></code
                   >
                 </div>
               </h4>
@@ -1508,7 +1784,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line452">line 452</a></code
+                    ><a href="environment.js.html#line530">line 530</a></code
                   >
                 </div>
               </h4>
@@ -1538,7 +1814,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line443">line 443</a></code
+                    ><a href="environment.js.html#line521">line 521</a></code
                   >
                 </div>
               </h4>
@@ -1567,7 +1843,7 @@
                 <div class="container-source members">
                   <code><a href="resolver.js.html">resolver.js</a></code
                   >,
-                  <code><a href="resolver.js.html#line275">line 275</a></code>
+                  <code><a href="resolver.js.html#line241">line 241</a></code>
                 </div>
               </h4>
             </dt>
@@ -1635,9 +1911,7 @@
 
                               <td class="attributes">&lt;optional><br /></td>
 
-                              <td class="default">
-                                false
-                              </td>
+                              <td class="default">false</td>
 
                               <td class="description last">
                                 <p>
@@ -1656,9 +1930,7 @@
 
                               <td class="attributes">&lt;optional><br /></td>
 
-                              <td class="default">
-                                false
-                              </td>
+                              <td class="default">false</td>
 
                               <td class="description last">
                                 <p>
@@ -1717,7 +1989,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line481">line 481</a></code
+                    ><a href="environment.js.html#line559">line 559</a></code
                   >
                 </div>
               </h4>
@@ -1780,7 +2052,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line496">line 496</a></code
+                    ><a href="environment.js.html#line574">line 574</a></code
                   >
                 </div>
               </h4>
@@ -1843,7 +2115,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line471">line 471</a></code
+                    ><a href="environment.js.html#line549">line 549</a></code
                   >
                 </div>
               </h4>
@@ -1878,7 +2150,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line428">line 428</a></code
+                    ><a href="environment.js.html#line506">line 506</a></code
                   >
                 </div>
               </h4>
@@ -1940,7 +2212,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line305">line 305</a></code
+                    ><a href="environment.js.html#line385">line 385</a></code
                   >
                 </div>
               </h4>
@@ -1964,6 +2236,8 @@
 
                       <th>Type</th>
 
+                      <th>Default</th>
+
                       <th class="last">Description</th>
                     </tr>
                   </thead>
@@ -1975,6 +2249,8 @@
                       <td class="type">
                         <span class="param-type">String</span>
                       </td>
+
+                      <td class="default">init</td>
 
                       <td class="description last"></td>
                     </tr>
@@ -1997,7 +2273,7 @@
                     ><a href="composability.js.html">composability.js</a></code
                   >,
                   <code
-                    ><a href="composability.js.html#line26">line 26</a></code
+                    ><a href="composability.js.html#line29">line 29</a></code
                   >
                 </div>
               </h4>
@@ -2073,16 +2349,15 @@
               <h4 class="name" id="instantiate">
                 <span class="type-signature"></span>instantiate<span
                   class="signature"
-                  >(generator, options<span class="signature-attributes"
-                    >opt</span
-                  >)</span
-                ><span class="type-signature"></span>
+                  >(generator, args<span class="signature-attributes">opt</span
+                  >, options<span class="signature-attributes">opt</span>)</span
+                ><span class="type-signature"> &rarr; {Generator}</span>
 
                 <div class="container-source members">
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line659">line 659</a></code
+                    ><a href="environment.js.html#line731">line 731</a></code
                   >
                 </div>
               </h4>
@@ -2122,6 +2397,20 @@
                     </tr>
 
                     <tr>
+                      <td class="name"><code>args</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Array</span>
+                      </td>
+
+                      <td class="attributes">&lt;optional><br /></td>
+
+                      <td class="description last">
+                        <p>Arguments to pass the instance</p>
+                      </td>
+                    </tr>
+
+                    <tr>
                       <td class="name"><code>options</code></td>
 
                       <td class="type">
@@ -2131,58 +2420,20 @@
                       <td class="attributes">&lt;optional><br /></td>
 
                       <td class="description last">
-                        <h6>Properties</h6>
-
-                        <table class="params">
-                          <thead>
-                            <tr>
-                              <th>Name</th>
-
-                              <th>Type</th>
-
-                              <th>Attributes</th>
-
-                              <th class="last">Description</th>
-                            </tr>
-                          </thead>
-
-                          <tbody>
-                            <tr>
-                              <td class="name"><code>arguments</code></td>
-
-                              <td class="type">
-                                <span class="param-type">Array</span>
-                                |
-
-                                <span class="param-type">String</span>
-                              </td>
-
-                              <td class="attributes">&lt;optional><br /></td>
-
-                              <td class="description last">
-                                <p>Arguments to pass the instance</p>
-                              </td>
-                            </tr>
-
-                            <tr>
-                              <td class="name"><code>options</code></td>
-
-                              <td class="type">
-                                <span class="param-type">Object</span>
-                              </td>
-
-                              <td class="attributes">&lt;optional><br /></td>
-
-                              <td class="description last">
-                                <p>Options to pass the instance</p>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                        <p>Options to pass the instance</p>
                       </td>
                     </tr>
                   </tbody>
                 </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">Generator</span>
+
+                -
+                <p>The instantiated generator</p>
               </div>
 
               <dl class="details"></dl>
@@ -2200,7 +2451,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line462">line 462</a></code
+                    ><a href="environment.js.html#line540">line 540</a></code
                   >
                 </div>
               </h4>
@@ -2263,17 +2514,126 @@
             </dd>
 
             <dt>
+              <h4 class="name" id="loadEnvironmentOptions">
+                <span class="type-signature"></span>loadEnvironmentOptions<span
+                  class="signature"
+                  >(options)</span
+                ><span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code><a href="environment.js.html">environment.js</a></code
+                  >,
+                  <code
+                    ><a href="environment.js.html#line337">line 337</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>
+                  Load options passed to the Generator that should be used by
+                  the Environment.
+                </p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>options</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="description last"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="loadSharedOptions">
+                <span class="type-signature"></span>loadSharedOptions<span
+                  class="signature"
+                  >(options)</span
+                ><span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code><a href="environment.js.html">environment.js</a></code
+                  >,
+                  <code
+                    ><a href="environment.js.html#line351">line 351</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>
+                  Load options passed to the Environment that should be
+                  forwarded to the Generator.
+                </p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>options</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="description last"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
               <h4 class="name" id="lookup">
                 <span class="type-signature"></span>lookup<span
                   class="signature"
-                  >(options<span class="signature-attributes">opt</span>,
-                  cb)</span
+                  >(options<span class="signature-attributes">opt</span>)</span
                 ><span class="type-signature"> &rarr; {Array.&lt;Object>}</span>
 
                 <div class="container-source members">
                   <code><a href="resolver.js.html">resolver.js</a></code
                   >,
-                  <code><a href="resolver.js.html#line55">line 55</a></code>
+                  <code><a href="resolver.js.html#line56">line 56</a></code>
                 </div>
               </h4>
             </dt>
@@ -2356,9 +2716,7 @@
 
                               <td class="attributes">&lt;optional><br /></td>
 
-                              <td class="default">
-                                false
-                              </td>
+                              <td class="default">false</td>
 
                               <td class="description last">
                                 <p>
@@ -2421,9 +2779,7 @@
 
                               <td class="attributes">&lt;optional><br /></td>
 
-                              <td class="default">
-                                '*\/index.js'
-                              </td>
+                              <td class="default">'*\/index.js'</td>
 
                               <td class="description last">
                                 <p>File pattern to look for.</p>
@@ -2442,9 +2798,7 @@
 
                               <td class="attributes">&lt;optional><br /></td>
 
-                              <td class="default">
-                                'generator-*'
-                              </td>
+                              <td class="default">'generator-*'</td>
 
                               <td class="description last">
                                 <p>Package pattern to look for.</p>
@@ -2460,9 +2814,7 @@
 
                               <td class="attributes">&lt;optional><br /></td>
 
-                              <td class="default">
-                                false
-                              </td>
+                              <td class="default">false</td>
 
                               <td class="description last">
                                 <p>
@@ -2488,23 +2840,6 @@
                             </tr>
                           </tbody>
                         </table>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td class="name"><code>cb</code></td>
-
-                      <td class="type">
-                        <span class="param-type">function</span>
-                      </td>
-
-                      <td class="attributes"></td>
-
-                      <td class="description last">
-                        <p>
-                          Callback called once the lookup is done. Take err as
-                          first parameter.
-                        </p>
                       </td>
                     </tr>
                   </tbody>
@@ -2548,7 +2883,7 @@
                     ><a href="composability.js.html">composability.js</a></code
                   >,
                   <code
-                    ><a href="composability.js.html#line48">line 48</a></code
+                    ><a href="composability.js.html#line51">line 51</a></code
                   >
                 </div>
               </h4>
@@ -2589,9 +2924,7 @@
 
                       <td class="attributes">&lt;optional><br /></td>
 
-                      <td class="default">
-                        'generator-*'
-                      </td>
+                      <td class="default">'generator-*'</td>
 
                       <td class="description last">
                         <p>packages to lookup.</p>
@@ -2627,7 +2960,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line848">line 848</a></code
+                    ><a href="environment.js.html#line1008">line 1008</a></code
                   >
                 </div>
               </h4>
@@ -2704,7 +3037,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line419">line 419</a></code
+                    ><a href="environment.js.html#line497">line 497</a></code
                   >
                 </div>
               </h4>
@@ -2724,6 +3057,142 @@ this.namespace('generator-mocha/backbone/model/index.js');
             </dd>
 
             <dt>
+              <h4 class="name" id="queueConflicter">
+                <span class="type-signature"></span>queueConflicter<span
+                  class="signature"
+                  >()</span
+                ><span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code><a href="environment.js.html">environment.js</a></code
+                  >,
+                  <code
+                    ><a href="environment.js.html#line1145">line 1145</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Queue environment's commit task.</p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="queueGenerator">
+                <span class="type-signature"></span>queueGenerator<span
+                  class="signature"
+                  >(generator, schedule<span class="signature-attributes"
+                    >opt</span
+                  >)</span
+                ><span class="type-signature"> &rarr; {Generator}</span>
+
+                <div class="container-source members">
+                  <code><a href="environment.js.html">environment.js</a></code
+                  >,
+                  <code
+                    ><a href="environment.js.html#line783">line 783</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Queue generator run (queue itself tasks).</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th>Attributes</th>
+
+                      <th>Default</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>generator</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Generator</span>
+                      </td>
+
+                      <td class="attributes"></td>
+
+                      <td class="default"></td>
+
+                      <td class="description last">
+                        <p>Generator instance</p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>schedule</code></td>
+
+                      <td class="type">
+                        <span class="param-type">boolean</span>
+                      </td>
+
+                      <td class="attributes">&lt;optional><br /></td>
+
+                      <td class="default">false</td>
+
+                      <td class="description last">
+                        <p>Whether to schedule the generator run.</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">Generator</span>
+
+                -
+                <p>The generator or singleton instance.</p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="queuePackageManagerInstall">
+                <span class="type-signature"></span
+                >queuePackageManagerInstall<span class="signature">()</span
+                ><span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code><a href="environment.js.html">environment.js</a></code
+                  >,
+                  <code
+                    ><a href="environment.js.html#line1181">line 1181</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Queue environment's package manager install task.</p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
               <h4 class="name" id="register">
                 <span class="type-signature"></span>register<span
                   class="signature"
@@ -2734,7 +3203,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line356">line 356</a></code
+                    ><a href="environment.js.html#line434">line 434</a></code
                   >
                 </div>
               </h4>
@@ -2834,7 +3303,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line395">line 395</a></code
+                    ><a href="environment.js.html#line473">line 473</a></code
                   >
                 </div>
               </h4>
@@ -2945,7 +3414,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line890">line 890</a></code
+                    ><a href="environment.js.html#line1050">line 1050</a></code
                   >
                 </div>
               </h4>
@@ -3000,6 +3469,108 @@ this.namespace('generator-mocha/backbone/model/index.js');
             </dd>
 
             <dt>
+              <h4 class="name" id="resolvePackage">
+                <span class="type-signature"></span>resolvePackage<span
+                  class="signature"
+                  >(packageName, packageVersion<span
+                    class="signature-attributes"
+                    >opt</span
+                  >, Array)</span
+                ><span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code
+                    ><a href="composability.js.html">composability.js</a></code
+                  >,
+                  <code
+                    ><a href="composability.js.html#line62">line 62</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Resolve a package name with version.</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th>Attributes</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>packageName</code></td>
+
+                      <td class="type">
+                        <span class="param-type">string</span>
+                      </td>
+
+                      <td class="attributes"></td>
+
+                      <td class="description last">
+                        <p>package to resolve.</p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>packageVersion</code></td>
+
+                      <td class="type">
+                        <span class="param-type">string</span>
+                      </td>
+
+                      <td class="attributes">&lt;optional><br /></td>
+
+                      <td class="description last">
+                        <p>version or range to resolve.</p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>Array</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Array.&lt;string></span>
+                      </td>
+
+                      <td class="attributes"></td>
+
+                      <td class="description last">
+                        <p>of key, value pairs.</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <dl class="details">
+                <dt class="mixes">Mixes In:</dt>
+
+                <dd class="mixes">
+                  <ul>
+                    <li>
+                      <a href="env_composability.html#.resolvePackage"
+                        >env/composability.resolvePackage</a
+                      >
+                    </li>
+                  </ul>
+                </dd>
+              </dl>
+            </dd>
+
+            <dt>
               <h4 class="name" id="rootGenerator">
                 <span class="type-signature"></span>rootGenerator<span
                   class="signature"
@@ -3010,7 +3581,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line824">line 824</a></code
+                    ><a href="environment.js.html#line984">line 984</a></code
                   >
                 </div>
               </h4>
@@ -3037,16 +3608,18 @@ this.namespace('generator-mocha/backbone/model/index.js');
 
             <dt>
               <h4 class="name" id="run">
-                <span class="type-signature"></span>run<span class="signature"
-                  >(args, options<span class="signature-attributes">opt</span>,
-                  done<span class="signature-attributes">opt</span>)</span
+                <span class="type-signature"
+                  ><span class="icon green">async</span> </span
+                >run<span class="signature"
+                  >(args, options<span class="signature-attributes">opt</span
+                  >)</span
                 ><span class="type-signature"></span>
 
                 <div class="container-source members">
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line697">line 697</a></code
+                    ><a href="environment.js.html#line857">line 857</a></code
                   >
                 </div>
               </h4>
@@ -3107,18 +3680,6 @@ this.namespace('generator-mocha/backbone/model/index.js');
 
                       <td class="description last"></td>
                     </tr>
-
-                    <tr>
-                      <td class="name"><code>done</code></td>
-
-                      <td class="type">
-                        <span class="param-type">function</span>
-                      </td>
-
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last"></td>
-                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -3130,15 +3691,14 @@ this.namespace('generator-mocha/backbone/model/index.js');
               <h4 class="name" id="runGenerator">
                 <span class="type-signature"></span>runGenerator<span
                   class="signature"
-                  >(generator, done<span class="signature-attributes">opt</span
-                  >)</span
+                  >(generator)</span
                 ><span class="type-signature"></span>
 
                 <div class="container-source members">
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line768">line 768</a></code
+                    ><a href="environment.js.html#line966">line 966</a></code
                   >
                 </div>
               </h4>
@@ -3161,8 +3721,6 @@ this.namespace('generator-mocha/backbone/model/index.js');
 
                       <th>Type</th>
 
-                      <th>Attributes</th>
-
                       <th class="last">Description</th>
                     </tr>
                   </thead>
@@ -3175,21 +3733,60 @@ this.namespace('generator-mocha/backbone/model/index.js');
                         <span class="param-type">Object</span>
                       </td>
 
-                      <td class="attributes"></td>
-
                       <td class="description last"></td>
                     </tr>
+                  </tbody>
+                </table>
+              </div>
 
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="start">
+                <span class="type-signature"></span>start<span class="signature"
+                  >(options)</span
+                ><span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code><a href="environment.js.html">environment.js</a></code
+                  >,
+                  <code
+                    ><a href="environment.js.html#line902">line 902</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Start Environment queue</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
                     <tr>
-                      <td class="name"><code>done</code></td>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>options</code></td>
 
                       <td class="type">
-                        <span class="param-type">function</span>
+                        <span class="param-type">Object</span>
                       </td>
 
-                      <td class="attributes">&lt;optional><br /></td>
-
-                      <td class="description last"></td>
+                      <td class="description last">
+                        <p>Conflicter options.</p>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -3206,7 +3803,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
       <img
         class="logo"
         src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
-        style="width: 127px; height: 14px;"
+        style="width: 127px; height: 14px"
       />
       <div class="footer-text">BSD license Copyright (c) Google</div>
     </footer>
