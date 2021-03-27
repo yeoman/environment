@@ -29,7 +29,7 @@ env.run('angular', {skipInstall: true}).then(() => {
   console.log('success')
 }, err => {
   console.log(`error ${error}`);
-};
+});
 ```
 
 For advance usage, see [our API documentation](http://yeoman.github.io/environment).
