@@ -20,7 +20,7 @@
   </head>
   <body>
     <nav class="lnb" id="lnb">
-      <div class="logo" style="width: 127px; height: 14px;">
+      <div class="logo" style="width: 127px; height: 14px">
         <img
           src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
           width="100%"
@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.10.3</span>
+        <span class="version">v3.2.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -78,6 +78,26 @@
         <h3>Classes</h3>
         <ul>
           <li>
+            <a href="Conflicter.html">Conflicter</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="Conflicter_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="Conflicter.html#_detectConflict">_detectConflict</a>
+                </li>
+                <li><a href="Conflicter.html#_printDiff">_printDiff</a></li>
+                <li>
+                  <a href="Conflicter.html#checkForCollision"
+                    >checkForCollision</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
             <a href="Environment.html">Environment</a
             ><button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
@@ -108,14 +128,19 @@
                     >namespaceToName</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#.prepareCommand">prepareCommand</a>
+                </li>
                 <li><a href="Environment.html#alias">alias</a></li>
+                <li>
+                  <a href="Environment.html#applyTransforms">applyTransforms</a>
+                </li>
+                <li>
+                  <a href="Environment.html#commitSharedFs">commitSharedFs</a>
+                </li>
+                <li><a href="Environment.html#composeWith">composeWith</a></li>
                 <li><a href="Environment.html#create">create</a></li>
                 <li><a href="Environment.html#error">error</a></li>
-                <li>
-                  <a href="Environment.html#findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
                 <li><a href="Environment.html#get">get</a></li>
                 <li><a href="Environment.html#getByPath">getByPath</a></li>
                 <li>
@@ -153,6 +178,16 @@
                     >isPackageRegistered</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#loadEnvironmentOptions"
+                    >loadEnvironmentOptions</a
+                  >
+                </li>
+                <li>
+                  <a href="Environment.html#loadSharedOptions"
+                    >loadSharedOptions</a
+                  >
+                </li>
                 <li><a href="Environment.html#lookup">lookup</a></li>
                 <li>
                   <a href="Environment.html#lookupLocalPackages"
@@ -161,6 +196,17 @@
                 </li>
                 <li><a href="Environment.html#namespace">namespace</a></li>
                 <li><a href="Environment.html#namespaces">namespaces</a></li>
+                <li>
+                  <a href="Environment.html#queueConflicter">queueConflicter</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queueGenerator">queueGenerator</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queuePackageManagerInstall"
+                    >queuePackageManagerInstall</a
+                  >
+                </li>
                 <li><a href="Environment.html#register">register</a></li>
                 <li>
                   <a href="Environment.html#registerStub">registerStub</a>
@@ -171,12 +217,16 @@
                   >
                 </li>
                 <li>
+                  <a href="Environment.html#resolvePackage">resolvePackage</a>
+                </li>
+                <li>
                   <a href="Environment.html#rootGenerator">rootGenerator</a>
                 </li>
                 <li><a href="Environment.html#run">run</a></li>
                 <li>
                   <a href="Environment.html#runGenerator">runGenerator</a>
                 </li>
+                <li><a href="Environment.html#start">start</a></li>
               </ul>
             </div>
           </li>
@@ -216,6 +266,11 @@
                     >lookupLocalPackages</a
                   >
                 </li>
+                <li>
+                  <a href="env_composability.html#.resolvePackage"
+                    >resolvePackage</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -237,14 +292,28 @@
               <ul class="inner">
                 <li><a href="env_resolver.html#.alias">alias</a></li>
                 <li>
-                  <a href="env_resolver.html#.findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
-                <li>
                   <a href="env_resolver.html#.getNpmPaths">getNpmPaths</a>
                 </li>
                 <li><a href="env_resolver.html#.lookup">lookup</a></li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="spawn-command.html">spawn-command</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="spawn-command_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="spawn-command.html#.spawnCommand">spawnCommand</a>
+                </li>
+                <li>
+                  <a href="spawn-command.html#.spawnCommandSync"
+                    >spawnCommandSync</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -253,7 +322,32 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
+          <li>
+            <a href="global.html#createConflicterStatusTransform"
+              >createConflicterStatusTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createEachFileTransform"
+              >createEachFileTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createYoRcTransform">createYoRcTransform</a>
+          </li>
+          <li>
+            <a href="global.html#createYoResolveTransform"
+              >createYoResolveTransform</a
+            >
+          </li>
+          <li><a href="global.html#execute">execute</a></li>
+          <li><a href="global.html#fileIsModified">fileIsModified</a></li>
           <li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li>
+          <li>
+            <a href="global.html#packageManagerInstallTask"
+              >packageManagerInstallTask</a
+            >
+          </li>
           <li>
             <a href="global.html#splitArgsFromString">splitArgsFromString</a>
           </li>
@@ -278,6 +372,10 @@ const memFs = require('mem-fs');
 const FileEditor = require('mem-fs-editor');
 const debug = require('debug')('yeoman:environment');
 const isScoped = require('is-scoped');
+const {pipe, pipeline} = require('pipeline-pipe');
+const crypto = require('crypto');
+const npmlog = require('npmlog');
+const {TrackerGroup} = require('are-we-there-yet');
 
 const ENVIRONMENT_VERSION = require('../package.json').version;
 const Store = require('./store');
@@ -285,6 +383,14 @@ const composability = require('./composability');
 const resolver = require('./resolver');
 const TerminalAdapter = require('./adapter');
 const YeomanRepository = require('./util/repository');
+const Conflicter = require('./util/conflicter');
+const {YeomanCommand} = require('./util/command');
+const {
+  createConflicterStatusTransform,
+  createEachFileTransform,
+  createYoRcTransform,
+  createYoResolveTransform
+} = require('./util/transform');
 
 /**
  * Two-step argument splitting function that first splits arguments in quotes,
@@ -292,10 +398,13 @@ const YeomanRepository = require('./util/repository');
  */
 function splitArgsFromString(argsString) {
   let result = [];
-  const quoteSeparatedArgs = argsString.split(/(\x22[^\x22]*\x22)/).filter(x => x);
+  if (!argsString) {
+    return result;
+  }
+  const quoteSeparatedArgs = argsString.split(/("[^"]*")/).filter(x => x);
   quoteSeparatedArgs.forEach(arg => {
     if (arg.match('\x22')) {
-      result.push(arg.replace(/\x22/g, ''));
+      result.push(arg.replace(/"/g, ''));
     } else {
       result = result.concat(arg.trim().split(' '));
     }
@@ -314,7 +423,16 @@ function getGeneratorHint(namespace) {
   return `generator-${namespace}`;
 }
 
-class Environment extends EventEmitter {
+const mixins = [
+  require('./command.js'),
+  require('./generator-features.js'),
+  require('./namespace'),
+  require('./package-manager.js')
+];
+
+const Base = mixins.reduce((a, b) => b(a), EventEmitter);
+
+class Environment extends Base {
   static get UNKNOWN_NAMESPACE() {
     return 'unknownnamespace';
   }
@@ -325,19 +443,22 @@ class Environment extends EventEmitter {
 
   static get queues() {
     return [
+      'environment:run',
       'initializing',
       'prompting',
       'configuring',
       'default',
       'writing',
+      'transform',
       'conflicts',
+      'environment:conflicts',
       'install',
       'end'
     ];
   }
 
   static get lookups() {
-    return ['.', 'generators', 'lib/generators'];
+    return ['.', 'generators', 'lib/generators', 'dist/generators'];
   }
 
   /**
@@ -352,7 +473,7 @@ class Environment extends EventEmitter {
     }
 
     if (!env.runLoop) {
-      env.runLoop = new GroupedQueue(Environment.queues);
+      env.runLoop = new GroupedQueue(Environment.queues, false);
     }
 
     if (!env.sharedFs) {
@@ -367,15 +488,42 @@ class Environment extends EventEmitter {
   }
 
   /**
+   * Prepare a commander instance for cli support.
+   *
+   * @return {Promise} Promise a Environment instance
+   */
+  static prepareCommand(GeneratorClass) {
+    const command = Base.addEnvironmentOptions(new YeomanCommand());
+
+    const generator = new GeneratorClass([], {help: true, env: {}});
+    command.addGeneratorOptions(generator._options);
+    command.addGeneratorArguments(generator._arguments);
+
+    command.action(async function () {
+      command.env = Environment.createEnv(this.opts());
+      const generator = command.env.instantiate(GeneratorClass, this.args, this.opts());
+      command.env.queueGenerator(generator);
+      return command.env.start().then(() => command.env);
+    });
+    return command;
+  }
+
+  /**
    * Factory method to create an environment instance. Take same parameters as the
    * Environment constructor.
    *
-   * @see This method take the same arguments as {@link Environment} constructor
+   * @deprecated @param {string[]} [args] - arguments.
+   * @param {object} [options] - Environment options.
+   * @param {Adapter} [adapter] - Terminal adapter.
    *
    * @return {Environment} a new Environment instance
    */
-  static createEnv(args, opts, adapter) {
-    return new Environment(args, opts, adapter);
+  static createEnv(args, options, adapter) {
+    if (args &amp;&amp; !Array.isArray(args)) {
+      options = args;
+    }
+    options = options || {};
+    return new Environment(options, adapter);
   }
 
   /**
@@ -383,12 +531,17 @@ class Environment extends EventEmitter {
    * Environment constructor.
    *
    * @param {String} version - Version of the Environment
-   * @param {...any} args - Same arguments as {@link Environment} constructor.
+   * @param {...any} args - Same arguments as {@link Environment}#createEnv.
    * @return {Environment} a new Environment instance
    */
-  static createEnvWithVersion(version, ...args) {
-    const VersionedEnvironment = Environment.repository.requireModule('yeoman-environment', version);
-    return new VersionedEnvironment(...args);
+  static async createEnvWithVersion(version, ...args) {
+    const repository = new YeomanRepository();
+    const installedVersion = repository.verifyInstalledVersion('yeoman-environment', version);
+    if (!installedVersion) {
+      await repository.installPackage('yeoman-environment', version);
+    }
+    const VersionedEnvironment = repository.requireModule('yeoman-environment', version);
+    return VersionedEnvironment.createEnv(...args);
   }
 
   /**
@@ -413,13 +566,8 @@ class Environment extends EventEmitter {
    * @param {Boolean} [options.singleResult=true] - Set false to return multiple values.
    * @return {String} generator
    */
-  static lookupGenerator(namespace, options = {singleResult: true}) {
-    if (typeof options === 'boolean') {
-      options = {singleResult: true, localOnly: options};
-    } else {
-      // Keep compatibility with options.multiple
-      options = {singleResult: !options.multiple, ...options};
-    }
+  static lookupGenerator(namespace, options) {
+    options = typeof options === 'boolean' ? {singleResult: true, localOnly: options} : {singleResult: !(options &amp;&amp; options.multiple), ...options};
 
     options.filePatterns = options.filePatterns || Environment.lookups.map(prefix => path.join(prefix, '*/index.{js,ts}'));
 
@@ -429,8 +577,7 @@ class Environment extends EventEmitter {
 
     options.npmPaths = options.npmPaths || envProt.getNpmPaths(options.localOnly).reverse();
     options.packagePatterns = options.packagePatterns || 'generator-*';
-    options.packagePaths = options.packagePaths || resolver.packageLookup.findPackagesIn(options.npmPaths, options);
-    options.globbyDeep = options.globbyDeep === undefined ? 1 : options.globbyDeep;
+    options.packagePaths = options.packagePaths || resolver.packageLookup.findPackagesIn(options.npmPaths, options.packagePatterns);
 
     let paths = options.singleResult ? undefined : [];
     resolver.packageLookup.sync(options, module => {
@@ -476,21 +623,24 @@ class Environment extends EventEmitter {
    * @param {Stream}         [opts.stdin]
    * @param {Stream}        [opts.stdout]
    * @param {Stream}        [opts.stderr]
-   * @param {TerminalAdapter} [adaper] - A TerminalAdapter instance or another object
+   * @param {TerminalAdapter} [adapter] - A TerminalAdapter instance or another object
    *                                     implementing this adapter interface. This is how
    *                                     you'd interface Yeoman with a GUI or an editor.
    */
-  constructor(args, opts, adapter) {
+  constructor(options, adapter) {
     super();
 
-    args = args || [];
-    this.arguments = Array.isArray(args) ? args : splitArgsFromString(args);
-    this.options = opts || {};
+    this.setMaxListeners(100);
+
+    this.options = options || {};
     this.adapter = adapter || new TerminalAdapter({console: this.options.console, stdin: this.options.stdin, stderr: this.options.stderr});
     this.cwd = this.options.cwd || process.cwd();
+    this.cwd = path.resolve(this.cwd);
+    this.logCwd = this.options.logCwd || this.cwd;
     this.store = new Store();
+    this.command = this.options.command;
 
-    this.runLoop = new GroupedQueue(Environment.queues);
+    this.runLoop = new GroupedQueue(Environment.queues, false);
     this.sharedFs = memFs.create();
 
     // Each composed generator might set listeners on these shared resources. Let's make sure
@@ -514,53 +664,77 @@ class Environment extends EventEmitter {
     // Create a default sharedData.
     this.sharedOptions.sharedData = this.sharedOptions.sharedData || {};
 
-    const {newErrorHandler = false} = this.options;
     // Pass forwardErrorToEnvironment to generators.
-    this.sharedOptions.forwardErrorToEnvironment =
-      this.sharedOptions.forwardErrorToEnvironment === undefined ? newErrorHandler : this.sharedOptions.forwardErrorToEnvironment;
+    this.sharedOptions.forwardErrorToEnvironment = false;
 
     this.repository = new YeomanRepository(this.options.yeomanRepository);
 
     if (!this.options.experimental) {
-      process.argv.forEach(val => {
-        if (val === '--experimental') {
+      process.argv.forEach(value => {
+        if (value === '--experimental') {
           this.options.experimental = true;
           debug('Set environment as experimental');
         }
       });
     }
 
+    this.loadSharedOptions(this.options);
+    if (this.sharedOptions.skipLocalCache === undefined) {
+      this.sharedOptions.skipLocalCache = true;
+    }
     if (this.options.experimental) {
-      if (this.sharedOptions.skipLocalCache === undefined) {
-        this.sharedOptions.skipLocalCache = true;
-      }
-      Object.assign(this, require('./namespace'));
       Object.assign(this, require('./namespace-composability'));
     }
 
+    // Store the generators by uniqueBy feature.
     this._generators = {};
   }
 
   /**
+   * Load options passed to the Generator that should be used by the Environment.
+   *
+   * @param {Object} options
+   */
+  loadEnvironmentOptions(options) {
+    const environmentOptions = _.pick(options, [
+      'skipInstall',
+      'nodePackageManager'
+    ]);
+    _.defaults(this.options, environmentOptions);
+    return environmentOptions;
+  }
+
+  /**
+   * Load options passed to the Environment that should be forwarded to the Generator.
+   *
+   * @param {Object} options
+   */
+  loadSharedOptions(options) {
+    const optionsToShare = _.pick(options, [
+      'skipInstall',
+      'forceInstall',
+      'skipCache',
+      'skipLocalCache',
+      'skipParseOptions',
+      'localConfigOnly',
+      'askAnswered'
+    ]);
+    Object.assign(this.sharedOptions, optionsToShare);
+    return optionsToShare;
+  }
+
+  /**
+   * @deprecated
    * Error handler taking `err` instance of Error.
    *
    * The `error` event is emitted with the error object, if no `error` listener
    * is registered, then we throw the error.
    *
    * @param  {Object} err
-   * @param  {Boolean} [verifyListener] - Only emit error if a listener is registered.
    * @return {Error}  err
    */
-  error(err, verifyListener) {
-    err = err instanceof Error ? err : new Error(err);
-
-    // If error listener is not registered, the error is thrown.
-    // https://nodejs.org/api/events.html#events_error_events
-    if (!verifyListener || this.listenerCount('error')) {
-      this.emit('error', err);
-    }
-
-    return err;
+  error(error) {
+    throw error instanceof Error ? error : new Error(error);
   }
 
   /**
@@ -569,9 +743,7 @@ class Environment extends EventEmitter {
    *
    * @param {String} name
    */
-  help(name) {
-    name = name || 'init';
-
+  help(name = 'init') {
     const out = [
       'Usage: :binary: GENERATOR [args] [options]',
       '',
@@ -599,7 +771,7 @@ class Environment extends EventEmitter {
     for (const key of Object.keys(groups).sort()) {
       const group = groups[key];
 
-      if (group.length >= 1) {
+      if (group.length > 0) {
         out.push('', key.charAt(0).toUpperCase() + key.slice(1));
       }
 
@@ -622,14 +794,14 @@ class Environment extends EventEmitter {
    */
   register(name, namespace, packagePath) {
     if (typeof name !== 'string') {
-      return this.error(new Error('You must provide a generator name to register.'));
+      throw new TypeError('You must provide a generator name to register.');
     }
 
     const modulePath = this.resolveModulePath(name);
     namespace = namespace || this.namespace(modulePath);
 
     if (!namespace) {
-      return this.error(new Error('Unable to determine namespace.'));
+      throw new Error('Unable to determine namespace.');
     }
 
     // Generator is already registered and matches the current namespace.
@@ -661,11 +833,11 @@ class Environment extends EventEmitter {
    */
   registerStub(Generator, namespace, resolved = Environment.UNKNOWN_RESOLVED, packagePath = undefined) {
     if (typeof Generator !== 'function' &amp;&amp; typeof Generator.createGenerator !== 'function') {
-      return this.error(new Error('You must provide a stub function to register.'));
+      throw new TypeError('You must provide a stub function to register.');
     }
 
     if (typeof namespace !== 'string') {
-      return this.error(new Error('You must provide a namespace to register.'));
+      throw new TypeError('You must provide a namespace to register.');
     }
 
     this.store.add(namespace, Generator, resolved, packagePath);
@@ -696,7 +868,7 @@ class Environment extends EventEmitter {
     if (packageName &amp;&amp; packageName !== 'yeoman-environment') {
       try {
         return require(`${packageName}/package.json`).version;
-      } catch (_) {
+      } catch {
         return undefined;
       }
     }
@@ -717,7 +889,7 @@ class Environment extends EventEmitter {
    * @return {Array}
    */
   getGeneratorNames() {
-    return _.uniq(Object.keys(this.getGeneratorsMeta()).map(Environment.namespaceToName));
+    return _.uniq(Object.keys(this.getGeneratorsMeta()).map(namespace => Environment.namespaceToName(namespace)));
   }
 
   /**
@@ -860,15 +1032,23 @@ class Environment extends EventEmitter {
    * An error is raised on invalid namespace.
    *
    * @param {String} namespaceOrPath
-   * @param {Object} options
+   * @param {Array} [args]
+   * @param {Object} [options]
+   * @return {Generator} The instantiated generator
    */
-  create(namespaceOrPath, options) {
-    options = options || {};
+  create(namespaceOrPath, args, options) {
+    if (!Array.isArray(args) &amp;&amp; typeof args === 'object') {
+      options = args.options || args;
+      args = args.arguments || args.args || [];
+    } else {
+      args = Array.isArray(args) ? args : splitArgsFromString(args);
+      options = options || {};
+    }
+
     const namespace = this.toNamespace ? this.toNamespace(namespaceOrPath) : undefined;
 
     let Generator;
     if (namespace &amp;&amp; this.getByNamespace) {
-      options.namespaceId = namespace;
       Generator = this.getByNamespace(namespace);
       if (!Generator) {
         this.lookupLocalNamespaces(namespace);
@@ -876,11 +1056,7 @@ class Environment extends EventEmitter {
       }
     }
 
-    try {
-      Generator = Generator || this.get(namespaceOrPath);
-    } catch (error) {
-      return this.error(error);
-    }
+    Generator = Generator || this.get(namespaceOrPath);
 
     if (namespace &amp;&amp; Generator &amp;&amp; Generator.namespace &amp;&amp; Generator.namespace !== Environment.UNKNOWN_NAMESPACE) {
       // Update namespace object in case of aliased namespace.
@@ -888,14 +1064,10 @@ class Environment extends EventEmitter {
     }
 
     if (typeof Generator !== 'function') {
-      if (namespace &amp;&amp; namespace.optional) {
-        return undefined;
-      }
       const generatorHint = namespace ? namespace.generatorHint : getGeneratorHint(namespaceOrPath);
 
-      return this.error(
-        new Error(
-          chalk.red('You don\'t seem to have a generator with the name “' + namespaceOrPath + '” installed.') + '\n' +
+      throw new Error(
+        chalk.red('You don\'t seem to have a generator with the name “' + namespaceOrPath + '” installed.') + '\n' +
           'But help is on the way:\n\n' +
           'You can see available generators via ' +
           chalk.yellow('npm search yeoman-generator') + ' or via ' + chalk.yellow('http://yeoman.io/generators/') + '. \n' +
@@ -903,51 +1075,134 @@ class Environment extends EventEmitter {
           'To see all your installed generators run ' + chalk.yellow('yo') + ' without any arguments. ' +
           'Adding the ' + chalk.yellow('--help') + ' option will also show subgenerators. \n\n' +
           'If ' + chalk.yellow('yo') + ' cannot find the generator, run ' + chalk.yellow('yo doctor') + ' to troubleshoot your system.'
-        ),
-        options.verifyListener
       );
     }
 
-    try {
-      return this.instantiate(Generator, options);
-    } catch (error) {
-      return this.error(error);
-    }
+    return this.instantiate(Generator, args, options);
   }
 
   /**
    * Instantiate a Generator with metadatas
    *
-   * @param {Class&lt;Generator>} generator      Generator class
-   * @param {Object}       [options]
-   * @param {Array|String} [options.arguments] Arguments to pass the instance
-   * @param {Object}       [options.options]   Options to pass the instance
+   * @param {Class&lt;Generator>} generator   Generator class
+   * @param {Array}            [args]      Arguments to pass the instance
+   * @param {Object}           [options]   Options to pass the instance
+   * @return {Generator}       The instantiated generator
    */
-  instantiate(Generator, options) {
-    options = options || {};
+  instantiate(Generator, args, options) {
+    if (!Array.isArray(args) &amp;&amp; typeof args === 'object') {
+      options = args.options || args;
+      args = args.arguments || args.args || [];
+    } else {
+      args = Array.isArray(args) ? args : splitArgsFromString(args);
+      options = options || {};
+    }
 
-    let args = options.arguments || options.args || _.clone(this.arguments);
-    args = Array.isArray(args) ? args : splitArgsFromString(args);
-
-    const opts = options.options || this.options;
+    const {namespace} = Generator;
 
     const environmentOptions = {
       env: this,
       resolved: Generator.resolved || Environment.UNKNOWN_RESOLVED,
-      namespace: Generator.namespace,
-      namespaceId: options.namespaceId
+      namespace
     };
+
     const generator = new Generator(args, {
       ...this.sharedOptions,
-      ...opts,
+      ...options,
       ...environmentOptions
     });
+
     generator._environmentOptions = {
       ...this.options,
       ...this.sharedOptions,
       ...environmentOptions
     };
 
+    return generator;
+  }
+
+  /**
+   * Compose with the generator.
+   *
+   * @param {String} namespaceOrPath
+   * @param {Array} [args]
+   * @param {Object} [options]
+   * @return {Generator} The instantiated generator or the singleton instance.
+   */
+  composeWith(generator, args, options) {
+    const generatorInstance = this.create(generator, args, options);
+    return this.queueGenerator(generatorInstance, true);
+  }
+
+  /**
+   * Queue generator run (queue itself tasks).
+   *
+   * @param {Generator} generator Generator instance
+   * @param {boolean} [schedule=false] Whether to schedule the generator run.
+   * @return {Generator} The generator or singleton instance.
+   */
+  queueGenerator(generator, schedule = false) {
+    const generatorFeatures = generator.getFeatures ? generator.getFeatures() : {};
+    let uniqueBy;
+    let namespaceToEmit;
+    if (generatorFeatures) {
+      uniqueBy = generatorFeatures.uniqueBy;
+      namespaceToEmit = uniqueBy;
+    }
+
+    if (!uniqueBy) {
+      const {namespace} = generator.options;
+      const instanceId = crypto.randomBytes(20).toString('hex');
+      let namespaceDefinition = this.toNamespace(namespace);
+      if (namespaceDefinition) {
+        namespaceDefinition = namespaceDefinition.with({instanceId});
+        uniqueBy = namespaceDefinition.id;
+        namespaceToEmit = namespaceDefinition.namespace;
+      } else {
+        uniqueBy = `${namespace}#${instanceId}`;
+        namespaceToEmit = namespace;
+      }
+    }
+
+    const existing = this._generators[uniqueBy];
+    if (existing) {
+      debug(`Using existing generator for namespace ${uniqueBy}`);
+      return existing;
+    }
+
+    this._generators[uniqueBy] = generator;
+    this.emit('compose', namespaceToEmit, generator);
+    this.emit(`compose:${namespaceToEmit}`, generator);
+
+    const runGenerator = () => {
+      if (generator.queueTasks) {
+        // Generator > 5
+        this.once('run', () => generator.emit('run'));
+        this.once('end', () => generator.emit('end'));
+        generator.queueTasks();
+      } else {
+        if (!generator.options.forwardErrorToEnvironment) {
+          generator.on('error', error => this.emit('error', error));
+        }
+        generator.promise = generator.run();
+      }
+    };
+
+    if (schedule) {
+      this.runLoop.add(
+        'environment:run',
+        (done, stop) => {
+          try {
+            runGenerator();
+            done();
+          } catch (error) {
+            stop(error);
+          }
+        }
+      );
+    } else {
+      runGenerator();
+    }
     return generator;
   }
 
@@ -959,55 +1214,33 @@ class Environment extends EventEmitter {
    *
    * @param {String|Array} args
    * @param {Object}       [options]
-   * @param {Function}     [done]
    */
-  run(args, options, done) {
-    args = args || this.arguments;
-
-    if (typeof options === 'object' &amp;&amp; this.options.experimental) {
-      const {skipInstall, skipCache, forceInstall, skipLocalCache} = options;
-      _.defaults(this.sharedOptions, {
-        skipInstall, skipCache, forceInstall, skipLocalCache
-      });
-    }
-
-    if (typeof options === 'function') {
-      done = options;
-      options = this.options;
-    }
-
-    if (typeof args === 'function') {
-      done = args;
-      options = this.options;
-      args = this.arguments;
+  async run(args, options, done) {
+    if (done === 'function' || typeof options === 'function' || typeof args === 'function') {
+      throw new Error('Callback support have been removed.');
     }
 
     args = Array.isArray(args) ? args : splitArgsFromString(args);
-    options = {...options} || {...this.options};
+    options = {...options};
 
     const name = args.shift();
     if (!name) {
-      return Promise.reject(
-        this.error(new Error('Must provide at least one argument, the generator namespace to invoke.'), true)
-      );
+      throw new Error('Must provide at least one argument, the generator namespace to invoke.');
     }
 
+    this.loadEnvironmentOptions(options);
+
     const instantiateAndRun = () => {
-      const generator = this.create(name, {
-        args,
-        options,
-        verifyListener: true
+      const generator = this.create(name, args, {
+        ...options,
+        initialGenerator: true
       });
-
-      if (generator instanceof Error) {
-        return Promise.reject(generator);
-      }
-
       if (options.help) {
-        return console.log(generator.help());
+        console.log(generator.help());
+        return undefined;
       }
 
-      return this.runGenerator(generator, done);
+      return this.runGenerator(generator);
     };
 
     if (this.options.experimental) {
@@ -1017,12 +1250,72 @@ class Environment extends EventEmitter {
 
     if (this.options.experimental &amp;&amp; !this.get(name)) {
       debug(`Generator ${name} was not found, trying to install it`);
-      return this.prepareEnvironment(name).then(() => {
-        return instantiateAndRun();
-      }).catch(() => instantiateAndRun());
+      return this.prepareEnvironment(name).then(() => instantiateAndRun(), () => instantiateAndRun());
     }
 
     return instantiateAndRun();
+  }
+
+  /**
+   * Start Environment queue
+   * @param {Object} options - Conflicter options.
+   */
+  start(options) {
+    return new Promise((resolve, reject) => {
+      if (this.conflicter === undefined) {
+        const conflicterOptions = _.pick(
+          _.defaults({}, this.options, options),
+          ['force', 'bail', 'ignoreWhitespace', 'dryRun', 'skipYoResolve', 'logCwd']
+        );
+        conflicterOptions.cwd = conflicterOptions.logCwd;
+
+        this.conflicter = new Conflicter(this.adapter, conflicterOptions);
+
+        this.queueConflicter();
+        this.queuePackageManagerInstall();
+      }
+
+      /*
+       * Listen to errors and reject if emmited.
+       * Some cases the generator relied at the behavior that the running process
+       * would be killed if an error is thrown to environment.
+       * Make sure to not rely on that behavior.
+       */
+      this.on('error', error => {
+        reject(error);
+      });
+
+      /*
+       * For backward compatibility
+       */
+      this.on('generator:reject', error => {
+        reject(error);
+      });
+
+      this.on('generator:resolve', error => {
+        resolve(error);
+      });
+
+      this.runLoop.on('error', error => {
+        this.emit('error', error);
+      });
+
+      this.runLoop.on('paused', () => {
+        this.emit('paused');
+      });
+
+      this.once('end', () => {
+        resolve();
+      });
+
+      /* If runLoop has ended, the environment has ended too. */
+      this.runLoop.once('end', () => {
+        this.emit('end');
+      });
+
+      this.emit('run');
+      this.runLoop.start();
+    });
   }
 
   /**
@@ -1030,57 +1323,18 @@ class Environment extends EventEmitter {
    * See https://github.com/yeoman/environment/pull/101
    *
    * @param {Object}       generator
-   * @param {Function}     [done]
    */
-  runGenerator(generator, done) {
-    const {newErrorHandler} = this.options;
-    const promise = new Promise((resolve, reject) => {
-      // Old behavior throws an exception directly to node.js due to scheduled throw.
-      // https://nodejs.org/api/events.html#events_error_events
-      if (newErrorHandler) {
-        // Listen to errors and reject if emmited.
-        this.on('error', error => {
-          /* Pause disabled due to grouped-queue default behavior.
-           * Multiple runLoop.run is scheduled by default, this causes a paused queue
-           * to continue right after it have been paused.
-           */
-          // this.runLoop.pause();
-          reject(error);
-        });
-      }
-
-      // Root generator always forwarded to reject.
-      generator.on('error', reject);
-
-      // If runLoop has ended, the environment has ended too.
-      this.runLoop.on('end', () => {
-        resolve();
-        this.emit('end');
-      });
-
-      /*
-       * On success cb() is called.
-       * On reject cb(err) is called.
-       * yeoman-generator 2.0.5 returns self.
-       * yeoman-generator > 3.0.0 returns a Promise.
-       * Returned promise doesn't rejects on 'error' event, so listen to it.
-       */
-      const generatorCallback = err => {
-        return err === undefined ? resolve() : reject(err);
-      };
-
-      const genPromise = generator.run(generatorCallback);
-      if (genPromise instanceof Promise) {
-        genPromise.then(resolve, reject);
-      }
-    });
-
-    this._rootGenerator = this._rootGenerator || generator;
-    if (done) {
-      return promise.then(done, done);
+  runGenerator(generator) {
+    try {
+      generator = this.queueGenerator(generator);
+    } catch (error) {
+      return Promise.reject(error);
     }
 
-    return promise;
+    this.compatibilityMode = generator.queueTasks ? false : 'v4';
+    this._rootGenerator = this._rootGenerator || generator;
+
+    return this.start(generator.options);
   }
 
   /**
@@ -1121,7 +1375,7 @@ class Environment extends EventEmitter {
     let ns = path.normalize(filepath.replace(new RegExp(escapeStrRe(path.extname(filepath)) + '$'), ''));
 
     // Sort lookups by length so biggest are removed first
-    const nsLookups = _(lookups.concat(['..'])).map(path.normalize).sortBy('length').value().reverse();
+    const nsLookups = _(lookups.concat(['..'])).map(found => path.normalize(found)).sortBy('length').value().reverse();
 
     // If `ns` contains a lookup dir in its path, remove it.
     ns = nsLookups.reduce((ns, lookup) => {
@@ -1171,29 +1425,139 @@ class Environment extends EventEmitter {
     if (process.platform === 'win32' &amp;&amp; path.extname(moduleId) === '') {
       try {
         resolved = require.resolve(path.join(moduleId, 'index'));
-      } catch (_) {
-      }
+      } catch {}
     }
 
     return resolved || require.resolve(moduleId);
+  }
+
+  /**
+   * Apply transform streams to file in MemFs.
+   * @param {Transform[]} transformStreams - transform streams to be applied.
+   * @param {Stream} [stream] - files stream, defaults to this.sharedFs.stream().
+   * @return {Promise}
+   */
+  applyTransforms(transformStreams, options = {}) {
+    const {
+      stream = this.sharedFs.stream(),
+      name = 'Tranforming'
+    } = options;
+
+    let {log = true} = options;
+
+    if (log) {
+      npmlog.tracker = new TrackerGroup();
+      npmlog.enableProgress();
+      log = npmlog.newItem(name);
+    }
+
+    if (!Array.isArray(transformStreams)) {
+      transformStreams = [transformStreams];
+    }
+    return pipeline(
+      stream,
+      createEachFileTransform({forwardUmodified: false}),
+      ...transformStreams,
+      createEachFileTransform(file => {
+        if (log) {
+          log.completeWork(10);
+          npmlog.info('Completed', path.relative(this.logCwd, file.path));
+        }
+      }, {autoForward: false})
+    ).then(() => {
+      if (log) {
+        log.finish();
+        npmlog.disableProgress();
+      }
+    });
+  }
+
+  /**
+   * Commits the MemFs to the disc.
+   * @param {Stream} [stream] - files stream, defaults to this.sharedFs.stream().
+   * @return {Promise}
+   */
+  commitSharedFs(stream = this.sharedFs.stream()) {
+    return new Promise((resolve, reject) => {
+      debug('committing files');
+      const transformStreams = [
+        createYoResolveTransform(this.conflicter),
+        createYoRcTransform(),
+        pipe(file => this.conflicter.checkForCollision(file), {ordered: false, maxParallel: 10}),
+        createConflicterStatusTransform()
+      ];
+      this.fs.commit(transformStreams, stream, (error, value) => {
+        debug('committing finished');
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        // Force to empty Conflicter queue.
+        this.conflicter.queue.once('end', () => resolve(value));
+        this.conflicter.queue.run();
+      });
+    });
+  }
+
+  /**
+   * Queue environment's commit task.
+   */
+  queueConflicter() {
+    const queueCommit = () => {
+      debug('Queueing conflicts task');
+      this.runLoop.add('environment:conflicts', (done, stop) => {
+        let customCommitTask = this.findGeneratorCustomCommitTask();
+        if (customCommitTask !== undefined &amp;&amp; customCommitTask) {
+          if (typeof customCommitTask !== 'function') {
+            done();
+            return;
+          }
+        } else {
+          customCommitTask = this.commitSharedFs.bind(this);
+        }
+        const result = customCommitTask();
+        if (!result || !result.then) {
+          done();
+          return;
+        }
+        return result.then(() => {
+          debug('Adding queueCommit event listener');
+          this.sharedFs.once('change', queueCommit);
+          done();
+        }
+        , stop);
+      }
+      , {
+        once: 'write memory fs to disk'
+      });
+    };
+
+    queueCommit();
+  }
+
+  /**
+   * Queue environment's package manager install task.
+   */
+  queuePackageManagerInstall() {
+    this.runLoop.add(
+      'install',
+      (done, stop) => this.packageManagerInstallTask().then(done, stop),
+      {once: 'package manager install'}
+    );
   }
 }
 
 Object.assign(Environment.prototype, resolver);
 Object.assign(Environment.prototype, composability);
+Object.assign(Environment.prototype, require('./package-manager'));
+Object.assign(Environment.prototype, require('./spawn-command'));
 
 /**
  * Expose the utilities on the module
  * @see {@link env/util}
  */
 Environment.util = require('./util/util');
-
-/**
- * Expose the repository on the module
- * @see {@link env/repository}
- * @private
- */
-Environment.repository = new YeomanRepository();
 
 module.exports = Environment;
 </code></pre>
@@ -1205,7 +1569,7 @@ module.exports = Environment;
       <img
         class="logo"
         src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
-        style="width: 127px; height: 14px;"
+        style="width: 127px; height: 14px"
       />
       <div class="footer-text">BSD license Copyright (c) Google</div>
     </footer>

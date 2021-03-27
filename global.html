@@ -20,7 +20,7 @@
   </head>
   <body>
     <nav class="lnb" id="lnb">
-      <div class="logo" style="width: 127px; height: 14px;">
+      <div class="logo" style="width: 127px; height: 14px">
         <img
           src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
           width="100%"
@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v2.10.3</span>
+        <span class="version">v3.2.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -78,6 +78,26 @@
         <h3>Classes</h3>
         <ul>
           <li>
+            <a href="Conflicter.html">Conflicter</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="Conflicter_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="Conflicter.html#_detectConflict">_detectConflict</a>
+                </li>
+                <li><a href="Conflicter.html#_printDiff">_printDiff</a></li>
+                <li>
+                  <a href="Conflicter.html#checkForCollision"
+                    >checkForCollision</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
             <a href="Environment.html">Environment</a
             ><button type="button" class="hidden toggle-subnav btn btn-link">
               <span class="glyphicon glyphicon-plus"></span>
@@ -108,14 +128,19 @@
                     >namespaceToName</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#.prepareCommand">prepareCommand</a>
+                </li>
                 <li><a href="Environment.html#alias">alias</a></li>
+                <li>
+                  <a href="Environment.html#applyTransforms">applyTransforms</a>
+                </li>
+                <li>
+                  <a href="Environment.html#commitSharedFs">commitSharedFs</a>
+                </li>
+                <li><a href="Environment.html#composeWith">composeWith</a></li>
                 <li><a href="Environment.html#create">create</a></li>
                 <li><a href="Environment.html#error">error</a></li>
-                <li>
-                  <a href="Environment.html#findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
                 <li><a href="Environment.html#get">get</a></li>
                 <li><a href="Environment.html#getByPath">getByPath</a></li>
                 <li>
@@ -153,6 +178,16 @@
                     >isPackageRegistered</a
                   >
                 </li>
+                <li>
+                  <a href="Environment.html#loadEnvironmentOptions"
+                    >loadEnvironmentOptions</a
+                  >
+                </li>
+                <li>
+                  <a href="Environment.html#loadSharedOptions"
+                    >loadSharedOptions</a
+                  >
+                </li>
                 <li><a href="Environment.html#lookup">lookup</a></li>
                 <li>
                   <a href="Environment.html#lookupLocalPackages"
@@ -161,6 +196,17 @@
                 </li>
                 <li><a href="Environment.html#namespace">namespace</a></li>
                 <li><a href="Environment.html#namespaces">namespaces</a></li>
+                <li>
+                  <a href="Environment.html#queueConflicter">queueConflicter</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queueGenerator">queueGenerator</a>
+                </li>
+                <li>
+                  <a href="Environment.html#queuePackageManagerInstall"
+                    >queuePackageManagerInstall</a
+                  >
+                </li>
                 <li><a href="Environment.html#register">register</a></li>
                 <li>
                   <a href="Environment.html#registerStub">registerStub</a>
@@ -171,12 +217,16 @@
                   >
                 </li>
                 <li>
+                  <a href="Environment.html#resolvePackage">resolvePackage</a>
+                </li>
+                <li>
                   <a href="Environment.html#rootGenerator">rootGenerator</a>
                 </li>
                 <li><a href="Environment.html#run">run</a></li>
                 <li>
                   <a href="Environment.html#runGenerator">runGenerator</a>
                 </li>
+                <li><a href="Environment.html#start">start</a></li>
               </ul>
             </div>
           </li>
@@ -216,6 +266,11 @@
                     >lookupLocalPackages</a
                   >
                 </li>
+                <li>
+                  <a href="env_composability.html#.resolvePackage"
+                    >resolvePackage</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -237,14 +292,28 @@
               <ul class="inner">
                 <li><a href="env_resolver.html#.alias">alias</a></li>
                 <li>
-                  <a href="env_resolver.html#.findGeneratorsIn"
-                    >findGeneratorsIn</a
-                  >
-                </li>
-                <li>
                   <a href="env_resolver.html#.getNpmPaths">getNpmPaths</a>
                 </li>
                 <li><a href="env_resolver.html#.lookup">lookup</a></li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="spawn-command.html">spawn-command</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="spawn-command_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="spawn-command.html#.spawnCommand">spawnCommand</a>
+                </li>
+                <li>
+                  <a href="spawn-command.html#.spawnCommandSync"
+                    >spawnCommandSync</a
+                  >
+                </li>
               </ul>
             </div>
           </li>
@@ -253,7 +322,32 @@
       <div class="lnb-api hidden">
         <h3>Global</h3>
         <ul>
+          <li>
+            <a href="global.html#createConflicterStatusTransform"
+              >createConflicterStatusTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createEachFileTransform"
+              >createEachFileTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createYoRcTransform">createYoRcTransform</a>
+          </li>
+          <li>
+            <a href="global.html#createYoResolveTransform"
+              >createYoResolveTransform</a
+            >
+          </li>
+          <li><a href="global.html#execute">execute</a></li>
+          <li><a href="global.html#fileIsModified">fileIsModified</a></li>
           <li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li>
+          <li>
+            <a href="global.html#packageManagerInstallTask"
+              >packageManagerInstallTask</a
+            >
+          </li>
           <li>
             <a href="global.html#splitArgsFromString">splitArgsFromString</a>
           </li>
@@ -273,6 +367,479 @@
 
           <dl>
             <dt>
+              <h4 class="name" id="createConflicterStatusTransform">
+                <span class="type-signature"></span
+                >createConflicterStatusTransform<span class="signature"
+                  >(logger)</span
+                ><span class="type-signature"> &rarr; {Transform}</span>
+
+                <div class="container-source members">
+                  <code
+                    ><a href="util_transform.js.html"
+                      >util/transform.js</a
+                    ></code
+                  >,
+                  <code
+                    ><a href="util_transform.js.html#line144">line 144</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Create a transform to apply conflicter status.</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>logger</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Log</span>
+                      </td>
+
+                      <td class="description last">
+                        <p>Log reference. See log.js</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">Transform</span>
+
+                -
+                <p>
+                  A Transform
+                  https://nodejs.org/api/stream.html#stream_class_stream_transform
+                </p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="createEachFileTransform">
+                <span class="type-signature"></span>createEachFileTransform<span
+                  class="signature"
+                  >(forEach, options)</span
+                ><span class="type-signature"> &rarr; {Transform}</span>
+
+                <div class="container-source members">
+                  <code
+                    ><a href="util_transform.js.html"
+                      >util/transform.js</a
+                    ></code
+                  >,
+                  <code
+                    ><a href="util_transform.js.html#line32">line 32</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Create a for each file stream transform.</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>forEach</code></td>
+
+                      <td class="type">
+                        <span class="param-type">function</span>
+                      </td>
+
+                      <td class="description last">
+                        <p>Function to execute for each file</p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>options</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="description last">
+                        <p>Options</p>
+                        <h6>Properties</h6>
+
+                        <table class="params">
+                          <thead>
+                            <tr>
+                              <th>Name</th>
+
+                              <th>Type</th>
+
+                              <th>Attributes</th>
+
+                              <th>Default</th>
+
+                              <th class="last">Description</th>
+                            </tr>
+                          </thead>
+
+                          <tbody>
+                            <tr>
+                              <td class="name"><code>autoForward</code></td>
+
+                              <td class="type">
+                                <span class="param-type">boolean</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="default">true</td>
+
+                              <td class="description last">
+                                <p>
+                                  Set false to don't add a file to the stream,
+                                  the function must do it.
+                                </p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name">
+                                <code>executeUnmodified</code>
+                              </td>
+
+                              <td class="type">
+                                <span class="param-type">boolean</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="default">false</td>
+
+                              <td class="description last">
+                                <p>
+                                  Set true to execute the forEach function with
+                                  a not modified file.
+                                </p>
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td class="name">
+                                <code>forwardUmodified</code>
+                              </td>
+
+                              <td class="type">
+                                <span class="param-type">boolean</span>
+                              </td>
+
+                              <td class="attributes">&lt;optional><br /></td>
+
+                              <td class="default">true</td>
+
+                              <td class="description last">
+                                <p>
+                                  Set false to don't add a not modified file to
+                                  the stream.
+                                </p>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">Transform</span>
+
+                -
+                <p>
+                  A Transform
+                  https://nodejs.org/api/stream.html#stream_class_stream_transform
+                </p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="createYoRcTransform">
+                <span class="type-signature"></span>createYoRcTransform<span
+                  class="signature"
+                  >()</span
+                ><span class="type-signature"> &rarr; {Transform}</span>
+
+                <div class="container-source members">
+                  <code
+                    ><a href="util_transform.js.html"
+                      >util/transform.js</a
+                    ></code
+                  >,
+                  <code
+                    ><a href="util_transform.js.html#line129">line 129</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Create a force yeoman configs transform stream.</p>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">Transform</span>
+
+                -
+                <p>
+                  A Transform
+                  https://nodejs.org/api/stream.html#stream_class_stream_transform
+                </p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="createYoResolveTransform">
+                <span class="type-signature"></span
+                >createYoResolveTransform<span class="signature"
+                  >(conflicter, yoResolveFileName)</span
+                ><span class="type-signature"> &rarr; {Transform}</span>
+
+                <div class="container-source members">
+                  <code
+                    ><a href="util_transform.js.html"
+                      >util/transform.js</a
+                    ></code
+                  >,
+                  <code
+                    ><a href="util_transform.js.html#line119">line 119</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>
+                  Create a yo-resolve transform stream. Suports pre-defined
+                  conflicter actions action based on file glob.
+                </p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>conflicter</code></td>
+
+                      <td class="type">
+                        <span class="param-type"
+                          ><a href="Conflicter.html">Conflicter</a></span
+                        >
+                      </td>
+
+                      <td class="description last">
+                        <p>Conflicter instance</p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>yoResolveFileName</code></td>
+
+                      <td class="type">
+                        <span class="param-type">string</span>
+                      </td>
+
+                      <td class="description last">
+                        <p>.yo-resolve filename</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">Transform</span>
+
+                -
+                <p>
+                  A Transform
+                  https://nodejs.org/api/stream.html#stream_class_stream_transform
+                </p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="execute">
+                <span class="type-signature"
+                  ><span class="icon green">async</span> </span
+                >execute<span class="signature">(generatorNamespace, args)</span
+                ><span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code><a href="command.js.html">command.js</a></code
+                  >,
+                  <code><a href="command.js.html#line36">line 36</a></code>
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Generate a command for the generator and execute.</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>generatorNamespace</code></td>
+
+                      <td class="type">
+                        <span class="param-type">string</span>
+                      </td>
+
+                      <td class="description last"></td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>args</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Array.&lt;string></span>
+                      </td>
+
+                      <td class="description last"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="fileIsModified">
+                <span class="type-signature"></span>fileIsModified<span
+                  class="signature"
+                  >(field)</span
+                ><span class="type-signature"></span>
+
+                <div class="container-source members">
+                  <code
+                    ><a href="util_transform.js.html"
+                      >util/transform.js</a
+                    ></code
+                  >,
+                  <code
+                    ><a href="util_transform.js.html#line18">line 18</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>
+                  Detect if the file is modified See
+                  https://github.com/SBoudrias/mem-fs-editor/blob/3ff18e26c52dc30d8f371bcc72c1884f2ea706d6/lib/actions/commit.js#L38
+                </p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>field</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Object</span>
+                      </td>
+
+                      <td class="description last"><p>vinyl file</p></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
               <h4 class="name" id="getGeneratorHint">
                 <span class="type-signature"></span>getGeneratorHint<span
                   class="signature"
@@ -282,13 +849,55 @@
                 <div class="container-source members">
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
-                  <code><a href="environment.js.html#line42">line 42</a></code>
+                  <code><a href="environment.js.html#line57">line 57</a></code>
                 </div>
               </h4>
             </dt>
             <dd>
               <div class="description">
                 <p>Hint of generator module name</p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id="packageManagerInstallTask">
+                <span class="type-signature"
+                  ><span class="icon green">async</span> </span
+                >packageManagerInstallTask<span class="signature">()</span
+                ><span class="type-signature">
+                  &rarr; {Promise.&lt;boolean>}</span
+                >
+
+                <div class="container-source members">
+                  <code
+                    ><a href="package-manager.js.html"
+                      >package-manager.js</a
+                    ></code
+                  >,
+                  <code
+                    ><a href="package-manager.js.html#line45">line 45</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Executes package manager install.</p>
+                <ul>
+                  <li>checks if package.json was committed.</li>
+                  <li>uses a preferred package manager or try to detect.</li>
+                </ul>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">Promise.&lt;boolean></span>
+
+                -
+                <p>Promise true if the install execution suceeded.</p>
               </div>
 
               <dl class="details"></dl>
@@ -304,7 +913,7 @@
                 <div class="container-source members">
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
-                  <code><a href="environment.js.html#line26">line 26</a></code>
+                  <code><a href="environment.js.html#line38">line 38</a></code>
                 </div>
               </h4>
             </dt>
@@ -328,7 +937,7 @@
       <img
         class="logo"
         src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
-        style="width: 127px; height: 14px;"
+        style="width: 127px; height: 14px"
       />
       <div class="footer-text">BSD license Copyright (c) Google</div>
     </footer>
