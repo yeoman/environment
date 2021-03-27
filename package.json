@@ -75,7 +75,6 @@
     "minimatch": "^3.0.4",
     "npmlog": "^4.1.2",
     "pacote": "^11.2.6",
-    "pipeline-pipe": "^0.1.5",
     "preferred-pm": "^3.0.3",
     "pretty-bytes": "^5.3.0",
     "read-chunk": "^3.2.0",

@@ -23,6 +23,7 @@ describe('Conflicter', () => {
 
   describe('#checkForCollision()', () => {
     beforeEach(function () {
+      this.timeout(5000);
       this.conflictingFile = {path: __filename, contents: ''};
     });
 
