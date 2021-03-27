@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Source: util/repository.js | yeoman-environment</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css" />
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="styles/prettify-tomorrow.css"
+    />
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css" />
+  </head>
+  <body>
+    <nav class="lnb" id="lnb">
+      <div class="logo" style="width: 127px; height: 14px;">
+        <img
+          src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
+          width="100%"
+          height="100%"
+        />
+      </div>
+      <div class="title">
+        <h1><a href="index.html" class="link">yeoman-environment</a></h1>
+
+        <span class="version">v2.10.3</span>
+      </div>
+      <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search" />
+        <ul></ul>
+      </div>
+
+      <div class="lnb-api hidden">
+        <h3>Modules</h3>
+        <ul>
+          <li>
+            <a href="module-env_log.html">env/log</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="module:env/log_sub"></div>
+          </li>
+          <li>
+            <a href="module-env_repository.html">env/repository</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="module:env/repository_sub"></div>
+          </li>
+          <li>
+            <a href="module-env_util.html">env/util</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="module:env/util_sub">
+              <div class="member-type">Members</div>
+              <ul class="inner">
+                <li><a href="module-env_util.html#.log">log</a></li>
+              </ul>
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="module-env_util.html#.duplicateEnv">duplicateEnv</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="lnb-api hidden">
+        <h3>Classes</h3>
+        <ul>
+          <li>
+            <a href="Environment.html">Environment</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="Environment_sub">
+              <div class="member-type">Members</div>
+              <ul class="inner">
+                <li><a href="Environment.html#.util">util</a></li>
+              </ul>
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li><a href="Environment.html#.createEnv">createEnv</a></li>
+                <li>
+                  <a href="Environment.html#.createEnvWithVersion"
+                    >createEnvWithVersion</a
+                  >
+                </li>
+                <li>
+                  <a href="Environment.html#.enforceUpdate">enforceUpdate</a>
+                </li>
+                <li>
+                  <a href="Environment.html#.lookupGenerator"
+                    >lookupGenerator</a
+                  >
+                </li>
+                <li>
+                  <a href="Environment.html#.namespaceToName"
+                    >namespaceToName</a
+                  >
+                </li>
+                <li><a href="Environment.html#alias">alias</a></li>
+                <li><a href="Environment.html#create">create</a></li>
+                <li><a href="Environment.html#error">error</a></li>
+                <li>
+                  <a href="Environment.html#findGeneratorsIn"
+                    >findGeneratorsIn</a
+                  >
+                </li>
+                <li><a href="Environment.html#get">get</a></li>
+                <li><a href="Environment.html#getByPath">getByPath</a></li>
+                <li>
+                  <a href="Environment.html#getGeneratorNames"
+                    >getGeneratorNames</a
+                  >
+                </li>
+                <li>
+                  <a href="Environment.html#getGeneratorsMeta"
+                    >getGeneratorsMeta</a
+                  >
+                </li>
+                <li><a href="Environment.html#getNpmPaths">getNpmPaths</a></li>
+                <li>
+                  <a href="Environment.html#getPackagePath">getPackagePath</a>
+                </li>
+                <li>
+                  <a href="Environment.html#getPackagePaths">getPackagePaths</a>
+                </li>
+                <li>
+                  <a href="Environment.html#getRegisteredPackages"
+                    >getRegisteredPackages</a
+                  >
+                </li>
+                <li><a href="Environment.html#getVersion">getVersion</a></li>
+                <li><a href="Environment.html#help">help</a></li>
+                <li>
+                  <a href="Environment.html#installLocalGenerators"
+                    >installLocalGenerators</a
+                  >
+                </li>
+                <li><a href="Environment.html#instantiate">instantiate</a></li>
+                <li>
+                  <a href="Environment.html#isPackageRegistered"
+                    >isPackageRegistered</a
+                  >
+                </li>
+                <li><a href="Environment.html#lookup">lookup</a></li>
+                <li>
+                  <a href="Environment.html#lookupLocalPackages"
+                    >lookupLocalPackages</a
+                  >
+                </li>
+                <li><a href="Environment.html#namespace">namespace</a></li>
+                <li><a href="Environment.html#namespaces">namespaces</a></li>
+                <li><a href="Environment.html#register">register</a></li>
+                <li>
+                  <a href="Environment.html#registerStub">registerStub</a>
+                </li>
+                <li>
+                  <a href="Environment.html#resolveModulePath"
+                    >resolveModulePath</a
+                  >
+                </li>
+                <li>
+                  <a href="Environment.html#rootGenerator">rootGenerator</a>
+                </li>
+                <li><a href="Environment.html#run">run</a></li>
+                <li>
+                  <a href="Environment.html#runGenerator">runGenerator</a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="TerminalAdapter.html">TerminalAdapter</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="TerminalAdapter_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li><a href="TerminalAdapter.html#diff">diff</a></li>
+                <li><a href="TerminalAdapter.html#prompt">prompt</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="lnb-api hidden">
+        <h3>Mixins</h3>
+        <ul>
+          <li>
+            <a href="env_composability.html">env/composability</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="env/composability_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li>
+                  <a href="env_composability.html#.installLocalGenerators"
+                    >installLocalGenerators</a
+                  >
+                </li>
+                <li>
+                  <a href="env_composability.html#.lookupLocalPackages"
+                    >lookupLocalPackages</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="env_namespace-composability.html"
+              >env/namespace-composability</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="env/namespace-composability_sub"></div>
+          </li>
+          <li>
+            <a href="env_resolver.html">env/resolver</a
+            ><button type="button" class="hidden toggle-subnav btn btn-link">
+              <span class="glyphicon glyphicon-plus"></span>
+            </button>
+            <div class="hidden" id="env/resolver_sub">
+              <div class="member-type">Methods</div>
+              <ul class="inner">
+                <li><a href="env_resolver.html#.alias">alias</a></li>
+                <li>
+                  <a href="env_resolver.html#.findGeneratorsIn"
+                    >findGeneratorsIn</a
+                  >
+                </li>
+                <li>
+                  <a href="env_resolver.html#.getNpmPaths">getNpmPaths</a>
+                </li>
+                <li><a href="env_resolver.html#.lookup">lookup</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="lnb-api hidden">
+        <h3>Global</h3>
+        <ul>
+          <li><a href="global.html#getGeneratorHint">getGeneratorHint</a></li>
+          <li>
+            <a href="global.html#splitArgsFromString">splitArgsFromString</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div id="resizer"></div>
+
+    <div class="main" id="main">
+      <section>
+        <article>
+          <pre
+            class="prettyprint source linenums"
+          ><code>/** @module env/repository */
+'use strict';
+const fs = require('fs');
+const path = require('path');
+const semver = require('semver');
+const debug = require('debug')('yeoman:environment:repository');
+const execa = require('execa');
+
+const logger = require('./log');
+
+const REPOSITORY_FOLDER = '.yo-repository';
+
+/**
+ * @private
+ */
+class YeomanRepository {
+  constructor(repositoryPath = REPOSITORY_FOLDER) {
+    this.log = logger();
+
+    this._repositoryPath = path.resolve(repositoryPath);
+  }
+
+  /**
+   * @private
+   * @property
+   * Repository absolute path (npm --prefix).
+   */
+  get repositoryPath() {
+    return this._repositoryPath;
+  }
+
+  set repositoryPath(repositoryPath) {
+    this._repositoryPath = path.resolve(repositoryPath);
+    delete this._nodeModulesPath;
+  }
+
+  /**
+   * @private
+   * @property nodeModulesPath
+   * Path to the repository's node_modules.
+   */
+  get nodeModulesPath() {
+    if (!this._nodeModulesPath) {
+      this._nodeModulesPath = this.runPackageManager('root').stdout;
+    }
+    return this._nodeModulesPath;
+  }
+
+  /**
+   * @private
+   * @method
+   * Create the repositoryPath if it doesn't exists.
+   */
+  createRepositoryFolder() {
+    if (!fs.existsSync(this.repositoryPath)) {
+      fs.mkdirSync(this.repositoryPath);
+    }
+  }
+
+  /**
+   * @private
+   * @method
+   * Resolve the package name module path inside the [repository path]{@link repository.repositoryPath}
+   * @param {String} packageName - Package name. If packageName is a absolute path then modulePath is joined to it.
+   * @param {String} [modulePath] - Path to a module inside the package path.
+   * @returns {String} Absolute module path.
+   */
+  resolvePackagePath(packageName = '', modulePath = '') {
+    if (path.isAbsolute(packageName)) {
+      return path.join(packageName, modulePath);
+    }
+    return path.join(this.nodeModulesPath, packageName, modulePath);
+  }
+
+  /**
+   * @private
+   * @method
+   * Remove the package from node's cache, necessary for a reinstallation.
+   * Removes only package.json by default, it's used to version verification.
+   * Removes only cache of the repository's packages.
+   * @param {String} packageName - Package name.
+   * @param {Boolean} [force=false] - If true removes every cache the package.
+   * @throw Error if force === false and any file other the package.json is loaded.
+   */
+  cleanupPackageCache(packageName, force = false) {
+    if (!packageName) {
+      throw new Error('You must provide a packageName');
+    }
+    debug('Cleaning cache of %s', packageName);
+    const packagePath = this.resolvePackagePath(packageName);
+    const toCleanup = Object.keys(require.cache).filter(cache => cache.startsWith(packagePath));
+    if (!force &amp;&amp; toCleanup.find(cache => !cache.endsWith('package.json'))) {
+      throw new Error(`Package ${packageName} already loaded`);
+    }
+
+    toCleanup.forEach(cache => {
+      delete require.cache[cache];
+    });
+  }
+
+  /**
+   * @private
+   * @method
+   * Run the packageManager.
+   * @param {String} cmd - The command.
+   * @param {String[]} [args] - Additional arguments.
+   * @param {Object} [options] - Config to be passed to execa.
+   */
+  runPackageManager(cmd, args, options) {
+    const allArgs = [cmd, '-g', '--prefix', this.repositoryPath, '--loglevel', 'error'];
+    if (cmd === 'install') {
+      allArgs.push('--no-optional');
+    }
+    if (args) {
+      allArgs.push(...args);
+    }
+    debug('Running npm with args %o', allArgs);
+    return execa.sync('npm', allArgs, options);
+  }
+
+  /**
+   * @private
+   * @method
+   * Verify if the package is installed and matches the version range.
+   * @param {String} packageName - Package name.
+   * @param {String} versionRange - Version range of the package.
+   * @returns {Boolean} True if the package is installed and matches the version.
+   * @throws Error.
+   */
+  verifyInstalledVersion(packageName, versionRange) {
+    const packagePath = this.resolvePackagePath(packageName);
+    const installedVersion = this.getPackageVersion(packagePath);
+    let installed;
+    if (installedVersion &amp;&amp; !versionRange) {
+      installed = true;
+    } else if (installedVersion) {
+      installed = semver.validRange(versionRange) &amp;&amp; semver.satisfies(installedVersion, versionRange);
+    }
+    return installed ? installedVersion : undefined;
+  }
+
+  /**
+   * @private
+   * @method
+   * Install a package into the repository.
+   * @param {String} packageName - Package name.
+   * @param {String} versionRange - range Version of the package.
+   * @returns {String} Package path.
+   * @throws Error.
+   */
+  installPackage(packageName, versionRange) {
+    const pkgs = {};
+    if (packageName === 'yeoman-environment' &amp;&amp; versionRange &amp;&amp; (!semver.validRange(versionRange) || semver.lt(semver.minVersion(versionRange), '2.9.0'))) {
+      // Workaround buggy dependencies.
+      pkgs['rxjs-compat'] = '^6.0.0';
+    }
+
+    pkgs[packageName] = versionRange;
+    const success = this.installPackages(pkgs) === true;
+    if (!success) {
+      throw new Error(`Error installing package ${packageName}, version ${versionRange}.`);
+    }
+    debug(`Package ${packageName} sucessfully installed`);
+    return this.resolvePackagePath(packageName);
+  }
+
+  /**
+   * @private
+   * @method
+   * Install packages.
+   * @param {Object} packages - Packages to be installed.
+   * @returns {Boolean}
+   * @example
+   * repository.installPackages({ 'yeoman-environment': '2.3.0' });
+   */
+  installPackages(packages) {
+    this.createRepositoryFolder();
+    debug('Installing packages %o', packages);
+    const packagesArgs = Object
+      .entries(packages)
+      .filter(([packageName, _]) => {
+        this.cleanupPackageCache(packageName);
+        return true;
+      })
+      .map(([packageName, version]) => version ? (semver.validRange(version) ? `${packageName}@${version}` : version) : packageName);
+    const result = this.runPackageManager('install', [...packagesArgs], {stdio: 'inherit'});
+    const success = result.exitCode === 0;
+    Object.keys(packages).forEach(packageName => {
+      if (success) {
+        this.log.ok(`${packageName} installed.`);
+      } else {
+        this.log.error(`${packageName} cannot be installed.`);
+      }
+    });
+    return success;
+  }
+
+  /**
+   * @private
+   * @method
+   * Get the installed package version.
+   * @param {String} packageName - Package name.
+   * @returns {String|undefined} Package version or undefined.
+   */
+  getPackageVersion(packageName) {
+    try {
+      const packageJson = this.resolvePackagePath(packageName, 'package.json');
+      return require(packageJson).version;
+    } catch (_) {
+      return undefined;
+    }
+  }
+
+  /**
+   * @private
+   * @method
+   * Require a module from the repository.
+   * @param {String} packageName - Package name.
+   * @param {String} versionRange - Version range of the package.
+   * @param {String} modulePath - Package name.
+   * @returns {Object} Module.
+   * @throws Error.
+   */
+  requireModule(packageName, versionRange, modulePath = '') {
+    const installedVersion = this.verifyInstalledVersion(packageName, versionRange);
+    if (installedVersion) {
+      debug(`Using ${packageName} installed version ${installedVersion}`);
+    } else {
+      // Installs the package if no version is installed or the version is provided and don't match the installed version.
+      debug(`Found ${packageName} version ${installedVersion} but requires version ${versionRange}`);
+      this.installPackage(packageName, versionRange);
+    }
+    const absolutePath = this.resolvePackagePath(packageName, modulePath);
+    debug('Loading module at %s', absolutePath);
+    return require(absolutePath);
+  }
+}
+
+module.exports = YeomanRepository;
+</code></pre>
+        </article>
+      </section>
+    </div>
+
+    <footer>
+      <img
+        class="logo"
+        src="https://raw.githubusercontent.com/yeoman/yeoman.github.io/source/app/assets/img/logo.png"
+        style="width: 127px; height: 14px;"
+      />
+      <div class="footer-text">BSD license Copyright (c) Google</div>
+    </footer>
+    <script>
+      prettyPrint();
+    </script>
+    <script src="scripts/jquery.min.js"></script>
+    <script src="scripts/tui-doc.js"></script>
+    <script src="scripts/linenumber.js"></script>
+
+    <script>
+      var id = "_sub".replace(/"/g, "_");
+      var selectedApi = document.getElementById(id); // do not use jquery selector
+      var $selectedApi = $(selectedApi);
+
+      $selectedApi.removeClass("hidden");
+      $selectedApi
+        .parent()
+        .find(".glyphicon")
+        .removeClass("glyphicon-plus")
+        .addClass("glyphicon-minus");
+      showLnbApi();
+    </script>
+  </body>
+</html>
