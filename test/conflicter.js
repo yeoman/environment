@@ -4,6 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const sinon = require('sinon');
+const slash = require('slash');
+const semver = require('semver');
 const {TestAdapter} = require('yeoman-test/lib/adapter');
 const Conflicter = require('../lib/util/conflicter');
 
@@ -96,47 +98,65 @@ describe('Conflicter', () => {
       });
     });
 
-    it('abort on first conflict', function () {
-      this.timeout(4000);
-      const conflicter = new Conflicter(new TestAdapter(), {force: false, bail: true});
-      return conflicter.checkForCollision(this.conflictingFile).then(
-        () => assert.fail('was not supposed to succeed')
-      ).catch(error => {
-        assert.equal(error.message, 'Process aborted by conflict');
+    describe('with bail option', () => {
+      it('abort on first conflict', function () {
+        this.timeout(4000);
+        const conflicter = new Conflicter(new TestAdapter(), {bail: true});
+        return conflicter.checkForCollision(this.conflictingFile).then(
+          () => assert.fail('was not supposed to succeed')
+        ).catch(error => {
+          assert.equal(slash(error.message), 'Process aborted by conflict: test/conflicter.js');
+        });
       });
-    });
 
-    it('abort on first conflict with whitespace changes', () => {
-      const conflicter = new Conflicter(new TestAdapter(), {
-        force: false,
-        bail: true
-      });
-      return conflicter.checkForCollision(
-        {
-          path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
-          contents: `initial
+      it('abort on first conflict with whitespace changes', function () {
+        if (!semver.satisfies(require('../node_modules/yeoman-generator/package.json').version, '>=5.0.0-beta.1')) {
+          this.skip();
+        }
+        const conflicter = new Conflicter(new TestAdapter(), {bail: true});
+        return conflicter.checkForCollision(
+          {
+            path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
+            contents: `initial
                  content
       `
-        }
-      ).then(
-        file => {
-          assert.equal(file.conflicter, 'skip');
-        }
-      );
-    });
-
-    it('abort on create new file', () => {
-      const conflicter = new Conflicter(new TestAdapter(), {
-        force: false,
-        bail: true
+          }
+        )
+          .then(
+            () => assert.fail('was not supposed to succeed')
+          ).catch(error => {
+            assert.equal(slash(error.message), 'Process aborted by conflict: test/fixtures/conflicter/file-conflict.txt');
+          });
       });
-      return conflicter.checkForCollision({
-        path: 'file-who-does-not-exist2.js',
-        contents: ''
-      }).then(
-        () => assert.fail('was not supposed to succeed')
-      ).catch(error => {
-        assert.equal(error.message, 'Process aborted by conflict');
+
+      describe('with ignoreWhitespace option', () => {
+        it('should not abort on first conflict with whitespace changes', () => {
+          const conflicter = new Conflicter(new TestAdapter(), {ignoreWhitespace: true, bail: true});
+          return conflicter.checkForCollision(
+            {
+              path: path.join(__dirname, 'fixtures/conflicter/file-conflict.txt'),
+              contents: `initial
+                 content
+      `
+            }
+          ).then(
+            file => {
+              assert.equal(file.conflicter, 'skip');
+            }
+          );
+        });
+      });
+
+      it('abort on create new file', () => {
+        const conflicter = new Conflicter(new TestAdapter(), {bail: true});
+        return conflicter.checkForCollision({
+          path: 'file-who-does-not-exist2.js',
+          contents: ''
+        }).then(
+          () => assert.fail('was not supposed to succeed')
+        ).catch(error => {
+          assert.equal(error.message, 'Process aborted by conflict: file-who-does-not-exist2.js');
+        });
       });
     });
 

@@ -237,7 +237,7 @@ describe('Environment', () => {
       this.env.composeWith('stub');
     });
 
-    it('should emit a compose namespace event', function (done) {
+    it('should emit a compose namespace event with scoped generators', function (done) {
       this.env.once('compose:@scope/stub', generator => {
         assert.ok(generator instanceof this.Generator);
         done();
@@ -245,7 +245,7 @@ describe('Environment', () => {
       this.env.composeWith('@scope/stub');
     });
 
-    it('should emit a compose namespace event with scoped generators', function (done) {
+    it('should emit a compose namespace event', function (done) {
       this.env.once('compose:stub', generator => {
         assert.ok(generator instanceof this.Generator);
         done();
@@ -294,6 +294,17 @@ describe('Environment', () => {
         exec() {}
       };
 
+      this.WritingStub = class extends Generator {
+        constructor(args, options) {
+          super(args, options);
+          self.args = [args, options];
+        }
+
+        writing() {
+          this.fs.write('foo.js', 'foo');
+        }
+      };
+
       this.PromiseFailingStub = class extends Generator {
         install() {
           return Promise.reject(new Error('some error'));
@@ -309,6 +320,7 @@ describe('Environment', () => {
       const runName = semver.satisfies(generatorPackageJson.version, '>=5.0.0-beta.1') ? 'queueTasks' : 'run';
       this.runMethod = sinon.spy(Generator.prototype, runName);
       this.env.registerStub(this.Stub, 'stub:run');
+      this.env.registerStub(this.WritingStub, 'writingstub:run');
       this.env.registerStub(this.PromiseFailingStub, 'promisefailingstub:run');
       this.env.registerStub(this.EventFailingStub, 'eventfailingstub:run');
       this.env.register(path.join(__dirname, './fixtures', 'generator-no-constructor', 'generators', 'app'));
@@ -321,6 +333,17 @@ describe('Environment', () => {
     it('runs a registered generator', function () {
       return this.env.run(['stub:run']).then(() => {
         assert.ok(this.runMethod.calledOnce);
+      });
+    });
+
+    it('runs a registered writing generator with bail option', function () {
+      if (!semver.satisfies(require('../node_modules/yeoman-generator/package.json').version, '>=5.0.0-beta.1')) {
+        this.skip();
+      }
+      return this.env.run(['writingstub:run'], {bail: true}).then(() => {
+        throw new Error('should not happen');
+      }).catch(error => {
+        assert.equal(error.message, 'Process aborted by conflict: foo.js');
       });
     });
 
