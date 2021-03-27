@@ -32,7 +32,7 @@ env.run('angular', {skipInstall: true}).then(() => {
 });
 ```
 
-For advance usage, see [our API documentation](http://yeoman.github.io/environment).
+For advance usage, see [our API documentation for latest yeoman-environment](http://yeoman.github.io/environment).
 
 [API documentation for yeoman-environment v2.x](http://yeoman.github.io/environment/2.x).
 
