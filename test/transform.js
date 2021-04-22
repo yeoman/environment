@@ -3,9 +3,9 @@
 
 const assert = require('assert');
 const path = require('path');
-const through = require('through2');
 const {pipeline} = require('stream');
 const {
+  createFileTransform,
   fileIsModified,
   getConflicterStatusForFile,
   createEachFileTransform,
@@ -57,7 +57,7 @@ describe('Transform stream', () => {
     sinonTransformPre = sinon.stub().callsFake(passthroughFunction);
     sinonTransformPost = sinon.stub().callsFake(passthroughFunction);
 
-    stream = through.obj();
+    stream = createFileTransform();
     files.forEach(file => stream.write(file));
     stream.end();
   });
@@ -88,7 +88,7 @@ describe('Transform stream', () => {
         sinonTransform = sinon.stub();
 
         const transform = createEachFileTransform(sinonTransform);
-        pipeline(stream, through.obj(sinonTransformPre), transform, through.obj(sinonTransformPost), error => {
+        pipeline(stream, createFileTransform(sinonTransformPre), transform, createFileTransform(sinonTransformPost), error => {
           done(error);
         });
       });
@@ -105,7 +105,7 @@ describe('Transform stream', () => {
         sinonTransform = sinon.stub();
 
         const transform = createEachFileTransform(sinonTransform, {executeUnmodified: true});
-        pipeline(stream, through.obj(sinonTransformPre), transform, through.obj(sinonTransformPost), error => {
+        pipeline(stream, createFileTransform(sinonTransformPre), transform, createFileTransform(sinonTransformPost), error => {
           done(error);
         });
       });
@@ -122,7 +122,7 @@ describe('Transform stream', () => {
         sinonTransform = sinon.stub();
 
         const transform = createEachFileTransform(sinonTransform, {forwardUmodified: false});
-        pipeline(stream, through.obj(sinonTransformPre), transform, through.obj(sinonTransformPost), error => {
+        pipeline(stream, createFileTransform(sinonTransformPre), transform, createFileTransform(sinonTransformPost), error => {
           done(error);
         });
       });
@@ -139,7 +139,7 @@ describe('Transform stream', () => {
         sinonTransform = sinon.stub();
 
         const transform = createEachFileTransform(sinonTransform, {passUmodified: true, executeUnmodified: true});
-        pipeline(stream, through.obj(sinonTransformPre), transform, through.obj(sinonTransformPost), error => {
+        pipeline(stream, createFileTransform(sinonTransformPre), transform, createFileTransform(sinonTransformPost), error => {
           done(error);
         });
       });
@@ -156,7 +156,7 @@ describe('Transform stream', () => {
         sinonTransform = sinon.stub();
 
         const transform = createEachFileTransform(sinonTransform, {autoForward: false});
-        pipeline(stream, through.obj(sinonTransformPre), transform, through.obj(sinonTransformPost), error => {
+        pipeline(stream, createFileTransform(sinonTransformPre), transform, createFileTransform(sinonTransformPost), error => {
           done(error);
         });
       });
@@ -173,7 +173,7 @@ describe('Transform stream', () => {
         sinonTransform = sinon.stub();
 
         const transform = createEachFileTransform(sinonTransform, {autoForward: false, executeUnmodified: true});
-        pipeline(stream, through.obj(sinonTransformPre), transform, through.obj(sinonTransformPost), error => {
+        pipeline(stream, createFileTransform(sinonTransformPre), transform, createFileTransform(sinonTransformPost), error => {
           done(error);
         });
       });
@@ -191,7 +191,7 @@ describe('Transform stream', () => {
       [yoRcFile, yoRcGlobalFile].forEach(file => {
         assert.equal(file.conflicter, undefined);
       });
-      pipeline(stream, through.obj(sinonTransformPre), createYoRcTransform(), through.obj(sinonTransformPost), error => {
+      pipeline(stream, createFileTransform(sinonTransformPre), createYoRcTransform(), createFileTransform(sinonTransformPost), error => {
         done(error);
       });
     });
@@ -211,7 +211,7 @@ describe('Transform stream', () => {
     let adapter;
     beforeEach(done => {
       adapter = {skip: sinon.fake()};
-      pipeline(stream, through.obj(sinonTransformPre), createConflicterStatusTransform(adapter), through.obj(sinonTransformPost), error => {
+      pipeline(stream, createFileTransform(sinonTransformPre), createConflicterStatusTransform(adapter), createFileTransform(sinonTransformPost), error => {
         done(error);
       });
     });

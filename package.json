@@ -82,7 +82,6 @@
     "slash": "^3.0.0",
     "strip-ansi": "^6.0.0",
     "text-table": "^0.2.0",
-    "through2": "^4.0.2",
     "untildify": "^4.0.0"
   },
   "devDependencies": {
