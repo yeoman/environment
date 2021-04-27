@@ -1,5 +1,5 @@
 var Generator = require('yeoman-generator');
-exports.default = class extends Generator {
+module.exports = class extends Generator {
   constructor(args, options = {}) {
     super(args, options);
 
