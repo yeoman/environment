@@ -132,7 +132,7 @@ describe('environment (command)', () => {
       return;
     }
     describe('generator with arguments', () => {
-      describe('without arguments', () => {
+      describe('passing bar argument', () => {
         let generator;
         let env;
 
@@ -148,6 +148,39 @@ describe('environment (command)', () => {
 
         it('should parse arguments correctly', () => {
           assert.deepStrictEqual(generator._args, ['bar']);
+        });
+      });
+    });
+    describe('generator with options', () => {
+      describe('passing options', () => {
+        let generator;
+        let env;
+
+        beforeEach(async () => {
+          const command = Environment.prepareCommand(require('./fixtures/generator-commands/generators/options'));
+          await command.parseAsync([
+            'node',
+            'yo',
+            '--bool',
+            '--no-bool-default',
+            '--string',
+            'customValue',
+            '--string-default',
+            'newValue'
+          ]);
+
+          env = command.env;
+          const generators = Object.values(env._generators);
+          assert(generators.length === 1);
+          generator = generators[0];
+        });
+
+        it('should parse options correctly', () => {
+          assert.strictEqual(generator.options.bool, true);
+          assert.strictEqual(generator.options.boolDefault, false);
+
+          assert.strictEqual(generator.options.string, 'customValue');
+          assert.strictEqual(generator.options.stringDefault, 'newValue');
         });
       });
     });
