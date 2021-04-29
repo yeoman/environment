@@ -70,7 +70,7 @@
     "istextorbinary": "^5.7.0",
     "lodash": "^4.17.10",
     "log-symbols": "^4.0.0",
-    "mem-fs": "^2.0.0",
+    "mem-fs": "^1.2.0 || ^2.0.0",
     "mem-fs-editor": "^8.1.2",
     "minimatch": "^3.0.4",
     "npmlog": "^4.1.2",
@@ -84,6 +84,10 @@
     "strip-ansi": "^6.0.0",
     "text-table": "^0.2.0",
     "untildify": "^4.0.0"
+  },
+  "peerDependencies": {
+    "mem-fs": "^1.2.0 || ^2.0.0",
+    "mem-fs-editor": "^8.1.2"
   },
   "devDependencies": {
     "coveralls": "^3.0.2",
