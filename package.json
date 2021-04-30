@@ -71,7 +71,7 @@
     "lodash": "^4.17.10",
     "log-symbols": "^4.0.0",
     "mem-fs": "^1.2.0 || ^2.0.0",
-    "mem-fs-editor": "^8.1.2",
+    "mem-fs-editor": "^8.1.2 || ^9.0.0",
     "minimatch": "^3.0.4",
     "npmlog": "^4.1.2",
     "p-queue": "^6.6.2",
@@ -87,7 +87,7 @@
   },
   "peerDependencies": {
     "mem-fs": "^1.2.0 || ^2.0.0",
-    "mem-fs-editor": "^8.1.2"
+    "mem-fs-editor": "^8.1.2 || ^9.0.0"
   },
   "devDependencies": {
     "coveralls": "^3.0.2",
