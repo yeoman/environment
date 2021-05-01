@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v3.2.0</span>
+        <span class="version">v3.3.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -130,6 +130,11 @@
                 </li>
                 <li>
                   <a href="Environment.html#.prepareCommand">prepareCommand</a>
+                </li>
+                <li>
+                  <a href="Environment.html#.prepareGeneratorCommand"
+                    >prepareGeneratorCommand</a
+                  >
                 </li>
                 <li><a href="Environment.html#alias">alias</a></li>
                 <li>
@@ -323,6 +328,19 @@
         <h3>Global</h3>
         <ul>
           <li>
+            <a href="global.html#addGeneratorOptions">addGeneratorOptions</a>
+          </li>
+          <li>
+            <a href="global.html#createCommitTransform"
+              >createCommitTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createConflicterCheckTransform"
+              >createConflicterCheckTransform</a
+            >
+          </li>
+          <li>
             <a href="global.html#createConflicterStatusTransform"
               >createConflicterStatusTransform</a
             >
@@ -330,6 +348,14 @@
           <li>
             <a href="global.html#createEachFileTransform"
               >createEachFileTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createFileTransform">createFileTransform</a>
+          </li>
+          <li>
+            <a href="global.html#createModifiedTransform"
+              >createModifiedTransform</a
             >
           </li>
           <li>
@@ -407,9 +433,8 @@ class Conflicter {
     this.diffOptions = options.diffOptions;
 
     if (this.bail) {
-      // Set ignoreWhitespace as true by default for bail.
-      // Probably just testing, so don't override.
-      this.ignoreWhitespace = true;
+      // Bail conflicts with force option, if bail set force to false.
+      this.force = false;
     }
 
     this.queue = new GroupedQueue(['log', 'conflicts'], false);
@@ -549,7 +574,7 @@ class Conflicter {
     if (!fs.existsSync(file.path)) {
       if (this.bail) {
         this._log('writeln', 'Aborting ...');
-        return Promise.reject(ConflicterConflictError.create('Process aborted by conflict'));
+        return Promise.reject(ConflicterConflictError.create(`Process aborted by conflict: ${rfilepath}`));
       }
 
       this._log('create', rfilepath);
@@ -569,7 +594,9 @@ class Conflicter {
         this.adapter.log.conflict(rfilepath);
         this._printDiff(file);
         this.adapter.log.writeln('Aborting ...');
-        return Promise.reject(ConflicterConflictError.create('Process aborted by conflict'));
+        const error = ConflicterConflictError.create(`Process aborted by conflict: ${rfilepath}`);
+        error.file = file;
+        return Promise.reject(error);
       }
 
       if (this.dryRun) {

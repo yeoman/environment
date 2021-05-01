@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v3.2.0</span>
+        <span class="version">v3.3.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -130,6 +130,11 @@
                 </li>
                 <li>
                   <a href="Environment.html#.prepareCommand">prepareCommand</a>
+                </li>
+                <li>
+                  <a href="Environment.html#.prepareGeneratorCommand"
+                    >prepareGeneratorCommand</a
+                  >
                 </li>
                 <li><a href="Environment.html#alias">alias</a></li>
                 <li>
@@ -323,6 +328,19 @@
         <h3>Global</h3>
         <ul>
           <li>
+            <a href="global.html#addGeneratorOptions">addGeneratorOptions</a>
+          </li>
+          <li>
+            <a href="global.html#createCommitTransform"
+              >createCommitTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createConflicterCheckTransform"
+              >createConflicterCheckTransform</a
+            >
+          </li>
+          <li>
             <a href="global.html#createConflicterStatusTransform"
               >createConflicterStatusTransform</a
             >
@@ -330,6 +348,14 @@
           <li>
             <a href="global.html#createEachFileTransform"
               >createEachFileTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createFileTransform">createFileTransform</a>
+          </li>
+          <li>
+            <a href="global.html#createModifiedTransform"
+              >createModifiedTransform</a
             >
           </li>
           <li>
@@ -406,7 +432,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line269">line 269</a></code
+                    ><a href="environment.js.html#line292">line 292</a></code
                   >
                 </div>
               </h4>
@@ -600,7 +626,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line1199">line 1199</a></code
+                    ><a href="environment.js.html#line1225">line 1225</a></code
                   >
                 </div>
               </h4>
@@ -643,7 +669,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line160">line 160</a></code
+                    ><a href="environment.js.html#line183">line 183</a></code
                   >
                 </div>
               </h4>
@@ -738,7 +764,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line176">line 176</a></code
+                    ><a href="environment.js.html#line199">line 199</a></code
                   >
                 </div>
               </h4>
@@ -829,7 +855,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line109">line 109</a></code
+                    ><a href="environment.js.html#line115">line 115</a></code
                   >
                 </div>
               </h4>
@@ -900,7 +926,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line208">line 208</a></code
+                    ><a href="environment.js.html#line231">line 231</a></code
                   >
                 </div>
               </h4>
@@ -1051,7 +1077,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line192">line 192</a></code
+                    ><a href="environment.js.html#line215">line 215</a></code
                   >
                 </div>
               </h4>
@@ -1102,14 +1128,14 @@
               <h4 class="name" id=".prepareCommand">
                 <span class="type-signature"
                   ><span class="icon green">static</span> </span
-                >prepareCommand<span class="signature">()</span
-                ><span class="type-signature"> &rarr; {Promise}</span>
+                >prepareCommand<span class="signature">(GeneratorClass)</span
+                ><span class="type-signature"> &rarr; {Command}</span>
 
                 <div class="container-source members">
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line134">line 134</a></code
+                    ><a href="environment.js.html#line141">line 141</a></code
                   >
                 </div>
               </h4>
@@ -1119,13 +1145,119 @@
                 <p>Prepare a commander instance for cli support.</p>
               </div>
 
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>GeneratorClass</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Class</span>
+                      </td>
+
+                      <td class="description last">
+                        <p>Generator to create Command</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
               <div class="container-returns">
                 <h5>Returns:</h5>
 
-                <span class="param-type">Promise</span>
+                <span class="param-type">Command</span>
 
                 -
-                <p>Promise a Environment instance</p>
+                <p>Return a Command instance</p>
+              </div>
+
+              <dl class="details"></dl>
+            </dd>
+
+            <dt>
+              <h4 class="name" id=".prepareGeneratorCommand">
+                <span class="type-signature"
+                  ><span class="icon green">static</span> </span
+                >prepareGeneratorCommand<span class="signature"
+                  >(command, GeneratorClass)</span
+                ><span class="type-signature"> &rarr; {Command}</span>
+
+                <div class="container-source members">
+                  <code><a href="environment.js.html">environment.js</a></code
+                  >,
+                  <code
+                    ><a href="environment.js.html#line153">line 153</a></code
+                  >
+                </div>
+              </h4>
+            </dt>
+            <dd>
+              <div class="description">
+                <p>Prepare a commander instance for cli support.</p>
+              </div>
+
+              <div class="container-params">
+                <h5>Parameters:</h5>
+
+                <table class="params">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+
+                      <th>Type</th>
+
+                      <th class="last">Description</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td class="name"><code>command</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Command</span>
+                      </td>
+
+                      <td class="description last">
+                        <p>Command to be prepared</p>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td class="name"><code>GeneratorClass</code></td>
+
+                      <td class="type">
+                        <span class="param-type">Class</span>
+                      </td>
+
+                      <td class="description last">
+                        <p>Generator to create Command</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="container-returns">
+                <h5>Returns:</h5>
+
+                <span class="param-type">Command</span>
+
+                -
+                <p>return command</p>
               </div>
 
               <dl class="details"></dl>
@@ -1248,7 +1380,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line1079">line 1079</a></code
+                    ><a href="environment.js.html#line1102">line 1102</a></code
                   >
                 </div>
               </h4>
@@ -1326,7 +1458,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line1119">line 1119</a></code
+                    ><a href="environment.js.html#line1142">line 1142</a></code
                   >
                 </div>
               </h4>
@@ -1392,7 +1524,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line771">line 771</a></code
+                    ><a href="environment.js.html#line794">line 794</a></code
                   >
                 </div>
               </h4>
@@ -1483,7 +1615,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line678">line 678</a></code
+                    ><a href="environment.js.html#line701">line 701</a></code
                   >
                 </div>
               </h4>
@@ -1577,7 +1709,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line375">line 375</a></code
+                    ><a href="environment.js.html#line398">line 398</a></code
                   >
                 </div>
               </h4>
@@ -1644,7 +1776,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line589">line 589</a></code
+                    ><a href="environment.js.html#line612">line 612</a></code
                   >
                 </div>
               </h4>
@@ -1718,7 +1850,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line630">line 630</a></code
+                    ><a href="environment.js.html#line653">line 653</a></code
                   >
                 </div>
               </h4>
@@ -1784,7 +1916,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line530">line 530</a></code
+                    ><a href="environment.js.html#line553">line 553</a></code
                   >
                 </div>
               </h4>
@@ -1814,7 +1946,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line521">line 521</a></code
+                    ><a href="environment.js.html#line544">line 544</a></code
                   >
                 </div>
               </h4>
@@ -1989,7 +2121,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line559">line 559</a></code
+                    ><a href="environment.js.html#line582">line 582</a></code
                   >
                 </div>
               </h4>
@@ -2052,7 +2184,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line574">line 574</a></code
+                    ><a href="environment.js.html#line597">line 597</a></code
                   >
                 </div>
               </h4>
@@ -2115,7 +2247,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line549">line 549</a></code
+                    ><a href="environment.js.html#line572">line 572</a></code
                   >
                 </div>
               </h4>
@@ -2150,7 +2282,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line506">line 506</a></code
+                    ><a href="environment.js.html#line529">line 529</a></code
                   >
                 </div>
               </h4>
@@ -2212,7 +2344,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line385">line 385</a></code
+                    ><a href="environment.js.html#line408">line 408</a></code
                   >
                 </div>
               </h4>
@@ -2357,7 +2489,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line731">line 731</a></code
+                    ><a href="environment.js.html#line754">line 754</a></code
                   >
                 </div>
               </h4>
@@ -2451,7 +2583,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line540">line 540</a></code
+                    ><a href="environment.js.html#line563">line 563</a></code
                   >
                 </div>
               </h4>
@@ -2524,7 +2656,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line337">line 337</a></code
+                    ><a href="environment.js.html#line360">line 360</a></code
                   >
                 </div>
               </h4>
@@ -2579,7 +2711,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line351">line 351</a></code
+                    ><a href="environment.js.html#line374">line 374</a></code
                   >
                 </div>
               </h4>
@@ -2960,7 +3092,7 @@
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line1008">line 1008</a></code
+                    ><a href="environment.js.html#line1031">line 1031</a></code
                   >
                 </div>
               </h4>
@@ -3037,7 +3169,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line497">line 497</a></code
+                    ><a href="environment.js.html#line520">line 520</a></code
                   >
                 </div>
               </h4>
@@ -3067,7 +3199,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line1145">line 1145</a></code
+                    ><a href="environment.js.html#line1171">line 1171</a></code
                   >
                 </div>
               </h4>
@@ -3093,7 +3225,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line783">line 783</a></code
+                    ><a href="environment.js.html#line806">line 806</a></code
                   >
                 </div>
               </h4>
@@ -3179,7 +3311,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line1181">line 1181</a></code
+                    ><a href="environment.js.html#line1207">line 1207</a></code
                   >
                 </div>
               </h4>
@@ -3203,7 +3335,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line434">line 434</a></code
+                    ><a href="environment.js.html#line457">line 457</a></code
                   >
                 </div>
               </h4>
@@ -3303,7 +3435,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line473">line 473</a></code
+                    ><a href="environment.js.html#line496">line 496</a></code
                   >
                 </div>
               </h4>
@@ -3414,7 +3546,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line1050">line 1050</a></code
+                    ><a href="environment.js.html#line1073">line 1073</a></code
                   >
                 </div>
               </h4>
@@ -3581,7 +3713,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line984">line 984</a></code
+                    ><a href="environment.js.html#line1007">line 1007</a></code
                   >
                 </div>
               </h4>
@@ -3619,7 +3751,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line857">line 857</a></code
+                    ><a href="environment.js.html#line880">line 880</a></code
                   >
                 </div>
               </h4>
@@ -3698,7 +3830,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line966">line 966</a></code
+                    ><a href="environment.js.html#line989">line 989</a></code
                   >
                 </div>
               </h4>
@@ -3752,7 +3884,7 @@ this.namespace('generator-mocha/backbone/model/index.js');
                   <code><a href="environment.js.html">environment.js</a></code
                   >,
                   <code
-                    ><a href="environment.js.html#line902">line 902</a></code
+                    ><a href="environment.js.html#line925">line 925</a></code
                   >
                 </div>
               </h4>
