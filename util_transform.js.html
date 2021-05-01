@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v3.2.0</span>
+        <span class="version">v3.3.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -130,6 +130,11 @@
                 </li>
                 <li>
                   <a href="Environment.html#.prepareCommand">prepareCommand</a>
+                </li>
+                <li>
+                  <a href="Environment.html#.prepareGeneratorCommand"
+                    >prepareGeneratorCommand</a
+                  >
                 </li>
                 <li><a href="Environment.html#alias">alias</a></li>
                 <li>
@@ -323,6 +328,19 @@
         <h3>Global</h3>
         <ul>
           <li>
+            <a href="global.html#addGeneratorOptions">addGeneratorOptions</a>
+          </li>
+          <li>
+            <a href="global.html#createCommitTransform"
+              >createCommitTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createConflicterCheckTransform"
+              >createConflicterCheckTransform</a
+            >
+          </li>
+          <li>
             <a href="global.html#createConflicterStatusTransform"
               >createConflicterStatusTransform</a
             >
@@ -330,6 +348,14 @@
           <li>
             <a href="global.html#createEachFileTransform"
               >createEachFileTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createFileTransform">createFileTransform</a>
+          </li>
+          <li>
+            <a href="global.html#createModifiedTransform"
+              >createModifiedTransform</a
             >
           </li>
           <li>
@@ -366,11 +392,36 @@ const fs = require('fs');
 const path = require('path');
 const findUp = require('find-up');
 const minimatch = require('minimatch');
-const through = require('through2');
+const OOOTransform = require('./out-of-order-transform');
 
 class YoResolveError extends WError {}
 
 /**
+ * Transform api should be avoided by generators without a executable.
+ * May break between major yo versions.
+ *
+ * Creates a out of order transform.
+ *
+ * @param {Function} transform - transform function.
+ * @param {Object}   options   - additional options passed to transform
+ * @return {Stream} a transform stream.
+ */
+function createFileTransform(
+  transform = (file, _enc, cb) => cb(null, file),
+  options = {}
+) {
+  return new OOOTransform({
+    ...options,
+    transform(...args) {
+      return transform.call(this, ...args);
+    }
+  });
+}
+
+/**
+ * Transform api should be avoided by generators without a executable.
+ * May break between major yo versions.
+ *
  * Detect if the file is modified
  * See https://github.com/SBoudrias/mem-fs-editor/blob/3ff18e26c52dc30d8f371bcc72c1884f2ea706d6/lib/actions/commit.js#L38
  *
@@ -382,6 +433,9 @@ function fileIsModified(file) {
 }
 
 /**
+ * Transform api should be avoided by generators without a executable.
+ * May break between major yo versions.
+ *
  * Create a for each file stream transform.
  * @param {Function} forEach - Function to execute for each file
  * @param {Object} options - Options
@@ -395,27 +449,22 @@ function createEachFileTransform(forEach, options = {}) {
     options = forEach;
     forEach = () => {};
   }
-  const {forwardUmodified = true, executeUnmodified = false, autoForward = true, autoContinue = true} = options;
-  return through.obj(function (file, enc, cb) {
+  const {forwardUmodified = true, executeUnmodified = false, autoForward = true} = options;
+  return createFileTransform(function (file, enc, cb) {
     const forward = () => {
       if (autoForward &amp;&amp; (forwardUmodified || fileIsModified(file))) {
         this.push(file);
-      }
-      if (autoContinue) {
-        cb();
       }
     };
     if (!executeUnmodified &amp;&amp; !fileIsModified(file)) {
       forward();
       return;
     }
-    const mayBePromise = forEach.call(this, file, enc, autoContinue ? undefined : cb);
-    if (mayBePromise &amp;&amp; mayBePromise.then) {
-      mayBePromise.then(() => forward()).catch(error => cb(error));
-    } else {
-      forward();
-    }
-  });
+    return Promise
+      .resolve(forEach.call(this, file, enc))
+      .then(() => forward())
+      .catch(error => cb(error));
+  }, options);
 }
 
 function parseYoAttributesFile(yoAttributeFileName) {
@@ -437,6 +486,17 @@ function parseYoAttributesFile(yoAttributeFileName) {
   );
 }
 
+/**
+ * Transform api should be avoided by generators without a executable.
+ * May break between major yo versions.
+ */
+function createConflicterCheckTransform(conflicter) {
+  return createEachFileTransform(file => conflicter.checkForCollision(file), {logName: 'environment:conflicter-check'});
+}
+
+/**
+ * @private
+ */
 function getConflicterStatusForFile(conflicter, filePath, yoAttributeFileName = '.yo-resolve') {
   const fileDir = path.dirname(filePath);
   conflicter.yoResolveByFile = conflicter.yoResolveByFile || {};
@@ -471,6 +531,9 @@ function getConflicterStatusForFile(conflicter, filePath, yoAttributeFileName = 
 }
 
 /**
+ * Transform api should be avoided by generators without a executable.
+ * May break between major yo versions.
+ *
  * Create a yo-resolve transform stream.
  * Suports pre-defined conflicter actions action based on file glob.
  * @param {Conflicter} conflicter - Conflicter instance
@@ -480,10 +543,13 @@ function getConflicterStatusForFile(conflicter, filePath, yoAttributeFileName = 
 function createYoResolveTransform(conflicter, yoResolveFileName) {
   return createEachFileTransform(file => {
     file.conflicter = file.conflicter || getConflicterStatusForFile(conflicter, file.path, yoResolveFileName);
-  });
+  }, {logName: 'environment:yo-resolve'});
 }
 
 /**
+ * Transform api should be avoided by generators without a executable.
+ * May break between major yo versions.
+ *
  * Create a force yeoman configs transform stream.
  * @return {Transform} A Transform https://nodejs.org/api/stream.html#stream_class_stream_transform
  */
@@ -494,10 +560,13 @@ function createYoRcTransform() {
     if (filename === '.yo-rc.json' || filename === '.yo-rc-global.json') {
       file.conflicter = 'force';
     }
-  });
+  }, {logName: 'environment:yo-rc'});
 }
 
 /**
+ * Transform api should be avoided by generators without a executable.
+ * May break between major yo versions.
+ *
  * Create a transform to apply conflicter status.
  * @param {Log} logger - Log reference. See log.js
  * @return {Transform} A Transform https://nodejs.org/api/stream.html#stream_class_stream_transform
@@ -522,15 +591,35 @@ function createConflicterStatusTransform() {
     } else {
       this.push(file);
     }
-  }, {autoForward: false});
+  }, {autoForward: false, logName: 'environment:conflicter-status'});
+}
+
+/**
+ * Transform api should be avoided by generators without a executable.
+ * May break between major yo versions.
+ */
+function createModifiedTransform() {
+  return createEachFileTransform({forwardUmodified: false, logName: 'environment:modified'});
+}
+
+/**
+ * Transform api should be avoided by generators without a executable.
+ * May break between major yo versions.
+ */
+function createCommitTransform(memFsEditor) {
+  return createFileTransform(file => memFsEditor.commitFileAsync(file), {logName: 'environment:commit'});
 }
 
 module.exports = {
+  createFileTransform,
   fileIsModified,
   getConflicterStatusForFile,
   createEachFileTransform,
   createYoResolveTransform,
   createYoRcTransform,
+  createModifiedTransform,
+  createCommitTransform,
+  createConflicterCheckTransform,
   createConflicterStatusTransform
 };
 </code></pre>

@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v3.2.0</span>
+        <span class="version">v3.3.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -130,6 +130,11 @@
                 </li>
                 <li>
                   <a href="Environment.html#.prepareCommand">prepareCommand</a>
+                </li>
+                <li>
+                  <a href="Environment.html#.prepareGeneratorCommand"
+                    >prepareGeneratorCommand</a
+                  >
                 </li>
                 <li><a href="Environment.html#alias">alias</a></li>
                 <li>
@@ -323,6 +328,19 @@
         <h3>Global</h3>
         <ul>
           <li>
+            <a href="global.html#addGeneratorOptions">addGeneratorOptions</a>
+          </li>
+          <li>
+            <a href="global.html#createCommitTransform"
+              >createCommitTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createConflicterCheckTransform"
+              >createConflicterCheckTransform</a
+            >
+          </li>
+          <li>
             <a href="global.html#createConflicterStatusTransform"
               >createConflicterStatusTransform</a
             >
@@ -330,6 +348,14 @@
           <li>
             <a href="global.html#createEachFileTransform"
               >createEachFileTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createFileTransform">createFileTransform</a>
+          </li>
+          <li>
+            <a href="global.html#createModifiedTransform"
+              >createModifiedTransform</a
             >
           </li>
           <li>
@@ -365,7 +391,7 @@ const {Option} = require('commander');
 
 const {YeomanCommand} = require('./util/command');
 
-module.exports = cls => class extends cls {
+module.exports = cls => class EnvironmentCommand extends cls {
   static addEnvironmentOptions(command = new YeomanCommand()) {
     /* Environment options */
     return command.option('--cwd', 'Path to use as current dir')
@@ -386,6 +412,19 @@ module.exports = cls => class extends cls {
       .addOption(new Option('--skip-parse-options', 'Skip legacy options parsing').default(true).hideHelp())
       .addOption(new Option('--experimental', 'Experimental features').default(false).hideHelp())
       .addOption(new Option('--log-cwd', 'Path for log purpose').hideHelp());
+  }
+
+  /**
+   * Load Generator options into a commander instance.
+   *
+   * @param {Command} command - Command to load options
+   * @param {Generator} generator - Generator
+   * @return {Command} return command
+   */
+  static addGeneratorOptions(command, generator) {
+    command.addGeneratorOptions(generator._options);
+    command.addGeneratorArguments(generator._arguments);
+    return command;
   }
 
   /**
@@ -410,8 +449,7 @@ module.exports = cls => class extends cls {
 
     // Instantiate the generator for options
     const generator = this.create(namespace.namespace, {help: true});
-    namespaceCommand.addGeneratorOptions(generator._options);
-    namespaceCommand.addGeneratorArguments(generator._arguments);
+    EnvironmentCommand.addGeneratorOptions(namespaceCommand, generator);
 
     namespaceCommand.action(async function () {
       debug('Running generator with arguments %o, options %o', this.args, this.opts());

@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v3.2.0</span>
+        <span class="version">v3.3.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -130,6 +130,11 @@
                 </li>
                 <li>
                   <a href="Environment.html#.prepareCommand">prepareCommand</a>
+                </li>
+                <li>
+                  <a href="Environment.html#.prepareGeneratorCommand"
+                    >prepareGeneratorCommand</a
+                  >
                 </li>
                 <li><a href="Environment.html#alias">alias</a></li>
                 <li>
@@ -323,6 +328,19 @@
         <h3>Global</h3>
         <ul>
           <li>
+            <a href="global.html#addGeneratorOptions">addGeneratorOptions</a>
+          </li>
+          <li>
+            <a href="global.html#createCommitTransform"
+              >createCommitTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createConflicterCheckTransform"
+              >createConflicterCheckTransform</a
+            >
+          </li>
+          <li>
             <a href="global.html#createConflicterStatusTransform"
               >createConflicterStatusTransform</a
             >
@@ -330,6 +348,14 @@
           <li>
             <a href="global.html#createEachFileTransform"
               >createEachFileTransform</a
+            >
+          </li>
+          <li>
+            <a href="global.html#createFileTransform">createFileTransform</a>
+          </li>
+          <li>
+            <a href="global.html#createModifiedTransform"
+              >createModifiedTransform</a
             >
           </li>
           <li>
@@ -409,16 +435,22 @@ const env = yeoman.createEnv();
 
 // The #lookup() method will search the user computer for installed generators
 // The search if done from the current working directory
-env.lookup(() => {
-  env.run('angular', {'skip-install': true}, err => {
-    console.log('done');
-  });
+env.lookup();
+env.run('angular', {skipInstall: true}).then(() => {
+  console.log('success')
+}, err => {
+  console.log(`error ${error}`);
 });
 </code></pre>
           <p>
             For advance usage, see
             <a href="http://yeoman.github.io/environment"
-              >our API documentation</a
+              >our API documentation for latest yeoman-environment</a
+            >.
+          </p>
+          <p>
+            <a href="http://yeoman.github.io/environment/2.x"
+              >API documentation for yeoman-environment v2.x</a
             >.
           </p>
           <h2>License</h2>
