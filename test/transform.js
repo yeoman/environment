@@ -218,7 +218,7 @@ describe('Transform stream', () => {
 
     it('should forward modified and not skipped files', () => {
       assert.equal(sinonTransformPre.callCount, files.length);
-      assert.equal(sinonTransformPost.callCount, files.length - unmodifiedFilesCount - 1);
+      assert.equal(sinonTransformPost.callCount, files.length - 1);
       files.forEach(file => {
         assert.equal(file.conflicter, undefined);
         assert.equal(file.binary, undefined);
