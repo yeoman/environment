@@ -1,0 +1,13 @@
+{
+  "author": "",
+  "type":"module",
+  "name": "generator-esm",
+  "version": "0.0.0",
+  "exports": "./index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}

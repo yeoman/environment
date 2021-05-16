@@ -78,6 +78,8 @@ describe('Environment Resolver', function () {
     before(() => {
       linkGenerator('generator-extend');
       linkGenerator('generator-scoped', '@dummyscope');
+      linkGenerator('generator-esm');
+      linkGenerator('generator-common-js');
       linkGenerator('generator-ts');
       linkGenerator('generator-ts-js');
     });
@@ -85,6 +87,8 @@ describe('Environment Resolver', function () {
     after(() => {
       unlinkGenerator('generator-extend');
       unlinkGenerator('generator-scoped', '@dummyscope');
+      unlinkGenerator('generator-esm');
+      unlinkGenerator('generator-common-js');
       unlinkGenerator('generator-ts');
       unlinkGenerator('generator-ts-js');
     });
@@ -105,6 +109,18 @@ describe('Environment Resolver', function () {
 
     it('registers local ts generators', function () {
       assert.ok(this.env.get('ts:app'));
+    });
+
+    it('registers local common js generators with cjs extension', function () {
+      assert.ok(this.env.get('common-js:cjs'));
+    });
+
+    it('registers local esm generators with js extension', function () {
+      assert.ok(this.env.get('ts:app'));
+    });
+
+    it('registers local esm generators with mjs extension', function () {
+      assert.ok(this.env.get('esm:mjs'));
     });
 
     it('js generators takes precedence', function () {

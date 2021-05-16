@@ -441,7 +441,7 @@ describe('Environment', () => {
     });
   });
 
-  describe('#run() with ts generator', () => {
+  describe('#run() a ts generator', () => {
     beforeEach(function () {
       this.env
         .register(path.join(__dirname, './fixtures/generator-ts/generators/app/index.ts'), 'ts:app');
@@ -455,6 +455,63 @@ describe('Environment', () => {
     it('runs a registered generator', function () {
       return this.env.run(['ts:app']).then(() => {
         assert.ok(this.runMethod.calledOnce);
+      });
+    });
+  });
+
+  describe('#run() a cjs generator', () => {
+    beforeEach(function () {
+      this.env
+        .register(path.join(__dirname, './fixtures/generator-common-js/generators/cjs/index.cjs'), 'common-js:cjs');
+      this.runMethod = sinon.spy(this.env.get('common-js:cjs').prototype, 'default');
+    });
+
+    afterEach(function () {
+      this.runMethod.restore();
+    });
+
+    it('runs a registered generator', function () {
+      return this.env.run(['common-js:cjs']).then(() => {
+        assert.ok(this.runMethod.calledOnce);
+      });
+    });
+  });
+
+  describe('#run() an esm generator', () => {
+    describe('with js extension', () => {
+      beforeEach(async function () {
+        this.env
+          .register(path.join(__dirname, './fixtures/generator-esm/generators/app/index.js'), 'esm:app');
+        const esmClass = await this.env.get('esm:app');
+        this.runMethod = sinon.spy(esmClass.prototype, 'default');
+      });
+
+      afterEach(function () {
+        this.runMethod.restore();
+      });
+
+      it('runs a registered generator', function () {
+        return this.env.run(['esm:app']).then(() => {
+          assert.ok(this.runMethod.calledOnce);
+        });
+      });
+    });
+    describe('with mjs extension', () => {
+      beforeEach(async function () {
+        this.env
+          .register(path.join(__dirname, './fixtures/generator-esm/generators/mjs/index.mjs'), 'esm:mjs');
+        const esmClass = await this.env.get('esm:mjs');
+        this.runMethod = sinon.spy(esmClass.prototype, 'default');
+      });
+
+      afterEach(function () {
+        this.runMethod.restore();
+      });
+
+      it('runs a registered generator', function () {
+        return this.env.run(['esm:mjs']).then(() => {
+          assert.ok(this.runMethod.calledOnce);
+        });
       });
     });
   });
