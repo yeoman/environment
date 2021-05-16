@@ -40,6 +40,13 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
+    - uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-integration
+        restore-keys: |
+          ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-
+
     - run: npm install -g npm@7.11.2
 
     - name: Run yeoman-test test
