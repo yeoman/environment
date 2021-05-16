@@ -32,6 +32,12 @@ jobs:
     - uses: actions/setup-node@v2.1.4
       with:
         node-version: ${{ matrix.node-version }}
+    - uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-ci
+        restore-keys: |
+          ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-
     - run: npm install -g npm@latest
     - run: npm ci
     - run: npm install yeoman-generator@${{ matrix.generator-version }}
