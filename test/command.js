@@ -21,7 +21,7 @@ describe('environment (command)', () => {
       describe('without options', () => {
         let generator;
         beforeEach(async () => {
-          env.execute('commands:options');
+          await env.execute('commands:options');
           const generators = Object.values(env._generators);
           assert(generators.length === 1);
           generator = generators[0];
@@ -39,7 +39,7 @@ describe('environment (command)', () => {
       describe('with options', () => {
         let generator;
         beforeEach(async () => {
-          env.execute('commands:options', [
+          await env.execute('commands:options', [
             '--bool',
             '--no-bool-default',
             '--string',
@@ -65,7 +65,7 @@ describe('environment (command)', () => {
       describe('using aliases', () => {
         let generator;
         beforeEach(async () => {
-          env.execute('commands:options', [
+          await env.execute('commands:options', [
             '-b',
             '-s',
             'customValue'
