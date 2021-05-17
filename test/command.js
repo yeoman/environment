@@ -22,7 +22,7 @@ describe('environment (command)', () => {
         let generator;
         beforeEach(async () => {
           await env.execute('commands:options');
-          const generators = Object.values(env._generators);
+          const generators = Object.values(env.getAllGenerators());
           assert(generators.length === 1);
           generator = generators[0];
         });
@@ -48,7 +48,7 @@ describe('environment (command)', () => {
             'newValue'
           ]);
 
-          const generators = Object.values(env._generators);
+          const generators = Object.values(env.getAllGenerators());
           assert(generators.length === 1);
           generator = generators[0];
         });
@@ -70,7 +70,7 @@ describe('environment (command)', () => {
             '-s',
             'customValue'
           ]);
-          const generators = Object.values(env._generators);
+          const generators = Object.values(env.getAllGenerators());
           assert(generators.length === 1);
           generator = generators[0];
         });
@@ -97,7 +97,7 @@ describe('environment (command)', () => {
         let generator;
         beforeEach(async () => {
           await env.execute('commands:arguments');
-          const generators = Object.values(env._generators);
+          const generators = Object.values(env.getAllGenerators());
           assert(generators.length === 1);
           generator = generators[0];
         });
@@ -111,7 +111,7 @@ describe('environment (command)', () => {
         let generator;
         beforeEach(async () => {
           await env.execute('commands:arguments', ['foo']);
-          const generators = Object.values(env._generators);
+          const generators = Object.values(env.getAllGenerators());
           assert(generators.length === 1);
           generator = generators[0];
         });
@@ -141,7 +141,7 @@ describe('environment (command)', () => {
           await command.parseAsync(['node', 'yo', 'bar']);
 
           env = command.env;
-          const generators = Object.values(env._generators);
+          const generators = Object.values(env.getAllGenerators());
           assert(generators.length === 1);
           generator = generators[0];
         });
@@ -170,7 +170,7 @@ describe('environment (command)', () => {
           ]);
 
           env = command.env;
-          const generators = Object.values(env._generators);
+          const generators = Object.values(env.getAllGenerators());
           assert(generators.length === 1);
           generator = generators[0];
         });
