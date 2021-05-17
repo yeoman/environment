@@ -20,8 +20,15 @@ const GROUPED_QUEUE_VERSION = require('grouped-queue/package.json').version;
 const sinonTest = sinonTestFactory(sinon);
 
 describe('Environment', () => {
+  let mockedDefault;
+  let MockedGenerator;
+
   beforeEach(function () {
     this.env = new Environment({skipInstall: true, sharedOptions: {sharedConstructorData: {}}});
+
+    MockedGenerator = class MockedGenerator extends Generator {};
+    mockedDefault = sinon.stub();
+    MockedGenerator.prototype.mockedDefault = mockedDefault;
   });
 
   afterEach(function () {
@@ -511,6 +518,34 @@ describe('Environment', () => {
       it('runs a registered generator', function () {
         return this.env.run(['esm:mjs']).then(() => {
           assert.ok(this.runMethod.calledOnce);
+        });
+      });
+    });
+    describe('with createGenerator', () => {
+      beforeEach(async function () {
+        this.env.registerStub(MockedGenerator, 'mocked-generator');
+        this.env
+          .register(path.join(__dirname, './fixtures/generator-esm/generators/create/index.js'), 'esm:create');
+      });
+
+      it('runs a registered generator', function () {
+        return this.env.run(['esm:create']).then(() => {
+          assert.ok(mockedDefault.calledOnce);
+        });
+      });
+    });
+    describe('with inherited createGenerator', () => {
+      beforeEach(async function () {
+        this.env.registerStub(MockedGenerator, 'mocked-generator');
+        this.env
+          .register(path.join(__dirname, './fixtures/generator-esm/generators/create/index.js'), 'esm:create');
+        this.env
+          .register(path.join(__dirname, './fixtures/generator-esm/generators/create-inherited/index.js'), 'esm:create-inherited');
+      });
+
+      it('runs a registered generator', function () {
+        return this.env.run(['esm:create-inherited']).then(() => {
+          assert.ok(mockedDefault.calledOnce);
         });
       });
     });
