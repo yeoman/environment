@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v3.3.0</span>
+        <span class="version">v3.4.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -389,6 +389,8 @@
 
 const debug = require('debug')('yeoman:environment:store');
 
+const {requireOrImport} = require('./util/esm');
+
 /**
  * The Generator store
  * This is used to store generator (npm packages) reference and instantiate them when
@@ -422,17 +424,16 @@ class Store {
     this._storeAsModule(namespace, generator, resolved, packagePath);
   }
 
-  _storeAsPath(namespace, path, packagePath) {
+  _storeAsPath(namespace, resolvedPath, packagePath) {
     this._meta[namespace] = {
-      resolved: path,
+      resolved: resolvedPath,
       namespace,
       packagePath
     };
 
     Object.defineProperty(this._generators, namespace, {
       get() {
-        const Generator = require(path);
-        return Generator;
+        return requireOrImport(resolvedPath);
       },
       enumerable: true,
       configurable: true
@@ -455,13 +456,20 @@ class Store {
    * @return {Module}
    */
   get(namespace) {
-    const Generator = this._generators[namespace];
+    const maybeGenerator = this._generators[namespace];
 
-    if (!Generator) {
+    if (!maybeGenerator) {
       return;
     }
 
-    return Object.assign(Generator, this._meta[namespace]);
+    if (maybeGenerator.then) {
+      return maybeGenerator.then(esmGenerator => {
+        return [esmGenerator, {...this._meta[namespace]}];
+      });
+    }
+
+    Object.assign(maybeGenerator, this._meta[namespace]);
+    return maybeGenerator;
   }
 
   /**

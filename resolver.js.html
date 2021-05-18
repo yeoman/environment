@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v3.3.0</span>
+        <span class="version">v3.4.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -454,7 +454,7 @@ resolver.lookup = function (options) {
   const {registerToScope, lookups = this.lookups} = options;
   options = {
   // Js generators should be after, last will override registered one.
-    filePatterns: lookups.flatMap(prefix => [`${prefix}/*/index.ts`, `${prefix}/*/index.js`]),
+    filePatterns: lookups.flatMap(prefix => [`${prefix}/*/index.ts`, `${prefix}/*/index.js`, `${prefix}/*/index.cjs`, `${prefix}/*/index.mjs`]),
     filterPaths: false,
     packagePatterns: ['generator-*'],
     reverse: !options.singleResult,

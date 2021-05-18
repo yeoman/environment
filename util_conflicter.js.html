@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v3.3.0</span>
+        <span class="version">v3.4.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -611,6 +611,8 @@ class Conflicter {
         this.queue.add('conflicts', next => {
           if (this.force) {
             file.conflicter = 'force';
+            this.adapter.log.force(rfilepath);
+            resolve(file);
             next();
             return;
           }
@@ -618,8 +620,8 @@ class Conflicter {
           return this._ask(file, 1).then(action => {
             this.adapter.log[action || 'force'](rfilepath);
             file.conflicter = action;
-            next();
             resolve(file);
+            next();
           }).catch(reject);
         });
         this.queue.run();

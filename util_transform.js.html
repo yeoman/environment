@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v3.3.0</span>
+        <span class="version">v3.4.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -572,7 +572,7 @@ function createYoRcTransform() {
  * @return {Transform} A Transform https://nodejs.org/api/stream.html#stream_class_stream_transform
  */
 function createConflicterStatusTransform() {
-  return createEachFileTransform(function (file) {
+  return createFileTransform(function (file) {
     const action = file.conflicter;
 
     delete file.conflicter;
@@ -580,7 +580,7 @@ function createConflicterStatusTransform() {
     delete file.conflicterChanges;
     delete file.conflicterLog;
 
-    if (!action) {
+    if (!action &amp;&amp; file.state) {
       this.push(file);
       return;
     }
@@ -591,7 +591,7 @@ function createConflicterStatusTransform() {
     } else {
       this.push(file);
     }
-  }, {autoForward: false, logName: 'environment:conflicter-status'});
+  }, {logName: 'environment:conflicter-status'});
 }
 
 /**
