@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v3.3.0</span>
+        <span class="version">v3.4.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -448,14 +448,12 @@ module.exports = cls => class EnvironmentCommand extends cls {
     namespaceCommand.usage('[generator-options]');
 
     // Instantiate the generator for options
-    const generator = this.create(namespace.namespace, {help: true});
+    const generator = await this.create(namespace.namespace, {help: true});
     EnvironmentCommand.addGeneratorOptions(namespaceCommand, generator);
 
-    namespaceCommand.action(async function () {
-      debug('Running generator with arguments %o, options %o', this.args, this.opts());
-      return env.run([namespace.namespace, ...this.args], {...this.opts()});
-    });
     namespaceCommand._parseCommand([], args);
+    debug('Running generator with arguments %o, options %o', namespaceCommand.args, namespaceCommand.opts());
+    return env.run([namespace.namespace, ...namespaceCommand.args], {...namespaceCommand.opts()});
   }
 };
 </code></pre>

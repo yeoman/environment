@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v3.3.0</span>
+        <span class="version">v3.4.0</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -388,7 +388,6 @@
           <pre class="prettyprint source linenums"><code>'use strict';
 const debug = require('debug')('yeoman:environment:compose');
 const EventEmitter = require('events');
-const _ = require('lodash');
 const path = require('path');
 const semver = require('semver');
 
@@ -406,8 +405,11 @@ const composability = module.exports;
  */
 composability.getByNamespace = function (namespace) {
   const ns = this.requireNamespace(namespace).namespace;
-  const Generator = this.store.get(ns) || this.store.get(this.alias(ns));
-  return this._findGeneratorClass(Generator);
+  const maybeGenerator = this.store.get(ns) || this.store.get(this.alias(ns));
+  if (maybeGenerator &amp;&amp; maybeGenerator.then) {
+    return maybeGenerator.then(Generator => this._findGeneratorClass(Generator));
+  }
+  return this._findGeneratorClass(maybeGenerator);
 };
 
 /**
@@ -534,124 +536,34 @@ composability.prepareEnvironment = async function (namespaces) {
   return true;
 };
 
-class YeomanGeneratorApi {
-  constructor(generator) {
-    this._generator = generator;
-
-    const propertyNames = Object.getOwnPropertyNames(Object.getPrototypeOf(generator));
-    this.methods = propertyNames.map(property => {
-      if (!property.startsWith('#')) {
-        return undefined;
-      }
-      return property.slice(1);
-    }).filter(property => property);
-
-    this.methods.forEach(property => {
-      const propertyValue = generator[`#${property}`];
-      this[property] = propertyValue.bind(generator);
-    });
+const multipleGeneratorProxyHandler = {
+  get(target, prop) {
+    // Testing if this is a promise.
+    if (prop === 'then') {
+      return undefined;
+    }
+    if (target.some(each => typeof each[prop] !== 'function')) {
+      throw new Error(`Some generator doesn't implement ${prop} method.`);
+    }
+    return (...args) => Promise.all(target.map(each => each[prop](...args)));
   }
+};
 
-  get config() {
-    return this._generator.config;
-  }
-
-  get generatorConfig() {
-    return this._generator.generatorConfig;
-  }
-
-  get instanceConfig() {
-    return this._generator.instanceConfig;
-  }
-}
-
-class YeomanWith {
-  constructor(generatorApis, compose) {
-    this.generatorApis = Array.isArray(generatorApis) ? generatorApis : [generatorApis];
-    this.compose = compose;
-
-    this.generatorApis.forEach(generatorApi => {
-      generatorApi.methods.forEach(method => {
-        if (!this[method]) {
-          this[method] = this.call.bind(this, method);
-        }
-      });
-    });
-  }
-
-  call(methods, ...methodArgs) {
-    methods = Array.isArray(methods) ? methods : [methods];
-    const runMethods = generatorApi => {
-      const promises = methods.map(methodName => {
-        return generatorApi[methodName](...methodArgs);
-      });
-      return promises.length === 1 ? promises[0] : Promise.all(promises);
-    };
-
-    this.generatorApis.forEach(generatorApi => runMethods(generatorApi));
-    return this;
-  }
-}
-
-class YeomanCompose {
+class YeomanCompose extends EventEmitter {
   constructor(env, options, sharedOptions) {
+    super();
+
     if (typeof options === 'string') {
       options = {destinationRoot: options};
     }
     this.env = env;
     // Destination root for this context.
     this._destinationRoot = options.destinationRoot;
-    // Parent YeomanCompose if exists.
-    this._parent = options.parent;
-    // Store compose childs.
-    this._childs = {};
 
-    // Store the generators by namespaceId.
-    this._generators = {};
-    // Store the generators apis by namespaceId.
-    this._generatorsApi = [];
     // Options by namespace.
     this._namespaceOptions = {};
     // Default options to be passed to all generators.
     this._sharedOptions = {...sharedOptions, compose: this};
-
-    // Store generators apis hierarchically .
-    this.api = {};
-
-    this.events = new EventEmitter();
-
-    // Shared options between contexts.
-    this.shared = this._parent ? this._parent.shared : {};
-
-    // Load rootGenerator if passes.
-    if (options.rootGenerator) {
-      this._loadGenerator(options.rootGenerator);
-    }
-  }
-
-  /**
-   * @private
-   * Get parent context
-   */
-  atParent() {
-    return this._parent;
-  }
-
-  /**
-   * @private
-   * Get YeomanCompose child.
-   *
-   * @param {String} id - Identification to register into.
-   * @param {String} destinationRoot - The relative path for the context.
-   * @param {Object} sharedOptions - Configuration to be passed to every generator.
-   * @return {YeomanCompose} Child YeomanCompose
-   */
-  createChild(id, destinationRoot, sharedOptions) {
-    const namespace = this.env.requireNamespace(id);
-    if (!this._childs[namespace.id]) {
-      this._childs[namespace.id] = new YeomanCompose(this.env, {destinationRoot, parent: this}, sharedOptions);
-    }
-    return this._childs[namespace.id];
   }
 
   /**
@@ -690,7 +602,7 @@ class YeomanCompose {
       throw new Error('Wildcard not supported');
     }
     return this.if(namespace, callback, () => {
-      this.events.once(`load_${namespace.id}`, callback);
+      super.once(`load_${namespace.id}`, callback);
     });
   }
 
@@ -709,9 +621,9 @@ class YeomanCompose {
     if (namespace.complete !== namespace.id) {
       throw new Error(`Namespace ${namespace.complete} should be ${namespace.id}`);
     }
-    const generatorApi = this._generatorsApi[namespace.id];
-    if (generatorApi) {
-      return generatorApi;
+    const generator = this.env.getGenerator(namespace.id, this._destinationRoot);
+    if (generator) {
+      return generator;
     }
     throw new Error(`Generator ${namespace.complete} isn't loaded`);
   }
@@ -751,23 +663,26 @@ class YeomanCompose {
    * @return {Promise} Promise YeomanWith
    */
   async with(namespace, generatorOptions, ...methodArgs) {
+    let namespaces = [].concat(namespace);
     debug(`Compose with generator ${namespace} at ${this._destinationRoot}`);
-    namespace = this.env.requireNamespace(namespace);
-    if (!namespace.generator) {
-      throw new Error(`Namespace with generator is required: ${namespace.id}`);
+    namespaces = namespaces.map(namespace => this.env.requireNamespace(namespace));
+    const brokenNamespace = namespaces.find(namespace => !namespace.generator);
+    if (brokenNamespace) {
+      throw new Error(`Generator part in namespace is missing: ${brokenNamespace.id}`);
     }
-    const namespacesId = namespace.instanceId &amp;&amp; namespace.instanceId === '*' ? this._getInstanceNames(namespace.namespace).map(instanceId => {
-      return namespace.with({instanceId}).id;
-    }) : [namespace.id];
+    const namespacesId = namespaces.map(namespace => {
+      return namespace.instanceId &amp;&amp; namespace.instanceId === '*' ? this._getInstanceNames(namespace.namespace).map(instanceId => {
+        return namespace.with({instanceId}).id;
+      }) : [namespace.id];
+    }).flat();
 
-    const withPromise = Promise.all(namespacesId.map(nsId => this.require(nsId, generatorOptions))).then(generatorsApi => new YeomanWith(generatorsApi, this));
+    const composedGenerators = await Promise.all(namespacesId.map(nsId => this.require(nsId, generatorOptions)));
+    const composedProxy = new Proxy(composedGenerators, multipleGeneratorProxyHandler);
     if (namespace.methods &amp;&amp; namespace.methods.length > 0) {
-      return withPromise.then(withInstance => {
-        withInstance.call(namespace.methods, ...methodArgs);
-        return withInstance;
-      });
+      debug(`Running methods ${namespace.methods}`);
+      await Promise.all(namespace.methods.map(method => composedProxy[method](...methodArgs)));
     }
-    return withPromise;
+    return composedProxy;
   }
 
   /**
@@ -799,14 +714,9 @@ class YeomanCompose {
     if (namespace.complete !== namespace.id) {
       throw new Error(`Namespace ${namespace.complete} should be ${namespace.id}`);
     }
-    const generatorApi = this._generatorsApi[namespace.id];
-    if (generatorApi) {
-      return generatorApi;
-    }
 
     debug(`Creating generator ${namespace} at ${this._destinationRoot}`);
-    const generator = this._createGenerator(namespace, {...generatorOptions});
-    return this._loadGenerator(generator);
+    return this._composeWithGenerator(namespace, {...generatorOptions});
   }
 
   /**
@@ -817,8 +727,8 @@ class YeomanCompose {
    * @param {Object} generatorOptions - Options to be passed to the generator
    * @return {Generator} the instance of the generator.
    */
-  _createGenerator(namespace, generatorOptions) {
-    return this.env.create(namespace, {
+  _composeWithGenerator(namespace, generatorOptions) {
+    return this.env.composeWith(namespace, {
       arguments: [namespace.instanceId],
       options: {
         destinationRoot: this._destinationRoot,
@@ -827,33 +737,6 @@ class YeomanCompose {
         ...generatorOptions
       }
     });
-  }
-
-  /**
-   * @private
-   * Prepare the composed api for the generator.
-   *
-   * @param {Generator} generator - Generator
-   * @return {Object} Generator composed api
-   */
-  _loadGenerator(generator) {
-    const generatorApi = new YeomanGeneratorApi(generator);
-
-    generator.options.generatorApi = generatorApi;
-    const namespace = generator.options.namespaceId;
-    const generatorObjectName = `${_.camelCase(namespace.unscoped)}`;
-    if (namespace.instanceId) {
-      this.api[generatorObjectName] = this[generatorObjectName] || {};
-      this.api[generatorObjectName][namespace.instanceId] = generatorApi;
-    } else {
-      this.api[generatorObjectName] = generatorApi;
-    }
-
-    this._generatorsApi[namespace.id] = generatorApi;
-    this._generators[namespace.id] = generator;
-    this.events.emit(`load_${namespace.id}`, generatorApi);
-
-    return generatorApi;
   }
 
   /**
@@ -867,15 +750,18 @@ class YeomanCompose {
   _queue(namespace, generatorOptions) {
     debug(`Queueing generator ${namespace} at ${this._destinationRoot}`);
     namespace = this.env.requireNamespace(namespace);
-    const generatorApi = this._load(namespace, generatorOptions);
-    generatorApi._generator.queueOwnTasks();
-    return generatorApi;
+    return this._load(namespace, generatorOptions);
   }
 }
 
 composability.createCompose = function (destinationRoot, options = {}) {
+  const compose = this._composeStore[destinationRoot];
+  if (compose) {
+    return compose;
+  }
   const rootGenerator = this._rootGenerator;
-  return new YeomanCompose(this, {destinationRoot, rootGenerator}, options);
+  this._composeStore[destinationRoot] = new YeomanCompose(this, {destinationRoot, rootGenerator}, options);
+  return this._composeStore[destinationRoot];
 };
 </code></pre>
         </article>
