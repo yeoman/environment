@@ -8,9 +8,10 @@ describe('environment (spawn-command)', () => {
   beforeEach(function () {
     this.spawnLib = sinon.stub();
     this.spawnLib.sync = sinon.stub();
-    this.spawn = proxyquire('../lib/spawn-command', {
+    this.spawn = {};
+    Object.assign(this.spawn, proxyquire('../lib/spawn-command', {
       execa: this.spawnLib
-    });
+    }));
     cwd = Math.random().toString(36).slice(7);
     this.spawn.cwd = cwd;
   });
