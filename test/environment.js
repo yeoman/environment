@@ -235,6 +235,21 @@ describe('Environment', () => {
       assert.ok(this.env.composeWith('stub') instanceof this.Generator);
     });
 
+    it('should schedule generator queue', function () {
+      this.env.runLoop.add = sinon.spy();
+      this.env.composeWith('stub');
+      assert(this.env.runLoop.add.calledOnce);
+      assert(this.env.runLoop.add.getCall(0).firstArg === 'environment:run');
+    });
+
+    describe('passing false schedule parameter', () => {
+      it('should queue generator tasks', function () {
+        this.env.runLoop.add = sinon.spy();
+        this.env.composeWith('stub', [], {}, false);
+        assert(this.env.runLoop.add.getCall(0).firstArg !== 'environment:run');
+      });
+    });
+
     it('should emit a compose event', function (done) {
       this.env.once('compose', (namespace, generator) => {
         assert.ok(namespace === 'stub');
