@@ -30,7 +30,7 @@
       <div class="title">
         <h1><a href="index.html" class="link">yeoman-environment</a></h1>
 
-        <span class="version">v3.4.0</span>
+        <span class="version">v3.5.1</span>
       </div>
       <div class="search-container" id="search-container">
         <input type="text" placeholder="Search" />
@@ -551,7 +551,7 @@ class Environment extends Base {
       rootCommand.emit('yeoman:environment', command.env);
 
       const generator = command.env.instantiate(GeneratorClass, this.args, this.opts());
-      command.env.queueGenerator(generator);
+      await command.env.queueGenerator(generator);
       return command.env.start().then(() => command.env);
     });
     return command;
@@ -1199,14 +1199,23 @@ class Environment extends Base {
    * @param {String} namespaceOrPath
    * @param {Array} [args]
    * @param {Object} [options]
+   * @param {Boolean} [schedule]
    * @return {Generator} The instantiated generator or the singleton instance.
    */
-  composeWith(generator, args, options) {
+  composeWith(generator, args, options, schedule = true) {
+    if (typeof args === 'boolean') {
+      schedule = args;
+      args = undefined;
+      options = undefined;
+    } else if (typeof options === 'boolean') {
+      schedule = options;
+      options = undefined;
+    }
     const generatorInstance = this.create(generator, args, options);
     if (generatorInstance.then) {
-      return generatorInstance.then(generatorInstance => this.queueGenerator(generatorInstance, true));
+      return generatorInstance.then(generatorInstance => this.queueGenerator(generatorInstance, schedule));
     }
-    return this.queueGenerator(generatorInstance, true);
+    return this.queueGenerator(generatorInstance, schedule);
   }
 
   /**
@@ -1300,21 +1309,20 @@ class Environment extends Base {
         // Generator > 5
         this.once('run', () => generator.emit('run'));
         this.once('end', () => generator.emit('end'));
-        generator.queueTasks();
-      } else {
-        if (!generator.options.forwardErrorToEnvironment) {
-          generator.on('error', error => this.emit('error', error));
-        }
-        generator.promise = generator.run();
+        return generator.queueTasks();
       }
+      if (!generator.options.forwardErrorToEnvironment) {
+        generator.on('error', error => this.emit('error', error));
+      }
+      generator.promise = generator.run();
     };
 
     if (schedule) {
       this.runLoop.add(
         'environment:run',
-        (done, stop) => {
+        async (done, stop) => {
           try {
-            runGenerator();
+            await runGenerator();
             done();
           } catch (error) {
             stop(error);
@@ -1322,7 +1330,10 @@ class Environment extends Base {
         }
       );
     } else {
-      runGenerator();
+      const maybePromise = runGenerator();
+      if (maybePromise &amp;&amp; maybePromise.then) {
+        return maybePromise.then(() => generator);
+      }
     }
     return generator;
   }
@@ -1337,7 +1348,7 @@ class Environment extends Base {
    * @param {Object}       [options]
    */
   async run(args, options, done) {
-    if (done === 'function' || typeof options === 'function' || typeof args === 'function') {
+    if (done || typeof options === 'function' || typeof args === 'function') {
       throw new Error('Callback support have been removed.');
     }
 
@@ -1443,7 +1454,7 @@ class Environment extends Base {
   async runGenerator(generator) {
     try {
       generator = await generator;
-      generator = this.queueGenerator(generator);
+      generator = await this.queueGenerator(generator);
     } catch (error) {
       return Promise.reject(error);
     }
