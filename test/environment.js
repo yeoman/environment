@@ -485,16 +485,29 @@ describe('Environment', () => {
     beforeEach(function () {
       this.env
         .register(path.join(__dirname, './fixtures/generator-common-js/generators/cjs/index.cjs'), 'common-js:cjs');
-      this.runMethod = sinon.spy(this.env.get('common-js:cjs').prototype, 'default');
+      const Generator = this.env.get('common-js:cjs');
+      this.runMethod = sinon.spy(Generator.prototype, 'default');
+      this.postConstruct = sinon.spy(Generator.prototype, '_postConstruct');
     });
 
     afterEach(function () {
       this.runMethod.restore();
+      this.postConstruct.restore();
     });
 
     it('runs a registered generator', function () {
       return this.env.run(['common-js:cjs']).then(() => {
         assert.ok(this.runMethod.calledOnce);
+      });
+    });
+    it('calls generator _postConstruct method', function () {
+      return this.env.run(['common-js:cjs']).then(() => {
+        assert.ok(this.postConstruct.calledOnce);
+      });
+    });
+    it('should not call generator _postConstruct method with help option', function () {
+      return this.env.run(['common-js:cjs'], {help: true}).then(() => {
+        assert.ok(this.postConstruct.notCalled);
       });
     });
   });
@@ -506,15 +519,27 @@ describe('Environment', () => {
           .register(path.join(__dirname, './fixtures/generator-esm/generators/app/index.js'), 'esm:app');
         const esmClass = await this.env.get('esm:app');
         this.runMethod = sinon.spy(esmClass.prototype, 'default');
+        this.postConstruct = sinon.spy(esmClass.prototype, '_postConstruct');
       });
 
       afterEach(function () {
         this.runMethod.restore();
+        this.postConstruct.restore();
       });
 
       it('runs a registered generator', function () {
         return this.env.run(['esm:app']).then(() => {
           assert.ok(this.runMethod.calledOnce);
+        });
+      });
+      it('calls generator _postConstruct method', function () {
+        return this.env.run(['esm:app']).then(() => {
+          assert.ok(this.postConstruct.calledOnce);
+        });
+      });
+      it('should not call generator _postConstruct method with help option', function () {
+        return this.env.run(['esm:app'], {help: true}).then(() => {
+          assert.ok(this.postConstruct.notCalled);
         });
       });
     });
