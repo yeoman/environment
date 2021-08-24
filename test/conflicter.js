@@ -38,6 +38,21 @@ describe('Conflicter', () => {
       });
     });
 
+    it('handles custom actions', function (done) {
+      const conflicter = new Conflicter(new TestAdapter({action(data) {
+        try {
+          assert(this === conflicter);
+          assert.strictEqual(slash(data.relativeFilePath), 'test/conflicter.js');
+          done();
+        } catch (error) {
+          done(error);
+        }
+      }
+      }));
+
+      conflicter.checkForCollision(this.conflictingFile);
+    });
+
     it('identical status', function () {
       const me = fs.readFileSync(__filename, 'utf8');
 
