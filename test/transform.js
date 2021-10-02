@@ -26,6 +26,7 @@ describe('Transform stream', () => {
   let newDeletedFile;
   let yoRcFile;
   let yoRcGlobalFile;
+  let yoResolveFile;
   let conflicterSkippedFile;
 
   let stream;
@@ -42,6 +43,7 @@ describe('Transform stream', () => {
     newDeletedFile = {state: 'deleted', isNew: true, path: 'newDeletedFile'};
     yoRcFile = {state: 'modified', path: '.yo-rc.json'};
     yoRcGlobalFile = {state: 'modified', path: '.yo-rc-global.json'};
+    yoResolveFile = {state: 'modified', path: '.yo-resolve'};
     conflicterSkippedFile = {state: 'modified', path: 'conflicterSkippedFile', conflicter: 'skip'};
 
     files = [
@@ -51,6 +53,7 @@ describe('Transform stream', () => {
       newDeletedFile,
       yoRcFile,
       yoRcGlobalFile,
+      yoResolveFile,
       conflicterSkippedFile
     ];
 
@@ -188,7 +191,7 @@ describe('Transform stream', () => {
 
   describe('createYoRcTransform()', () => {
     beforeEach(done => {
-      [yoRcFile, yoRcGlobalFile].forEach(file => {
+      [yoRcFile, yoRcGlobalFile, yoResolveFile].forEach(file => {
         assert.equal(file.conflicter, undefined);
       });
       pipeline(stream, createFileTransform(sinonTransformPre), createYoRcTransform(), createFileTransform(sinonTransformPost), error => {
@@ -200,7 +203,7 @@ describe('Transform stream', () => {
       assert.equal(sinonTransformPre.callCount, files.length);
       assert.equal(sinonTransformPost.callCount, files.length);
       files.forEach(file => {
-        if ([yoRcFile, yoRcGlobalFile].includes(file)) {
+        if ([yoRcFile, yoRcGlobalFile, yoResolveFile].includes(file)) {
           assert.equal(file.conflicter, 'force');
         }
       });
