@@ -1,4 +1,3 @@
-'use strict';
 /* eslint-disable max-nested-callbacks */
 const assert = require('assert');
 const sinon = require('sinon');

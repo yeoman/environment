@@ -1,9 +1,9 @@
-'use strict';
-/* eslint-disable max-nested-callbacks, eslint-comments/disable-enable-pair */
+/* eslint-disable max-nested-callbacks */
 
 const assert = require('assert');
 const path = require('path');
 const {pipeline} = require('stream');
+const sinon = require('sinon');
 const {
   createFileTransform,
   fileIsModified,
@@ -12,7 +12,6 @@ const {
   createYoRcTransform,
   createConflicterStatusTransform
 } = require('../lib/util/transform');
-const sinon = require('sinon');
 
 const passthroughFunction = function (file, _, cb) {
   this.push(file);
@@ -61,7 +60,9 @@ describe('Transform stream', () => {
     sinonTransformPost = sinon.stub().callsFake(passthroughFunction);
 
     stream = createFileTransform();
-    files.forEach(file => stream.write(file));
+    for (const file of files) {
+      stream.write(file);
+    }
     stream.end();
   });
 
@@ -191,9 +192,9 @@ describe('Transform stream', () => {
 
   describe('createYoRcTransform()', () => {
     beforeEach(done => {
-      [yoRcFile, yoRcGlobalFile, yoResolveFile].forEach(file => {
+      for (const file of [yoRcFile, yoRcGlobalFile, yoResolveFile]) {
         assert.equal(file.conflicter, undefined);
-      });
+      }
       pipeline(stream, createFileTransform(sinonTransformPre), createYoRcTransform(), createFileTransform(sinonTransformPost), error => {
         done(error);
       });
@@ -202,11 +203,11 @@ describe('Transform stream', () => {
     it('should call the function for every modified file and forward them through', () => {
       assert.equal(sinonTransformPre.callCount, files.length);
       assert.equal(sinonTransformPost.callCount, files.length);
-      files.forEach(file => {
+      for (const file of files) {
         if ([yoRcFile, yoRcGlobalFile, yoResolveFile].includes(file)) {
           assert.equal(file.conflicter, 'force');
         }
-      });
+      }
     });
   });
 
@@ -222,12 +223,12 @@ describe('Transform stream', () => {
     it('should forward modified and not skipped files', () => {
       assert.equal(sinonTransformPre.callCount, files.length);
       assert.equal(sinonTransformPost.callCount, files.length - 1);
-      files.forEach(file => {
+      for (const file of files) {
         assert.equal(file.conflicter, undefined);
         assert.equal(file.binary, undefined);
         assert.equal(file.conflicterChanges, undefined);
         assert.equal(file.conflicterLog, undefined);
-      });
+      }
     });
   });
 

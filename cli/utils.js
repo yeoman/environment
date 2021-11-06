@@ -5,15 +5,15 @@ const Env = require('..');
 
 const printGroupedGenerator = (generators, env) => {
   const grouped = groupBy(generators, 'packagePath');
-  Object.entries(grouped).forEach(([packagePath, group]) => {
+  for (const [packagePath, group] of Object.entries(grouped)) {
     const namespace = env.toNamespace(group[0].namespace);
     console.log(`  ${namespace.packageNamespace} at ${packagePath}`);
-    group.forEach(generator => {
+    for (const generator of group) {
       const generatorNamespace = env.toNamespace(generator.namespace);
       console.log(`    :${generatorNamespace.generator || 'app'}`);
-    });
+    }
     console.log('');
-  });
+  }
   console.log(`${generators.length} generators`);
 };
 

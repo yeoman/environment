@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const {YeomanCommand} = require('../lib/util/command');
-const {printGroupedGenerator, environmentAction} = require('./utils');
 const packageJson = require('../package.json');
 const Env = require('..');
+const {printGroupedGenerator, environmentAction} = require('./utils');
 
 const program = new YeomanCommand();
 

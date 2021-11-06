@@ -1,4 +1,3 @@
-'use strict';
 const assert = require('assert');
 const NamespaceMixin = require('../lib/namespace')(class {});
 
@@ -19,10 +18,12 @@ const fields = [
 ];
 
 const equalsNamespace = function (namespace, expected) {
-  fields.forEach(field => assert.deepStrictEqual(
-    namespace[field], expected[field],
-    `Field ${field} differs: ${namespace[field]} === ${expected[field]}`
-  ));
+  for (const field of fields) {
+    assert.deepStrictEqual(
+      namespace[field], expected[field],
+      `Field ${field} differs: ${namespace[field]} === ${expected[field]}`
+    );
+  }
   return true;
 };
 

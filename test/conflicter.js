@@ -1,4 +1,3 @@
-'use strict';
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
@@ -9,14 +8,12 @@ const semver = require('semver');
 const {TestAdapter} = require('yeoman-test/lib/adapter');
 const Conflicter = require('../lib/util/conflicter');
 
-const createActions = actions => {
-  return {
-    _action: actions,
-    get action() {
-      return this._action.shift();
-    }
-  };
-};
+const createActions = actions => ({
+  _action: actions,
+  get action() {
+    return this._action.shift();
+  }
+});
 
 describe('Conflicter', () => {
   beforeEach(function () {

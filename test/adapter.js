@@ -1,4 +1,3 @@
-'use strict';
 const assert = require('yeoman-assert');
 const inquirer = require('inquirer');
 const sinon = require('sinon');
@@ -78,10 +77,8 @@ describe('TerminalAdapter', () => {
       this.spyerror = sinon.spy(this.adapter.console, 'error');
 
       logMessage = '';
-      process.stderr.write = (() => {
-        return string => {
-          logMessage = string;
-        };
+      process.stderr.write = (() => string => {
+        logMessage = string;
       })(process.stderr.write);
     });
 
@@ -187,15 +184,15 @@ describe('TerminalAdapter', () => {
     ];
     it('log has functions', function () {
       this.adapter.log = createLog();
-      funcs.concat(defaultColors).forEach(k => {
+      for (const k of [...funcs, ...defaultColors]) {
         assert.equal(typeof this.adapter.log[k], 'function');
-      });
+      }
     });
     it('log can be added custom status', function () {
       this.adapter.log = createLog({colors: {merge: 'yellow'}});
-      funcs.concat(defaultColors, ['merge']).forEach(k => {
+      for (const k of [...funcs, ...defaultColors, 'merge']) {
         assert.equal(typeof this.adapter.log[k], 'function');
-      });
+      }
     });
   });
 });

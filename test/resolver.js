@@ -1,7 +1,6 @@
-'use strict';
-const fs = require('fs-extra');
 const path = require('path');
 const assert = require('assert');
+const fs = require('fs-extra');
 const spawn = require('cross-spawn');
 const Environment = require('../lib/environment');
 const {execaOutput} = require('../lib/util/util');
@@ -51,10 +50,10 @@ const customProjectRoot = path.join(__dirname, 'fixtures/lookup-custom');
 const subDirRoot = path.join(projectRoot, 'subdir');
 
 describe('Environment Resolver', function () {
-  this.timeout(100000);
+  this.timeout(100_000);
 
   before(function () {
-    this.timeout(500000);
+    this.timeout(500_000);
     this.cwd = process.cwd();
 
     if (!fs.existsSync(projectRoot)) {

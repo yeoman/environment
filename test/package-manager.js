@@ -1,4 +1,3 @@
-'use strict';
 /* eslint-disable max-nested-callbacks */
 const assert = require('assert');
 const path = require('path');
@@ -27,9 +26,7 @@ describe('environment (package-manager)', () => {
 
   describe('#packageManagerInstallTask()', () => {
     describe('without a package.json', async () => {
-      beforeEach(() => {
-        return packageManager.packageManagerInstallTask();
-      });
+      beforeEach(() => packageManager.packageManagerInstallTask());
 
       it('should not log', () => {
         assert(packageManager.adapter.log.notCalled);
@@ -56,9 +53,7 @@ describe('environment (package-manager)', () => {
       });
 
       describe('when package.json was not committed', () => {
-        beforeEach(async () => {
-          return packageManager.packageManagerInstallTask();
-        });
+        beforeEach(async () => packageManager.packageManagerInstallTask());
 
         it('should log', () => {
           assert(packageManager.adapter.log.calledOnce);

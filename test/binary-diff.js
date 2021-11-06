@@ -1,9 +1,7 @@
-'use strict';
-
 const path = require('path');
 const assert = require('assert');
-const {isBinary} = require('../lib/util/binary-diff');
 const fs = require('fs');
+const {isBinary} = require('../lib/util/binary-diff');
 
 describe('binary-diff', () => {
   it('regular file that contains ut8 chars is not binary file', done => {
