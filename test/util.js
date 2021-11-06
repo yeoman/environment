@@ -1,4 +1,3 @@
-'use strict';
 const assert = require('assert');
 const util = require('../lib/util/util');
 const Env = require('..');

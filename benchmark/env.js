@@ -1,5 +1,4 @@
 /* global bench */
-'use strict';
 const yeoman = require('..');
 
 suite('Environment', () => {

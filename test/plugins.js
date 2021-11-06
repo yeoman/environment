@@ -1,4 +1,3 @@
-'use strict';
 const assert = require('assert');
 const os = require('os');
 const path = require('path');
@@ -22,15 +21,15 @@ describe('Generators plugin', () => {
   });
 
   afterEach(function () {
-    this.timeout(40000);
+    this.timeout(40_000);
     process.chdir(this.cwd);
     fs.removeSync(tmpdir);
   });
 
-  [undefined, 'super:app'].forEach(extended => {
+  for (const extended of [undefined, 'super:app']) {
     describe(`#run ${extended}`, () => {
       beforeEach(async function () {
-        this.timeout(300000);
+        this.timeout(300_000);
         delete this.execValue;
 
         this.env = new Environment({skipInstall: true, experimental: true});
@@ -54,12 +53,12 @@ describe('Generators plugin', () => {
       });
 
       it(`runs generators plugin with requireGenerator value ${extended}`, function () {
-        this.timeout(100000);
+        this.timeout(100_000);
         const self = this;
         return this.env.run('dummy:app').then(() => {
           assert.equal(self.execValue, 'done');
         });
       });
     });
-  });
+  }
 });
