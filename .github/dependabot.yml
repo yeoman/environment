@@ -1,10 +1,16 @@
 version: 2
 updates:
     - package-ecosystem: "npm"
+      update_types:
+          - "semver:major"
       directory: "/"
       schedule:
-          interval: daily
-      open-pull-requests-limit: 0
+          interval: "monthly"
+      open-pull-requests-limit: 10
+      ignore:
+          # ESM only version
+          - dependency-name: 'p-queue'
+            versions: ['>=7']
 
     - package-ecosystem: "github-actions"
       directory: "/"
