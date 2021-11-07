@@ -9,9 +9,9 @@ updates:
           # ESM only version
           - dependency-name: 'p-queue'
             versions: ['>=7']
-            update-types: ["version-update:semver-major"]
+            update-types: ["version-update:semver-minor", "version-update:semver-patch"]
           - dependency-name: '*'
-            update-types: ["version-update:semver-major"]
+            update-types: ["version-update:semver-minor", "version-update:semver-patch"]
     - package-ecosystem: "github-actions"
       directory: "/"
       schedule:
