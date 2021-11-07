@@ -1,8 +1,6 @@
 version: 2
 updates:
     - package-ecosystem: "npm"
-      update_types:
-          - "semver:major"
       directory: "/"
       schedule:
           interval: "monthly"
@@ -11,7 +9,9 @@ updates:
           # ESM only version
           - dependency-name: 'p-queue'
             versions: ['>=7']
-
+            update-types: ["version-update:semver-major"]
+          - dependency-name: '*'
+            update-types: ["version-update:semver-major"]
     - package-ecosystem: "github-actions"
       directory: "/"
       schedule:
