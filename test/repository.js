@@ -92,11 +92,6 @@ describe('repository', () => {
   describe('repository workflow', () => {
     it('run the workflow correctly', async function () {
       this.timeout(500_000);
-      await repository.installPackage('yeoman-environment', '2.3.0');
-      assert.equal(repository.getPackageVersion('yeoman-environment'), '2.3.0');
-
-      // Force install another version
-      repository.cleanupPackageCache('yeoman-environment', true);
       await repository.installPackage('yeoman-environment', '2.8.1');
       assert.equal(repository.getPackageVersion('yeoman-environment'), '2.8.1');
 
