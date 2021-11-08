@@ -802,6 +802,13 @@ describe('Environment', () => {
       );
     });
 
+    it('Handles non generator-* packages inside node_modules', function () {
+      assert.equal(
+        this.env.namespace('c:\\projects\\node_modules\\example\\generators\\app\\index.js'),
+        'example:app'
+      );
+    });
+
     it('handle paths when multiples lookups are in it', function () {
       assert.equal(
         this.env.namespace('c:\\projects\\yeoman\\generators\\generator-example\\generators\\app\\index.js'),
