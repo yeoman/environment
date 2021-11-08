@@ -794,7 +794,12 @@ describe('Environment', () => {
 
     it('remove path before the generator name', function () {
       assert.equal(this.env.namespace('/Users/yeoman/.nvm/v0.10.22/lib/node_modules/generator-backbone/all/index.js'), 'backbone:all');
+      assert.equal(this.env.namespace('/Users/yeoman with space and ./.nvm/v0.10.22/lib/node_modules/generator-backbone/all/index.js'), 'backbone:all');
       assert.equal(this.env.namespace('/usr/lib/node_modules/generator-backbone/all/index.js'), 'backbone:all');
+      assert.equal(
+        this.env.namespace('c:\\projects\\m. projects\\generators\\generator-example\\generators\\app\\index.js'),
+        'example:app'
+      );
     });
 
     it('handle paths when multiples lookups are in it', function () {
