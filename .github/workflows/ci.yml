@@ -1,15 +1,20 @@
 name: NPM Test
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || (github.ref == 'refs/heads/main' && github.sha) || github.ref }}
+  cancel-in-progress: true
 on:
   push:
     branches-ignore:
       - 'dependabot/**'
   pull_request:
+    types: [closed, opened, synchronize, reopened]
     branches:
       - '*'
 
 jobs:
   build:
+    if: >-
+      github.event.action != 'closed'
 
     runs-on: ${{ matrix.os }}
 
