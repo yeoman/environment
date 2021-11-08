@@ -11,7 +11,7 @@ const {
   createEachFileTransform,
   createYoRcTransform,
   createConflicterStatusTransform
-} = require('../lib/util/transform');
+} = require('yeoman-environment/transform');
 
 const passthroughFunction = function (file, _, cb) {
   this.push(file);
