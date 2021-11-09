@@ -1,22 +1,14 @@
-/* eslint-disable max-nested-callbacks */
-
 const assert = require('assert');
 const path = require('path');
-const {pipeline} = require('stream');
 const sinon = require('sinon');
+const {pipeline, passthrough} = require('p-transform');
 const {
-  createFileTransform,
   fileIsModified,
   getConflicterStatusForFile,
   createEachFileTransform,
   createYoRcTransform,
   createConflicterStatusTransform
 } = require('../lib/util/transform');
-
-const passthroughFunction = function (file, _, cb) {
-  this.push(file);
-  cb();
-};
 
 describe('Transform stream', () => {
   let unmodifiedFile;
@@ -56,10 +48,10 @@ describe('Transform stream', () => {
       conflicterSkippedFile
     ];
 
-    sinonTransformPre = sinon.stub().callsFake(passthroughFunction);
-    sinonTransformPost = sinon.stub().callsFake(passthroughFunction);
+    sinonTransformPre = sinon.stub().callsFake(() => {});
+    sinonTransformPost = sinon.stub().callsFake(() => {});
 
-    stream = createFileTransform();
+    stream = passthrough();
     for (const file of files) {
       stream.write(file);
     }
@@ -88,13 +80,11 @@ describe('Transform stream', () => {
     let sinonTransform;
 
     describe('sync functions', () => {
-      beforeEach(done => {
+      beforeEach(async () => {
         sinonTransform = sinon.stub();
 
         const transform = createEachFileTransform(sinonTransform);
-        pipeline(stream, createFileTransform(sinonTransformPre), transform, createFileTransform(sinonTransformPost), error => {
-          done(error);
-        });
+        await pipeline(stream, passthrough(sinonTransformPre), transform, passthrough(sinonTransformPost));
       });
 
       it('should call the function for every modified file and forward them through', () => {
@@ -105,13 +95,11 @@ describe('Transform stream', () => {
     });
 
     describe('executeUnmodified option', () => {
-      beforeEach(done => {
+      beforeEach(async () => {
         sinonTransform = sinon.stub();
 
         const transform = createEachFileTransform(sinonTransform, {executeUnmodified: true});
-        pipeline(stream, createFileTransform(sinonTransformPre), transform, createFileTransform(sinonTransformPost), error => {
-          done(error);
-        });
+        await pipeline(stream, passthrough(sinonTransformPre), transform, passthrough(sinonTransformPost));
       });
 
       it('should call the function for every file and forward every file', () => {
@@ -122,13 +110,11 @@ describe('Transform stream', () => {
     });
 
     describe('false forwardUmodified option', () => {
-      beforeEach(done => {
+      beforeEach(async () => {
         sinonTransform = sinon.stub();
 
         const transform = createEachFileTransform(sinonTransform, {forwardUmodified: false});
-        pipeline(stream, createFileTransform(sinonTransformPre), transform, createFileTransform(sinonTransformPost), error => {
-          done(error);
-        });
+        await pipeline(stream, passthrough(sinonTransformPre), transform, passthrough(sinonTransformPost));
       });
 
       it('should call the function for every modified file and forward modified files', () => {
@@ -139,13 +125,11 @@ describe('Transform stream', () => {
     });
 
     describe('executeUnmodified and false forwardUmodified options', () => {
-      beforeEach(done => {
+      beforeEach(async () => {
         sinonTransform = sinon.stub();
 
         const transform = createEachFileTransform(sinonTransform, {passUmodified: true, executeUnmodified: true});
-        pipeline(stream, createFileTransform(sinonTransformPre), transform, createFileTransform(sinonTransformPost), error => {
-          done(error);
-        });
+        await pipeline(stream, passthrough(sinonTransformPre), transform, passthrough(sinonTransformPost));
       });
 
       it('should call the function for every modified file and forward every file', () => {
@@ -156,13 +140,11 @@ describe('Transform stream', () => {
     });
 
     describe('false autoForward option', () => {
-      beforeEach(done => {
+      beforeEach(async () => {
         sinonTransform = sinon.stub();
 
         const transform = createEachFileTransform(sinonTransform, {autoForward: false});
-        pipeline(stream, createFileTransform(sinonTransformPre), transform, createFileTransform(sinonTransformPost), error => {
-          done(error);
-        });
+        await pipeline(stream, passthrough(sinonTransformPre), transform, passthrough(sinonTransformPost));
       });
 
       it('should call the function for every modified file and forward every file', () => {
@@ -173,13 +155,11 @@ describe('Transform stream', () => {
     });
 
     describe('false autoForward and executeUnmodified option', () => {
-      beforeEach(done => {
+      beforeEach(async () => {
         sinonTransform = sinon.stub();
 
         const transform = createEachFileTransform(sinonTransform, {autoForward: false, executeUnmodified: true});
-        pipeline(stream, createFileTransform(sinonTransformPre), transform, createFileTransform(sinonTransformPost), error => {
-          done(error);
-        });
+        await pipeline(stream, passthrough(sinonTransformPre), transform, passthrough(sinonTransformPost));
       });
 
       it('should call the function for every modified file and forward every file', () => {
@@ -191,13 +171,11 @@ describe('Transform stream', () => {
   });
 
   describe('createYoRcTransform()', () => {
-    beforeEach(done => {
+    beforeEach(async () => {
       for (const file of [yoRcFile, yoRcGlobalFile, yoResolveFile]) {
         assert.equal(file.conflicter, undefined);
       }
-      pipeline(stream, createFileTransform(sinonTransformPre), createYoRcTransform(), createFileTransform(sinonTransformPost), error => {
-        done(error);
-      });
+      await pipeline(stream, passthrough(sinonTransformPre), createYoRcTransform(), passthrough(sinonTransformPost));
     });
 
     it('should call the function for every modified file and forward them through', () => {
@@ -213,11 +191,9 @@ describe('Transform stream', () => {
 
   describe('createConflicterStatusTransform()', () => {
     let adapter;
-    beforeEach(done => {
+    beforeEach(async () => {
       adapter = {skip: sinon.fake()};
-      pipeline(stream, createFileTransform(sinonTransformPre), createConflicterStatusTransform(adapter), createFileTransform(sinonTransformPost), error => {
-        done(error);
-      });
+      await pipeline(stream, passthrough(sinonTransformPre), createConflicterStatusTransform(adapter), passthrough(sinonTransformPost));
     });
 
     it('should forward modified and not skipped files', () => {
