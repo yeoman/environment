@@ -1,0 +1,31 @@
+name: Package lock maintenance
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Bump transitional dependencies
+    if: github.repository == 'yeoman/environment'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+      - uses: actions/checkout@v2
+      - name: Create commit
+        run: |
+          rm package-lock.json
+          npm install || npm install --force
+          git add .
+          git config --local user.email ""
+          git config --local user.name "Github Actions"
+          git commit -a -m "Bump transitional dependencies" || true
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3.12.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'Bump transitional dependencies'
+          title: 'Bump transitional dependencies'
+          body: Transitional dependencies bump.
+          labels: 'dependencies'
