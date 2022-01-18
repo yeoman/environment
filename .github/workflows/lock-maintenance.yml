@@ -5,7 +5,6 @@ on:
 jobs:
   build:
     name: Bump transitional dependencies
-    if: github.repository == 'yeoman/environment'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -16,16 +15,14 @@ jobs:
       - name: Create commit
         run: |
           rm package-lock.json
-          npm install || npm install --force
-          git add .
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "Github Actions"
-          git commit -a -m "Bump transitional dependencies" || true
+          npm install
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3.12.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'Bump transitional dependencies'
+          committer: 'Github Actions <41898282+github-actions[bot]@users.noreply.github.com>'
+          author: 'Github Actions <41898282+github-actions[bot]@users.noreply.github.com>'
           title: 'Bump transitional dependencies'
           body: Transitional dependencies bump.
           labels: 'dependencies'
