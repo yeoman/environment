@@ -8,11 +8,11 @@ jobs:
     if: github.repository == 'yeoman/environment'
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: '16'
           cache: 'npm'
-      - uses: actions/checkout@v2
       - name: Create commit
         run: |
           rm package-lock.json
