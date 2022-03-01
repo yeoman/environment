@@ -75,7 +75,7 @@
     "escape-string-regexp": "^4.0.0",
     "execa": "^5.0.0",
     "find-up": "^5.0.0",
-    "globby": "^11.0.1",
+    "globby": "^13.1.1",
     "grouped-queue": "^2.0.0",
     "inquirer": "^8.0.0",
     "is-scoped": "^2.1.0",
