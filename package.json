@@ -61,7 +61,7 @@
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "dependencies": {
-    "@npmcli/arborist": "^4.0.4",
+    "@npmcli/arborist": "^5.0.6",
     "are-we-there-yet": "^2.0.0",
     "arrify": "^2.0.1",
     "binaryextensions": "^4.15.0",
