@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "@npmcli/arborist": "^4.0.4",
-    "are-we-there-yet": "^2.0.0",
+    "are-we-there-yet": "^3.0.0",
     "arrify": "^2.0.1",
     "binaryextensions": "^4.15.0",
     "chalk": "^4.1.0",
