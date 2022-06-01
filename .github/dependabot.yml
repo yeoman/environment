@@ -7,6 +7,9 @@ updates:
       open-pull-requests-limit: 10
       ignore:
           # node 14 only version
+          - dependency-name: 'mocha'
+            versions: ['>=10']
+            update-types: ["version-update:semver-minor", "version-update:semver-patch"]
           - dependency-name: 'sinon'
             versions: ['>=14']
             update-types: ["version-update:semver-minor", "version-update:semver-patch"]
