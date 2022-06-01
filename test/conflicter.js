@@ -35,6 +35,26 @@ describe('Conflicter', () => {
       });
     });
 
+    it('identical status', () => {
+      const conflicter = new Conflicter(new TestAdapter({action: 'force'}));
+      const me = fs.readFileSync(__filename, 'utf8');
+
+      return conflicter.checkForCollision(
+        {
+          path: __filename,
+          contents: me,
+          stat: {
+            mode: 1
+          }
+        }
+      ).then(
+        file => {
+          assert.strictEqual(file.conflicter, 'force');
+          assert.strictEqual(file.conflicterLog, undefined);
+        }
+      );
+    });
+
     it('handles custom actions', function (done) {
       const conflicter = new Conflicter(new TestAdapter({action(data) {
         try {
