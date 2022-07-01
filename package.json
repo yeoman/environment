@@ -77,7 +77,7 @@
     "find-up": "^5.0.0",
     "globby": "^11.0.1",
     "grouped-queue": "^2.0.0",
-    "inquirer": "^8.0.0",
+    "inquirer": "^9.0.0",
     "is-scoped": "^2.1.0",
     "lodash": "^4.17.10",
     "log-symbols": "^4.0.0",
