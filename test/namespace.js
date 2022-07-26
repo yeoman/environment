@@ -35,6 +35,14 @@ describe('Namespace', () => {
     });
   });
 
+  describe('#namespace setter', () => {
+    it('throws error if namespace is invalid', () => {
+      assert.throws(() => {
+        namespace.requireNamespace('foo-bar').namespace = '.';
+      });
+    });
+  });
+
   describe('#requireNamespace()', () => {
     it('returns namespace', () => {
       const parsed = namespace.requireNamespace('foo-bar');
