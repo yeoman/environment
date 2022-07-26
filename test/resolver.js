@@ -310,12 +310,14 @@ describe('Environment Resolver', function () {
         this.env = new Environment();
         assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
         this.env.lookup(true);
+        this.env.alias('dummy-alias', 'dummy');
       });
 
       it('register local generators', function () {
         assert.ok(this.env.get('dummy:app'));
         assert.ok(this.env.get('dummy:yo'));
         assert.ok(this.env.isPackageRegistered('dummy'));
+        assert.ok(this.env.isPackageRegistered('dummy-alias'));
       });
 
       it('register generators in scoped packages', function () {
