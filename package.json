@@ -14,9 +14,9 @@
   "main": "lib/environment.js",
   "exports": {
     ".": "./lib/environment.js",
-    "./cli/": "./cli/",
-    "./lib/": "./lib/",
-    "./lib/util/": "./lib/util/",
+    "./cli/*": "./cli/*.js",
+    "./lib/*": "./lib/*.js",
+    "./lib/util/*": "./lib/util/*.js",
     "./adapter": "./lib/adapter.js",
     "./conflicter": "./lib/util/conflicter.js",
     "./log": "./lib/util/log.js",
