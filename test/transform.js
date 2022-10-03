@@ -206,6 +206,12 @@ describe('Transform stream', () => {
         assert.equal(file.conflicterLog, undefined);
       }
     });
+
+    it('should clear the state of skipped file', () => {
+      assert.equal(conflicterSkippedFile.state, undefined);
+      assert.equal(conflicterSkippedFile.isNew, undefined);
+      assert.equal(conflicterSkippedFile.stateCleared, 'modified');
+    });
   });
 
   describe('getConflicterStatusForFile()', () => {
