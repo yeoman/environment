@@ -2,8 +2,9 @@ const assert = require('assert');
 const path = require('path');
 const fs = require('fs-extra');
 
+const {Environment} = require('yeoman-environment');
+
 const YeomanRepository = require('../lib/util/repository');
-const Env = require('..');
 
 /* eslint-disable max-nested-callbacks */
 describe('repository', () => {
@@ -29,7 +30,7 @@ describe('repository', () => {
   describe('Environment#installLocalGenerators', () => {
     beforeEach(async function () {
       this.timeout(500_000);
-      this.env = Env.createEnv();
+      this.env = Environment.createEnv();
       return this.env.installLocalGenerators({'generator-dummytest': '0.1.3'});
     });
 
@@ -68,12 +69,12 @@ describe('repository', () => {
       let env;
       beforeEach(async function () {
         this.timeout(500_000);
-        env = await Env.createEnvWithVersion('~2.3.0');
+        env = await Environment.createEnvWithVersion('~2.3.0');
       });
 
       it('returns env and #cleanup without force fails', () => {
         assert.ok(env);
-        assert.ok(!(env instanceof Env));
+        assert.ok(!(env instanceof Environment));
         assert.throws(() => repository.cleanupPackageCache('yeoman-environment'));
       });
     });
@@ -81,10 +82,10 @@ describe('repository', () => {
     describe('with git repository', () => {
       it('returns env', async function () {
         this.timeout(500_000);
-        const env = await Env.createEnvWithVersion('yeoman/environment#v2.8.1');
+        const env = await Environment.createEnvWithVersion('yeoman/environment#v2.8.1');
         assert.equal(repository.getPackageVersion('yeoman-environment'), '2.8.1');
         assert.ok(env);
-        assert.ok(!(env instanceof Env));
+        assert.ok(!(env instanceof Environment));
       });
     });
   });

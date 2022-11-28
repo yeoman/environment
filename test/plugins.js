@@ -2,7 +2,9 @@ const assert = require('assert');
 const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
-const Environment = require('../lib/environment');
+
+const {Environment} = require('yeoman-environment');
+
 const YeomanRepository = require('../lib/util/repository');
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-environment/light');

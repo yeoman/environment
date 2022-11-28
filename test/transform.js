@@ -5,7 +5,6 @@ const {pipeline, passthrough} = require('p-transform');
 const {
   fileIsModified,
   getConflicterStatusForFile,
-  createEachFileTransform,
   createYoRcTransform,
   createConflicterStatusTransform
 } = require('yeoman-environment/transform');
@@ -22,7 +21,6 @@ describe('Transform stream', () => {
 
   let stream;
   let files;
-  const unmodifiedFilesCount = 2;
 
   let sinonTransformPre;
   let sinonTransformPost;
@@ -73,100 +71,6 @@ describe('Transform stream', () => {
 
     it('should return false for new file that have been deleted', () => {
       assert.equal(fileIsModified(newFile), true);
-    });
-  });
-
-  describe('createEachFileTransform()', () => {
-    let sinonTransform;
-
-    describe('sync functions', () => {
-      beforeEach(async () => {
-        sinonTransform = sinon.stub();
-
-        const transform = createEachFileTransform(sinonTransform);
-        await pipeline(stream, passthrough(sinonTransformPre), transform, passthrough(sinonTransformPost));
-      });
-
-      it('should call the function for every modified file and forward them through', () => {
-        assert.equal(sinonTransformPre.callCount, files.length);
-        assert.equal(sinonTransform.callCount, files.length - unmodifiedFilesCount);
-        assert.equal(sinonTransformPost.callCount, files.length);
-      });
-    });
-
-    describe('executeUnmodified option', () => {
-      beforeEach(async () => {
-        sinonTransform = sinon.stub();
-
-        const transform = createEachFileTransform(sinonTransform, {executeUnmodified: true});
-        await pipeline(stream, passthrough(sinonTransformPre), transform, passthrough(sinonTransformPost));
-      });
-
-      it('should call the function for every file and forward every file', () => {
-        assert.equal(sinonTransformPre.callCount, files.length);
-        assert.equal(sinonTransform.callCount, files.length);
-        assert.equal(sinonTransformPost.callCount, files.length);
-      });
-    });
-
-    describe('false forwardUmodified option', () => {
-      beforeEach(async () => {
-        sinonTransform = sinon.stub();
-
-        const transform = createEachFileTransform(sinonTransform, {forwardUmodified: false});
-        await pipeline(stream, passthrough(sinonTransformPre), transform, passthrough(sinonTransformPost));
-      });
-
-      it('should call the function for every modified file and forward modified files', () => {
-        assert.equal(sinonTransformPre.callCount, files.length);
-        assert.equal(sinonTransform.callCount, files.length - unmodifiedFilesCount);
-        assert.equal(sinonTransformPost.callCount, files.length - unmodifiedFilesCount);
-      });
-    });
-
-    describe('executeUnmodified and false forwardUmodified options', () => {
-      beforeEach(async () => {
-        sinonTransform = sinon.stub();
-
-        const transform = createEachFileTransform(sinonTransform, {passUmodified: true, executeUnmodified: true});
-        await pipeline(stream, passthrough(sinonTransformPre), transform, passthrough(sinonTransformPost));
-      });
-
-      it('should call the function for every modified file and forward every file', () => {
-        assert.equal(sinonTransformPre.callCount, files.length);
-        assert.equal(sinonTransform.callCount, files.length);
-        assert.equal(sinonTransformPost.callCount, files.length);
-      });
-    });
-
-    describe('false autoForward option', () => {
-      beforeEach(async () => {
-        sinonTransform = sinon.stub();
-
-        const transform = createEachFileTransform(sinonTransform, {autoForward: false});
-        await pipeline(stream, passthrough(sinonTransformPre), transform, passthrough(sinonTransformPost));
-      });
-
-      it('should call the function for every modified file and forward every file', () => {
-        assert.equal(sinonTransformPre.callCount, files.length);
-        assert.equal(sinonTransform.callCount, files.length - unmodifiedFilesCount);
-        assert.equal(sinonTransformPost.callCount, 0);
-      });
-    });
-
-    describe('false autoForward and executeUnmodified option', () => {
-      beforeEach(async () => {
-        sinonTransform = sinon.stub();
-
-        const transform = createEachFileTransform(sinonTransform, {autoForward: false, executeUnmodified: true});
-        await pipeline(stream, passthrough(sinonTransformPre), transform, passthrough(sinonTransformPost));
-      });
-
-      it('should call the function for every modified file and forward every file', () => {
-        assert.equal(sinonTransformPre.callCount, files.length);
-        assert.equal(sinonTransform.callCount, files.length);
-        assert.equal(sinonTransformPost.callCount, 0);
-      });
     });
   });
 

@@ -6,7 +6,7 @@ const sinon = require('sinon');
 const slash = require('slash');
 const semver = require('semver');
 const {TestAdapter} = require('yeoman-test/lib/adapter');
-const Conflicter = require('yeoman-environment/conflicter');
+const {Conflicter} = require('yeoman-environment');
 
 const createActions = actions => ({
   _action: actions,

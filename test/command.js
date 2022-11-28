@@ -4,7 +4,7 @@ const path = require('path');
 const sinon = require('sinon');
 const semver = require('semver');
 
-const Environment = require('..');
+const {Environment} = require('yeoman-environment');
 
 describe('environment (command)', () => {
   describe('#execute() with options', () => {

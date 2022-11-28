@@ -1,15 +1,16 @@
 const {groupBy} = require('lodash');
 const debug = require('debug')('yeoman:yoe');
 
-const Env = require('..');
+const {Environment} = require('../lib/index.js');
+const {toNamespace} = require('../lib/util/namespace.js');
 
-const printGroupedGenerator = (generators, env) => {
+const printGroupedGenerator = generators => {
   const grouped = groupBy(generators, 'packagePath');
   for (const [packagePath, group] of Object.entries(grouped)) {
-    const namespace = env.toNamespace(group[0].namespace);
+    const namespace = toNamespace(group[0].namespace);
     console.log(`  ${namespace.packageNamespace} at ${packagePath}`);
     for (const generator of group) {
-      const generatorNamespace = env.toNamespace(generator.namespace);
+      const generatorNamespace = toNamespace(generator.namespace);
       console.log(`    :${generatorNamespace.generator || 'app'}`);
     }
     console.log('');
@@ -23,7 +24,7 @@ const environmentAction = async function (generatorNamespace, options, command) 
     return;
   }
 
-  this.env = Env.createEnv([], {...options, command: this});
+  this.env = Environment.createEnv([], {...options, command: this});
   this.env.lookupLocalPackages();
 
   return this.env.execute(generatorNamespace, command.args.splice(1));

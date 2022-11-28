@@ -1,10 +1,10 @@
 const assert = require('assert');
 
-const Env = require('..');
+const {Environment} = require('yeoman-environment');
 
 describe('composability', () => {
   before(function () {
-    this.env = Env.createEnv();
+    this.env = Environment.createEnv();
   });
 
   describe('resolvePackage()', () => {

@@ -9,10 +9,9 @@ const generatorPackageJson = require('yeoman-generator/package.json');
 const assert = require('yeoman-assert');
 
 const semver = require('semver');
-const TerminalAdapter = require('../lib/adapter');
-const Environment = require('../lib/environment');
+const {Environment, Adapter: TerminalAdapter} = require('yeoman-environment');
 
-const ENVIRONMENT_VERSION = require('../package.json').version;
+const ENVIRONMENT_VERSION = require('yeoman-environment/package.json').version;
 const INQUIRER_VERSION = require('inquirer/package.json').version;
 const GROUPED_QUEUE_VERSION = require('grouped-queue/package.json').version;
 

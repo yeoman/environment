@@ -2,7 +2,9 @@ const path = require('path');
 const assert = require('assert');
 const fs = require('fs-extra');
 const spawn = require('cross-spawn');
-const Environment = require('../lib/environment');
+
+const {Environment} = require('yeoman-environment');
+
 const {execaOutput} = require('../lib/util/util');
 
 const globalLookupTest = process.env.NODE_PATH ? it : xit;

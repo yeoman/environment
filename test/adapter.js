@@ -3,8 +3,8 @@ const inquirer = require('inquirer');
 const sinon = require('sinon');
 const logSymbols = require('log-symbols');
 const stripAnsi = require('strip-ansi');
-const TerminalAdapter = require('yeoman-environment/adapter');
-const createLog = require('yeoman-environment/log');
+const {Adapter: TerminalAdapter} = require('yeoman-environment');
+const createLog = require('../lib/util/log');
 
 describe('TerminalAdapter', () => {
   beforeEach(function () {

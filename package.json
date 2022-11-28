@@ -11,17 +11,15 @@
     "cli",
     "lib"
   ],
-  "main": "lib/environment.js",
   "exports": {
-    ".": "./lib/environment.js",
+    ".": "./lib/index.js",
     "./cli/*": "./cli/*.js",
     "./lib/*": "./lib/*.js",
     "./lib/util/*": "./lib/util/*.js",
-    "./adapter": "./lib/adapter.js",
-    "./conflicter": "./lib/util/conflicter.js",
-    "./log": "./lib/util/log.js",
     "./transform": "./lib/util/transform.js",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./namespace": "./lib/util/namespace.js",
+    "./cli": "./cli/index.js"
   },
   "keywords": [
     "development",
@@ -42,7 +40,7 @@
   "license": "BSD-2-Clause",
   "repository": "yeoman/environment",
   "engines": {
-    "node": ">=12.10.0"
+    "node": "^14.15.0 || ^16.13.0 || >=18.12.0"
   },
   "scripts": {
     "pretest": "xo",
@@ -117,7 +115,8 @@
     "xo": "0.37.1",
     "yeoman-assert": "^3.1.1",
     "yeoman-generator": "^5.1.0",
-    "yeoman-test": "^6.2.0"
+    "yeoman-test": "^6.2.0",
+    "prettier-plugin-packagejson": "^2.3.0"
   },
   "xo": {
     "space": true,
@@ -130,13 +129,19 @@
       "import/extensions": "off",
       "prefer-spread": "off",
       "padding-line-between-statements": "off",
-      "unicorn/no-hex-escape": "off",
-      "unicorn/prefer-reflect-apply": "off",
       "prefer-rest-params": "off",
       "node/prefer-promises/fs": "off",
       "promise/prefer-await-to-then": "off",
       "unicorn/no-array-reduce": "off",
-      "unicorn/import-style": "off"
+      "unicorn/import-style": "off",
+      "unicorn/prefer-spread": "off",
+      "unicorn/prefer-module": "off",
+      "unicorn/no-this-assignment": "off",
+      "unicorn/no-array-push-push": "off",
+      "unicorn/no-array-for-each": "off",
+      "node/prefer-global/process": "off",
+      "node/prefer-global/buffer": "off",
+      "import/order": "off"
     }
   }
 }
