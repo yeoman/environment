@@ -1,10 +1,10 @@
-const assert = require('yeoman-assert');
-const inquirer = require('inquirer');
-const sinon = require('sinon');
-const logSymbols = require('log-symbols');
-const stripAnsi = require('strip-ansi');
-const {Adapter: TerminalAdapter} = require('yeoman-environment');
-const createLog = require('../lib/util/log');
+import assert from 'yeoman-assert';
+import inquirer from 'inquirer';
+import sinon from 'sinon';
+import logSymbols from 'log-symbols';
+import stripAnsi from 'strip-ansi';
+import {TerminalAdapter} from '../lib/index.mjs';
+import createLog from '../lib/util/log.js';
 
 describe('TerminalAdapter', () => {
   beforeEach(function () {

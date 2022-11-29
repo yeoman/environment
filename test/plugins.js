@@ -1,11 +1,11 @@
-const assert = require('assert');
-const os = require('os');
-const path = require('path');
-const fs = require('fs-extra');
+import assert from 'assert';
+import os from 'os';
+import path from 'path';
+import fs from 'fs-extra';
 
-const {Environment} = require('yeoman-environment');
+import Environment from '../lib/index.mjs';
 
-const YeomanRepository = require('../lib/util/repository');
+import YeomanRepository from '../lib/util/repository.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-environment/light');
 

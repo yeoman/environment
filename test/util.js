@@ -1,6 +1,6 @@
-const assert = require('assert');
-const {Environment} = require('yeoman-environment');
-const util = require('../lib/util/util.js');
+import assert from 'assert';
+import Environment from '../lib/index.mjs';
+import util from '../lib/util/util.js';
 
 describe('util', () => {
   describe('.duplicateEnv()', () => {

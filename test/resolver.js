@@ -1,11 +1,18 @@
-const path = require('path');
-const assert = require('assert');
-const fs = require('fs-extra');
-const spawn = require('cross-spawn');
+import path, {dirname} from 'path';
+import assert from 'assert';
+import fs from 'fs-extra';
+import spawn from 'cross-spawn';
 
-const {Environment} = require('yeoman-environment');
+import Environment from '../lib/index.mjs';
 
-const {execaOutput} = require('../lib/util/util');
+import {execaOutput} from '../lib/util/util.js';
+import {fileURLToPath} from 'url';
+import {createRequire} from 'module';
+
+const require = createRequire(import.meta.url);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const globalLookupTest = process.env.NODE_PATH ? it : xit;
 
@@ -124,7 +131,7 @@ describe('Environment Resolver', function () {
       assert.ok(this.env.get('esm:mjs'));
     });
 
-    it('js generators takes precedence', function () {
+    it('js generators takes precedence', async function () {
       assert.equal(this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
     });
 

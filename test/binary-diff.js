@@ -1,7 +1,11 @@
-const path = require('path');
-const assert = require('assert');
-const fs = require('fs');
-const {isBinary} = require('../lib/util/binary-diff');
+import path, {dirname} from 'path';
+import assert from 'assert';
+import fs from 'fs';
+import {isBinary} from '../lib/util/binary-diff.js';
+import {fileURLToPath} from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe('binary-diff', () => {
   it('regular file that contains ut8 chars is not binary file', done => {

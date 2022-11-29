@@ -1,13 +1,17 @@
-const assert = require('assert');
-const path = require('path');
-const sinon = require('sinon');
-const {pipeline, passthrough} = require('p-transform');
-const {
+import assert from 'assert';
+import path, {dirname} from 'path';
+import sinon from 'sinon';
+import {pipeline, passthrough} from 'p-transform';
+import {
   fileIsModified,
   getConflicterStatusForFile,
   createYoRcTransform,
   createConflicterStatusTransform
-} = require('yeoman-environment/transform');
+} from '../lib/util/transform.js';
+import {fileURLToPath} from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe('Transform stream', () => {
   let unmodifiedFile;

@@ -1,5 +1,8 @@
+import sinon from 'sinon';
+import {createRequire} from 'module';
+
+const require = createRequire(import.meta.url);
 const proxyquire = require('proxyquire');
-const sinon = require('sinon');
 
 describe('environment (spawn-command)', () => {
   let cwd;

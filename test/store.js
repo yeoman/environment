@@ -1,6 +1,12 @@
-const assert = require('assert');
-const path = require('path');
-const Store = require('../lib/store');
+import assert from 'assert';
+import {createRequire} from 'module';
+import path, {dirname} from 'path';
+import {fileURLToPath} from 'url';
+import Store from '../lib/store.js';
+
+const require = createRequire(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe('Store', () => {
   beforeEach(function () {

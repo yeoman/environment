@@ -1,5 +1,5 @@
-const assert = require('assert');
-const {requireNamespace, isNamespace} = require('yeoman-environment/namespace');
+import assert from 'assert';
+import {requireNamespace, isNamespace} from '../lib/util/namespace.js';
 
 const fields = [
   'complete',

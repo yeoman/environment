@@ -1,10 +1,10 @@
-const assert = require('assert');
-const path = require('path');
-const fs = require('fs-extra');
+import assert from 'assert';
+import path from 'path';
+import fs from 'fs-extra';
 
-const {Environment} = require('yeoman-environment');
+import Environment from '../lib/index.mjs';
 
-const YeomanRepository = require('../lib/util/repository');
+import YeomanRepository from '../lib/util/repository.js';
 
 /* eslint-disable max-nested-callbacks */
 describe('repository', () => {

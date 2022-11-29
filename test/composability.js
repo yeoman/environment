@@ -1,6 +1,6 @@
-const assert = require('assert');
+import assert from 'assert';
 
-const {Environment} = require('yeoman-environment');
+import Environment from '../lib/index.mjs';
 
 describe('composability', () => {
   before(function () {

@@ -1,9 +1,16 @@
 /* eslint-disable max-nested-callbacks */
-const assert = require('assert');
-const path = require('path');
-const sinon = require('sinon');
+import assert from 'assert';
+import path, {dirname} from 'path';
+import sinon from 'sinon';
+import {fileURLToPath} from 'url';
 
-const PackageManager = require('../lib/package-manager')(class {});
+import PackageManagerMixin from '../lib/package-manager.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// eslint-disable-next-line new-cap
+const PackageManager = PackageManagerMixin(class {});
 
 describe('environment (package-manager)', () => {
   let packageManager;

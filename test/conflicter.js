@@ -1,12 +1,18 @@
-const assert = require('assert');
-const fs = require('fs');
-const path = require('path');
-const _ = require('lodash');
-const sinon = require('sinon');
-const slash = require('slash');
-const semver = require('semver');
-const {TestAdapter} = require('yeoman-test/lib/adapter');
-const {Conflicter} = require('yeoman-environment');
+import assert from 'assert';
+import fs from 'fs';
+import path, {dirname} from 'path';
+import _ from 'lodash';
+import sinon from 'sinon';
+import slash from 'slash';
+import semver from 'semver';
+import {TestAdapter} from 'yeoman-test';
+import {Conflicter} from '../lib/index.mjs';
+import {fileURLToPath} from 'url';
+import {createRequire} from 'module';
+
+const require = createRequire(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const createActions = actions => ({
   _action: actions,

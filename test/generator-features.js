@@ -1,10 +1,13 @@
 /* eslint-disable max-nested-callbacks */
-const assert = require('assert');
-const sinon = require('sinon');
-const semver = require('semver');
-const Generator = require('yeoman-generator');
+import assert from 'assert';
+import sinon from 'sinon';
+import semver from 'semver';
+import Generator from 'yeoman-generator';
+import helpers from './helpers.js';
+import {createRequire} from 'module';
+
+const require = createRequire(import.meta.url);
 const {version} = require('yeoman-generator/package.json');
-const helpers = require('./helpers');
 
 class FeaturesGenerator extends Generator {
   getFeatures() {

@@ -1,10 +1,16 @@
 /* eslint-disable max-nested-callbacks */
-const assert = require('assert');
-const path = require('path');
-const sinon = require('sinon');
-const semver = require('semver');
+import assert from 'assert';
+import path, {dirname} from 'path';
+import sinon from 'sinon';
+import semver from 'semver';
 
-const {Environment} = require('yeoman-environment');
+import Environment from '../lib/index.mjs';
+import {fileURLToPath} from 'url';
+import {createRequire} from 'module';
+
+const require = createRequire(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe('environment (command)', () => {
   describe('#execute() with options', () => {
