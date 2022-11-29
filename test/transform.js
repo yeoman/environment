@@ -1,14 +1,9 @@
 import assert from 'assert';
-import path, {dirname} from 'path';
+import path, { dirname } from 'path';
 import sinon from 'sinon';
-import {pipeline, passthrough} from 'p-transform';
-import {
-  fileIsModified,
-  getConflicterStatusForFile,
-  createYoRcTransform,
-  createConflicterStatusTransform
-} from '../lib/util/transform.js';
-import {fileURLToPath} from 'url';
+import { pipeline, passthrough } from 'p-transform';
+import { fileIsModified, getConflicterStatusForFile, createYoRcTransform, createConflicterStatusTransform } from '../lib/util/transform.js';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -30,25 +25,20 @@ describe('Transform stream', () => {
   let sinonTransformPost;
 
   beforeEach(() => {
-    unmodifiedFile = {path: 'unmodifiedFile'};
-    newFile = {state: 'modified', isNew: true, path: 'newFile'};
-    modifiedFile = {state: 'modified', path: 'modifiedFile'};
-    newDeletedFile = {state: 'deleted', isNew: true, path: 'newDeletedFile'};
-    yoRcFile = {state: 'modified', path: '.yo-rc.json'};
-    yoRcGlobalFile = {state: 'modified', path: '.yo-rc-global.json'};
-    yoResolveFile = {state: 'modified', path: '.yo-resolve'};
-    conflicterSkippedFile = {state: 'modified', path: 'conflicterSkippedFile', conflicter: 'skip'};
+    unmodifiedFile = { path: 'unmodifiedFile' };
+    newFile = { state: 'modified', isNew: true, path: 'newFile' };
+    modifiedFile = { state: 'modified', path: 'modifiedFile' };
+    newDeletedFile = { state: 'deleted', isNew: true, path: 'newDeletedFile' };
+    yoRcFile = { state: 'modified', path: '.yo-rc.json' };
+    yoRcGlobalFile = { state: 'modified', path: '.yo-rc-global.json' };
+    yoResolveFile = { state: 'modified', path: '.yo-resolve' };
+    conflicterSkippedFile = {
+      state: 'modified',
+      path: 'conflicterSkippedFile',
+      conflicter: 'skip',
+    };
 
-    files = [
-      unmodifiedFile,
-      newFile,
-      modifiedFile,
-      newDeletedFile,
-      yoRcFile,
-      yoRcGlobalFile,
-      yoResolveFile,
-      conflicterSkippedFile
-    ];
+    files = [unmodifiedFile, newFile, modifiedFile, newDeletedFile, yoRcFile, yoRcGlobalFile, yoResolveFile, conflicterSkippedFile];
 
     sinonTransformPre = sinon.stub().callsFake(() => {});
     sinonTransformPost = sinon.stub().callsFake(() => {});
@@ -57,6 +47,7 @@ describe('Transform stream', () => {
     for (const file of files) {
       stream.write(file);
     }
+
     stream.end();
   });
 
@@ -83,6 +74,7 @@ describe('Transform stream', () => {
       for (const file of [yoRcFile, yoRcGlobalFile, yoResolveFile]) {
         assert.equal(file.conflicter, undefined);
       }
+
       await pipeline(stream, passthrough(sinonTransformPre), createYoRcTransform(), passthrough(sinonTransformPost));
     });
 
@@ -100,7 +92,7 @@ describe('Transform stream', () => {
   describe('createConflicterStatusTransform()', () => {
     let adapter;
     beforeEach(async () => {
-      adapter = {skip: sinon.fake()};
+      adapter = { skip: sinon.fake() };
       await pipeline(stream, passthrough(sinonTransformPre), createConflicterStatusTransform(adapter), passthrough(sinonTransformPost));
     });
 

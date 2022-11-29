@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import {createRequire} from 'module';
+import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
 const proxyquire = require('proxyquire');
@@ -11,9 +11,12 @@ describe('environment (spawn-command)', () => {
     this.spawnLib = sinon.stub();
     this.spawnLib.sync = sinon.stub();
     this.spawn = {};
-    Object.assign(this.spawn, proxyquire('../lib/spawn-command', {
-      execa: this.spawnLib
-    }));
+    Object.assign(
+      this.spawn,
+      proxyquire('../lib/spawn-command', {
+        execa: this.spawnLib,
+      }),
+    );
     cwd = Math.random().toString(36).slice(7);
     this.spawn.cwd = cwd;
   });
@@ -23,7 +26,7 @@ describe('environment (spawn-command)', () => {
       this.spawn.spawnCommand('foo');
       sinon.assert.calledWith(this.spawnLib, 'foo', undefined, {
         cwd,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
@@ -31,24 +34,24 @@ describe('environment (spawn-command)', () => {
       this.spawn.spawnCommand('foo', 'bar');
       sinon.assert.calledWith(this.spawnLib, 'foo', 'bar', {
         cwd,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
     it('pass options', function () {
-      this.spawn.spawnCommand('foo', undefined, {foo: 1});
+      this.spawn.spawnCommand('foo', undefined, { foo: 1 });
       sinon.assert.calledWith(this.spawnLib, 'foo', undefined, {
         cwd,
         foo: 1,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
     it('allow overriding default options', function () {
-      this.spawn.spawnCommand('foo', undefined, {stdio: 'ignore'});
+      this.spawn.spawnCommand('foo', undefined, { stdio: 'ignore' });
       sinon.assert.calledWith(this.spawnLib, 'foo', undefined, {
         cwd,
-        stdio: 'ignore'
+        stdio: 'ignore',
       });
     });
   });
@@ -58,7 +61,7 @@ describe('environment (spawn-command)', () => {
       this.spawn.spawnCommandSync('foo');
       sinon.assert.calledWith(this.spawnLib.sync, 'foo', undefined, {
         cwd,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
@@ -66,24 +69,24 @@ describe('environment (spawn-command)', () => {
       this.spawn.spawnCommandSync('foo', 'bar');
       sinon.assert.calledWith(this.spawnLib.sync, 'foo', 'bar', {
         cwd,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
     it('pass options', function () {
-      this.spawn.spawnCommandSync('foo', undefined, {foo: 1});
+      this.spawn.spawnCommandSync('foo', undefined, { foo: 1 });
       sinon.assert.calledWith(this.spawnLib.sync, 'foo', undefined, {
         cwd,
         foo: 1,
-        stdio: 'inherit'
+        stdio: 'inherit',
       });
     });
 
     it('allow overriding default options', function () {
-      this.spawn.spawnCommandSync('foo', undefined, {stdio: 'wut'});
+      this.spawn.spawnCommandSync('foo', undefined, { stdio: 'wut' });
       sinon.assert.calledWith(this.spawnLib.sync, 'foo', undefined, {
         cwd,
-        stdio: 'wut'
+        stdio: 'wut',
       });
     });
   });

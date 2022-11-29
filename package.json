@@ -117,31 +117,5 @@
     "yeoman-assert": "^3.1.1",
     "yeoman-generator": "^5.1.0",
     "yeoman-test": "github:yeoman/yeoman-test#main"
-  },
-  "xo": {
-    "space": true,
-    "envs": [
-      "node",
-      "mocha"
-    ],
-    "rules": {
-      "unicorn/prefer-module": "off",
-      "import/no-dynamic-require": "off",
-      "padding-line-between-statements": "off",
-      "unicorn/prefer-spread": "off",
-      "prefer-spread": "off",
-      "prefer-rest-params": "off",
-      "node/prefer-promises/fs": "off",
-      "promise/prefer-await-to-then": "off",
-      "unicorn/no-array-reduce": "off",
-      "unicorn/import-style": "off",
-      "import/extensions": "off",
-      "unicorn/no-this-assignment": "off",
-      "import/order": "off",
-      "unicorn/no-array-for-each": "off",
-      "unicorn/no-array-push-push": "off",
-      "node/prefer-global/buffer": "off",
-      "node/prefer-global/process": "off"
-    }
   }
 }

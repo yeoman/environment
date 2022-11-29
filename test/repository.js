@@ -6,7 +6,6 @@ import Environment from '../lib/index.mjs';
 
 import YeomanRepository from '../lib/util/repository.js';
 
-/* eslint-disable max-nested-callbacks */
 describe('repository', () => {
   let repository;
 
@@ -24,6 +23,7 @@ describe('repository', () => {
     if (fs.existsSync(repository.repositoryPath)) {
       fs.removeSync(repository.repositoryPath);
     }
+
     delete repository.arb;
   });
 
@@ -31,7 +31,9 @@ describe('repository', () => {
     beforeEach(async function () {
       this.timeout(500_000);
       this.env = Environment.createEnv();
-      return this.env.installLocalGenerators({'generator-dummytest': '0.1.3'});
+      return this.env.installLocalGenerators({
+        'generator-dummytest': '0.1.3',
+      });
     });
 
     afterEach(() => {
@@ -102,5 +104,3 @@ describe('repository', () => {
     });
   });
 });
-/* eslint-enable max-nested-callbacks */
-

@@ -1,13 +1,12 @@
-/* eslint-disable max-nested-callbacks */
 import assert from 'assert';
 import sinon from 'sinon';
 import semver from 'semver';
 import Generator from 'yeoman-generator';
 import helpers from './helpers.js';
-import {createRequire} from 'module';
+import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
-const {version} = require('yeoman-generator/package.json');
+const { version } = require('yeoman-generator/package.json');
 
 class FeaturesGenerator extends Generator {
   getFeatures() {
@@ -28,13 +27,8 @@ describe('environment (generator-features)', () => {
       before(async () => {
         runContext = helpers
           .create('custom-commit')
-          .withOptions({skipInstall: true})
-          .withGenerators([
-            [
-              helpers.createMockedGenerator(),
-              'custom-commit:app'
-            ]
-          ])
+          .withOptions({ skipInstall: true })
+          .withGenerators([[helpers.createMockedGenerator(), 'custom-commit:app']])
           .withEnvironment(env => {
             env.commitSharedFs = sinon.stub().returns(Promise.resolve());
           });
@@ -51,18 +45,18 @@ describe('environment (generator-features)', () => {
       before(async () => {
         runContext = helpers
           .create('custom-commit')
-          .withOptions({skipInstall: true})
+          .withOptions({ skipInstall: true })
           .withGenerators([
             [
               helpers.createMockedGenerator(
                 class extends FeaturesGenerator {
                   constructor(args, options) {
-                    super(args, options, {customCommitTask: true});
+                    super(args, options, { customCommitTask: true });
                   }
-                }
+                },
               ),
-              'custom-commit:app'
-            ]
+              'custom-commit:app',
+            ],
           ])
           .withEnvironment(env => {
             env.commitSharedFs = sinon.stub().returns(Promise.resolve());
@@ -82,18 +76,18 @@ describe('environment (generator-features)', () => {
         customCommitTask = sinon.stub();
         runContext = helpers
           .create('custom-commit')
-          .withOptions({skipInstall: true})
+          .withOptions({ skipInstall: true })
           .withGenerators([
             [
               helpers.createMockedGenerator(
                 class extends FeaturesGenerator {
                   constructor(args, options) {
-                    super(args, options, {customCommitTask});
+                    super(args, options, { customCommitTask });
                   }
-                }
+                },
               ),
-              'custom-commit:app'
-            ]
+              'custom-commit:app',
+            ],
           ])
           .withEnvironment(env => {
             env.commitSharedFs = sinon.stub().returns(Promise.resolve());
@@ -117,16 +111,16 @@ describe('environment (generator-features)', () => {
       before(async () => {
         runContext = helpers
           .create('custom-install')
-          .withOptions({skipInstall: false})
+          .withOptions({ skipInstall: false })
           .withGenerators([
             [
               class extends FeaturesGenerator {
                 packageJsonTask() {
-                  this.packageJson.set({name: 'foo'});
+                  this.packageJson.set({ name: 'foo' });
                 }
               },
-              'custom-install:app'
-            ]
+              'custom-install:app',
+            ],
           ])
           .withEnvironment(env => {
             env.isDestinationPackageJsonCommitted = sinon.stub().returns(true);
@@ -145,20 +139,20 @@ describe('environment (generator-features)', () => {
       before(async () => {
         runContext = helpers
           .create('custom-install')
-          .withOptions({skipInstall: false})
+          .withOptions({ skipInstall: false })
           .withGenerators([
             [
               class extends FeaturesGenerator {
                 constructor(args, options) {
-                  super(args, options, {customInstallTask: true});
+                  super(args, options, { customInstallTask: true });
                 }
 
                 packageJsonTask() {
-                  this.packageJson.set({name: 'foo'});
+                  this.packageJson.set({ name: 'foo' });
                 }
               },
-              'custom-install:app'
-            ]
+              'custom-install:app',
+            ],
           ])
           .withEnvironment(env => {
             env.isDestinationPackageJsonCommitted = sinon.stub().returns(true);
@@ -179,20 +173,20 @@ describe('environment (generator-features)', () => {
         customInstallTask = sinon.stub();
         runContext = helpers
           .create('custom-install')
-          .withOptions({skipInstall: false})
+          .withOptions({ skipInstall: false })
           .withGenerators([
             [
               class extends FeaturesGenerator {
                 constructor(args, options) {
-                  super(args, options, {customInstallTask});
+                  super(args, options, { customInstallTask });
                 }
 
                 packageJsonTask() {
-                  this.packageJson.set({name: 'foo'});
+                  this.packageJson.set({ name: 'foo' });
                 }
               },
-              'custom-install:app'
-            ]
+              'custom-install:app',
+            ],
           ])
           .withEnvironment(env => {
             env.isDestinationPackageJsonCommitted = sinon.stub().returns(true);
@@ -219,4 +213,3 @@ describe('environment (generator-features)', () => {
     });
   });
 });
-/* eslint-enable max-nested-callbacks */

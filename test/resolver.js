@@ -1,13 +1,13 @@
-import path, {dirname} from 'path';
+import path, { dirname } from 'path';
 import assert from 'assert';
 import fs from 'fs-extra';
 import spawn from 'cross-spawn';
 
 import Environment from '../lib/index.mjs';
 
-import {execaOutput} from '../lib/util/util.js';
-import {fileURLToPath} from 'url';
-import {createRequire} from 'module';
+import { execaOutput } from '../lib/util/util.js';
+import { fileURLToPath } from 'url';
+import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
 
@@ -27,15 +27,12 @@ const linkGenerator = (generator, scope) => {
     const scopeDir = path.join(nodeModulesPath, scope);
     dest = path.join(scopeDir, generator);
     if (!fs.existsSync(scopeDir)) {
-      fs.mkdirSync(scopeDir, {recursive: true});
+      fs.mkdirSync(scopeDir, { recursive: true });
     }
   }
+
   if (!fs.existsSync(dest)) {
-    fs.symlinkSync(
-      path.resolve(path.join(__dirname, 'fixtures', generator)),
-      path.resolve(dest),
-      'dir'
-    );
+    fs.symlinkSync(path.resolve(path.join(__dirname, 'fixtures', generator)), path.resolve(dest), 'dir');
   }
 };
 
@@ -46,9 +43,11 @@ const unlinkGenerator = (generator, scope) => {
     scopeDir = path.resolve(path.join('node_modules', scope));
     dest = path.join(scopeDir, generator);
   }
+
   if (fs.existsSync(dest)) {
     fs.unlinkSync(dest);
   }
+
   if (scopeDir && fs.existsSync(scopeDir)) {
     fs.rmdirSync(scopeDir);
   }
@@ -148,7 +147,7 @@ describe('Environment Resolver', function () {
     }
 
     it('local generators prioritized over global', function () {
-      const {resolved} = this.env.get('dummy:app');
+      const { resolved } = this.env.get('dummy:app');
       assert.ok(resolved.includes('lookup-project'), `Couldn't find 'lookup-project' in ${resolved}`);
     });
 
@@ -161,7 +160,7 @@ describe('Environment Resolver', function () {
       assert.ok(this.env.get('extend:support'));
     });
 
-    describe('when there\'s ancestor node_modules/ folder', () => {
+    describe("when there's ancestor node_modules/ folder", () => {
       before(() => {
         process.chdir(subDirRoot);
         spawn.sync('npm', ['install', '--no-package-lock']);
@@ -169,7 +168,9 @@ describe('Environment Resolver', function () {
 
       after(() => {
         process.chdir(projectRoot);
-        fs.rmdirSync(path.join(subDirRoot, 'node_modules'), {recursive: true});
+        fs.rmdirSync(path.join(subDirRoot, 'node_modules'), {
+          recursive: true,
+        });
       });
 
       beforeEach(function () {
@@ -183,7 +184,7 @@ describe('Environment Resolver', function () {
       });
 
       it('local generators are prioritized over ancestor', function () {
-        const {resolved} = this.env.get('dummy:app');
+        const { resolved } = this.env.get('dummy:app');
         assert.ok(resolved.includes('subdir'), `Couldn't find 'subdir' in ${resolved}`);
       });
     });
@@ -192,23 +193,14 @@ describe('Environment Resolver', function () {
       before(() => {
         if (!fs.existsSync(path.resolve('orig'))) {
           fs.ensureDirSync(path.resolve('orig'));
-          fs.moveSync(
-            path.resolve('node_modules'),
-            path.resolve('orig/node_modules')
-          );
-          fs.ensureSymlinkSync(
-            path.resolve('orig/node_modules'),
-            path.resolve('node_modules')
-          );
+          fs.moveSync(path.resolve('node_modules'), path.resolve('orig/node_modules'));
+          fs.ensureSymlinkSync(path.resolve('orig/node_modules'), path.resolve('node_modules'));
         }
       });
       after(() => {
         if (fs.existsSync(path.resolve('orig'))) {
           fs.removeSync(path.resolve('node_modules'));
-          fs.moveSync(
-            path.resolve('orig/node_modules'),
-            path.resolve('node_modules')
-          );
+          fs.moveSync(path.resolve('orig/node_modules'), path.resolve('node_modules'));
           fs.removeSync(path.resolve('orig'));
         }
       });
@@ -242,7 +234,7 @@ describe('Environment Resolver', function () {
       }
 
       it('local generators prioritized over global', function () {
-        const {resolved} = this.env.get('dummy:app');
+        const { resolved } = this.env.get('dummy:app');
         assert.ok(resolved.includes('lookup-project'), `Couldn't find 'lookup-project' in ${resolved}`);
       });
 
@@ -262,21 +254,15 @@ describe('Environment Resolver', function () {
       before(() => {
         customRepositoryPath = path.resolve('orig');
         lookupOptionsBackup = lookupOptions;
-        lookupOptions = {npmPaths: [customRepositoryPath]};
+        lookupOptions = { npmPaths: [customRepositoryPath] };
         if (!fs.existsSync(customRepositoryPath)) {
-          fs.moveSync(
-            path.resolve('node_modules'),
-            customRepositoryPath
-          );
+          fs.moveSync(path.resolve('node_modules'), customRepositoryPath);
         }
       });
       after(() => {
         lookupOptions = lookupOptionsBackup;
         if (fs.existsSync(path.resolve('orig'))) {
-          fs.moveSync(
-            customRepositoryPath,
-            path.resolve('node_modules')
-          );
+          fs.moveSync(customRepositoryPath, path.resolve('node_modules'));
         }
       });
 
@@ -305,7 +291,7 @@ describe('Environment Resolver', function () {
       }
 
       it('local generators prioritized over global', function () {
-        const {resolved} = this.env.get('dummy:app');
+        const { resolved } = this.env.get('dummy:app');
         assert.ok(resolved.includes('orig'), `Couldn't find 'lookup-project' in ${resolved}`);
       });
 
@@ -351,7 +337,7 @@ describe('Environment Resolver', function () {
       beforeEach(function () {
         this.env = new Environment();
         assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-        this.env.lookup({localOnly: true});
+        this.env.lookup({ localOnly: true });
       });
 
       it('register local generators', function () {
@@ -402,39 +388,34 @@ describe('Environment Resolver', function () {
     });
 
     it('with packagePaths', function () {
-      this.env.lookup({packagePaths: [
-        'node_modules/generator-module'
-      ]});
+      this.env.lookup({ packagePaths: ['node_modules/generator-module'] });
       assert.ok(this.env.get('module:app'));
       assert.ok(this.env.getRegisteredPackages().length === 1);
     });
 
     it('with scope and packagePaths', function () {
-      this.env.lookup({packagePaths: [
-        'node_modules/generator-module',
-        'node_modules/@scoped/generator-scoped'
-      ], registerToScope: 'test'});
+      this.env.lookup({
+        packagePaths: ['node_modules/generator-module', 'node_modules/@scoped/generator-scoped'],
+        registerToScope: 'test',
+      });
       assert.ok(this.env.get('@test/module:app'));
       assert.ok(this.env.get('@scoped/scoped:app'));
       assert.ok(this.env.getRegisteredPackages().length === 2);
     });
 
     it('with 2 packagePaths', function () {
-      this.env.lookup({packagePaths: [
-        'node_modules/generator-module',
-        'node_modules/generator-module-root'
-      ]});
+      this.env.lookup({
+        packagePaths: ['node_modules/generator-module', 'node_modules/generator-module-root'],
+      });
       assert.ok(this.env.get('module:app'));
       assert.ok(this.env.get('module-root:app'));
       assert.ok(this.env.getRegisteredPackages().length === 2);
     });
 
     it('with 3 packagePaths', function () {
-      this.env.lookup({packagePaths: [
-        'node_modules/generator-module',
-        'node_modules/generator-module-root',
-        'node_modules/generator-module-lib-gen'
-      ]});
+      this.env.lookup({
+        packagePaths: ['node_modules/generator-module', 'node_modules/generator-module-root', 'node_modules/generator-module-lib-gen'],
+      });
       assert.ok(this.env.get('module:app'));
       assert.ok(this.env.get('module-root:app'));
       assert.ok(this.env.get('module-lib-gen:app'));
@@ -442,12 +423,14 @@ describe('Environment Resolver', function () {
     });
 
     it('with scoped packagePaths', function () {
-      this.env.lookup({packagePaths: [
-        'node_modules/generator-module',
-        'node_modules/generator-module-root',
-        'node_modules/generator-module-lib-gen',
-        'node_modules/@scoped/generator-scoped'
-      ]});
+      this.env.lookup({
+        packagePaths: [
+          'node_modules/generator-module',
+          'node_modules/generator-module-root',
+          'node_modules/generator-module-lib-gen',
+          'node_modules/@scoped/generator-scoped',
+        ],
+      });
       assert.ok(this.env.get('module:app'));
       assert.ok(this.env.get('module-root:app'));
       assert.ok(this.env.get('module-lib-gen:app'));
@@ -456,7 +439,7 @@ describe('Environment Resolver', function () {
     });
 
     it('with npmPaths', function () {
-      this.env.lookup({npmPaths: ['node_modules']});
+      this.env.lookup({ npmPaths: ['node_modules'] });
       assert.ok(this.env.get('module:app'));
       assert.ok(this.env.get('module-root:app'));
       assert.ok(this.env.get('module-lib-gen:app'));
@@ -465,24 +448,37 @@ describe('Environment Resolver', function () {
     });
 
     it('with sub-sub-generators filePatterns', function () {
-      this.env.lookup({npmPaths: ['node_modules'], filePatterns: ['*/*/index.js']});
+      this.env.lookup({
+        npmPaths: ['node_modules'],
+        filePatterns: ['*/*/index.js'],
+      });
       assert.ok(this.env.get('@scoped/scoped:app:scaffold'));
     });
 
     it('with packagePatterns', function () {
-      this.env.lookup({npmPaths: ['node_modules'], packagePatterns: ['generator-module', 'generator-module-root']});
+      this.env.lookup({
+        npmPaths: ['node_modules'],
+        packagePatterns: ['generator-module', 'generator-module-root'],
+      });
       assert.ok(this.env.get('module:app'));
       assert.ok(this.env.get('module-root:app'));
       assert.ok(this.env.getRegisteredPackages().length === 2);
     });
 
     it('with sub-sub-generators and packagePaths', function () {
-      this.env.lookup({packagePaths: ['node_modules/@scoped/generator-scoped'], filePatterns: ['*/*/index.js']});
+      this.env.lookup({
+        packagePaths: ['node_modules/@scoped/generator-scoped'],
+        filePatterns: ['*/*/index.js'],
+      });
       assert.ok(this.env.get('@scoped/scoped:app:scaffold'));
     });
 
     it('with sub-sub-generators and packagePatterns', function () {
-      this.env.lookup({npmPaths: ['node_modules'], packagePatterns: ['generator-scoped'], filePatterns: ['*/*/index.js']});
+      this.env.lookup({
+        npmPaths: ['node_modules'],
+        packagePatterns: ['generator-scoped'],
+        filePatterns: ['*/*/index.js'],
+      });
       assert.ok(this.env.get('@scoped/scoped:app:scaffold'));
     });
   });
@@ -498,7 +494,7 @@ describe('Environment Resolver', function () {
     });
 
     beforeEach(function () {
-      this.env = new Environment({experimental: true});
+      this.env = new Environment({ experimental: true });
     });
 
     after(() => {
@@ -508,33 +504,30 @@ describe('Environment Resolver', function () {
       unlinkGenerator('generator-module-root');
 
       process.chdir(projectRoot);
-      fs.rmdirSync(path.join(customProjectRoot, 'node_modules'), {recursive: true});
+      fs.rmdirSync(path.join(customProjectRoot, 'node_modules'), {
+        recursive: true,
+      });
     });
 
     it('with 1 namespace', function () {
-      this.env.lookupNamespaces('module:app', {npmPaths: [
-        'node_modules'
-      ]});
+      this.env.lookupNamespaces('module:app', { npmPaths: ['node_modules'] });
       assert.ok(this.env.get('module:app'));
       assert.ok(this.env.getRegisteredPackages().length === 1);
     });
 
     it('with 2 namespaces', function () {
-      this.env.lookupNamespaces(
-        [
-          'module:app',
-          'module-root:app'
-        ], {npmPaths: ['node_modules']}
-      );
+      this.env.lookupNamespaces(['module:app', 'module-root:app'], {
+        npmPaths: ['node_modules'],
+      });
       assert.ok(this.env.get('module:app'));
       assert.ok(this.env.get('module-root:app'));
       assert.ok(this.env.getRegisteredPackages().length === 2);
     });
 
     it('with sub-sub-generators', function () {
-      this.env.lookupNamespaces('@scoped/scoped:app:scaffold', {npmPaths: [
-        'node_modules'
-      ]});
+      this.env.lookupNamespaces('@scoped/scoped:app:scaffold', {
+        npmPaths: ['node_modules'],
+      });
       assert.ok(this.env.get('@scoped/scoped:app:scaffold'));
       assert.ok(this.env.getRegisteredPackages().length === 1);
     });
@@ -729,22 +722,28 @@ describe('Environment Resolver', function () {
       unlinkGenerator('generator-module');
 
       process.chdir(projectRoot);
-      fs.rmdirSync(path.join(customProjectRoot, 'node_modules'), {recursive: true});
+      fs.rmdirSync(path.join(customProjectRoot, 'node_modules'), {
+        recursive: true,
+      });
     });
 
     describe('Find generator', () => {
       it('Scoped lookup', () => {
         const modulePath = Environment.lookupGenerator('@dummyscope/scoped:app');
         assert.ok(modulePath.endsWith('node_modules/@dummyscope/generator-scoped/app/index.js'));
-        const packagePath = Environment.lookupGenerator('@dummyscope/scoped:app', {packagePath: true});
+        const packagePath = Environment.lookupGenerator('@dummyscope/scoped:app', { packagePath: true });
         assert.ok(packagePath.endsWith('node_modules/@dummyscope/generator-scoped'));
       });
       it('Lookup', () => {
         const modulePath = Environment.lookupGenerator('extend:support');
         assert.ok(modulePath.endsWith('node_modules/generator-extend/support/index.js'));
 
-        const packagePath = Environment.lookupGenerator('extend:support', {packagePath: true});
-        const packagePath3 = Environment.lookupGenerator('extend', {packagePath: true});
+        const packagePath = Environment.lookupGenerator('extend:support', {
+          packagePath: true,
+        });
+        const packagePath3 = Environment.lookupGenerator('extend', {
+          packagePath: true,
+        });
         assert.ok(packagePath.endsWith('node_modules/generator-extend'));
         assert.ok(packagePath3.endsWith('node_modules/generator-extend'));
       });
@@ -752,10 +751,14 @@ describe('Environment Resolver', function () {
         const modulePath = Environment.lookupGenerator('module:app');
         assert.ok(modulePath.endsWith('node_modules/generator-module/generators/app/index.js'), modulePath);
 
-        const packagePath = Environment.lookupGenerator('module:app', {packagePath: true});
+        const packagePath = Environment.lookupGenerator('module:app', {
+          packagePath: true,
+        });
         assert.ok(packagePath.endsWith('node_modules/generator-module'), packagePath);
 
-        const generatorPath = Environment.lookupGenerator('module:app', {generatorPath: true});
+        const generatorPath = Environment.lookupGenerator('module:app', {
+          generatorPath: true,
+        });
         assert.ok(generatorPath.endsWith('node_modules/generator-module/generators/'), generatorPath);
       });
     });
@@ -769,7 +772,7 @@ describe('Environment Resolver', function () {
       this.chdirRootNodeModule = path.join(this.chdirRoot, 'node_modules');
       this.multipleModuleGenerator = path.join(this.chdirRootNodeModule, 'generator-module');
 
-      fs.mkdirSync(this.chdirRoot, {recursive: true});
+      fs.mkdirSync(this.chdirRoot, { recursive: true });
       linkGenerator('generator-module');
       process.chdir(this.chdirRoot);
       linkGenerator('generator-module');
@@ -781,7 +784,9 @@ describe('Environment Resolver', function () {
       unlinkGenerator('generator-module');
       process.chdir(projectRoot);
 
-      fs.rmdirSync(path.join(customProjectRoot, 'node_modules'), {recursive: true});
+      fs.rmdirSync(path.join(customProjectRoot, 'node_modules'), {
+        recursive: true,
+      });
     });
 
     describe('Find generator', () => {
@@ -789,12 +794,16 @@ describe('Environment Resolver', function () {
         const modulePath = Environment.lookupGenerator('module:app');
         assert.ok(modulePath.endsWith('node_modules/generator-module/generators/app/index.js'));
 
-        const multiplePath = Environment.lookupGenerator('module:app', {multiple: true});
+        const multiplePath = Environment.lookupGenerator('module:app', {
+          multiple: true,
+        });
         assert.equal(multiplePath.length, 2);
         assert.ok(multiplePath[0].endsWith('lookup-custom/node_modules/generator-module/generators/app/index.js'));
         assert.ok(multiplePath[1].endsWith('lookup-custom/node_modules/foo/node_modules/generator-module/generators/app/index.js'));
 
-        const multiplePath2 = Environment.lookupGenerator('module:app', {singleResult: false});
+        const multiplePath2 = Environment.lookupGenerator('module:app', {
+          singleResult: false,
+        });
         assert.equal(multiplePath2.length, 2);
         assert.ok(multiplePath2[0].endsWith('lookup-custom/node_modules/generator-module/generators/app/index.js'));
         assert.ok(multiplePath2[1].endsWith('lookup-custom/node_modules/foo/node_modules/generator-module/generators/app/index.js'));

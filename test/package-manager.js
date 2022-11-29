@@ -1,8 +1,7 @@
-/* eslint-disable max-nested-callbacks */
 import assert from 'assert';
-import path, {dirname} from 'path';
+import path, { dirname } from 'path';
 import sinon from 'sinon';
-import {fileURLToPath} from 'url';
+import { fileURLToPath } from 'url';
 
 import PackageManagerMixin from '../lib/package-manager.js';
 
@@ -18,12 +17,12 @@ describe('environment (package-manager)', () => {
   beforeEach(() => {
     packageManager = new PackageManager();
     packageManager.adapter = {
-      log: sinon.stub()
+      log: sinon.stub(),
     };
     packageManager.findGeneratorCustomInstallTask = sinon.stub();
     packageManager.spawnCommand = sinon.stub().returns(Promise.resolve());
     packageManager.options = {};
-    packageManager.sharedFs = {get: sinon.stub().returns()};
+    packageManager.sharedFs = { get: sinon.stub().returns() };
     packageManager.cwd = path.join(__dirname, 'fixtures', 'package-manager', 'npm');
   });
 
@@ -64,8 +63,10 @@ describe('environment (package-manager)', () => {
 
         it('should log', () => {
           assert(packageManager.adapter.log.calledOnce);
-          assert(packageManager.adapter.log.getCall(0).calledWith(`
-No change to package.json was detected. No package manager install will be executed.`));
+          assert(
+            packageManager.adapter.log.getCall(0).calledWith(`
+No change to package.json was detected. No package manager install will be executed.`),
+          );
         });
 
         it('should not call spawnCommand', () => {
@@ -75,21 +76,25 @@ No change to package.json was detected. No package manager install will be execu
 
       describe('when package.json was committed', () => {
         beforeEach(async () => {
-          packageManager.sharedFs.get = sinon.stub().returns({committed: true});
+          packageManager.sharedFs.get = sinon.stub().returns({ committed: true });
         });
 
         describe('with skipInstall', () => {
           beforeEach(async () => {
-            packageManager.options = {skipInstall: true};
+            packageManager.options = { skipInstall: true };
             await packageManager.packageManagerInstallTask();
           });
 
           it('should log', async () => {
             assert(packageManager.adapter.log.calledTwice);
-            assert(packageManager.adapter.log.getCall(0).calledWith(`
-Changes to package.json were detected.`));
-            assert(packageManager.adapter.log.getCall(1).calledWith(`Skipping package manager install.
-`));
+            assert(
+              packageManager.adapter.log.getCall(0).calledWith(`
+Changes to package.json were detected.`),
+            );
+            assert(
+              packageManager.adapter.log.getCall(1).calledWith(`Skipping package manager install.
+`),
+            );
           });
 
           it('should not call spawnCommand', () => {
@@ -105,10 +110,14 @@ Changes to package.json were detected.`));
 
           it('should log', async () => {
             assert(packageManager.adapter.log.calledTwice);
-            assert(packageManager.adapter.log.getCall(0).calledWith(`
-Changes to package.json were detected.`));
-            assert(packageManager.adapter.log.getCall(1).calledWith(`
-Running npm install for you to install the required dependencies.`));
+            assert(
+              packageManager.adapter.log.getCall(0).calledWith(`
+Changes to package.json were detected.`),
+            );
+            assert(
+              packageManager.adapter.log.getCall(1).calledWith(`
+Running npm install for you to install the required dependencies.`),
+            );
           });
 
           it('should execute npm', () => {
@@ -125,10 +134,14 @@ Running npm install for you to install the required dependencies.`));
 
           it('should log', async () => {
             assert(packageManager.adapter.log.calledTwice);
-            assert(packageManager.adapter.log.getCall(0).calledWith(`
-Changes to package.json were detected.`));
-            assert(packageManager.adapter.log.getCall(1).calledWith(`
-Running yarn install for you to install the required dependencies.`));
+            assert(
+              packageManager.adapter.log.getCall(0).calledWith(`
+Changes to package.json were detected.`),
+            );
+            assert(
+              packageManager.adapter.log.getCall(1).calledWith(`
+Running yarn install for you to install the required dependencies.`),
+            );
           });
 
           it('should execute yarn', () => {
@@ -145,10 +158,14 @@ Running yarn install for you to install the required dependencies.`));
 
           it('should log', async () => {
             assert(packageManager.adapter.log.calledTwice);
-            assert(packageManager.adapter.log.getCall(0).calledWith(`
-Changes to package.json were detected.`));
-            assert(packageManager.adapter.log.getCall(1).calledWith(`
-Running pnpm install for you to install the required dependencies.`));
+            assert(
+              packageManager.adapter.log.getCall(0).calledWith(`
+Changes to package.json were detected.`),
+            );
+            assert(
+              packageManager.adapter.log.getCall(1).calledWith(`
+Running pnpm install for you to install the required dependencies.`),
+            );
           });
 
           it('should execute pnpm', () => {
@@ -160,14 +177,16 @@ Running pnpm install for you to install the required dependencies.`));
         describe('with an unsupported package manager', () => {
           beforeEach(async () => {
             packageManager.cwd = path.join(__dirname, 'fixtures', 'package-manager', 'npm');
-            packageManager.options = {nodePackageManager: 'foo'};
+            packageManager.options = { nodePackageManager: 'foo' };
             await packageManager.packageManagerInstallTask();
           });
 
           it('should log', async () => {
             assert(packageManager.adapter.log.calledTwice);
-            assert(packageManager.adapter.log.getCall(0).calledWith(`
-Changes to package.json were detected.`));
+            assert(
+              packageManager.adapter.log.getCall(0).calledWith(`
+Changes to package.json were detected.`),
+            );
             assert(packageManager.adapter.log.getCall(1).calledWith('foo is not a supported package manager. Run it by yourself.'));
           });
 
@@ -185,11 +204,15 @@ Changes to package.json were detected.`));
 
           it('should log', async () => {
             assert.equal(packageManager.adapter.log.callCount, 3);
-            assert(packageManager.adapter.log.getCall(0).calledWith(`
-Changes to package.json were detected.`));
+            assert(
+              packageManager.adapter.log.getCall(0).calledWith(`
+Changes to package.json were detected.`),
+            );
             assert(packageManager.adapter.log.getCall(1).calledWith('Error detecting the package manager. Falling back to npm.'));
-            assert(packageManager.adapter.log.getCall(2).calledWith(`
-Running npm install for you to install the required dependencies.`));
+            assert(
+              packageManager.adapter.log.getCall(2).calledWith(`
+Running npm install for you to install the required dependencies.`),
+            );
           });
 
           it('should not call spawnCommand', () => {
@@ -200,4 +223,3 @@ Running npm install for you to install the required dependencies.`));
     });
   });
 });
-/* eslint-enable max-nested-callbacks */

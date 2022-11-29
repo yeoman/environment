@@ -1,6 +1,6 @@
 import events from 'events';
 import fs from 'fs';
-import path, {dirname} from 'path';
+import path, { dirname } from 'path';
 import util from 'util';
 import sinon from 'sinon';
 import sinonTestFactory from 'sinon-test';
@@ -8,9 +8,9 @@ import Generator from 'yeoman-generator';
 import assert from 'yeoman-assert';
 
 import semver from 'semver';
-import Environment, {TerminalAdapter} from '../lib/index.mjs';
-import {fileURLToPath} from 'url';
-import {createRequire} from 'module';
+import Environment, { TerminalAdapter } from '../lib/index.mjs';
+import { fileURLToPath } from 'url';
+import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
 const generatorPackageJson = require('yeoman-generator/package.json');
@@ -28,7 +28,10 @@ describe('Environment', () => {
   let MockedGenerator;
 
   beforeEach(function () {
-    this.env = new Environment({skipInstall: true, sharedOptions: {sharedConstructorData: {}}});
+    this.env = new Environment({
+      skipInstall: true,
+      sharedOptions: { sharedConstructorData: {} },
+    });
 
     MockedGenerator = class MockedGenerator extends Generator {};
     mockedDefault = sinon.stub();
@@ -45,7 +48,7 @@ describe('Environment', () => {
 
   describe('constructor', () => {
     it('take options parameter', () => {
-      const options = {foo: 'bar'};
+      const options = { foo: 'bar' };
       assert.equal(new Environment(options).options, options);
     });
 
@@ -131,33 +134,33 @@ describe('Environment', () => {
 
     it('pass options parameter', function () {
       const args = [];
-      const options = {foo: 'bar'};
+      const options = { foo: 'bar' };
       const generator = this.env.create('stub', args, options);
       assert.equal(generator.options.foo, 'bar');
     });
 
     it('pass options.arguments', function () {
       const args = ['foo', 'bar'];
-      const generator = this.env.create('stub', {arguments: args});
+      const generator = this.env.create('stub', { arguments: args });
       assert.deepEqual(generator.arguments, args);
     });
 
     it('pass options.arguments as string', function () {
       const args = 'foo bar';
-      const generator = this.env.create('stub', {arguments: args});
+      const generator = this.env.create('stub', { arguments: args });
       assert.deepEqual(generator.arguments, args.split(' '));
     });
 
     it('pass options.args (as `arguments` alias)', function () {
       const args = ['foo', 'bar'];
-      const generator = this.env.create('stub', {args});
+      const generator = this.env.create('stub', { args });
       assert.deepEqual(generator.arguments, args);
     });
 
     it('prefer options.arguments over options.args', function () {
       const args1 = ['yo', 'unicorn'];
       const args = ['foo', 'bar'];
-      const generator = this.env.create('stub', {arguments: args1, args});
+      const generator = this.env.create('stub', { arguments: args1, args });
       assert.deepEqual(generator.arguments, args1);
     });
 
@@ -169,14 +172,14 @@ describe('Environment', () => {
     });
 
     it('pass options.options', function () {
-      const options = {foo: 'bar'};
-      const generator = this.env.create('stub', {options});
+      const options = { foo: 'bar' };
+      const generator = this.env.create('stub', { options });
       assert.equal(generator.options.foo, 'bar');
     });
 
     it('spread sharedOptions', function () {
-      const options = {foo: 'bar'};
-      const generator = this.env.create('stub', {options});
+      const options = { foo: 'bar' };
+      const generator = this.env.create('stub', { options });
       const generator2 = this.env.create('stub');
       assert.equal(generator.options.foo, 'bar');
       assert.equal(generator.options.sharedData, generator2.options.sharedData);
@@ -210,14 +213,12 @@ describe('Environment', () => {
     });
 
     it('adds the namespace from a module generator on the options', function () {
-      this.env
-        .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
+      this.env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
       assert.equal(this.env.create('fixtures:generator-module').options.namespace, 'fixtures:generator-module');
     });
 
     it('adds the Generator resolved path from a module generator on the options', function () {
-      this.env
-        .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
+      this.env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
       assert.equal(this.env.create('fixtures:generator-module').options.resolved, this.env.get('fixtures:generator-module').resolved);
     });
   });
@@ -226,7 +227,7 @@ describe('Environment', () => {
     beforeEach(function () {
       class NewGenerator extends Generator {
         getFeatures() {
-          return {uniqueBy: this.options.namespace};
+          return { uniqueBy: this.options.namespace };
         }
       }
       this.Generator = NewGenerator;
@@ -366,16 +367,20 @@ describe('Environment', () => {
       if (!semver.satisfies(require('../node_modules/yeoman-generator/package.json').version, '>=5.0.0-beta.1')) {
         this.skip();
       }
-      return this.env.run(['writingstub:run'], {bail: true}).then(() => {
-        throw new Error('should not happen');
-      }).catch(error => {
-        assert.equal(error.message, 'Process aborted by conflict: foo.js');
-      });
+
+      return this.env
+        .run(['writingstub:run'], { bail: true })
+        .then(() => {
+          throw new Error('should not happen');
+        })
+        .catch(error => {
+          assert.equal(error.message, 'Process aborted by conflict: foo.js');
+        });
     });
 
     it('pass args and options to the runned generator', function () {
       const args = ['stub:run', 'module'];
-      const options = {skipInstall: true};
+      const options = { skipInstall: true };
       return this.env.run(args, options).then(() => {
         assert.ok(this.runMethod.calledOnce);
         assert.equal(this.args[0], 'module');
@@ -393,24 +398,33 @@ describe('Environment', () => {
 
     it('cannot take no arguments', function () {
       this.env.arguments = ['stub:run'];
-      return this.env.run().then(() => {
-        throw new Error('not supposed to happen');
-      }, error => {
-        assert.ok(this.runMethod.notCalled);
-        assert.ok(error.message.includes('Must provide at least one argument, the generator namespace to invoke.'));
-      });
+      return this.env.run().then(
+        () => {
+          throw new Error('not supposed to happen');
+        },
+        error => {
+          assert.ok(this.runMethod.notCalled);
+          assert.ok(error.message.includes('Must provide at least one argument, the generator namespace to invoke.'));
+        },
+      );
     });
 
     it('launch error if generator is not found', function () {
-      return this.env.run('some:unknown:generator').then(() => assert.fail(), error => {
-        assert.ok(error.message.includes('some:unknown:generator'));
-      });
+      return this.env.run('some:unknown:generator').then(
+        () => assert.fail(),
+        error => {
+          assert.ok(error.message.includes('some:unknown:generator'));
+        },
+      );
     });
 
-    it('launch error if generator doesn\'t have a constructor', function () {
-      return this.env.run('no-constructor:app').then(() => assert.fail(), error => {
-        assert.ok(error.message.includes('provides a constructor'));
-      });
+    it("launch error if generator doesn't have a constructor", function () {
+      return this.env.run('no-constructor:app').then(
+        () => assert.fail(),
+        error => {
+          assert.ok(error.message.includes('provides a constructor'));
+        },
+      );
     });
 
     it('generator error event emits error event when no callback passed', function (done) {
@@ -455,22 +469,23 @@ describe('Environment', () => {
     });
 
     it('correctly append scope in generator hint', function () {
-      return this.env.run('@dummyscope/package').then(() => assert.fail(), error => {
-        assert.ok(error.message.includes('@dummyscope/generator-package'));
-      });
+      return this.env.run('@dummyscope/package').then(
+        () => assert.fail(),
+        error => {
+          assert.ok(error.message.includes('@dummyscope/generator-package'));
+        },
+      );
     });
 
     it('runs a module generator', function () {
-      this.env
-        .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
+      this.env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
       return this.env.run('fixtures:generator-module');
     });
   });
 
   describe('#run() a ts generator', () => {
     beforeEach(function () {
-      this.env
-        .register(path.join(__dirname, './fixtures/generator-ts/generators/app/index.ts'), 'ts:app');
+      this.env.register(path.join(__dirname, './fixtures/generator-ts/generators/app/index.ts'), 'ts:app');
       this.runMethod = sinon.spy(this.env.get('ts:app').prototype, 'exec');
     });
 
@@ -487,8 +502,7 @@ describe('Environment', () => {
 
   describe('#run() a cjs generator', () => {
     beforeEach(function () {
-      this.env
-        .register(path.join(__dirname, './fixtures/generator-common-js/generators/cjs/index.cjs'), 'common-js:cjs');
+      this.env.register(path.join(__dirname, './fixtures/generator-common-js/generators/cjs/index.cjs'), 'common-js:cjs');
       const Generator = this.env.get('common-js:cjs');
       this.runMethod = sinon.spy(Generator.prototype, 'default');
       this.postConstruct = sinon.spy(Generator.prototype, '_postConstruct');
@@ -510,7 +524,7 @@ describe('Environment', () => {
       });
     });
     it('should not call generator _postConstruct method with help option', function () {
-      return this.env.run(['common-js:cjs'], {help: true}).then(() => {
+      return this.env.run(['common-js:cjs'], { help: true }).then(() => {
         assert.ok(this.postConstruct.notCalled);
       });
     });
@@ -519,8 +533,7 @@ describe('Environment', () => {
   describe('#run() an esm generator', () => {
     describe('with js extension', () => {
       beforeEach(async function () {
-        this.env
-          .register(path.join(__dirname, './fixtures/generator-esm/generators/app/index.js'), 'esm:app');
+        this.env.register(path.join(__dirname, './fixtures/generator-esm/generators/app/index.js'), 'esm:app');
         const esmClass = await this.env.get('esm:app');
         this.runMethod = sinon.spy(esmClass.prototype, 'default');
         this.postConstruct = sinon.spy(esmClass.prototype, '_postConstruct');
@@ -542,15 +555,14 @@ describe('Environment', () => {
         });
       });
       it('should not call generator _postConstruct method with help option', function () {
-        return this.env.run(['esm:app'], {help: true}).then(() => {
+        return this.env.run(['esm:app'], { help: true }).then(() => {
           assert.ok(this.postConstruct.notCalled);
         });
       });
     });
     describe('with mjs extension', () => {
       beforeEach(async function () {
-        this.env
-          .register(path.join(__dirname, './fixtures/generator-esm/generators/mjs/index.mjs'), 'esm:mjs');
+        this.env.register(path.join(__dirname, './fixtures/generator-esm/generators/mjs/index.mjs'), 'esm:mjs');
         const esmClass = await this.env.get('esm:mjs');
         this.runMethod = sinon.spy(esmClass.prototype, 'default');
       });
@@ -568,8 +580,7 @@ describe('Environment', () => {
     describe('with createGenerator', () => {
       beforeEach(async function () {
         this.env.registerStub(MockedGenerator, 'mocked-generator');
-        this.env
-          .register(path.join(__dirname, './fixtures/generator-esm/generators/create/index.js'), 'esm:create');
+        this.env.register(path.join(__dirname, './fixtures/generator-esm/generators/create/index.js'), 'esm:create');
       });
 
       it('runs a registered generator', function () {
@@ -581,10 +592,8 @@ describe('Environment', () => {
     describe('with inherited createGenerator', () => {
       beforeEach(async function () {
         this.env.registerStub(MockedGenerator, 'mocked-generator');
-        this.env
-          .register(path.join(__dirname, './fixtures/generator-esm/generators/create/index.js'), 'esm:create');
-        this.env
-          .register(path.join(__dirname, './fixtures/generator-esm/generators/create-inherited/index.js'), 'esm:create-inherited');
+        this.env.register(path.join(__dirname, './fixtures/generator-esm/generators/create/index.js'), 'esm:create');
+        this.env.register(path.join(__dirname, './fixtures/generator-esm/generators/create-inherited/index.js'), 'esm:create-inherited');
       });
 
       it('runs a registered generator', function () {
@@ -618,9 +627,7 @@ describe('Environment', () => {
       this.simplePath = path.join(__dirname, 'fixtures/generator-simple');
       this.extendPath = path.join(__dirname, './fixtures/generator-extend/support');
       assert.equal(this.env.namespaces().length, 0, 'env should be empty');
-      this.env
-        .register(this.simplePath, 'fixtures:generator-simple', this.simplePath)
-        .register(this.extendPath, 'scaffold');
+      this.env.register(this.simplePath, 'fixtures:generator-simple', this.simplePath).register(this.extendPath, 'scaffold');
     });
 
     it('store registered generators', function () {
@@ -783,7 +790,7 @@ describe('Environment', () => {
       assert.equal(this.env.namespace('generator-backbone/generator-backbone/all.js'), 'backbone:all');
     });
 
-    it('works with Windows\' paths', function () {
+    it("works with Windows' paths", function () {
       assert.equal(this.env.namespace('backbone\\all\\main.js'), 'backbone:all');
       assert.equal(this.env.namespace('backbone\\all'), 'backbone:all');
       assert.equal(this.env.namespace('backbone\\all.js'), 'backbone:all');
@@ -799,27 +806,24 @@ describe('Environment', () => {
 
     it('remove path before the generator name', function () {
       assert.equal(this.env.namespace('/Users/yeoman/.nvm/v0.10.22/lib/node_modules/generator-backbone/all/index.js'), 'backbone:all');
-      assert.equal(this.env.namespace('/Users/yeoman with space and ./.nvm/v0.10.22/lib/node_modules/generator-backbone/all/index.js'), 'backbone:all');
+      assert.equal(
+        this.env.namespace('/Users/yeoman with space and ./.nvm/v0.10.22/lib/node_modules/generator-backbone/all/index.js'),
+        'backbone:all',
+      );
       assert.equal(this.env.namespace('/usr/lib/node_modules/generator-backbone/all/index.js'), 'backbone:all');
       assert.equal(
         this.env.namespace('c:\\projects\\m. projects\\generators\\generator-example\\generators\\app\\index.js'),
-        'example:app'
+        'example:app',
       );
     });
 
     it('Handles non generator-* packages inside node_modules', function () {
       assert.equal(this.env.namespace('/Users/yeoman with space and ./.nvm/v0.10.22/lib/node_modules/example/all/index.js'), 'example:all');
-      assert.equal(
-        this.env.namespace('c:\\projects\\node_modules\\example\\generators\\app\\index.js'),
-        'example:app'
-      );
+      assert.equal(this.env.namespace('c:\\projects\\node_modules\\example\\generators\\app\\index.js'), 'example:app');
     });
 
     it('handle paths when multiples lookups are in it', function () {
-      assert.equal(
-        this.env.namespace('c:\\projects\\yeoman\\generators\\generator-example\\generators\\app\\index.js'),
-        'example:app'
-      );
+      assert.equal(this.env.namespace('c:\\projects\\yeoman\\generators\\generator-example\\generators\\app\\index.js'), 'example:app');
     });
 
     it('handles namespaces', function () {
@@ -846,27 +850,23 @@ describe('Environment', () => {
       assert.equal(this.env.get('mocha:generator:C:\\foo\\bar'), this.generator);
     });
 
-    it('works with Windows\' absolute paths', sinonTest(function () {
-      const absolutePath = 'C:\\foo\\bar';
+    it(
+      "works with Windows' absolute paths",
+      sinonTest(function () {
+        const absolutePath = 'C:\\foo\\bar';
 
-      const envMock = this.mock(this.env);
+        const envMock = this.mock(this.env);
 
-      envMock
-        .expects('getByPath')
-        .once()
-        .withExactArgs(absolutePath)
-        .returns(null);
+        envMock.expects('getByPath').once().withExactArgs(absolutePath).returns(null);
 
-      this.env.get(absolutePath);
+        this.env.get(absolutePath);
 
-      envMock.verify();
-    }));
+        envMock.verify();
+      }),
+    );
 
     it('fallback to requiring generator from a file path', function () {
-      assert.equal(
-        this.env.get(path.join(__dirname, './fixtures/generator-mocha')),
-        this.generator
-      );
+      assert.equal(this.env.get(path.join(__dirname, './fixtures/generator-mocha')), this.generator);
     });
 
     it('returns undefined if namespace is not found', function () {
@@ -876,8 +876,7 @@ describe('Environment', () => {
 
     it('works with modules', function () {
       const generator = require('./fixtures/generator-module/generators/app');
-      this.env
-        .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
+      this.env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
       assert.equal(this.env.get('fixtures:generator-module'), generator.default);
     });
   });

@@ -34,23 +34,27 @@ describe('Generators plugin', () => {
         this.timeout(300_000);
         delete this.execValue;
 
-        this.env = new Environment({skipInstall: true, experimental: true});
+        this.env = new Environment({ skipInstall: true, experimental: true });
 
         const self = this;
-        const superGenerator = {createGenerator(env) {
-          return class extends env.requireGenerator(undefined) {
-            exec() {}
-          };
-        }};
+        const superGenerator = {
+          createGenerator(env) {
+            return class extends env.requireGenerator(undefined) {
+              exec() {}
+            };
+          },
+        };
         this.env.registerStub(superGenerator, 'super:app');
 
-        const dummy = {createGenerator(env) {
-          return class extends env.requireGenerator(extended) {
-            exec() {
-              self.execValue = 'done';
-            }
-          };
-        }};
+        const dummy = {
+          createGenerator(env) {
+            return class extends env.requireGenerator(extended) {
+              exec() {
+                self.execValue = 'done';
+              }
+            };
+          },
+        };
         this.env.registerStub(dummy, 'dummy:app');
       });
 

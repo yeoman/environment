@@ -1,27 +1,26 @@
 #!/usr/bin/env node
-const {YeomanCommand} = require('../lib/util/command');
+const { YeomanCommand } = require('../lib/util/command');
 const packageJson = require('../package.json');
 const Env = require('..');
-const {printGroupedGenerator, environmentAction} = require('./utils');
+const { printGroupedGenerator, environmentAction } = require('./utils');
 
 const program = new YeomanCommand();
 
-program
-  .version(packageJson.version)
-  .allowExcessArguments(false)
-  .enablePositionalOptions();
+program.version(packageJson.version).allowExcessArguments(false).enablePositionalOptions();
 
-Env.addEnvironmentOptions(program
-  .command('run <namespace>')
-  .description('Run a generator', {namespace: 'Generator to run'})
-  .passThroughOptions()
-  .allowUnknownOption()
-  .allowExcessArguments(true)
-  .action(environmentAction)
-  .usage('[environment options] <namespace> [generator-options]')
+Env.addEnvironmentOptions(
+  program
+    .command('run <namespace>')
+    .description('Run a generator', { namespace: 'Generator to run' })
+    .passThroughOptions()
+    .allowUnknownOption()
+    .allowExcessArguments(true)
+    .action(environmentAction)
+    .usage('[environment options] <namespace> [generator-options]'),
 );
 
-program.command('find')
+program
+  .command('find')
   .description('Find installed generators')
   .action(() => {
     const env = Env.createEnv();
@@ -29,7 +28,8 @@ program.command('find')
     printGroupedGenerator(generators, env);
   });
 
-program.command('list')
+program
+  .command('list')
   .description('List generators available to be used')
   .action(() => {
     const env = Env.createEnv();
@@ -37,8 +37,7 @@ program.command('list')
     printGroupedGenerator(Object.values(env.getGeneratorsMeta()), env);
   });
 
-program.parseAsync(process.argv)
-  .catch(error => {
-    console.log(error);
-    process.exit(1);
-  });
+program.parseAsync(process.argv).catch(error => {
+  console.log(error);
+  process.exit(1);
+});

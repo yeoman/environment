@@ -3,7 +3,7 @@ import inquirer from 'inquirer';
 import sinon from 'sinon';
 import logSymbols from 'log-symbols';
 import stripAnsi from 'strip-ansi';
-import {TerminalAdapter} from '../lib/index.mjs';
+import { TerminalAdapter } from '../lib/index.mjs';
 import createLog from '../lib/util/log.js';
 
 describe('TerminalAdapter', () => {
@@ -14,7 +14,7 @@ describe('TerminalAdapter', () => {
   describe('#prompt()', () => {
     beforeEach(function () {
       this.sandbox = sinon.createSandbox();
-      this.fakePromise = {then: sinon.spy()};
+      this.fakePromise = { then: sinon.spy() };
       this.stub = sinon.stub().returns(this.fakePromise);
       this.sandbox.stub(inquirer, 'createPromptModule').returns(this.stub);
       this.adapter = new TerminalAdapter();
@@ -43,7 +43,7 @@ describe('TerminalAdapter', () => {
   describe('#prompt() with answers', () => {
     it('pass its arguments to inquirer', function (done) {
       const questions = [];
-      const answers = {prompt1: 'foo'};
+      const answers = { prompt1: 'foo' };
       this.adapter.prompt(questions, answers).then(returnValue => {
         assert.equal(returnValue.prompt1, answers.prompt1);
         done();
@@ -54,7 +54,7 @@ describe('TerminalAdapter', () => {
   describe('#prompt() with callback for backwards compatibility for generator < 5', () => {
     it('should call the callback with answers', function (done) {
       const questions = [];
-      const answers = {prompt1: 'foo'};
+      const answers = { prompt1: 'foo' };
       this.adapter.prompt(questions, answers, returnValue => {
         assert.equal(returnValue.prompt1, answers.prompt1);
         done();
@@ -91,7 +91,7 @@ describe('TerminalAdapter', () => {
       this.adapter.log('%has %many %reps', {
         has: 'has',
         many: 'many',
-        reps: 'reps'
+        reps: 'reps',
       });
       assert(this.spyerror.withArgs('has many reps').calledOnce);
       assert.equal(stripAnsi(logMessage), 'has many reps\n');
@@ -118,15 +118,12 @@ describe('TerminalAdapter', () => {
     it('#write() objects', function () {
       const outputObject = {
         something: 72,
-        another: 12
+        another: 12,
       };
 
       this.adapter.log(outputObject);
       assert(this.spyerror.withArgs(outputObject).calledOnce);
-      assert.equal(
-        stripAnsi(logMessage),
-        '{ something: 72, another: 12 }\n'
-      );
+      assert.equal(stripAnsi(logMessage), '{ something: 72, another: 12 }\n');
     });
   });
 
@@ -179,9 +176,7 @@ describe('TerminalAdapter', () => {
 
   describe('#log', () => {
     const funcs = ['write', 'writeln', 'ok', 'error', 'table'];
-    const defaultColors = [
-      'skip', 'force', 'create', 'invoke', 'conflict', 'identical', 'info'
-    ];
+    const defaultColors = ['skip', 'force', 'create', 'invoke', 'conflict', 'identical', 'info'];
     it('log has functions', function () {
       this.adapter.log = createLog();
       for (const k of [...funcs, ...defaultColors]) {
@@ -189,7 +184,7 @@ describe('TerminalAdapter', () => {
       }
     });
     it('log can be added custom status', function () {
-      this.adapter.log = createLog({colors: {merge: 'yellow'}});
+      this.adapter.log = createLog({ colors: { merge: 'yellow' } });
       for (const k of [...funcs, ...defaultColors, 'merge']) {
         assert.equal(typeof this.adapter.log[k], 'function');
       }

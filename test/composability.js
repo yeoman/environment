@@ -18,26 +18,20 @@ describe('composability', () => {
     });
 
     it('should return package entry', async function () {
-      assert.deepStrictEqual(
-        await this.env.resolvePackage('yeoman-generator', '^2'),
-        ['yeoman-generator', '^2']
-      );
+      assert.deepStrictEqual(await this.env.resolvePackage('yeoman-generator', '^2'), ['yeoman-generator', '^2']);
     });
 
     it('should accept github repository version and return package entry', async function () {
       this.timeout(10_000);
-      assert.deepStrictEqual(
-        await this.env.resolvePackage('yeoman-generator', 'yeoman/generator'),
-        ['yeoman-generator', 'github:yeoman/generator']
-      );
+      assert.deepStrictEqual(await this.env.resolvePackage('yeoman-generator', 'yeoman/generator'), [
+        'yeoman-generator',
+        'github:yeoman/generator',
+      ]);
     });
 
     it('should accept github repository and return package entry', async function () {
       this.timeout(10_000);
-      assert.deepStrictEqual(
-        await this.env.resolvePackage('yeoman/generator'),
-        ['yeoman-generator', 'github:yeoman/generator']
-      );
+      assert.deepStrictEqual(await this.env.resolvePackage('yeoman/generator'), ['yeoman-generator', 'github:yeoman/generator']);
     });
   });
 });
