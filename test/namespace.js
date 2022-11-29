@@ -1,4 +1,4 @@
-import assert from 'assert';
+import assert from 'node:assert';
 import { requireNamespace, isNamespace } from '../lib/util/namespace.js';
 
 const fields = [

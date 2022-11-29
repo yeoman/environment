@@ -1,13 +1,14 @@
-import path, { dirname } from 'path';
-import assert from 'assert';
+import path, { dirname } from 'node:path';
+import assert from 'node:assert';
 import fs from 'fs-extra';
 import spawn from 'cross-spawn';
 
 import Environment from '../lib/index.mjs';
 
 import { execaOutput } from '../lib/util/util.js';
-import { fileURLToPath } from 'url';
-import { createRequire } from 'module';
+import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+import process from 'node:process';
 
 const require = createRequire(import.meta.url);
 

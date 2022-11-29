@@ -1,14 +1,14 @@
-import assert from 'assert';
-import fs from 'fs';
-import path, { dirname } from 'path';
+import assert from 'node:assert';
+import fs from 'node:fs';
+import path, { dirname } from 'node:path';
 import _ from 'lodash';
 import sinon from 'sinon';
 import slash from 'slash';
 import semver from 'semver';
 import { TestAdapter } from 'yeoman-test';
 import { Conflicter } from '../lib/index.mjs';
-import { fileURLToPath } from 'url';
-import { createRequire } from 'module';
+import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);

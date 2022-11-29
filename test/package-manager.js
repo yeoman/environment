@@ -1,7 +1,7 @@
-import assert from 'assert';
-import path, { dirname } from 'path';
+import assert from 'node:assert';
+import path, { dirname } from 'node:path';
 import sinon from 'sinon';
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'node:url';
 
 import PackageManagerMixin from '../lib/package-manager.js';
 

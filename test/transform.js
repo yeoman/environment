@@ -1,9 +1,9 @@
-import assert from 'assert';
-import path, { dirname } from 'path';
+import assert from 'node:assert';
+import path, { dirname } from 'node:path';
 import sinon from 'sinon';
 import { pipeline, passthrough } from 'p-transform';
 import { fileIsModified, getConflicterStatusForFile, createYoRcTransform, createConflicterStatusTransform } from '../lib/util/transform.js';
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

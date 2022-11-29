@@ -1,7 +1,7 @@
-import events from 'events';
-import fs from 'fs';
-import path, { dirname } from 'path';
-import util from 'util';
+import events from 'node:events';
+import fs from 'node:fs';
+import path, { dirname } from 'node:path';
+import util from 'node:util';
 import sinon from 'sinon';
 import sinonTestFactory from 'sinon-test';
 import Generator from 'yeoman-generator';
@@ -9,11 +9,12 @@ import assert from 'yeoman-assert';
 
 import semver from 'semver';
 import Environment, { TerminalAdapter } from '../lib/index.mjs';
-import { fileURLToPath } from 'url';
-import { createRequire } from 'module';
+import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const generatorPackageJson = require('yeoman-generator/package.json');
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 

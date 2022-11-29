@@ -1,9 +1,9 @@
-import assert from 'assert';
+import assert from 'node:assert';
 import sinon from 'sinon';
 import semver from 'semver';
 import Generator from 'yeoman-generator';
 import helpers from './helpers.js';
-import { createRequire } from 'module';
+import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const { version } = require('yeoman-generator/package.json');

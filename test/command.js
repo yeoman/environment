@@ -1,11 +1,11 @@
-import assert from 'assert';
-import path, { dirname } from 'path';
+import assert from 'node:assert';
+import path, { dirname } from 'node:path';
 import sinon from 'sinon';
 import semver from 'semver';
 
 import Environment from '../lib/index.mjs';
-import { fileURLToPath } from 'url';
-import { createRequire } from 'module';
+import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);

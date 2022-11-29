@@ -1,10 +1,12 @@
-const { groupBy } = require('lodash');
-const debug = require('debug')('yeoman:yoe');
+import { groupBy } from 'lodash';
+import createLogger from 'debug';
 
-const { Environment } = require('../lib/index.js');
-const { toNamespace } = require('../lib/util/namespace.js');
+import { Environment } from '../lib/index.js';
+import { toNamespace } from '../lib/util/namespace.js';
 
-const printGroupedGenerator = generators => {
+const debug = createLogger('yeoman:yoe');
+
+export const printGroupedGenerator = generators => {
   const grouped = groupBy(generators, 'packagePath');
   for (const [packagePath, group] of Object.entries(grouped)) {
     const namespace = toNamespace(group[0].namespace);
@@ -18,7 +20,7 @@ const printGroupedGenerator = generators => {
   console.log(`${generators.length} generators`);
 };
 
-const environmentAction = async function (generatorNamespace, options, command) {
+export const environmentAction = async function (generatorNamespace, options, command) {
   debug('Handling operands %o', generatorNamespace);
   if (!generatorNamespace) {
     return;
@@ -29,5 +31,3 @@ const environmentAction = async function (generatorNamespace, options, command) 
 
   return this.env.execute(generatorNamespace, command.args.splice(1));
 };
-
-module.exports = { printGroupedGenerator, environmentAction };

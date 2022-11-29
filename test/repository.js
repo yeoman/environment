@@ -1,5 +1,5 @@
-import assert from 'assert';
-import path from 'path';
+import assert from 'node:assert';
+import path from 'node:path';
 import fs from 'fs-extra';
 
 import Environment from '../lib/index.mjs';

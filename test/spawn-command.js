@@ -1,19 +1,16 @@
 import sinon from 'sinon';
-import { createRequire } from 'module';
-
-const require = createRequire(import.meta.url);
-const proxyquire = require('proxyquire');
+import esmock from 'esmock';
 
 describe('environment (spawn-command)', () => {
   let cwd;
 
-  beforeEach(function () {
+  beforeEach(async function () {
     this.spawnLib = sinon.stub();
     this.spawnLib.sync = sinon.stub();
     this.spawn = {};
     Object.assign(
       this.spawn,
-      proxyquire('../lib/spawn-command', {
+      await esmock('../lib/spawn-command.js', {
         execa: this.spawnLib,
       }),
     );

@@ -19,7 +19,7 @@ $ npm install yeoman-environment
 Full documentation available [here](http://yeoman.io/authoring/integrating-yeoman.html).
 
 ```js
-const yeoman = require('yeoman-environment');
+import yeoman from 'yeoman-environment';
 const env = yeoman.createEnv();
 
 // The #lookup() method will search the user computer for installed generators

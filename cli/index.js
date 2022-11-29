@@ -1,8 +1,9 @@
 #!/usr/bin/env node
-const { YeomanCommand } = require('../lib/util/command');
-const packageJson = require('../package.json');
-const Env = require('..');
-const { printGroupedGenerator, environmentAction } = require('./utils');
+import YeomanCommand from '../lib/util/command.js';
+import packageJson from '../package.json';
+import Env from '..';
+import { printGroupedGenerator, environmentAction } from './utils.js';
+import process from 'node:process';
 
 const program = new YeomanCommand();
 
@@ -37,7 +38,9 @@ program
     printGroupedGenerator(Object.values(env.getGeneratorsMeta()), env);
   });
 
-program.parseAsync(process.argv).catch(error => {
+try {
+  await program.parseAsync(process.argv);
+} catch (error) {
   console.log(error);
   process.exit(1);
-});
+}
