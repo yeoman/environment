@@ -16,17 +16,17 @@ jobs:
     name: Update api docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v2.1.4
+      - uses: actions/setup-node@v3
       - run: npm install -g npm@latest
         continue-on-error: true
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           path: source
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: gh-pages
           path: yeoman-environment-doc
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-gh-pages
