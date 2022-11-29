@@ -38,7 +38,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm install -g npm@7
     - run: npm ci
     - run: npm install yeoman-generator@${{ matrix.generator-version }}
       if: matrix.generator-version != ''

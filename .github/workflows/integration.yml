@@ -20,34 +20,32 @@ jobs:
 
     steps:
     - name: Checkout yeoman-test
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: yeoman/yeoman-test
         path: yeoman-test
 
     - name: Checkout yeoman-generator
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: yeoman/generator
         path: yeoman-generator
 
     - name: Checkout yeoman-environment
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         path: yeoman-environment
 
-    - uses: actions/setup-node@v2.1.4
+    - uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       with:
         path: ~/.npm
         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-integration
         restore-keys: |
           ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-
-
-    - run: npm install -g npm@7.11.2
 
     - name: Run yeoman-test test
       run: |
