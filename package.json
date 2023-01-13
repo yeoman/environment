@@ -21,7 +21,10 @@
   "author": "Yeoman",
   "type": "module",
   "exports": {
-    ".": "./lib/index.js",
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./lib/index.js"
+    },
     "./transform": "./lib/util/transform.js",
     "./package.json": "./package.json",
     "./namespace": "./lib/util/namespace.js",
@@ -30,12 +33,15 @@
     "./cli/*": "./cli/*.js",
     "./cli": "./cli/index.js"
   },
+  "types": "./types/index.d.ts",
+  "main": "./lib/index.js",
   "bin": {
     "yoe": "cli/index.js"
   },
   "files": [
     "cli",
-    "lib"
+    "lib",
+    "types"
   ],
   "scripts": {
     "coverage": "nyc report --reporter=text-lcov | coveralls",
@@ -58,6 +64,7 @@
   },
   "dependencies": {
     "@npmcli/arborist": "^4.0.4",
+    "@yeoman/api": "github:mshima/yeoman-api",
     "are-we-there-yet": "^2.0.0",
     "arrify": "^2.0.1",
     "binaryextensions": "^4.15.0",
