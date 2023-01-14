@@ -15,10 +15,9 @@ import {
   type BaseGenerator,
   type GeneratorBaseOptions,
   type BaseEnvironment,
-  type GeneratorBaseDefinition,
-  type GeneratorNewArg,
+  type BaseGeneratorConstructor,
   type GroupedQueue,
-  type TerminalAdapter,
+  type InputOutputAdapter,
 } from '@yeoman/api';
 import { type ConflicterOptions } from './lib/util/conflicter.js';
 
@@ -35,7 +34,7 @@ import { type ConflicterOptions } from './lib/util/conflicter.js';
  * An optional adapter can be passed to provide interaction in non-CLI environment
  * (e.g. IDE plugins), otherwise a `TerminalAdapter` is instantiated by default
  */
-export default class Environment<TOptions extends EnvironmentOptions = EnvironmentOptions> extends EventEmitter implements BaseEnvironment {
+declare class Environment<TOptions extends EnvironmentOptions = EnvironmentOptions> extends EventEmitter implements BaseEnvironment {
   /**
    * Creates a new `Environment` instance.
    *
@@ -47,8 +46,8 @@ export default class Environment<TOptions extends EnvironmentOptions = Environme
   static createEnv<TOptions extends EnvironmentOptions = EnvironmentOptions>(
     args?: string | string[],
     options?: TOptions,
-    adapter?: TerminalAdapter,
-  ): Environment<TOptions>;
+    adapter?: InputOutputAdapter,
+  ): Promise<Environment<TOptions>>;
 
   /**
    * Creates a new `Environment` instance with the specified `version`.
@@ -63,8 +62,8 @@ export default class Environment<TOptions extends EnvironmentOptions = Environme
     version: string,
     args?: string | string[],
     options?: TOptions,
-    adapter?: TerminalAdapter,
-  ): Environment<TOptions>;
+    adapter?: InputOutputAdapter,
+  ): Promise<Environment<TOptions>>;
 
   /**
    * Makes sure the Environment present expected methods if an old version is passed to a Generator.
@@ -105,7 +104,7 @@ export default class Environment<TOptions extends EnvironmentOptions = Environme
    * @param generatorClass The generator class to create a command for.
    * @returns The prepared command.
    */
-  static prepareCommand(generatorClass: GeneratorNewArg): Command;
+  static prepareCommand(generatorClass: BaseGeneratorConstructor): Command;
 
   /**
    * Prepares a command for cli support.
@@ -114,7 +113,7 @@ export default class Environment<TOptions extends EnvironmentOptions = Environme
    * @param generatorClass The constructor of the generator to prepare the command for.
    * @returns The prepared command.
    */
-  static prepareGeneratorCommand(command: Command, generatorClass: GeneratorNewArg): Command;
+  static prepareGeneratorCommand(command: Command, generatorClass: BaseGeneratorConstructor): Command;
 
   /**
    * The arguments passed to this environment.
@@ -129,7 +128,7 @@ export default class Environment<TOptions extends EnvironmentOptions = Environme
   /**
    * The adapter of the environment.
    */
-  adapter: TerminalAdapter;
+  adapter: InputOutputAdapter;
 
   /**
    * The working-directory of the environment.
@@ -165,21 +164,19 @@ export default class Environment<TOptions extends EnvironmentOptions = Environme
    * @param opts The options for the environment.
    * @param adapter A `TerminalAdapter` instance for handling input/output.
    */
-  constructor(args?: string | string[], options?: TOptions, adapter?: TerminalAdapter);
+  constructor(args?: string | string[], options?: TOptions, adapter?: InputOutputAdapter);
 
-  create<
-    Definition extends GeneratorBaseDefinition = GeneratorBaseDefinition,
-    GeneratorType extends BaseGenerator<Definition> = BaseGenerator<Definition>,
-  >(
+  create<GeneratorType extends BaseGenerator = BaseGenerator>(
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    namespaceOrPath: string | GeneratorNewArg<GeneratorType>,
+    namespaceOrPath: string | BaseGeneratorConstructor<GeneratorType>,
     args: string[],
-    options?: Definition['options'] | undefined,
+    options?: GeneratorType['options'] | undefined,
   ): Promise<GeneratorType>;
-  instantiate<
-    Definition extends GeneratorBaseDefinition = GeneratorBaseDefinition,
-    GeneratorType extends BaseGenerator<Definition> = BaseGenerator<Definition>,
-  >(generator: GeneratorNewArg<GeneratorType>, args: string[], options?: Definition['options'] | undefined): Promise<GeneratorType>;
+  instantiate<GeneratorType extends BaseGenerator = BaseGenerator>(
+    generator: BaseGeneratorConstructor<GeneratorType>,
+    args: string[],
+    options?: GeneratorType['options'] | undefined,
+  ): Promise<GeneratorType>;
   queueGenerator<GeneratorType extends BaseGenerator = BaseGenerator>(
     generator: GeneratorType,
     schedule?: boolean | undefined,
@@ -425,7 +422,7 @@ export default class Environment<TOptions extends EnvironmentOptions = Environme
    * @param namespace The namespace under which the generator should be registered.
    * @param packagePath The path to the npm package of the generator.
    */
-  register(name: string, namespace?: string, packagePath?: string): this;
+  register(name: string, namespace?: string, packagePath?: string): Promise<this>;
 
   /**
    * Registers a stubbed generator to this environment.
@@ -435,7 +432,7 @@ export default class Environment<TOptions extends EnvironmentOptions = Environme
    * @param resolved The file-path to the generator.
    * @param packagePath The path to the npm package of the generator.
    */
-  registerStub(generator: GeneratorNewArg, namespace: string, resolved?: string, packagePath?: string): this;
+  registerStub(generator: BaseGeneratorConstructor, namespace: string, resolved?: string, packagePath?: string): this;
 
   /**
    * Resolves the path of the specified module.
@@ -524,7 +521,7 @@ export type EnvironmentOptions = {
   /**
    * The options to pass to generators.
    */
-  sharedOptions?: GeneratorBaseOptions;
+  sharedOptions?: Record<string, unknown>;
 
   /**
    * A console instance for logging messages.
@@ -691,3 +688,5 @@ export type GeneratorsInOptions = {
    */
   packagePatterns?: string[] | undefined;
 };
+
+export default Environment;

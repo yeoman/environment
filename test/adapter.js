@@ -1,5 +1,4 @@
 import assert from 'yeoman-assert';
-import inquirer from 'inquirer';
 import sinon from 'sinon';
 import logSymbols from 'log-symbols';
 import stripAnsi from 'strip-ansi';
@@ -13,32 +12,27 @@ describe('TerminalAdapter', () => {
   });
 
   describe('#prompt()', () => {
+    let fakeAnswers;
+
     beforeEach(function () {
-      this.sandbox = sinon.createSandbox();
-      // eslint-disable-next-line unicorn/no-thenable
-      this.fakePromise = { then: sinon.spy() };
-      this.stub = sinon.stub().returns(this.fakePromise);
-      this.sandbox.stub(inquirer, 'createPromptModule').returns(this.stub);
-      this.adapter = new TerminalAdapter();
+      fakeAnswers = { foo: 'bar' };
+      this.stub = sinon.stub().resolves(fakeAnswers);
+      this.adapter = new TerminalAdapter({ promptModule: this.stub });
     });
 
-    afterEach(function () {
-      this.sandbox.restore();
-    });
-
-    it('pass its arguments to inquirer', function () {
+    it('pass its arguments to inquirer', async function () {
       const questions = [];
-      const returnValue = this.adapter.prompt(questions);
+      const returnValue = await this.adapter.prompt(questions);
       sinon.assert.calledWith(this.stub, questions);
-      assert.equal(returnValue, this.fakePromise);
+      assert.equal(returnValue, fakeAnswers);
     });
 
-    it('pass its arguments with answers to inquirer', function () {
+    it('pass its arguments with answers to inquirer', async function () {
       const questions = [];
       const answers = {};
-      const returnValue = this.adapter.prompt(questions, answers);
+      const returnValue = await this.adapter.prompt(questions, answers);
       sinon.assert.calledWith(this.stub, questions, answers);
-      assert.equal(returnValue, this.fakePromise);
+      assert.equal(returnValue, fakeAnswers);
     });
   });
 

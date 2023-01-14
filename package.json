@@ -23,7 +23,7 @@
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
-      "default": "./lib/index.js"
+      "import": "./lib/index.mjs"
     },
     "./transform": "./lib/util/transform.js",
     "./package.json": "./package.json",
@@ -34,7 +34,6 @@
     "./cli": "./cli/index.js"
   },
   "types": "./types/index.d.ts",
-  "main": "./lib/index.js",
   "bin": {
     "yoe": "cli/index.js"
   },
@@ -117,7 +116,7 @@
     "xo": "^0.53.1",
     "yeoman-assert": "^3.1.1",
     "yeoman-generator": "^5.1.0",
-    "yeoman-test": "^7.0.0"
+    "yeoman-test": "^7.2.0"
   },
   "peerDependencies": {
     "mem-fs": "^1.2.0 || ^2.0.0",

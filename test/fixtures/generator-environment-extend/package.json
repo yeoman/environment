@@ -5,6 +5,7 @@
   "dependencies": {},
   "devDependencies": {},
   "optionalDependencies": {},
+  "type": "module",
   "engines": {
     "node": "*"
   }

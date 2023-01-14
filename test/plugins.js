@@ -39,8 +39,9 @@ describe('Generators plugin', () => {
 
         const self = this;
         const superGenerator = {
-          createGenerator(env) {
-            return class extends env.requireGenerator(undefined) {
+          async createGenerator(env) {
+            const Generator = await env.requireGenerator(undefined);
+            return class extends Generator {
               exec() {}
             };
           },
@@ -48,8 +49,8 @@ describe('Generators plugin', () => {
         this.env.registerStub(superGenerator, 'super:app');
 
         const dummy = {
-          createGenerator(env) {
-            return class extends env.requireGenerator(extended) {
+          async createGenerator(env) {
+            return class extends (await env.requireGenerator(extended)) {
               exec() {
                 self.execValue = 'done';
               }

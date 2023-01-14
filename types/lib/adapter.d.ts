@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { type Change } from 'diff';
 import { type QuestionCollection, type PromptModule } from 'inquirer';
-import { type Logger, type TerminalAdapter as BaseAdapter, type Answers } from '@yeoman/api';
+import { type Logger, type InputOutputAdapter, type Answers } from '@yeoman/api';
 
 export { type Answers } from '@yeoman/api';
 
@@ -26,7 +26,7 @@ export type Questions<T extends Answers> = QuestionCollection<T>;
  *
  * It provides a CLI interaction
  */
-export default class TerminalAdapter implements BaseAdapter {
+export default class TerminalAdapter implements InputOutputAdapter {
   /**
    * An inquirer prompt module.
    */
