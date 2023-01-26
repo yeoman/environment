@@ -17,6 +17,7 @@
     "./cli/*": "./cli/*.js",
     "./lib/*": "./lib/*.js",
     "./lib/util/*": "./lib/util/*.js",
+    "./lib/util/namespace": "./lib/util/namespace.js",
     "./adapter": "./lib/adapter.js",
     "./conflicter": "./lib/util/conflicter.js",
     "./log": "./lib/util/log.js",
