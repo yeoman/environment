@@ -180,7 +180,7 @@ declare class Environment<TOptions extends EnvironmentOptions = EnvironmentOptio
   queueGenerator<GeneratorType extends BaseGenerator = BaseGenerator>(
     generator: GeneratorType,
     schedule?: boolean | undefined,
-  ): GeneratorType;
+  ): Promise<GeneratorType>;
   resolvePackage(packageName: string, packageVersion?: string | undefined): Promise<[string, string]>;
   runGenerator(generator: BaseGenerator): Promise<void>;
 
@@ -236,7 +236,11 @@ declare class Environment<TOptions extends EnvironmentOptions = EnvironmentOptio
    * @param options The options to pass to the generator.
    * @returns The instantiated generator or a singleton instance.
    */
-  composeWith<TGenerator extends BaseGenerator>(namespaceOrPath: string, args: string[], options: GeneratorBaseOptions): TGenerator;
+  composeWith<TGenerator extends BaseGenerator>(
+    namespaceOrPath: string,
+    args: string[],
+    options: GeneratorBaseOptions,
+  ): Promise<TGenerator>;
 
   /**
    * Handles the specified `error`.
@@ -269,7 +273,7 @@ declare class Environment<TOptions extends EnvironmentOptions = EnvironmentOptio
    * @param namespaceOrPath The namespace of the generator or the path to a generator.
    * @returns The constructor of the generator registered under the namespace.
    */
-  get<GeneratorType extends BaseGenerator = BaseGenerator>(namespaceOrPath: string): GeneratorType | undefined;
+  get<GeneratorType extends BaseGenerator = BaseGenerator>(namespaceOrPath: string): Promise<GeneratorType | undefined>;
 
   /**
    * Gets a constructor of a generator by the path instead of the namespace.
@@ -277,7 +281,7 @@ declare class Environment<TOptions extends EnvironmentOptions = EnvironmentOptio
    * @param path The path to the generator.
    * @returns The constructor of the generator found at the location.
    */
-  getByPath<GeneratorType extends BaseGenerator = BaseGenerator>(path: string): GeneratorType | undefined;
+  getByPath<GeneratorType extends BaseGenerator = BaseGenerator>(path: string): Promise<GeneratorType | undefined>;
 
   /**
    * Gets the names of the registered generators.
