@@ -15,10 +15,10 @@ describe('environment (command)', () => {
   describe('#execute() with options', () => {
     let env;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       env = new Environment([], { skipInstall: true, dryRun: true });
       env.adapter.log = sinon.stub();
-      env.register(path.join(__dirname, 'fixtures/generator-commands/generators/options'));
+      await env.register(path.join(__dirname, 'fixtures/generator-commands/generators/options'));
     });
 
     describe('generator with options', () => {
