@@ -462,7 +462,7 @@ describe('Environment', () => {
     });
   });
 
-  describe.only('#getGeneratorMeta{}', () => {
+  describe('#getGeneratorMeta{}', () => {
     it('importGenerator should return a class', async function () {
       this.env
         .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
