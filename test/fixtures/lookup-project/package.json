@@ -4,5 +4,8 @@
     "generator-commonjs": "*",
     "generator-dummy": "~0.1.0",
     "generator-jquery": "^1.2.3"
+  },
+  "overrides": {
+    "graceful-fs": "^4.2.10"
   }
 }
