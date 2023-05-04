@@ -491,30 +491,26 @@ describe('Environment', () => {
 
   describe('#getGeneratorMeta{}', () => {
     it('importGenerator should return a class', async function () {
-      this.env
-        .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
+      this.env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
       const meta = this.env.getGeneratorMeta('fixtures:generator-module');
-      assert.equal(typeof await meta.importGeneratorClass(), 'function');
+      assert.equal(typeof (await meta.importGeneratorClass()), 'function');
     });
     it('importModule should return the generator module', async function () {
-      this.env
-        .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
+      this.env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
       const meta = this.env.getGeneratorMeta('fixtures:generator-module');
       const Generator = await meta.importGeneratorClass();
       const module = await meta.importModule();
       assert.strictEqual(Generator, module.default);
     });
     it('intantiate should return an instance', async function () {
-      this.env
-        .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
+      this.env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
       const meta = this.env.getGeneratorMeta('fixtures:generator-module');
       const Generator = await meta.importGeneratorClass();
       const generator = await meta.instantiate();
       assert.ok(generator instanceof Generator);
     });
     it('intantiateHelp should return an instance with help option', async function () {
-      this.env
-        .register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
+      this.env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
       const meta = this.env.getGeneratorMeta('fixtures:generator-module');
       const generator = await meta.instantiateHelp();
       assert.strictEqual(generator.options.help, true);
