@@ -97,8 +97,7 @@
     "strip-ansi": "^6.0.0",
     "text-table": "^0.2.0",
     "textextensions": "^5.12.0",
-    "untildify": "^4.0.0",
-    "@yeoman/api": "github:mshima/yeoman-api"
+    "untildify": "^4.0.0"
   },
   "peerDependencies": {
     "mem-fs": "^1.2.0 || ^2.0.0",

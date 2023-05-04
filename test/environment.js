@@ -19,7 +19,7 @@ const generatorPackageJson = require('yeoman-generator/package.json');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const ENVIRONMENT_VERSION = require('yeoman-environment/package.json').version;
+const ENVIRONMENT_VERSION = require('../package.json').version;
 const INQUIRER_VERSION = require('inquirer/package.json').version;
 const GROUPED_QUEUE_VERSION = require('grouped-queue/package.json').version;
 
