@@ -2,28 +2,6 @@
   "name": "yeoman-environment",
   "version": "3.15.1",
   "description": "Handles the lifecyle and bootstrapping of generators in a specific environment",
-  "homepage": "http://yeoman.io",
-  "author": "Yeoman",
-  "bin": {
-    "yoe": "cli/index.js"
-  },
-  "files": [
-    "cli",
-    "lib",
-    "types"
-  ],
-  "exports": {
-    ".": {
-      "import": "./lib/index.mjs"
-    },
-    "./cli/*": "./cli/*.js",
-    "./lib/*": "./lib/*.js",
-    "./lib/util/*": "./lib/util/*.js",
-    "./transform": "./lib/util/transform.js",
-    "./package.json": "./package.json",
-    "./namespace": "./lib/util/namespace.js",
-    "./cli": "./cli/index.js"
-  },
   "keywords": [
     "development",
     "dev",
@@ -37,33 +15,53 @@
     "yeoman",
     "app"
   ],
+  "homepage": "http://yeoman.io",
+  "repository": "yeoman/environment",
+  "license": "BSD-2-Clause",
+  "author": "Yeoman",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./lib/index.mjs"
+    },
+    "./cli/*": "./cli/*.js",
+    "./lib/*": "./lib/*.js",
+    "./lib/util/*": "./lib/util/*.js",
+    "./transform": "./lib/util/transform.js",
+    "./package.json": "./package.json",
+    "./namespace": "./lib/util/namespace.js",
+    "./cli": "./cli/index.js"
+  },
+  "main": "./lib/index.mjs",
+  "types": "./types/index.d.ts",
+  "bin": {
+    "yoe": "cli/index.js"
+  },
+  "files": [
+    "cli",
+    "lib",
+    "types"
+  ],
+  "scripts": {
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
+    "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path/global.html || true",
+    "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path",
+    "doc:prettier": "prettier $npm_package_config_doc_path --write --ignore-path .prettierignore-doc",
+    "fix": "xo --fix",
+    "pretest": "xo",
+    "test": "c8 esmocha --forbid-only",
+    "test-base": "c8 esmocha test/environment*.js test/store.js test/util.js test/adapter.js",
+    "test-environment": "c8 esmocha test/environment.js",
+    "test-generators": "c8 esmocha test/generators.js",
+    "test-namespace": "c8 esmocha test/namespace.js test/flags.js",
+    "test-repository": "c8 esmocha test/repository.js",
+    "test-resolver": "c8 esmocha test/resolver.js"
+  },
   "config": {
     "doc_path": "./yeoman-environment-doc"
   },
-  "license": "BSD-2-Clause",
-  "repository": "yeoman/environment",
-  "engines": {
-    "node": "^16.13.0 || >=18.12.0"
-  },
-  "scripts": {
-    "pretest": "xo",
-    "fix": "xo --fix",
-    "test": "nyc mocha --forbid-only",
-    "test-base": "nyc mocha test/environment*.js test/store.js test/util.js test/adapter.js",
-    "test-environment": "nyc mocha test/environment.js",
-    "test-generators": "nyc mocha test/generators.js",
-    "test-namespace": "nyc mocha test/namespace.js test/flags.js",
-    "test-repository": "nyc mocha test/repository.js",
-    "test-resolver": "nyc mocha test/resolver.js",
-    "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
-    "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path",
-    "doc:prettier": "prettier $npm_package_config_doc_path --write --ignore-path .prettierignore-doc",
-    "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path/global.html || true",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
-  },
   "dependencies": {
-    "@node-loaders/auto": "^0.7.0",
-    "@node-loaders/jest-mock": "^0.2.3",
     "@npmcli/arborist": "^4.0.4",
     "are-we-there-yet": "^2.0.0",
     "arrify": "^2.0.1",
@@ -76,7 +74,6 @@
     "diff": "^5.0.0",
     "escape-string-regexp": "^4.0.0",
     "execa": "^7.1.1",
-    "expect": "^29.5.0",
     "find-up": "^5.0.0",
     "globby": "^11.0.1",
     "grouped-queue": "^2.0.0",
@@ -101,16 +98,13 @@
     "textextensions": "^5.12.0",
     "untildify": "^4.0.0"
   },
-  "peerDependencies": {
-    "mem-fs": "^1.2.0 || ^2.0.0",
-    "mem-fs-editor": "^8.1.2 || ^9.0.0"
-  },
   "devDependencies": {
+    "c8": "^7.13.0",
     "coveralls": "^3.0.2",
     "cross-spawn": "^7.0.1",
+    "esmocha": "^0.1.3",
     "fs-extra": "^10.0.0",
     "jsdoc": "^3.6.6",
-    "mocha": "^9.1.3",
     "nyc": "^15.0.0",
     "prettier": "^2.2.1",
     "prettier-plugin-packagejson": "^2.3.0",
@@ -122,6 +116,11 @@
     "yeoman-generator": "^5.1.0",
     "yeoman-test": "^7.2.0"
   },
-  "types": "./types/index.d.ts",
-  "type": "module"
+  "peerDependencies": {
+    "mem-fs": "^1.2.0 || ^2.0.0",
+    "mem-fs-editor": "^8.1.2 || ^9.0.0"
+  },
+  "engines": {
+    "node": "^16.13.0 || >=18.12.0"
+  }
 }

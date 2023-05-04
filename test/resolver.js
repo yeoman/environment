@@ -16,7 +16,7 @@ const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const globalLookupTest = process.env.NODE_PATH ? it : xit;
+const globalLookupTest = () => (process.env.NODE_PATH ? it : xit);
 
 const linkGenerator = (generator, scope) => {
   const nodeModulesPath = path.resolve('node_modules');
@@ -75,6 +75,18 @@ describe('Environment Resolver', async function () {
       spawn.sync('npm', ['ci']);
       spawn.sync('npm', ['install', '-g', 'generator-dummytest', 'generator-dummy', '--no-package-lock']);
     }
+  });
+
+  beforeEach(() => {
+    this.NODE_PATH = process.env.NODE_PATH;
+    delete process.env.NODE_PATH;
+    this.NVM_PATH = process.env.NVM_PATH;
+    delete process.env.NVM_PATH;
+  });
+
+  afterEach(function () {
+    process.env.NODE_PATH = this.NODE_PATH;
+    process.env.NVM_PATH = this.NVM_PATH;
   });
 
   after(function () {
@@ -153,7 +165,7 @@ describe('Environment Resolver', async function () {
       assert.ok(resolved.includes('lookup-project'), `Couldn't find 'lookup-project' in ${resolved}`);
     });
 
-    globalLookupTest('register global generators', async function () {
+    globalLookupTest()('register global generators', async function () {
       assert.ok(await this.env.get('dummytest:app'));
       assert.ok(await this.env.get('dummytest:controller'));
     });
@@ -240,7 +252,7 @@ describe('Environment Resolver', async function () {
         assert.ok(resolved.includes('lookup-project'), `Couldn't find 'lookup-project' in ${resolved}`);
       });
 
-      globalLookupTest('register global generators', async function () {
+      globalLookupTest()('register global generators', async function () {
         assert.ok(await this.env.get('dummytest:app'));
         assert.ok(await this.env.get('dummytest:controller'));
       });
@@ -329,7 +341,7 @@ describe('Environment Resolver', async function () {
         assert.ok(await this.env.get('extend:support'));
       });
 
-      globalLookupTest('does not register global generators', async function () {
+      globalLookupTest()('does not register global generators', async function () {
         assert.ok(!this.env.get('dummytest:app'));
         assert.ok(!this.env.get('dummytest:controller'));
       });
@@ -359,7 +371,7 @@ describe('Environment Resolver', async function () {
         assert.ok(await this.env.get('extend:support'));
       });
 
-      globalLookupTest('does not register global generators', async function () {
+      globalLookupTest()('does not register global generators', async function () {
         assert.ok(!this.env.get('dummytest:app'));
         assert.ok(!this.env.get('dummytest:controller'));
       });
@@ -537,23 +549,14 @@ describe('Environment Resolver', async function () {
 
   describe('#getNpmPaths()', async () => {
     beforeEach(function () {
-      this.NODE_PATH = process.env.NODE_PATH;
       this.bestBet = path.join(__dirname, '../../../..');
       this.bestBet2 = path.join(path.dirname(process.argv[1]), '../..');
       this.env = new Environment();
     });
 
-    afterEach(function () {
-      process.env.NODE_PATH = this.NODE_PATH;
-    });
-
     describe('with NODE_PATH', async () => {
       beforeEach(() => {
         process.env.NODE_PATH = '/some/dummy/path';
-      });
-
-      afterEach(() => {
-        delete process.env.NODE_PATH;
       });
 
       it('walk up the CWD lookups dir', async function () {
@@ -568,10 +571,6 @@ describe('Environment Resolver', async function () {
     });
 
     describe('without NODE_PATH', async () => {
-      beforeEach(() => {
-        delete process.env.NODE_PATH;
-      });
-
       it('walk up the CWD lookups dir', async function () {
         const paths = this.env.getNpmPaths();
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
@@ -598,10 +597,6 @@ describe('Environment Resolver', async function () {
         process.env.NVM_PATH = '/some/dummy/path';
       });
 
-      afterEach(() => {
-        delete process.env.NVM_PATH;
-      });
-
       it('walk up the CWD lookups dir', async function () {
         const paths = this.env.getNpmPaths();
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
@@ -614,10 +609,6 @@ describe('Environment Resolver', async function () {
     });
 
     describe('without NVM_PATH', async () => {
-      beforeEach(() => {
-        delete process.env.NVM_PATH;
-      });
-
       it('walk up the CWD lookups dir', async function () {
         const paths = this.env.getNpmPaths();
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
@@ -631,11 +622,6 @@ describe('Environment Resolver', async function () {
     });
 
     describe('when localOnly argument is true', async () => {
-      afterEach(() => {
-        delete process.env.NODE_PATH;
-        delete process.env.NVM_PATH;
-      });
-
       it('walk up the CWD lookups dir', async function () {
         const paths = this.env.getNpmPaths();
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));

@@ -1,7 +1,6 @@
-import { expect } from 'expect';
-import { mock, restoreAllMocks } from '@node-loaders/jest-mock';
+import { expect, esmocha, describe, beforeEach, it, afterEach } from 'esmocha';
 
-const execa = await mock('execa');
+const execa = await esmocha.mock('execa');
 const { default: spawnCommand } = await import('../lib/spawn-command.js');
 
 describe('environment (spawn-command)', () => {
@@ -13,7 +12,7 @@ describe('environment (spawn-command)', () => {
   });
 
   afterEach(() => {
-    restoreAllMocks();
+    esmocha.restoreAllMocks();
   });
 
   describe('#spawnCommand()', () => {
