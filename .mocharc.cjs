@@ -1,4 +1,4 @@
 module.exports = {
-  'node-option': ['loader=esmock'],
+  'node-option': ['loader=@node-loaders/auto'],
   parallel: true,
 };
