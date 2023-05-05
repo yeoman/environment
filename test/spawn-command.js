@@ -77,10 +77,10 @@ describe('environment (spawn-command)', () => {
     });
 
     it('allow overriding default options', function () {
-      spawnCommand.spawnCommandSync('foo', undefined, { stdio: 'wut' });
+      spawnCommand.spawnCommandSync('foo', undefined, { stdio: 'pipe' });
       expect(execa.execaSync).toHaveBeenCalledWith('foo', undefined, {
         cwd,
-        stdio: 'wut',
+        stdio: 'pipe',
       });
     });
   });
