@@ -2,7 +2,7 @@
   "space": true,
   "envs": ["es2020", "node", "mocha"],
   "prettier": true,
-  "ignores": ["test/fixtures"],
+  "ignores": ["test/fixtures", "types/**"],
   "rules": {
     "unicorn/prefer-module": "off",
     "import/no-dynamic-require": "off",
