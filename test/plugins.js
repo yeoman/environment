@@ -1,9 +1,12 @@
-const assert = require('assert');
-const os = require('os');
-const path = require('path');
-const fs = require('fs-extra');
-const Environment = require('../lib/environment');
-const YeomanRepository = require('../lib/util/repository');
+import assert from 'node:assert';
+import os from 'node:os';
+import path from 'node:path';
+import fs from 'fs-extra';
+import process from 'node:process';
+
+import Environment from '../lib/index.mjs';
+
+import YeomanRepository from '../lib/util/repository.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-environment/light');
 
@@ -32,23 +35,28 @@ describe('Generators plugin', () => {
         this.timeout(300_000);
         delete this.execValue;
 
-        this.env = new Environment({skipInstall: true, experimental: true});
+        this.env = new Environment({ skipInstall: true, experimental: true });
 
         const self = this;
-        const superGenerator = {createGenerator(env) {
-          return class extends env.requireGenerator(undefined) {
-            exec() {}
-          };
-        }};
+        const superGenerator = {
+          async createGenerator(env) {
+            const Generator = await env.requireGenerator(undefined);
+            return class extends Generator {
+              exec() {}
+            };
+          },
+        };
         this.env.registerStub(superGenerator, 'super:app');
 
-        const dummy = {createGenerator(env) {
-          return class extends env.requireGenerator(extended) {
-            exec() {
-              self.execValue = 'done';
-            }
-          };
-        }};
+        const dummy = {
+          async createGenerator(env) {
+            return class extends (await env.requireGenerator(extended)) {
+              exec() {
+                self.execValue = 'done';
+              }
+            };
+          },
+        };
         this.env.registerStub(dummy, 'dummy:app');
       });
 

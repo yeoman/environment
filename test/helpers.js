@@ -1,3 +1,4 @@
-const {createHelpers} = require('yeoman-test');
+import { createHelpers } from 'yeoman-test';
+import Environment from '../lib/environment.js';
 
-module.exports = createHelpers({createEnv: require('../lib/environment').createEnv});
+export default createHelpers({ createEnv: Environment.createEnv });

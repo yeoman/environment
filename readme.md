@@ -6,36 +6,29 @@
 
 It provides a high-level API to discover, create and run generators, as well as further tuning of where and how a generator is resolved.
 
-
 ## Install
 
 ```
 $ npm install yeoman-environment
 ```
 
-
 ## Usage
 
 Full documentation available [here](http://yeoman.io/authoring/integrating-yeoman.html).
 
 ```js
-const yeoman = require('yeoman-environment');
+import yeoman from 'yeoman-environment';
 const env = yeoman.createEnv();
 
 // The #lookup() method will search the user computer for installed generators
 // The search if done from the current working directory
 env.lookup();
-env.run('angular', {skipInstall: true}).then(() => {
-  console.log('success')
-}, err => {
-  console.log(`error ${error}`);
-});
+await env.run('angular', { skipInstall: true });
 ```
 
 For advance usage, see [our API documentation for latest yeoman-environment](http://yeoman.github.io/environment).
 
 [API documentation for yeoman-environment v2.x](http://yeoman.github.io/environment/2.x).
-
 
 ## License
 

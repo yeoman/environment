@@ -10,7 +10,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -19,56 +18,56 @@ jobs:
         node-version: [14.x]
 
     steps:
-    - name: Checkout yeoman-test
-      uses: actions/checkout@v3
-      with:
-        repository: yeoman/yeoman-test
-        path: yeoman-test
+      - name: Checkout yeoman-test
+        uses: actions/checkout@v3
+        with:
+          repository: yeoman/yeoman-test
+          path: yeoman-test
 
-    - name: Checkout yeoman-generator
-      uses: actions/checkout@v3
-      with:
-        repository: yeoman/generator
-        path: yeoman-generator
+      - name: Checkout yeoman-generator
+        uses: actions/checkout@v3
+        with:
+          repository: yeoman/generator
+          path: yeoman-generator
 
-    - name: Checkout yeoman-environment
-      uses: actions/checkout@v3
-      with:
-        path: yeoman-environment
+      - name: Checkout yeoman-environment
+        uses: actions/checkout@v3
+        with:
+          path: yeoman-environment
 
-    - uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
 
-    - uses: actions/cache@v3
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-integration
-        restore-keys: |
-          ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-
+      - uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-integration
+          restore-keys: |
+            ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-
 
-    - name: Run yeoman-test test
-      run: |
-        cd $GITHUB_WORKSPACE/yeoman-test
-        npm ci
-        npm install yeoman/generator#main
-        npm install ${{ github.repository }}#$GITHUB_REF
-        npm test
+      - name: Run yeoman-test test
+        run: |
+          cd $GITHUB_WORKSPACE/yeoman-test
+          npm ci
+          npm install yeoman/generator#main
+          npm install ${{ github.repository }}#$GITHUB_REF
+          npm test
 
-    - name: Run yeoman-generator test
-      if: always()
-      run: |
-        cd $GITHUB_WORKSPACE/yeoman-generator
-        npm ci
-        npm install yeoman/yeoman-test#main
-        npm install ${{ github.repository }}#$GITHUB_REF
-        npm test
+      - name: Run yeoman-generator test
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/yeoman-generator
+          npm ci
+          npm install yeoman/yeoman-test#main
+          npm install ${{ github.repository }}#$GITHUB_REF
+          npm test
 
-    - name: Run yeoman-environment test
-      if: always()
-      run: |
-        cd $GITHUB_WORKSPACE/yeoman-environment
-        npm ci
-        npm install yeoman/yeoman-test#main
-        npm install yeoman/generator#main
-        npm test
+      - name: Run yeoman-environment test
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/yeoman-environment
+          npm ci
+          npm install yeoman/yeoman-test#main
+          npm install yeoman/generator#main
+          npm test

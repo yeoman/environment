@@ -1,19 +1,24 @@
-/* eslint-disable max-nested-callbacks */
-const assert = require('assert');
-const path = require('path');
-const sinon = require('sinon');
-const semver = require('semver');
+import assert from 'node:assert';
+import path, { dirname } from 'node:path';
+import sinon from 'sinon';
+import semver from 'semver';
 
-const Environment = require('..');
+import Environment from '../lib/index.mjs';
+import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 describe('environment (command)', () => {
   describe('#execute() with options', () => {
     let env;
 
-    beforeEach(() => {
-      env = new Environment([], {skipInstall: true, dryRun: true});
+    beforeEach(async () => {
+      env = new Environment([], { skipInstall: true, dryRun: true });
       env.adapter.log = sinon.stub();
-      env.register(path.join(__dirname, 'fixtures/generator-commands/generators/options'));
+      await env.register(path.join(__dirname, 'fixtures/generator-commands/generators/options'));
     });
 
     describe('generator with options', () => {
@@ -38,14 +43,7 @@ describe('environment (command)', () => {
       describe('with options', () => {
         let generator;
         beforeEach(async () => {
-          await env.execute('commands:options', [
-            '--bool',
-            '--no-bool-default',
-            '--string',
-            'customValue',
-            '--string-default',
-            'newValue'
-          ]);
+          await env.execute('commands:options', ['--bool', '--no-bool-default', '--string', 'customValue', '--string-default', 'newValue']);
 
           const generators = Object.values(env.getAllGenerators());
           assert(generators.length === 1);
@@ -64,11 +62,7 @@ describe('environment (command)', () => {
       describe('using aliases', () => {
         let generator;
         beforeEach(async () => {
-          await env.execute('commands:options', [
-            '-b',
-            '-s',
-            'customValue'
-          ]);
+          await env.execute('commands:options', ['-b', '-s', 'customValue']);
           const generators = Object.values(env.getAllGenerators());
           assert(generators.length === 1);
           generator = generators[0];
@@ -86,7 +80,7 @@ describe('environment (command)', () => {
     let env;
 
     beforeEach(() => {
-      env = new Environment([], {skipInstall: true, dryRun: true});
+      env = new Environment([], { skipInstall: true, dryRun: true });
       env.adapter.log = sinon.stub();
       env.register(path.join(__dirname, 'fixtures/generator-commands/generators/arguments'));
     });
@@ -130,6 +124,7 @@ describe('environment (command)', () => {
     if (!semver.satisfies(require('../node_modules/yeoman-generator/package.json').version, '>=5.0.0-beta.1')) {
       return;
     }
+
     describe('generator with arguments', () => {
       describe('passing bar argument', () => {
         let generator;
@@ -165,7 +160,7 @@ describe('environment (command)', () => {
             '--string',
             'customValue',
             '--string-default',
-            'newValue'
+            'newValue',
           ]);
 
           env = command.env;
@@ -185,4 +180,3 @@ describe('environment (command)', () => {
     });
   });
 });
-/* eslint-enable max-nested-callbacks */
