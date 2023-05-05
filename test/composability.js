@@ -21,7 +21,7 @@ describe('composability', () => {
     });
 
     it('should accept github repository version and return package entry', async function () {
-      this.timeout(10_000);
+      this.timeout(20_000);
       assert.deepStrictEqual(await this.env.resolvePackage('yeoman-generator', 'yeoman/generator'), [
         'yeoman-generator',
         'github:yeoman/generator',
@@ -29,7 +29,7 @@ describe('composability', () => {
     });
 
     it('should accept github repository and return package entry', async function () {
-      this.timeout(10_000);
+      this.timeout(20_000);
       assert.deepStrictEqual(await this.env.resolvePackage('yeoman/generator'), ['yeoman-generator', 'github:yeoman/generator']);
     });
   });
