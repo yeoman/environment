@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
 import fs from 'fs-extra';
-import spawn from 'cross-spawn';
 import { expect } from 'esmocha';
+import { execaSync } from 'execa';
 import slash from 'slash';
 import Environment from '../lib/index.mjs';
 import { execaOutput } from '../lib/util/util.js';
@@ -82,8 +82,8 @@ describe('Environment Resolver', async function () {
 
     process.chdir(projectRoot);
     if (!fs.existsSync(path.join(projectRoot, 'node_modules'))) {
-      spawn.sync('npm', ['ci']);
-      spawn.sync('npm', ['install', '-g', 'generator-dummytest', 'generator-dummy', '--no-package-lock']);
+      execaSync('npm', ['ci']);
+      execaSync('npm', ['install', '-g', 'generator-dummytest', 'generator-dummy', '--no-package-lock']);
     }
   });
 
@@ -173,7 +173,7 @@ describe('Environment Resolver', async function () {
     describe("when there's ancestor node_modules/ folder", async () => {
       before(() => {
         process.chdir(subDirRoot);
-        spawn.sync('npm', ['install', '--no-package-lock']);
+        execaSync('npm', ['install', '--no-package-lock']);
       });
 
       after(() => {
