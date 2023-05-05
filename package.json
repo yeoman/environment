@@ -93,7 +93,8 @@
     "strip-ansi": "^7.0.1",
     "text-table": "^0.2.0",
     "textextensions": "^5.16.0",
-    "untildify": "^4.0.0"
+    "untildify": "^4.0.0",
+    "yeoman-generator": "^5.8.0"
   },
   "devDependencies": {
     "c8": "^7.13.0",
