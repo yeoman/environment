@@ -1,17 +1,15 @@
 /* eslint-disable unicorn/no-await-expression-member */
 import path, { dirname, relative } from 'node:path';
 import assert from 'node:assert';
+import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+import process from 'node:process';
 import fs from 'fs-extra';
 import spawn from 'cross-spawn';
 import { expect } from 'esmocha';
 import slash from 'slash';
-
 import Environment from '../lib/index.mjs';
-
 import { execaOutput } from '../lib/util/util.js';
-import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
-import process from 'node:process';
 
 const require = createRequire(import.meta.url);
 

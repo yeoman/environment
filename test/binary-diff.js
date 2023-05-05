@@ -1,8 +1,8 @@
 import path, { dirname } from 'node:path';
 import assert from 'node:assert';
 import fs from 'node:fs';
-import { isBinary } from '../lib/util/binary-diff.js';
 import { fileURLToPath } from 'node:url';
+import { isBinary } from '../lib/util/binary-diff.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

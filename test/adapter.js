@@ -1,10 +1,10 @@
+import process from 'node:process';
 import assert from 'yeoman-assert';
 import sinon from 'sinon';
 import logSymbols from 'log-symbols';
 import stripAnsi from 'strip-ansi';
 import { TerminalAdapter } from '../lib/index.mjs';
 import createLog from '../lib/util/log.js';
-import process from 'node:process';
 
 describe('TerminalAdapter', () => {
   beforeEach(function () {

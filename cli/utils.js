@@ -1,6 +1,5 @@
 import { groupBy } from 'lodash';
 import createLogger from 'debug';
-
 import { Environment } from '../lib/index.js';
 import { toNamespace } from '../lib/util/namespace.js';
 
@@ -15,8 +14,10 @@ export const printGroupedGenerator = generators => {
       const generatorNamespace = toNamespace(generator.namespace);
       console.log(`    :${generatorNamespace.generator || 'app'}`);
     }
+
     console.log('');
   }
+
   console.log(`${generators.length} generators`);
 };
 

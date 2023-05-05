@@ -1,11 +1,10 @@
 import assert from 'node:assert';
 import path, { dirname } from 'node:path';
-import sinon from 'sinon';
-import semver from 'semver';
-
-import Environment from '../lib/index.mjs';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import sinon from 'sinon';
+import semver from 'semver';
+import Environment from '../lib/index.mjs';
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
@@ -136,7 +135,7 @@ describe('environment (command)', () => {
         let env;
 
         beforeEach(async () => {
-          const command = Environment.prepareCommand(require('./fixtures/generator-commands/generators/arguments'));
+          const command = Environment.prepareCommand(require('./fixtures/generator-commands/generators/arguments/index.js'));
           await command.parseAsync(['node', 'yo', 'bar']);
 
           env = command.env;
@@ -156,7 +155,7 @@ describe('environment (command)', () => {
         let env;
 
         beforeEach(async () => {
-          const command = Environment.prepareCommand(require('./fixtures/generator-commands/generators/options'));
+          const command = Environment.prepareCommand(require('./fixtures/generator-commands/generators/options/index.js'));
           await command.parseAsync([
             'node',
             'yo',

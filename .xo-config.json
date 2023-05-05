@@ -2,30 +2,22 @@
   "space": true,
   "envs": ["es2020", "node", "mocha"],
   "prettier": true,
-  "ignores": ["test/fixtures"],
+  "ignores": ["test/fixtures", "types/**"],
   "rules": {
-    "unicorn/prefer-module": "off",
-    "import/no-dynamic-require": "off",
     "padding-line-between-statements": "off",
     "unicorn/prefer-spread": "off",
     "prefer-spread": "off",
     "prefer-rest-params": "off",
-    "node/prefer-promises/fs": "off",
-    "promise/prefer-await-to-then": "off",
     "unicorn/no-array-reduce": "off",
-    "unicorn/import-style": "off",
-    "import/extensions": "off",
     "unicorn/no-this-assignment": "off",
-    "import/order": "off",
     "unicorn/no-array-for-each": "off",
-    "unicorn/no-array-push-push": "off",
-    "node/prefer-global/buffer": "off",
-    "node/prefer-global/process": "off"
+    "unicorn/no-array-push-push": "off"
   },
   "overrides": [
     {
       "files": "test/*",
       "rules": {
+        "import/order": "off",
         "max-nested-callbacks": "off"
       }
     }

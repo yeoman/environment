@@ -111,7 +111,7 @@
     "sinon": "^11.1.2",
     "sinon-test": "^3.1.1",
     "tui-jsdoc-template": "^1.2.2",
-    "xo": "^0.53.1",
+    "xo": "0.54.2",
     "yeoman-assert": "^3.1.1",
     "yeoman-generator": "^5.1.0",
     "yeoman-test": "^8.0.0-alpha.0"
