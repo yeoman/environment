@@ -1,0 +1,735 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Environment Resolver #lookup() should register expected generators 1`] = `
+{
+  "@dummyscope/scoped:app": {
+    "importGenerator": [Function],
+    "namespace": "@dummyscope/scoped:app",
+    "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "resolved": "fixtures/generator-scoped/app/index.js",
+  },
+  "@dummyscope/scoped:package": {
+    "importGenerator": [Function],
+    "namespace": "@dummyscope/scoped:package",
+    "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "resolved": "fixtures/generator-scoped/package/index.js",
+  },
+  "common-js:cjs": {
+    "importGenerator": [Function],
+    "namespace": "common-js:cjs",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-common-js",
+    "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
+  },
+  "commonjs:app": {
+    "importGenerator": [Function],
+    "namespace": "commonjs:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-commonjs",
+    "resolved": "fixtures/lookup-project/node_modules/generator-commonjs/app/index.js",
+  },
+  "dummy:app": {
+    "importGenerator": [Function],
+    "namespace": "dummy:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "resolved": "fixtures/lookup-project/node_modules/generator-dummy/app/index.js",
+  },
+  "dummy:yo": {
+    "importGenerator": [Function],
+    "namespace": "dummy:yo",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "resolved": "fixtures/lookup-project/node_modules/generator-dummy/yo/index.js",
+  },
+  "esm:app": {
+    "importGenerator": [Function],
+    "namespace": "esm:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/app/index.js",
+  },
+  "esm:create": {
+    "importGenerator": [Function],
+    "namespace": "esm:create",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/create/index.js",
+  },
+  "esm:create-inherited": {
+    "importGenerator": [Function],
+    "namespace": "esm:create-inherited",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
+  },
+  "esm:mjs": {
+    "importGenerator": [Function],
+    "namespace": "esm:mjs",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
+  },
+  "extend:support": {
+    "importGenerator": [Function],
+    "namespace": "extend:support",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-extend",
+    "resolved": "fixtures/generator-extend/support/index.js",
+  },
+  "jquery:app": {
+    "importGenerator": [Function],
+    "namespace": "jquery:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-jquery",
+    "resolved": "fixtures/lookup-project/node_modules/generator-jquery/app/index.js",
+  },
+  "ts-js:app": {
+    "importGenerator": [Function],
+    "namespace": "ts-js:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-ts-js",
+    "resolved": "fixtures/generator-ts-js/generators/app/index.js",
+  },
+  "ts:app": {
+    "importGenerator": [Function],
+    "namespace": "ts:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-ts",
+    "resolved": "fixtures/generator-ts/generators/app/index.ts",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() when localOnly argument is true should register expected generators 1`] = `
+{
+  "@dummyscope/scoped:app": {
+    "importGenerator": [Function],
+    "namespace": "@dummyscope/scoped:app",
+    "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "resolved": "fixtures/generator-scoped/app/index.js",
+  },
+  "@dummyscope/scoped:package": {
+    "importGenerator": [Function],
+    "namespace": "@dummyscope/scoped:package",
+    "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "resolved": "fixtures/generator-scoped/package/index.js",
+  },
+  "common-js:cjs": {
+    "importGenerator": [Function],
+    "namespace": "common-js:cjs",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-common-js",
+    "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
+  },
+  "commonjs:app": {
+    "importGenerator": [Function],
+    "namespace": "commonjs:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-commonjs",
+    "resolved": "fixtures/lookup-project/node_modules/generator-commonjs/app/index.js",
+  },
+  "dummy:app": {
+    "importGenerator": [Function],
+    "namespace": "dummy:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "resolved": "fixtures/lookup-project/node_modules/generator-dummy/app/index.js",
+  },
+  "dummy:yo": {
+    "importGenerator": [Function],
+    "namespace": "dummy:yo",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "resolved": "fixtures/lookup-project/node_modules/generator-dummy/yo/index.js",
+  },
+  "esm:app": {
+    "importGenerator": [Function],
+    "namespace": "esm:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/app/index.js",
+  },
+  "esm:create": {
+    "importGenerator": [Function],
+    "namespace": "esm:create",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/create/index.js",
+  },
+  "esm:create-inherited": {
+    "importGenerator": [Function],
+    "namespace": "esm:create-inherited",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
+  },
+  "esm:mjs": {
+    "importGenerator": [Function],
+    "namespace": "esm:mjs",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
+  },
+  "extend:support": {
+    "importGenerator": [Function],
+    "namespace": "extend:support",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-extend",
+    "resolved": "fixtures/generator-extend/support/index.js",
+  },
+  "jquery:app": {
+    "importGenerator": [Function],
+    "namespace": "jquery:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-jquery",
+    "resolved": "fixtures/lookup-project/node_modules/generator-jquery/app/index.js",
+  },
+  "ts-js:app": {
+    "importGenerator": [Function],
+    "namespace": "ts-js:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-ts-js",
+    "resolved": "fixtures/generator-ts-js/generators/app/index.js",
+  },
+  "ts:app": {
+    "importGenerator": [Function],
+    "namespace": "ts:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-ts",
+    "resolved": "fixtures/generator-ts/generators/app/index.ts",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() when modules repository is not called node_modules should register expected generators 1`] = `
+{
+  "@dummyscope/scoped:app": {
+    "importGenerator": [Function],
+    "namespace": "@dummyscope/scoped:app",
+    "packagePath": "fixtures/lookup-project/orig/@dummyscope/generator-scoped",
+    "resolved": "fixtures/generator-scoped/app/index.js",
+  },
+  "@dummyscope/scoped:package": {
+    "importGenerator": [Function],
+    "namespace": "@dummyscope/scoped:package",
+    "packagePath": "fixtures/lookup-project/orig/@dummyscope/generator-scoped",
+    "resolved": "fixtures/generator-scoped/package/index.js",
+  },
+  "common-js:cjs": {
+    "importGenerator": [Function],
+    "namespace": "common-js:cjs",
+    "packagePath": "fixtures/lookup-project/orig/generator-common-js",
+    "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
+  },
+  "commonjs:app": {
+    "importGenerator": [Function],
+    "namespace": "commonjs:app",
+    "packagePath": "fixtures/lookup-project/orig/generator-commonjs",
+    "resolved": "fixtures/lookup-project/orig/generator-commonjs/app/index.js",
+  },
+  "dummy:app": {
+    "importGenerator": [Function],
+    "namespace": "dummy:app",
+    "packagePath": "fixtures/lookup-project/orig/generator-dummy",
+    "resolved": "fixtures/lookup-project/orig/generator-dummy/app/index.js",
+  },
+  "dummy:yo": {
+    "importGenerator": [Function],
+    "namespace": "dummy:yo",
+    "packagePath": "fixtures/lookup-project/orig/generator-dummy",
+    "resolved": "fixtures/lookup-project/orig/generator-dummy/yo/index.js",
+  },
+  "esm:app": {
+    "importGenerator": [Function],
+    "namespace": "esm:app",
+    "packagePath": "fixtures/lookup-project/orig/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/app/index.js",
+  },
+  "esm:create": {
+    "importGenerator": [Function],
+    "namespace": "esm:create",
+    "packagePath": "fixtures/lookup-project/orig/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/create/index.js",
+  },
+  "esm:create-inherited": {
+    "importGenerator": [Function],
+    "namespace": "esm:create-inherited",
+    "packagePath": "fixtures/lookup-project/orig/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
+  },
+  "esm:mjs": {
+    "importGenerator": [Function],
+    "namespace": "esm:mjs",
+    "packagePath": "fixtures/lookup-project/orig/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
+  },
+  "extend:support": {
+    "importGenerator": [Function],
+    "namespace": "extend:support",
+    "packagePath": "fixtures/lookup-project/orig/generator-extend",
+    "resolved": "fixtures/generator-extend/support/index.js",
+  },
+  "jquery:app": {
+    "importGenerator": [Function],
+    "namespace": "jquery:app",
+    "packagePath": "fixtures/lookup-project/orig/generator-jquery",
+    "resolved": "fixtures/lookup-project/orig/generator-jquery/app/index.js",
+  },
+  "ts-js:app": {
+    "importGenerator": [Function],
+    "namespace": "ts-js:app",
+    "packagePath": "fixtures/lookup-project/orig/generator-ts-js",
+    "resolved": "fixtures/generator-ts-js/generators/app/index.js",
+  },
+  "ts:app": {
+    "importGenerator": [Function],
+    "namespace": "ts:app",
+    "packagePath": "fixtures/lookup-project/orig/generator-ts",
+    "resolved": "fixtures/generator-ts/generators/app/index.ts",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() when node_modules is a symlink should register expected generators 1`] = `
+{
+  "@dummyscope/scoped:app": {
+    "importGenerator": [Function],
+    "namespace": "@dummyscope/scoped:app",
+    "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "resolved": "fixtures/generator-scoped/app/index.js",
+  },
+  "@dummyscope/scoped:package": {
+    "importGenerator": [Function],
+    "namespace": "@dummyscope/scoped:package",
+    "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "resolved": "fixtures/generator-scoped/package/index.js",
+  },
+  "common-js:cjs": {
+    "importGenerator": [Function],
+    "namespace": "common-js:cjs",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-common-js",
+    "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
+  },
+  "commonjs:app": {
+    "importGenerator": [Function],
+    "namespace": "commonjs:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-commonjs",
+    "resolved": "fixtures/lookup-project/orig/node_modules/generator-commonjs/app/index.js",
+  },
+  "dummy:app": {
+    "importGenerator": [Function],
+    "namespace": "dummy:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "resolved": "fixtures/lookup-project/orig/node_modules/generator-dummy/app/index.js",
+  },
+  "dummy:yo": {
+    "importGenerator": [Function],
+    "namespace": "dummy:yo",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "resolved": "fixtures/lookup-project/orig/node_modules/generator-dummy/yo/index.js",
+  },
+  "esm:app": {
+    "importGenerator": [Function],
+    "namespace": "esm:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/app/index.js",
+  },
+  "esm:create": {
+    "importGenerator": [Function],
+    "namespace": "esm:create",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/create/index.js",
+  },
+  "esm:create-inherited": {
+    "importGenerator": [Function],
+    "namespace": "esm:create-inherited",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
+  },
+  "esm:mjs": {
+    "importGenerator": [Function],
+    "namespace": "esm:mjs",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
+  },
+  "extend:support": {
+    "importGenerator": [Function],
+    "namespace": "extend:support",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-extend",
+    "resolved": "fixtures/generator-extend/support/index.js",
+  },
+  "jquery:app": {
+    "importGenerator": [Function],
+    "namespace": "jquery:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-jquery",
+    "resolved": "fixtures/lookup-project/orig/node_modules/generator-jquery/app/index.js",
+  },
+  "ts-js:app": {
+    "importGenerator": [Function],
+    "namespace": "ts-js:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-ts-js",
+    "resolved": "fixtures/generator-ts-js/generators/app/index.js",
+  },
+  "ts:app": {
+    "importGenerator": [Function],
+    "namespace": "ts:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-ts",
+    "resolved": "fixtures/generator-ts/generators/app/index.ts",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() when options.localOnly argument is true should register expected generators 1`] = `
+{
+  "@dummyscope/scoped:app": {
+    "importGenerator": [Function],
+    "namespace": "@dummyscope/scoped:app",
+    "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "resolved": "fixtures/generator-scoped/app/index.js",
+  },
+  "@dummyscope/scoped:package": {
+    "importGenerator": [Function],
+    "namespace": "@dummyscope/scoped:package",
+    "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "resolved": "fixtures/generator-scoped/package/index.js",
+  },
+  "common-js:cjs": {
+    "importGenerator": [Function],
+    "namespace": "common-js:cjs",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-common-js",
+    "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
+  },
+  "commonjs:app": {
+    "importGenerator": [Function],
+    "namespace": "commonjs:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-commonjs",
+    "resolved": "fixtures/lookup-project/node_modules/generator-commonjs/app/index.js",
+  },
+  "dummy:app": {
+    "importGenerator": [Function],
+    "namespace": "dummy:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "resolved": "fixtures/lookup-project/node_modules/generator-dummy/app/index.js",
+  },
+  "dummy:yo": {
+    "importGenerator": [Function],
+    "namespace": "dummy:yo",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "resolved": "fixtures/lookup-project/node_modules/generator-dummy/yo/index.js",
+  },
+  "esm:app": {
+    "importGenerator": [Function],
+    "namespace": "esm:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/app/index.js",
+  },
+  "esm:create": {
+    "importGenerator": [Function],
+    "namespace": "esm:create",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/create/index.js",
+  },
+  "esm:create-inherited": {
+    "importGenerator": [Function],
+    "namespace": "esm:create-inherited",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
+  },
+  "esm:mjs": {
+    "importGenerator": [Function],
+    "namespace": "esm:mjs",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
+  },
+  "extend:support": {
+    "importGenerator": [Function],
+    "namespace": "extend:support",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-extend",
+    "resolved": "fixtures/generator-extend/support/index.js",
+  },
+  "jquery:app": {
+    "importGenerator": [Function],
+    "namespace": "jquery:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-jquery",
+    "resolved": "fixtures/lookup-project/node_modules/generator-jquery/app/index.js",
+  },
+  "ts-js:app": {
+    "importGenerator": [Function],
+    "namespace": "ts-js:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-ts-js",
+    "resolved": "fixtures/generator-ts-js/generators/app/index.js",
+  },
+  "ts:app": {
+    "importGenerator": [Function],
+    "namespace": "ts:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-ts",
+    "resolved": "fixtures/generator-ts/generators/app/index.ts",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() when there's ancestor node_modules/ folder should register expected generators 1`] = `
+{
+  "@dummyscope/scoped:app": {
+    "importGenerator": [Function],
+    "namespace": "@dummyscope/scoped:app",
+    "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "resolved": "fixtures/generator-scoped/app/index.js",
+  },
+  "@dummyscope/scoped:package": {
+    "importGenerator": [Function],
+    "namespace": "@dummyscope/scoped:package",
+    "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "resolved": "fixtures/generator-scoped/package/index.js",
+  },
+  "common-js:cjs": {
+    "importGenerator": [Function],
+    "namespace": "common-js:cjs",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-common-js",
+    "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
+  },
+  "commonjs:app": {
+    "importGenerator": [Function],
+    "namespace": "commonjs:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-commonjs",
+    "resolved": "fixtures/lookup-project/node_modules/generator-commonjs/app/index.js",
+  },
+  "dummy:app": {
+    "importGenerator": [Function],
+    "namespace": "dummy:app",
+    "packagePath": "fixtures/lookup-project/subdir/node_modules/generator-dummy",
+    "resolved": "fixtures/lookup-project/subdir/node_modules/generator-dummy/app/index.js",
+  },
+  "dummy:yo": {
+    "importGenerator": [Function],
+    "namespace": "dummy:yo",
+    "packagePath": "fixtures/lookup-project/subdir/node_modules/generator-dummy",
+    "resolved": "fixtures/lookup-project/subdir/node_modules/generator-dummy/yo/index.js",
+  },
+  "esm:app": {
+    "importGenerator": [Function],
+    "namespace": "esm:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/app/index.js",
+  },
+  "esm:create": {
+    "importGenerator": [Function],
+    "namespace": "esm:create",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/create/index.js",
+  },
+  "esm:create-inherited": {
+    "importGenerator": [Function],
+    "namespace": "esm:create-inherited",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
+  },
+  "esm:mjs": {
+    "importGenerator": [Function],
+    "namespace": "esm:mjs",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
+  },
+  "extend:support": {
+    "importGenerator": [Function],
+    "namespace": "extend:support",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-extend",
+    "resolved": "fixtures/generator-extend/support/index.js",
+  },
+  "jquery:app": {
+    "importGenerator": [Function],
+    "namespace": "jquery:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-jquery",
+    "resolved": "fixtures/lookup-project/node_modules/generator-jquery/app/index.js",
+  },
+  "ts-js:app": {
+    "importGenerator": [Function],
+    "namespace": "ts-js:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-ts-js",
+    "resolved": "fixtures/generator-ts-js/generators/app/index.js",
+  },
+  "ts:app": {
+    "importGenerator": [Function],
+    "namespace": "ts:app",
+    "packagePath": "fixtures/lookup-project/node_modules/generator-ts",
+    "resolved": "fixtures/generator-ts/generators/app/index.ts",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() with options with 2 packagePaths 1`] = `
+{
+  "module-root:app": {
+    "importGenerator": [Function],
+    "namespace": "module-root:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module-root",
+    "resolved": "fixtures/generator-module-root/app/index.js",
+  },
+  "module:app": {
+    "importGenerator": [Function],
+    "namespace": "module:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "resolved": "fixtures/generator-module/generators/app/index.js",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() with options with 3 packagePaths 1`] = `
+{
+  "module-lib-gen:app": {
+    "importGenerator": [Function],
+    "namespace": "module-lib-gen:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module-lib-gen",
+    "resolved": "fixtures/generator-module-lib-gen/lib/generators/app/index.js",
+  },
+  "module-root:app": {
+    "importGenerator": [Function],
+    "namespace": "module-root:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module-root",
+    "resolved": "fixtures/generator-module-root/app/index.js",
+  },
+  "module:app": {
+    "importGenerator": [Function],
+    "namespace": "module:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "resolved": "fixtures/generator-module/generators/app/index.js",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() with options with npmPaths 1`] = `
+{
+  "@scoped/scoped:app": {
+    "importGenerator": [Function],
+    "namespace": "@scoped/scoped:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "resolved": "fixtures/generator-scoped/app/index.js",
+  },
+  "@scoped/scoped:package": {
+    "importGenerator": [Function],
+    "namespace": "@scoped/scoped:package",
+    "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "resolved": "fixtures/generator-scoped/package/index.js",
+  },
+  "module-lib-gen:app": {
+    "importGenerator": [Function],
+    "namespace": "module-lib-gen:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module-lib-gen",
+    "resolved": "fixtures/generator-module-lib-gen/lib/generators/app/index.js",
+  },
+  "module-root:app": {
+    "importGenerator": [Function],
+    "namespace": "module-root:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module-root",
+    "resolved": "fixtures/generator-module-root/app/index.js",
+  },
+  "module:app": {
+    "importGenerator": [Function],
+    "namespace": "module:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "resolved": "fixtures/generator-module/generators/app/index.js",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() with options with packagePaths 1`] = `
+{
+  "module:app": {
+    "importGenerator": [Function],
+    "namespace": "module:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "resolved": "fixtures/generator-module/generators/app/index.js",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() with options with packagePatterns 1`] = `
+{
+  "module-root:app": {
+    "importGenerator": [Function],
+    "namespace": "module-root:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module-root",
+    "resolved": "fixtures/generator-module-root/app/index.js",
+  },
+  "module:app": {
+    "importGenerator": [Function],
+    "namespace": "module:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "resolved": "fixtures/generator-module/generators/app/index.js",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() with options with scope and packagePaths 1`] = `
+{
+  "@scoped/scoped:app": {
+    "importGenerator": [Function],
+    "namespace": "@scoped/scoped:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "resolved": "fixtures/generator-scoped/app/index.js",
+  },
+  "@scoped/scoped:package": {
+    "importGenerator": [Function],
+    "namespace": "@scoped/scoped:package",
+    "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "resolved": "fixtures/generator-scoped/package/index.js",
+  },
+  "@test/module:app": {
+    "importGenerator": [Function],
+    "namespace": "@test/module:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "resolved": "fixtures/generator-module/generators/app/index.js",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() with options with scoped packagePaths 1`] = `
+{
+  "@scoped/scoped:app": {
+    "importGenerator": [Function],
+    "namespace": "@scoped/scoped:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "resolved": "fixtures/generator-scoped/app/index.js",
+  },
+  "@scoped/scoped:package": {
+    "importGenerator": [Function],
+    "namespace": "@scoped/scoped:package",
+    "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "resolved": "fixtures/generator-scoped/package/index.js",
+  },
+  "module-lib-gen:app": {
+    "importGenerator": [Function],
+    "namespace": "module-lib-gen:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module-lib-gen",
+    "resolved": "fixtures/generator-module-lib-gen/lib/generators/app/index.js",
+  },
+  "module-root:app": {
+    "importGenerator": [Function],
+    "namespace": "module-root:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module-root",
+    "resolved": "fixtures/generator-module-root/app/index.js",
+  },
+  "module:app": {
+    "importGenerator": [Function],
+    "namespace": "module:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "resolved": "fixtures/generator-module/generators/app/index.js",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() with options with sub-sub-generators and packagePaths 1`] = `
+{
+  "@scoped/scoped:app:scaffold": {
+    "importGenerator": [Function],
+    "namespace": "@scoped/scoped:app:scaffold",
+    "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "resolved": "fixtures/generator-scoped/app/scaffold/index.js",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() with options with sub-sub-generators and packagePatterns 1`] = `
+{
+  "@scoped/scoped:app:scaffold": {
+    "importGenerator": [Function],
+    "namespace": "@scoped/scoped:app:scaffold",
+    "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "resolved": "fixtures/generator-scoped/app/scaffold/index.js",
+  },
+}
+`;
+
+exports[`Environment Resolver #lookup() with options with sub-sub-generators filePatterns 1`] = `
+{
+  "@scoped/scoped:app:scaffold": {
+    "importGenerator": [Function],
+    "namespace": "@scoped/scoped:app:scaffold",
+    "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "resolved": "fixtures/generator-scoped/app/scaffold/index.js",
+  },
+  "module:app": {
+    "importGenerator": [Function],
+    "namespace": "module:app",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "resolved": "fixtures/generator-module/generators/app/index.js",
+  },
+}
+`;

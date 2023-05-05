@@ -1,8 +1,9 @@
 /* eslint-disable unicorn/no-await-expression-member */
-import path, { dirname } from 'node:path';
+import path, { dirname, relative } from 'node:path';
 import assert from 'node:assert';
 import fs from 'fs-extra';
 import spawn from 'cross-spawn';
+import { expect } from 'esmocha';
 
 import Environment from '../lib/index.mjs';
 
@@ -17,6 +18,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const globalLookupTest = () => (process.env.NODE_PATH ? it : xit);
+
+const toRelativeMeta = meta =>
+  Object.fromEntries(
+    Object.entries(meta).map(([namespace, meta]) => {
+      return [namespace, { ...meta, packagePath: relative(__dirname, meta.packagePath), resolved: relative(__dirname, meta.resolved) }];
+    }),
+  );
 
 const linkGenerator = (generator, scope) => {
   const nodeModulesPath = path.resolve('node_modules');
@@ -117,61 +125,47 @@ describe('Environment Resolver', async function () {
     beforeEach(function () {
       this.env = new Environment();
       assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-      this.env.lookup(lookupOptions);
+      this.env.lookup({ ...lookupOptions, localOnly: true });
     });
 
-    it('register local generators', async function () {
+    it('should register expected generators', async function () {
+      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
+      // Register local generators
       assert.ok(await this.env.get('dummy:app'));
       assert.ok(await this.env.get('dummy:yo'));
 
       assert.ok((await this.env.get('dummy:app')).packagePath.endsWith('node_modules/generator-dummy'));
       assert.ok((await this.env.get('dummy:app')).packagePath.endsWith('node_modules/generator-dummy'));
-    });
 
-    it('registers local ts generators', async function () {
+      // Registers local ts generators
       assert.ok(await this.env.get('ts:app'));
-    });
 
-    it('registers local common js generators with cjs extension', async function () {
+      // Registers local common js generators with cjs extension
       assert.ok(await this.env.get('common-js:cjs'));
-    });
 
-    it('registers local esm generators with js extension', async function () {
+      // Registers local esm generators with js extension
       assert.ok(await this.env.get('ts:app'));
-    });
 
-    it('registers local esm generators with mjs extension', async function () {
+      // Registers local esm generators with mjs extension
       assert.ok(await this.env.get('esm:mjs'));
-    });
 
-    it('js generators takes precedence', async function () {
+      // Js generators takes precedence
       assert.equal(await this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
-    });
 
-    it('register generators in scoped packages', async function () {
+      // Register generators in scoped packages
       assert.ok(await this.env.get('@dummyscope/scoped:app'));
-    });
 
-    it('register non-dependency local generator', async function () {
+      // Register non-dependency local generator
       assert.ok(await this.env.get('jquery:app'));
-    });
 
-    if (!process.env.NODE_PATH) {
-      console.log('Skipping tests for global generators. Please setup `NODE_PATH` environment variable to run it.');
-    }
-
-    it('local generators prioritized over global', async function () {
-      const { resolved } = await this.env.get('dummy:app');
-      assert.ok(resolved.includes('lookup-project'), `Couldn't find 'lookup-project' in ${resolved}`);
+      // Register symlinked generators
+      assert.ok(await this.env.get('extend:support'));
     });
 
     globalLookupTest()('register global generators', async function () {
       assert.ok(await this.env.get('dummytest:app'));
       assert.ok(await this.env.get('dummytest:controller'));
-    });
-
-    it('register symlinked generators', async function () {
-      assert.ok(await this.env.get('extend:support'));
     });
 
     describe("when there's ancestor node_modules/ folder", async () => {
@@ -187,10 +181,14 @@ describe('Environment Resolver', async function () {
         });
       });
 
-      beforeEach(function () {
+      beforeEach(async function () {
         this.env = new Environment();
         assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-        this.env.lookup();
+        await this.env.lookup({ localOnly: true });
+      });
+
+      it('should register expected generators', async function () {
+        expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
       });
 
       it('register generators in ancestor node_modules directory', async function () {
@@ -219,46 +217,39 @@ describe('Environment Resolver', async function () {
         }
       });
 
-      it('register local generators', async function () {
+      it('should register expected generators', async function () {
+        expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
+        // Register local generators
         assert.ok(await this.env.get('dummy:app'));
         assert.ok(await this.env.get('dummy:yo'));
 
         assert.ok((await this.env.get('dummy:app')).packagePath.endsWith('node_modules/generator-dummy'));
         assert.ok((await this.env.get('dummy:app')).packagePath.endsWith('node_modules/generator-dummy'));
-      });
 
-      it('registers local ts generators', async function () {
+        // Registers local ts generators
         assert.ok(await this.env.get('ts:app'));
-      });
 
-      it('js generators takes precedence', async function () {
+        // Js generators takes precedence
         assert.equal(await this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
-      });
 
-      it('register generators in scoped packages', async function () {
+        // Register generators in scoped packages
         assert.ok(await this.env.get('@dummyscope/scoped:app'));
-      });
 
-      it('register non-dependency local generator', async function () {
+        // Register non-dependency local generator
         assert.ok(await this.env.get('jquery:app'));
-      });
 
-      if (!process.env.NODE_PATH) {
-        console.log('Skipping tests for global generators. Please setup `NODE_PATH` environment variable to run it.');
-      }
-
-      it('local generators prioritized over global', async function () {
+        // Local generators prioritized over global
         const { resolved } = await this.env.get('dummy:app');
         assert.ok(resolved.includes('lookup-project'), `Couldn't find 'lookup-project' in ${resolved}`);
+
+        // Register symlinked generators
+        assert.ok(await this.env.get('extend:support'));
       });
 
       globalLookupTest()('register global generators', async function () {
         assert.ok(await this.env.get('dummytest:app'));
         assert.ok(await this.env.get('dummytest:controller'));
-      });
-
-      it('register symlinked generators', async function () {
-        assert.ok(await this.env.get('extend:support'));
       });
     });
 
@@ -280,36 +271,30 @@ describe('Environment Resolver', async function () {
         }
       });
 
-      it('register local generators', async function () {
+      it('should register expected generators', async function () {
+        expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
+        // Register local generators
         assert.ok(await this.env.get('dummy:app'));
         assert.ok(await this.env.get('dummy:yo'));
 
         assert.ok((await this.env.get('dummy:app')).packagePath.endsWith('/generator-dummy'));
         assert.ok((await this.env.get('dummy:app')).packagePath.endsWith('/generator-dummy'));
-      });
 
-      it('registers local ts generators', async function () {
+        // Registers local ts generators', async function () {
         assert.ok(await this.env.get('ts:app'));
-      });
 
-      it('js generators takes precedence', async function () {
+        // Js generators takes precedence', async function () {
         assert.equal(await this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
-      });
 
-      it('register generators in scoped packages', async function () {
+        // Register generators in scoped packages', async function () {
         assert.ok(await this.env.get('@dummyscope/scoped:app'));
-      });
 
-      if (!process.env.NODE_PATH) {
-        console.log('Skipping tests for global generators. Please setup `NODE_PATH` environment variable to run it.');
-      }
-
-      it('local generators prioritized over global', async function () {
+        // Local generators prioritized over global
         const { resolved } = await this.env.get('dummy:app');
         assert.ok(resolved.includes('orig'), `Couldn't find 'lookup-project' in ${resolved}`);
-      });
 
-      it('register symlinked generators', async function () {
+        // Register symlinked generators
         assert.ok(await this.env.get('extend:support'));
       });
     });
@@ -322,22 +307,22 @@ describe('Environment Resolver', async function () {
         this.env.alias('dummy-alias', 'dummy');
       });
 
-      it('register local generators', async function () {
+      it('should register expected generators', async function () {
+        expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
+        // Register local generators
         assert.ok(await this.env.get('dummy:app'));
         assert.ok(await this.env.get('dummy:yo'));
         assert.ok(this.env.isPackageRegistered('dummy'));
         assert.ok(this.env.isPackageRegistered('dummy-alias'));
-      });
 
-      it('register generators in scoped packages', async function () {
+        // Register generators in scoped packages
         assert.ok(await this.env.get('@dummyscope/scoped:app'));
-      });
 
-      it('register non-dependency local generator', async function () {
+        // Register non-dependency local generator
         assert.ok(await this.env.get('jquery:app'));
-      });
 
-      it('register symlinked generators', async function () {
+        // Register symlinked generators
         assert.ok(await this.env.get('extend:support'));
       });
 
@@ -354,20 +339,20 @@ describe('Environment Resolver', async function () {
         this.env.lookup({ localOnly: true });
       });
 
-      it('register local generators', async function () {
+      it('should register expected generators', async function () {
+        expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
+        // Register local generators
         assert.ok(await this.env.get('dummy:app'));
         assert.ok(await this.env.get('dummy:yo'));
-      });
 
-      it('register generators in scoped packages', async function () {
+        // Register generators in scoped packages
         assert.ok(await this.env.get('@dummyscope/scoped:app'));
-      });
 
-      it('register non-dependency local generator', async function () {
+        // Register non-dependency local generator
         assert.ok(await this.env.get('jquery:app'));
-      });
 
-      it('register symlinked generators', async function () {
+        // Register symlinked generators
         assert.ok(await this.env.get('extend:support'));
       });
 
@@ -402,16 +387,23 @@ describe('Environment Resolver', async function () {
     });
 
     it('with packagePaths', async function () {
-      this.env.lookup({ packagePaths: ['node_modules/generator-module'] });
+      this.env.lookup({ localOnly: true, packagePaths: ['node_modules/generator-module'] });
+
+      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
       assert.ok(await this.env.get('module:app'));
       assert.ok(this.env.getRegisteredPackages().length === 1);
     });
 
     it('with scope and packagePaths', async function () {
       this.env.lookup({
+        localOnly: true,
         packagePaths: ['node_modules/generator-module', 'node_modules/@scoped/generator-scoped'],
         registerToScope: 'test',
       });
+
+      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
       assert.ok(await this.env.get('@test/module:app'));
       assert.ok(await this.env.get('@scoped/scoped:app'));
       assert.ok(this.env.getRegisteredPackages().length === 2);
@@ -419,8 +411,12 @@ describe('Environment Resolver', async function () {
 
     it('with 2 packagePaths', async function () {
       this.env.lookup({
+        localOnly: true,
         packagePaths: ['node_modules/generator-module', 'node_modules/generator-module-root'],
       });
+
+      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
       assert.ok(await this.env.get('module:app'));
       assert.ok(await this.env.get('module-root:app'));
       assert.ok(this.env.getRegisteredPackages().length === 2);
@@ -428,8 +424,12 @@ describe('Environment Resolver', async function () {
 
     it('with 3 packagePaths', async function () {
       this.env.lookup({
+        localOnly: true,
         packagePaths: ['node_modules/generator-module', 'node_modules/generator-module-root', 'node_modules/generator-module-lib-gen'],
       });
+
+      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
       assert.ok(await this.env.get('module:app'));
       assert.ok(await this.env.get('module-root:app'));
       assert.ok(await this.env.get('module-lib-gen:app'));
@@ -438,6 +438,7 @@ describe('Environment Resolver', async function () {
 
     it('with scoped packagePaths', async function () {
       this.env.lookup({
+        localOnly: true,
         packagePaths: [
           'node_modules/generator-module',
           'node_modules/generator-module-root',
@@ -445,6 +446,9 @@ describe('Environment Resolver', async function () {
           'node_modules/@scoped/generator-scoped',
         ],
       });
+
+      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
       assert.ok(await this.env.get('module:app'));
       assert.ok(await this.env.get('module-root:app'));
       assert.ok(await this.env.get('module-lib-gen:app'));
@@ -454,6 +458,9 @@ describe('Environment Resolver', async function () {
 
     it('with npmPaths', async function () {
       this.env.lookup({ npmPaths: ['node_modules'] });
+
+      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
       assert.ok(await this.env.get('module:app'));
       assert.ok(await this.env.get('module-root:app'));
       assert.ok(await this.env.get('module-lib-gen:app'));
@@ -463,17 +470,25 @@ describe('Environment Resolver', async function () {
 
     it('with sub-sub-generators filePatterns', async function () {
       this.env.lookup({
+        localOnly: true,
         npmPaths: ['node_modules'],
         filePatterns: ['*/*/index.js'],
       });
+
+      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
       assert.ok(await this.env.get('@scoped/scoped:app:scaffold'));
     });
 
     it('with packagePatterns', async function () {
       this.env.lookup({
+        localOnly: true,
         npmPaths: ['node_modules'],
         packagePatterns: ['generator-module', 'generator-module-root'],
       });
+
+      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
       assert.ok(await this.env.get('module:app'));
       assert.ok(await this.env.get('module-root:app'));
       assert.ok(this.env.getRegisteredPackages().length === 2);
@@ -481,18 +496,26 @@ describe('Environment Resolver', async function () {
 
     it('with sub-sub-generators and packagePaths', async function () {
       this.env.lookup({
+        localOnly: true,
         packagePaths: ['node_modules/@scoped/generator-scoped'],
         filePatterns: ['*/*/index.js'],
       });
+
+      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
       assert.ok(await this.env.get('@scoped/scoped:app:scaffold'));
     });
 
     it('with sub-sub-generators and packagePatterns', async function () {
       this.env.lookup({
+        localOnly: true,
         npmPaths: ['node_modules'],
         packagePatterns: ['generator-scoped'],
         filePatterns: ['*/*/index.js'],
       });
+
+      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
       assert.ok(await this.env.get('@scoped/scoped:app:scaffold'));
     });
   });
@@ -524,13 +547,14 @@ describe('Environment Resolver', async function () {
     });
 
     it('with 1 namespace', async function () {
-      this.env.lookupNamespaces('module:app', { npmPaths: ['node_modules'] });
+      this.env.lookupNamespaces('module:app', { localOnly: true, npmPaths: ['node_modules'] });
       assert.ok(await this.env.get('module:app'));
       assert.ok(this.env.getRegisteredPackages().length === 1);
     });
 
     it('with 2 namespaces', async function () {
       this.env.lookupNamespaces(['module:app', 'module-root:app'], {
+        localOnly: true,
         npmPaths: ['node_modules'],
       });
       assert.ok(await this.env.get('module:app'));
@@ -540,6 +564,7 @@ describe('Environment Resolver', async function () {
 
     it('with sub-sub-generators', async function () {
       this.env.lookupNamespaces('@scoped/scoped:app:scaffold', {
+        localOnly: true,
         npmPaths: ['node_modules'],
       });
       assert.ok(await this.env.get('@scoped/scoped:app:scaffold'));
