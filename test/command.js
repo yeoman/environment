@@ -16,17 +16,22 @@ describe('environment (command)', () => {
     let env;
 
     beforeEach(async () => {
+      console.log('foo1');
       env = new Environment([], { skipInstall: true, dryRun: true });
       env.adapter.log = sinon.stub();
+      console.log('foo2');
       await env.register(path.join(__dirname, 'fixtures/generator-commands/generators/options'));
+      console.log('foo3');
     });
 
     describe('generator with options', () => {
       describe('without options', () => {
         let generator;
         beforeEach(async () => {
+          console.log('execute');
           await env.execute('commands:options');
           const generators = Object.values(env.getAllGenerators());
+          console.log('generators', generators);
           assert(generators.length === 1);
           generator = generators[0];
         });
