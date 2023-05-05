@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import path, { dirname } from 'node:path';
 import sinon from 'sinon';
 import { pipeline, passthrough } from 'p-transform';
-import { fileIsModified, getConflicterStatusForFile, createYoRcTransform, createConflicterStatusTransform } from '../lib/util/transform.js';
+import { getConflicterStatusForFile, createYoRcTransform, createConflicterStatusTransform } from '../lib/util/transform.js';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -49,24 +49,6 @@ describe('Transform stream', () => {
     }
 
     stream.end();
-  });
-
-  describe('fileIsModified()', () => {
-    it('should return false for unmodified file', () => {
-      assert.equal(fileIsModified(unmodifiedFile), false);
-    });
-
-    it('should return true for modified file', () => {
-      assert.equal(fileIsModified(modifiedFile), true);
-    });
-
-    it('should return true for new file', () => {
-      assert.equal(fileIsModified(newFile), true);
-    });
-
-    it('should return false for new file that have been deleted', () => {
-      assert.equal(fileIsModified(newFile), true);
-    });
   });
 
   describe('createYoRcTransform()', () => {

@@ -82,8 +82,8 @@
     "isbinaryfile": "^4.0.10",
     "lodash": "^4.17.10",
     "log-symbols": "^4.0.0",
-    "mem-fs": "^1.2.0 || ^2.0.0",
-    "mem-fs-editor": "^8.1.2 || ^9.0.0",
+    "mem-fs": "^3.0.0",
+    "mem-fs-editor": "^10.0.1",
     "minimatch": "^3.0.4",
     "npmlog": "^5.0.1",
     "p-queue": "^6.6.2",
@@ -114,11 +114,10 @@
     "xo": "^0.53.1",
     "yeoman-assert": "^3.1.1",
     "yeoman-generator": "^5.1.0",
-    "yeoman-test": "^7.2.0"
+    "yeoman-test": "^8.0.0-alpha.0"
   },
   "peerDependencies": {
-    "mem-fs": "^1.2.0 || ^2.0.0",
-    "mem-fs-editor": "^8.1.2 || ^9.0.0"
+    "mem-fs": "3.0.0"
   },
   "engines": {
     "node": "^16.13.0 || >=18.12.0"
