@@ -33,14 +33,12 @@
     "./cli": "./cli/index.js"
   },
   "main": "./lib/index.mjs",
-  "types": "./types/index.d.ts",
   "bin": {
     "yoe": "cli/index.js"
   },
   "files": [
     "cli",
-    "lib",
-    "types"
+    "lib"
   ],
   "scripts": {
     "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
