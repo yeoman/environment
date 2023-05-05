@@ -82,7 +82,7 @@
     "isbinaryfile": "^5.0.0",
     "lodash": "^4.17.10",
     "log-symbols": "^4.0.0",
-    "mem-fs": "3.0.0",
+    "mem-fs": "^3.0.0",
     "mem-fs-editor": "^10.0.1",
     "minimatch": "^3.0.4",
     "npmlog": "^5.0.1",
@@ -117,7 +117,7 @@
     "yeoman-test": "^8.0.0-alpha.0"
   },
   "peerDependencies": {
-    "mem-fs": "3.0.0"
+    "mem-fs": "^3.0.0"
   },
   "engines": {
     "node": "^16.13.0 || >=18.12.0"
