@@ -4,6 +4,7 @@ import assert from 'node:assert';
 import fs from 'fs-extra';
 import spawn from 'cross-spawn';
 import { expect } from 'esmocha';
+import slash from 'slash';
 
 import Environment from '../lib/index.mjs';
 
@@ -22,7 +23,10 @@ const globalLookupTest = () => (process.env.NODE_PATH ? it : xit);
 const toRelativeMeta = meta =>
   Object.fromEntries(
     Object.entries(meta).map(([namespace, meta]) => {
-      return [namespace, { ...meta, packagePath: relative(__dirname, meta.packagePath), resolved: relative(__dirname, meta.resolved) }];
+      return [
+        namespace,
+        { ...meta, packagePath: slash(relative(__dirname, meta.packagePath)), resolved: slash(relative(__dirname, meta.resolved)) },
+      ];
     }),
   );
 
