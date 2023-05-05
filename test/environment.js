@@ -3,15 +3,14 @@ import events from 'node:events';
 import fs from 'node:fs';
 import path, { dirname } from 'node:path';
 import util from 'node:util';
+import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import sinon from 'sinon';
 import sinonTestFactory from 'sinon-test';
 import Generator from 'yeoman-generator';
 import assert from 'yeoman-assert';
-
 import semver from 'semver';
 import Environment, { TerminalAdapter } from '../lib/index.mjs';
-import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const generatorPackageJson = require('yeoman-generator/package.json');
@@ -871,7 +870,7 @@ describe('Environment', () => {
 
   describe('#get()', () => {
     beforeEach(async function () {
-      this.generator = require('./fixtures/generator-mocha');
+      this.generator = require('./fixtures/generator-mocha/index.js');
       await this.env.register(path.join(__dirname, './fixtures/generator-mocha'), 'fixtures:generator-mocha');
       await this.env.register(path.join(__dirname, './fixtures/generator-mocha'), 'mocha:generator');
     });
@@ -911,7 +910,7 @@ describe('Environment', () => {
     });
 
     it('works with modules', async function () {
-      const generator = require('./fixtures/generator-module/generators/app');
+      const generator = require('./fixtures/generator-module/generators/app/index.js');
       await this.env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
       assert.equal(await this.env.get('fixtures:generator-module'), generator.default);
     });
@@ -956,7 +955,7 @@ describe('Environment', () => {
 
   describe('#get() with #alias()', () => {
     beforeEach(async function () {
-      this.generator = require('./fixtures/generator-mocha');
+      this.generator = require('./fixtures/generator-mocha/index.js');
       this.env.alias(/^prefix-(.*)$/, '$1');
       await this.env.register(path.join(__dirname, './fixtures/generator-mocha'), 'fixtures:generator-mocha');
       await this.env.register(path.join(__dirname, './fixtures/generator-mocha'), 'mocha:generator');

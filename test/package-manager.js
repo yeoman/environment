@@ -1,8 +1,7 @@
 import assert from 'node:assert';
 import path, { dirname } from 'node:path';
-import sinon from 'sinon';
 import { fileURLToPath } from 'node:url';
-
+import sinon from 'sinon';
 import PackageManagerMixin from '../lib/package-manager.js';
 
 const __filename = fileURLToPath(import.meta.url);

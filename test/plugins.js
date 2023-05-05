@@ -1,11 +1,9 @@
 import assert from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
-import fs from 'fs-extra';
 import process from 'node:process';
-
+import fs from 'fs-extra';
 import Environment from '../lib/index.mjs';
-
 import YeomanRepository from '../lib/util/repository.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-environment/light');
