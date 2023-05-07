@@ -2,7 +2,7 @@
 import process from 'node:process';
 import YeomanCommand from '../src/util/command.js';
 import packageJson from '../package.json';
-import Env from '..';
+import Env from '../index.js';
 import { printGroupedGenerator, environmentAction } from './utils.js';
 
 const program = new YeomanCommand();
