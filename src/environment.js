@@ -6,7 +6,7 @@ import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
 import chalk from 'chalk';
-import _ from 'lodash';
+import _, { defaults, findLast, last, pick, uniq } from 'lodash-es';
 import GroupedQueue from 'grouped-queue';
 import escapeStrRe from 'escape-string-regexp';
 import untildify from 'untildify';
@@ -402,8 +402,8 @@ class Environment extends Base {
    * @param {Object} options
    */
   loadEnvironmentOptions(options) {
-    const environmentOptions = _.pick(options, ['skipInstall', 'nodePackageManager']);
-    _.defaults(this.options, environmentOptions);
+    const environmentOptions = pick(options, ['skipInstall', 'nodePackageManager']);
+    defaults(this.options, environmentOptions);
     return environmentOptions;
   }
 
@@ -413,7 +413,7 @@ class Environment extends Base {
    * @param {Object} options
    */
   loadSharedOptions(options) {
-    const optionsToShare = _.pick(options, [
+    const optionsToShare = pick(options, [
       'skipInstall',
       'forceInstall',
       'skipCache',
@@ -619,7 +619,7 @@ class Environment extends Base {
    * @return {Array}
    */
   getGeneratorNames() {
-    return _.uniq(Object.keys(this.getGeneratorsMeta()).map(namespace => Environment.namespaceToName(namespace)));
+    return uniq(Object.keys(this.getGeneratorsMeta()).map(namespace => Environment.namespaceToName(namespace)));
   }
 
   /**
@@ -695,12 +695,12 @@ class Environment extends Base {
     // of the namespace. If we find a path delimiter in the namespace, then ignore the
     // last part of the namespace.
     const parts = namespaceOrPath.split(':');
-    const maybePath = _.last(parts);
+    const maybePath = last(parts);
     if (parts.length > 1 && /[/\\]/.test(maybePath)) {
       parts.pop();
 
       // We also want to remove the drive letter on windows
-      if (maybePath.includes('\\') && _.last(parts).length === 1) {
+      if (maybePath.includes('\\') && last(parts).length === 1) {
         parts.pop();
       }
 
@@ -1087,7 +1087,7 @@ class Environment extends Base {
   start(options) {
     return new Promise((resolve, reject) => {
       if (this.conflicter === undefined) {
-        const conflicterOptions = _.pick(_.defaults({}, this.options, options), [
+        const conflicterOptions = pick(defaults({}, this.options, options), [
           'force',
           'bail',
           'ignoreWhitespace',
@@ -1225,7 +1225,7 @@ class Environment extends Base {
     }
 
     const folders = ns.split('/');
-    const scope = _.findLast(folders, folder => folder.indexOf('@') === 0);
+    const scope = findLast(folders, folder => folder.indexOf('@') === 0);
 
     // Cleanup `ns` from unwanted parts and then normalize slashes to `:`
     ns = ns

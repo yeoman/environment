@@ -4,14 +4,19 @@
   "prettier": true,
   "ignores": ["test/fixtures", "types/**"],
   "rules": {
+    "@typescript-eslint/no-unsafe-argument": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
     "padding-line-between-statements": "off",
-    "unicorn/prefer-spread": "off",
     "prefer-spread": "off",
     "prefer-rest-params": "off",
-    "unicorn/no-array-reduce": "off",
-    "unicorn/no-this-assignment": "off",
     "unicorn/no-array-for-each": "off",
-    "unicorn/no-array-push-push": "off"
+    "unicorn/no-array-reduce": "off",
+    "unicorn/no-array-push-push": "off",
+    "unicorn/no-this-assignment": "off",
+    "unicorn/prefer-spread": "off"
   },
   "overrides": [
     {

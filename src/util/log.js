@@ -2,7 +2,7 @@
 import util from 'node:util';
 import EventEmitter from 'node:events';
 import process from 'node:process';
-import _ from 'lodash';
+import { extend } from 'lodash-es';
 import table from 'text-table';
 import chalk from 'chalk';
 import logSymbols from 'log-symbols';
@@ -91,7 +91,7 @@ const log = parameters => {
     return log;
   }
 
-  _.extend(log, EventEmitter.prototype);
+  extend(log, EventEmitter.prototype);
 
   // A simple write method, with formatted message.
   //

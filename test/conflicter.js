@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
-import _ from 'lodash';
+import { filter } from 'lodash-es';
 import sinon from 'sinon';
 import slash from 'slash';
 import semver from 'semver';
@@ -349,7 +349,7 @@ describe('Conflicter', () => {
           contents: null,
         })
         .then(() => {
-          assert.equal(_.filter(spy.firstCall.args[0][0].choices, { value: 'diff' }).length, 0);
+          assert.equal(filter(spy.firstCall.args[0][0].choices, { value: 'diff' }).length, 0);
         });
     });
 
