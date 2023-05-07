@@ -1417,10 +1417,10 @@ class Environment extends Base {
    * @param {string} [before]
    */
   addPriority(priority, before) {
-    if (this.env.runLoop.queueNames.includes(priority)) {
+    if (this.runLoop.queueNames.includes(priority)) {
       return;
     }
-    this.env.runLoop.addSubQueue(priority, before);
+    this.runLoop.addSubQueue(priority, before);
   }
 }
 

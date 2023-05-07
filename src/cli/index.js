@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import process from 'node:process';
-import YeomanCommand from '../src/util/command.js';
+import YeomanCommand from '../util/command.js';
 import packageJson from '../package.json';
 import Env from '../index.js';
 import { printGroupedGenerator, environmentAction } from './utils.js';
