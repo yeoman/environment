@@ -63,6 +63,7 @@
   },
   "dependencies": {
     "@npmcli/arborist": "^6.2.9",
+    "@yeoman/types": "^0.0.1",
     "are-we-there-yet": "^4.0.0",
     "arrify": "^3.0.0",
     "binaryextensions": "^4.18.0",

@@ -308,6 +308,7 @@ class Environment extends Base {
    * (e.g. IDE plugins), otherwise a `TerminalAdapter` is instantiated by default
    *
    * @constructor
+   * @implements {import('@yeoman/types').BaseEnvironment}
    * @mixes env/resolver
    * @mixes env/composability
    * @param {String|Array}          args
