@@ -3,8 +3,8 @@ import assert from 'yeoman-assert';
 import sinon from 'sinon';
 import logSymbols from 'log-symbols';
 import stripAnsi from 'strip-ansi';
-import { TerminalAdapter } from '../lib/index.mjs';
-import createLog from '../lib/util/log.js';
+import { TerminalAdapter } from '../src/index.js';
+import createLog from '../src/util/log.js';
 
 describe('TerminalAdapter', () => {
   beforeEach(function () {

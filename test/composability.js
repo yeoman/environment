@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import Environment from '../lib/index.mjs';
+import Environment from '../src/index.js';
 
 describe('composability', () => {
   before(function () {

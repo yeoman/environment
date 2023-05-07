@@ -3,7 +3,7 @@ import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sinon from 'sinon';
 import { pipeline, passthrough } from 'p-transform';
-import { getConflicterStatusForFile, createYoRcTransform, createConflicterStatusTransform } from '../lib/util/transform.js';
+import { getConflicterStatusForFile, createYoRcTransform, createConflicterStatusTransform } from '../src/util/transform.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

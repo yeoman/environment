@@ -22,23 +22,23 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./lib/index.mjs"
+      "import": "./dist/index.js"
     },
     "./cli/*": "./cli/*.js",
-    "./lib/*": "./lib/*.js",
-    "./lib/util/*": "./lib/util/*.js",
-    "./transform": "./lib/util/transform.js",
+    "./lib/*": "./dist/*.js",
+    "./lib/util/*": "./dist/util/*.js",
+    "./transform": "./dist/util/transform.js",
     "./package.json": "./package.json",
-    "./namespace": "./lib/util/namespace.js",
+    "./namespace": "./dist/util/namespace.js",
     "./cli": "./cli/index.js"
   },
-  "main": "./lib/index.mjs",
+  "main": "./dist/index.js",
   "bin": {
     "yoe": "cli/index.js"
   },
   "files": [
     "cli",
-    "lib"
+    "dist"
   ],
   "scripts": {
     "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
@@ -106,6 +106,7 @@
     "sinon": "^15.0.4",
     "sinon-test": "^3.1.5",
     "tui-jsdoc-template": "^1.2.2",
+    "typescript": "^5.0.4",
     "xo": "0.54.2",
     "yeoman-assert": "^3.1.1",
     "yeoman-generator": "^5.8.0",

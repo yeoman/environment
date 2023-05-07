@@ -1,6 +1,6 @@
 import assert from 'node:assert';
-import Environment from '../lib/index.mjs';
-import { duplicateEnv } from '../lib/util/util.js';
+import Environment from '../src/index.js';
+import { duplicateEnv } from '../src/util/util.js';
 
 describe('util', () => {
   describe('.duplicateEnv()', () => {

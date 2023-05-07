@@ -10,7 +10,7 @@ import sinonTestFactory from 'sinon-test';
 import Generator from 'yeoman-generator';
 import assert from 'yeoman-assert';
 import semver from 'semver';
-import Environment, { TerminalAdapter } from '../lib/index.mjs';
+import Environment, { TerminalAdapter } from '../src/index.js';
 
 const require = createRequire(import.meta.url);
 const generatorPackageJson = require('yeoman-generator/package.json');

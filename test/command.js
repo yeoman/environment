@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import sinon from 'sinon';
 import semver from 'semver';
-import Environment from '../lib/index.mjs';
+import Environment from '../src/index.js';
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);

@@ -1,7 +1,7 @@
 import { expect, esmocha, describe, beforeEach, it, afterEach } from 'esmocha';
 
 const execa = await esmocha.mock('execa');
-const { default: spawnCommand } = await import('../lib/spawn-command.js');
+const { default: spawnCommand } = await import('../src/spawn-command.js');
 
 describe('environment (spawn-command)', () => {
   let cwd;

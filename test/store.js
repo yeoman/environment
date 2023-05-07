@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import { createRequire } from 'node:module';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import Store from '../lib/store.js';
+import Store from '../src/store.js';
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);

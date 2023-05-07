@@ -8,8 +8,8 @@ import fs from 'fs-extra';
 import { expect } from 'esmocha';
 import { execaSync } from 'execa';
 import slash from 'slash';
-import Environment from '../lib/index.mjs';
-import { execaOutput } from '../lib/util/util.js';
+import Environment from '../src/index.js';
+import { execaOutput } from '../src/util/util.js';
 
 const require = createRequire(import.meta.url);
 

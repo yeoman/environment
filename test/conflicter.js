@@ -8,7 +8,7 @@ import sinon from 'sinon';
 import slash from 'slash';
 import semver from 'semver';
 import { TestAdapter } from 'yeoman-test';
-import { Conflicter } from '../lib/index.mjs';
+import { Conflicter } from '../src/index.js';
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);

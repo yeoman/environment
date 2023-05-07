@@ -1,7 +1,7 @@
 import { groupBy } from 'lodash';
 import createLogger from 'debug';
-import { Environment } from '../lib/index.js';
-import { toNamespace } from '../lib/util/namespace.js';
+import { Environment } from '../src/index.js';
+import { toNamespace } from '../src/util/namespace.js';
 
 const debug = createLogger('yeoman:yoe');
 
