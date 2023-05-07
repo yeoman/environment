@@ -1414,7 +1414,7 @@ class Environment extends Base {
   /**
    * Add priority
    * @param {string} priority
-   * @param {string} before
+   * @param {string} [before]
    */
   addPriority(priority, before) {
     if (this.env.runLoop.queueNames.includes(priority)) {

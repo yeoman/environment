@@ -8,7 +8,7 @@
 
     /* Modules */
     "module": "node16" /* Specify what module code is generated. */,
-    "rootDir": "" /* Specify the root folder within your source files. */,
+    "rootDir": "./src" /* Specify the root folder within your source files. */,
 
     /* Emit */
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,
