@@ -12,7 +12,7 @@
 
     /* Emit */
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,
-    "declaration": true,
+    "declaration": false,
     "sourceMap": true,
     "allowJs": true,
 
