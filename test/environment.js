@@ -235,17 +235,17 @@ describe('Environment', () => {
     });
 
     it('should schedule generator queue', function () {
-      this.env.runLoop.add = sinon.spy();
+      this.env.queueTask = sinon.spy();
       this.env.composeWith('stub');
-      assert(this.env.runLoop.add.calledOnce);
-      assert(this.env.runLoop.add.getCall(0).firstArg === 'environment:run');
+      assert(this.env.queueTask.calledOnce);
+      assert(this.env.queueTask.getCall(0).firstArg === 'environment:run');
     });
 
     describe('passing false schedule parameter', () => {
       it('should queue generator tasks', function () {
-        this.env.runLoop.add = sinon.spy();
+        this.env.queueTask = sinon.spy();
         this.env.composeWith('stub', [], {}, false);
-        assert(this.env.runLoop.add.getCall(0).firstArg !== 'environment:run');
+        assert(this.env.queueTask.notCalled);
       });
     });
 
