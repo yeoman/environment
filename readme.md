@@ -22,7 +22,7 @@ const env = yeoman.createEnv();
 
 // The #lookup() method will search the user computer for installed generators
 // The search if done from the current working directory
-env.lookup();
+await env.lookup();
 await env.run('angular', { skipInstall: true });
 ```
 

@@ -55,7 +55,7 @@ const commandMixin = cls =>
       const env = this;
       const namespace = requireNamespace(generatorNamespace);
       if (!this.get(namespace.namespace)) {
-        this.lookup({
+        await this.lookup({
           packagePatterns: namespace.generatorHint,
           singleResult: true,
         });

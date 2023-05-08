@@ -34,7 +34,7 @@ export const environmentAction = async function (this: any, generatorNamespace: 
   }
 
   this.env = Environment.createEnv([], { ...options, command: this });
-  this.env.lookupLocalPackages();
+  await this.env.lookupLocalPackages();
 
   return this.env.execute(generatorNamespace, command.args.splice(1));
 };

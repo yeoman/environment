@@ -124,10 +124,10 @@ describe('Environment Resolver', async function () {
       unlinkGenerator('generator-ts-js');
     });
 
-    beforeEach(function () {
+    beforeEach(async function () {
       this.env = new Environment();
       assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-      this.env.lookup({ ...lookupOptions, localOnly: true });
+      await this.env.lookup({ ...lookupOptions, localOnly: true });
     });
 
     it('should register expected generators', async function () {
@@ -302,10 +302,10 @@ describe('Environment Resolver', async function () {
     });
 
     describe('when localOnly argument is true', async () => {
-      beforeEach(function () {
+      beforeEach(async function () {
         this.env = new Environment();
         assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-        this.env.lookup(true);
+        await this.env.lookup(true);
         this.env.alias('dummy-alias', 'dummy');
       });
 
@@ -335,10 +335,10 @@ describe('Environment Resolver', async function () {
     });
 
     describe('when options.localOnly argument is true', async () => {
-      beforeEach(function () {
+      beforeEach(async function () {
         this.env = new Environment();
         assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-        this.env.lookup({ localOnly: true });
+        await this.env.lookup({ localOnly: true });
       });
 
       it('should register expected generators', async function () {
@@ -389,7 +389,7 @@ describe('Environment Resolver', async function () {
     });
 
     it('with packagePaths', async function () {
-      this.env.lookup({ localOnly: true, packagePaths: ['node_modules/generator-module'] });
+      await this.env.lookup({ localOnly: true, packagePaths: ['node_modules/generator-module'] });
 
       expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
 
@@ -398,7 +398,7 @@ describe('Environment Resolver', async function () {
     });
 
     it('with scope and packagePaths', async function () {
-      this.env.lookup({
+      await this.env.lookup({
         localOnly: true,
         packagePaths: ['node_modules/generator-module', 'node_modules/@scoped/generator-scoped'],
         registerToScope: 'test',
@@ -412,7 +412,7 @@ describe('Environment Resolver', async function () {
     });
 
     it('with 2 packagePaths', async function () {
-      this.env.lookup({
+      await this.env.lookup({
         localOnly: true,
         packagePaths: ['node_modules/generator-module', 'node_modules/generator-module-root'],
       });
@@ -425,7 +425,7 @@ describe('Environment Resolver', async function () {
     });
 
     it('with 3 packagePaths', async function () {
-      this.env.lookup({
+      await this.env.lookup({
         localOnly: true,
         packagePaths: ['node_modules/generator-module', 'node_modules/generator-module-root', 'node_modules/generator-module-lib-gen'],
       });
@@ -439,7 +439,7 @@ describe('Environment Resolver', async function () {
     });
 
     it('with scoped packagePaths', async function () {
-      this.env.lookup({
+      await this.env.lookup({
         localOnly: true,
         packagePaths: [
           'node_modules/generator-module',
@@ -459,7 +459,7 @@ describe('Environment Resolver', async function () {
     });
 
     it('with npmPaths', async function () {
-      this.env.lookup({ npmPaths: ['node_modules'] });
+      await this.env.lookup({ npmPaths: ['node_modules'] });
 
       expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
 
@@ -471,7 +471,7 @@ describe('Environment Resolver', async function () {
     });
 
     it('with sub-sub-generators filePatterns', async function () {
-      this.env.lookup({
+      await this.env.lookup({
         localOnly: true,
         npmPaths: ['node_modules'],
         filePatterns: ['*/*/index.js'],
@@ -483,7 +483,7 @@ describe('Environment Resolver', async function () {
     });
 
     it('with packagePatterns', async function () {
-      this.env.lookup({
+      await this.env.lookup({
         localOnly: true,
         npmPaths: ['node_modules'],
         packagePatterns: ['generator-module', 'generator-module-root'],
@@ -497,7 +497,7 @@ describe('Environment Resolver', async function () {
     });
 
     it('with sub-sub-generators and packagePaths', async function () {
-      this.env.lookup({
+      await this.env.lookup({
         localOnly: true,
         packagePaths: ['node_modules/@scoped/generator-scoped'],
         filePatterns: ['*/*/index.js'],
@@ -509,7 +509,7 @@ describe('Environment Resolver', async function () {
     });
 
     it('with sub-sub-generators and packagePatterns', async function () {
-      this.env.lookup({
+      await this.env.lookup({
         localOnly: true,
         npmPaths: ['node_modules'],
         packagePatterns: ['generator-scoped'],
@@ -549,13 +549,13 @@ describe('Environment Resolver', async function () {
     });
 
     it('with 1 namespace', async function () {
-      this.env.lookupNamespaces('module:app', { localOnly: true, npmPaths: ['node_modules'] });
+      await this.env.lookupNamespaces('module:app', { localOnly: true, npmPaths: ['node_modules'] });
       assert.ok(await this.env.get('module:app'));
       assert.ok(this.env.getRegisteredPackages().length === 1);
     });
 
     it('with 2 namespaces', async function () {
-      this.env.lookupNamespaces(['module:app', 'module-root:app'], {
+      await this.env.lookupNamespaces(['module:app', 'module-root:app'], {
         localOnly: true,
         npmPaths: ['node_modules'],
       });
@@ -565,7 +565,7 @@ describe('Environment Resolver', async function () {
     });
 
     it('with sub-sub-generators', async function () {
-      this.env.lookupNamespaces('@scoped/scoped:app:scaffold', {
+      await this.env.lookupNamespaces('@scoped/scoped:app:scaffold', {
         localOnly: true,
         npmPaths: ['node_modules'],
       });
@@ -839,7 +839,7 @@ describe('Environment Resolver', async function () {
       it('Generator extended by environment lookup', async () => {
         this.env = new Environment();
         assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-        this.env.lookup();
+        await this.env.lookup();
         assert.ok(await this.env.get('environment-extend:app'));
         assert.ok(await this.env.create('environment-extend:app'));
       });

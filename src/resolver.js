@@ -57,9 +57,9 @@ resolver.packageLookup = packageLookup;
  * @param {string|Array} [options.packagePatterns='generator-*'] - Package pattern to look for.
  * @param {boolean}      [options.singleResult=false] - Set true to stop lookup on the first match.
  * @param {Number}       [options.globbyDeep] - Deep option to be passed to globby.
- * @return {Object[]} List of generators
+ * @return {Promise<Object[]>} List of generators
  */
-resolver.lookup = function (options) {
+resolver.lookup = async function (options) {
   // Resolve signature where options is omitted.
   if (typeof options === 'function') {
     throw new TypeError('Callback support have been removed.');

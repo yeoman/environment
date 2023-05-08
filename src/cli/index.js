@@ -23,18 +23,18 @@ Env.addEnvironmentOptions(
 program
   .command('find')
   .description('Find installed generators')
-  .action(() => {
+  .action(async () => {
     const env = Env.createEnv();
-    const generators = env.lookup();
+    const generators = await env.lookup();
     printGroupedGenerator(generators, env);
   });
 
 program
   .command('list')
   .description('List generators available to be used')
-  .action(() => {
+  .action(async () => {
     const env = Env.createEnv();
-    env.lookup();
+    await env.lookup();
     printGroupedGenerator(Object.values(env.getGeneratorsMeta()), env);
   });
 

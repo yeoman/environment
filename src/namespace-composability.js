@@ -30,7 +30,7 @@ composability.getByNamespace = async function (namespace) {
  *
  * @private
  * @param  {YeomanNamespace[]} namespacesToLookup - namespaces to lookup.
- * @return {Object[]} List of generators
+ * @return {Promise<Object[]>} List of generators
  */
 composability.lookupLocalNamespaces = function (namespacesToLookup) {
   if (!namespacesToLookup) {
@@ -52,7 +52,7 @@ composability.lookupLocalNamespaces = function (namespacesToLookup) {
  *                                   filePatterns and packagePatterns can be overridden
  * @return {Array|Object} List of generators
  */
-composability.lookupNamespaces = function (namespaces, options = {}) {
+composability.lookupNamespaces = async function (namespaces, options = {}) {
   if (!namespaces) {
     return [];
   }
@@ -73,7 +73,7 @@ composability.lookupNamespaces = function (namespaces, options = {}) {
 
     return nsOptions;
   });
-  return options_.flatMap(opt => this.lookup({ ...opt, ...options }));
+  return Promise.all(options_.flatMap(opt => this.lookup({ ...opt, ...options })));
 };
 
 /**
@@ -142,7 +142,7 @@ composability.prepareEnvironment = async function (namespaces) {
   }
 
   // At last, try to lookup if install failed.
-  this.lookupLocalNamespaces([...missing, ...toLookup]);
+  await this.lookupLocalNamespaces([...missing, ...toLookup]);
 
   assertMissing(updateMissing());
   return true;

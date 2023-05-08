@@ -796,7 +796,7 @@ class Environment extends Base {
     if (namespace && this.getByNamespace) {
       maybeGenerator = await this.getByNamespace(namespace);
       if (!maybeGenerator) {
-        this.lookupLocalNamespaces(namespace);
+        await this.lookupLocalNamespaces(namespace);
         maybeGenerator = await this.getByNamespace(namespace);
       }
     }

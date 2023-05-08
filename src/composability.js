@@ -45,7 +45,7 @@ composability.installLocalGenerators = async function (packages) {
 
   if (await this.repository.installPackages(toInstall)) {
     const packagesToLookup = entries.map(([packageName, _]) => packageName);
-    this.lookupLocalPackages(packagesToLookup);
+    await this.lookupLocalPackages(packagesToLookup);
     return true;
   }
 
@@ -57,8 +57,8 @@ composability.installLocalGenerators = async function (packages) {
  *
  * @param  {String[]} [packagesToLookup='generator-*'] - packages to lookup.
  */
-composability.lookupLocalPackages = function (packagesToLookup = 'generator-*') {
-  this.lookup({
+composability.lookupLocalPackages = async function (packagesToLookup = 'generator-*') {
+  await this.lookup({
     packagePatterns: packagesToLookup,
     npmPaths: this.repository.nodeModulesPath,
   });

@@ -386,14 +386,14 @@ declare class Environment<TOptions extends EnvironmentOptions = EnvironmentOptio
    * @param options The options for the lookup.
    * @returns A list of generators.
    */
-  lookup(options?: LookupOptions): LookupGeneratorMeta[];
+  lookup(options?: LookupOptions): Promise<LookupGeneratorMeta[]>;
 
   /**
    * Searches and registers generators inside the custom local repository.
    *
    * @param packagesToLookup The patterns of the packages to lookup.
    */
-  lookupLocalPackages(packagesToLookup?: string[]): LookupGeneratorMeta[];
+  lookupLocalPackages(packagesToLookup?: string[]): Promise<LookupGeneratorMeta[]>;
 
   /**
    * Converts the specified `filePath` to a namespace.
