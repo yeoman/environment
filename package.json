@@ -98,10 +98,6 @@
     "textextensions": "^5.12.0",
     "untildify": "^4.0.0"
   },
-  "peerDependencies": {
-    "mem-fs": "^1.2.0 || ^2.0.0",
-    "mem-fs-editor": "^8.1.2 || ^9.0.0"
-  },
   "devDependencies": {
     "coveralls": "^3.0.2",
     "cross-spawn": "^7.0.1",
