@@ -32,4 +32,3 @@ const execaOutput = (cmg, args, options) => {
 };
 
 export { duplicateEnv, execaOutput };
-export { default as log } from './log.js';

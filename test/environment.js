@@ -5,12 +5,13 @@ import path, { dirname } from 'node:path';
 import util from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import { QueuedAdapter } from '@yeoman/adapter';
 import sinon from 'sinon';
 import sinonTestFactory from 'sinon-test';
 import Generator from 'yeoman-generator';
 import assert from 'yeoman-assert';
 import semver from 'semver';
-import Environment, { TerminalAdapter } from '../src/index.js';
+import Environment from '../src/index.js';
 
 const require = createRequire(import.meta.url);
 const generatorPackageJson = require('yeoman-generator/package.json');
@@ -53,8 +54,8 @@ describe('Environment', () => {
       assert.equal(new Environment(options).options, options);
     });
 
-    it('instantiates a TerminalAdapter if none provided', async function () {
-      assert.ok(this.env.adapter instanceof TerminalAdapter);
+    it('instantiates a QueuedAdapter if none provided', async function () {
+      assert.ok(this.env.adapter instanceof QueuedAdapter);
     });
 
     it('uses the provided object as adapter if any', () => {

@@ -60,7 +60,8 @@
   },
   "dependencies": {
     "@npmcli/arborist": "^6.2.9",
-    "@yeoman/conflicter": "^0.3.2",
+    "@yeoman/adapter": "^0.1.2",
+    "@yeoman/conflicter": "^0.3.3",
     "@yeoman/namespace": "^0.0.1",
     "@yeoman/transform": "^0.2.1",
     "@yeoman/types": "^0.0.1",

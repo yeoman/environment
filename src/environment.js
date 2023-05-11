@@ -6,7 +6,9 @@ import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
 import { createConflicterTransform, createYoResolveTransform } from '@yeoman/conflicter';
+import { QueuedAdapter } from '@yeoman/adapter';
 import { toNamespace } from '@yeoman/namespace';
+import { pipeline, passthrough } from '@yeoman/transform';
 import chalk from 'chalk';
 import _, { defaults, findLast, last, pick, uniq } from 'lodash-es';
 import GroupedQueue from 'grouped-queue';
@@ -19,7 +21,6 @@ import isScoped from 'is-scoped';
 import npmlog from 'npmlog';
 import slash from 'slash';
 import { TrackerGroup } from 'are-we-there-yet';
-import { pipeline, passthrough } from '@yeoman/transform';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
 // eslint-disable-next-line n/file-extension-in-import
@@ -27,7 +28,6 @@ import { createCommitTransform } from 'mem-fs-editor/transform';
 import Store from './store.js';
 import composability from './composability.js';
 import resolver from './resolver.js';
-import TerminalAdapter from './adapter.js';
 import YeomanRepository from './util/repository.js';
 import YeomanCommand from './util/command.js';
 import commandMixin from './command.js';
@@ -118,7 +118,7 @@ class Environment extends Base {
    */
   static enforceUpdate(env) {
     if (!env.adapter) {
-      env.adapter = new TerminalAdapter();
+      env.adapter = new QueuedAdapter();
     }
 
     if (!env.runLoop) {
@@ -210,7 +210,7 @@ class Environment extends Base {
    * @return {Environment} a new Environment instance
    */
   static async createEnvWithVersion(version, ...args) {
-    const repository = new YeomanRepository();
+    const repository = new YeomanRepository({ adapter: this.adapter });
     const installedVersion = repository.verifyInstalledVersion('yeoman-environment', version);
     if (!installedVersion) {
       await repository.installPackage('yeoman-environment', version);
@@ -299,7 +299,7 @@ class Environment extends Base {
    * options parser.
    *
    * An optional adapter can be passed to provide interaction in non-CLI environment
-   * (e.g. IDE plugins), otherwise a `TerminalAdapter` is instantiated by default
+   * (e.g. IDE plugins), otherwise a `QueuedAdapter` is instantiated by default
    *
    * @constructor
    * @implements {import('@yeoman/types').BaseEnvironment}
@@ -313,7 +313,7 @@ class Environment extends Base {
    * @param {Stream}         [opts.stdin]
    * @param {Stream}        [opts.stdout]
    * @param {Stream}        [opts.stderr]
-   * @param {TerminalAdapter} [adapter] - A TerminalAdapter instance or another object
+   * @param {QueuedAdapter} [adapter] - A QueuedAdapter instance or another object
    *                                     implementing this adapter interface. This is how
    *                                     you'd interface Yeoman with a GUI or an editor.
    */
@@ -325,7 +325,7 @@ class Environment extends Base {
     this.options = options || {};
     this.adapter =
       adapter ||
-      new TerminalAdapter({
+      new QueuedAdapter({
         console: this.options.console,
         stdin: this.options.stdin,
         stderr: this.options.stderr,
@@ -363,6 +363,7 @@ class Environment extends Base {
     this.sharedOptions.forwardErrorToEnvironment = false;
 
     this.repository = new YeomanRepository({
+      adapter: this.adapter,
       repositoryPath: this.options.yeomanRepository,
       arboristRegistry: this.options.arboristRegistry,
     });

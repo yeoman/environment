@@ -2,10 +2,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
+import { createLogger } from '@yeoman/adapter';
 import semver from 'semver';
 import createdLogger from 'debug';
 import Arborist from '@npmcli/arborist';
-import logger from './log.js';
+import npmlog from 'npmlog';
 import { requireOrImport } from './esm.js';
 
 const debug = createdLogger('yeoman:environment:repository');
@@ -17,9 +18,8 @@ const REPOSITORY_FOLDER = '.yo-repository';
  * @private
  */
 class YeomanRepository {
-  constructor({ repositoryPath = REPOSITORY_FOLDER, arboristRegistry } = {}) {
-    this.log = logger();
-    this.tracker = logger.tracker;
+  constructor({ adapter, repositoryPath = REPOSITORY_FOLDER, arboristRegistry } = {}) {
+    this.log = adapter?.log ?? createLogger();
 
     this.repositoryPath = repositoryPath;
     this.arboristRegistry = arboristRegistry;
@@ -112,7 +112,7 @@ class YeomanRepository {
       new Arborist({
         path: this.repositoryPath,
         globalStyle: true,
-        log: this.tracker,
+        log: npmlog.tracker,
         registry: this.arboristRegistry,
       });
     return this.arb.reify(options);
