@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
+import { createConflicterTransform, createYoResolveTransform } from '@yeoman/conflicter';
 import chalk from 'chalk';
 import _, { defaults, findLast, last, pick, uniq } from 'lodash-es';
 import GroupedQueue from 'grouped-queue';
@@ -27,15 +28,9 @@ import composability from './composability.js';
 import resolver from './resolver.js';
 import TerminalAdapter from './adapter.js';
 import YeomanRepository from './util/repository.js';
-import Conflicter from './util/conflicter.js';
 import YeomanCommand from './util/command.js';
 import { toNamespace } from './util/namespace.js';
-import {
-  createConflicterCheckTransform,
-  createConflicterStatusTransform,
-  createYoRcTransform,
-  createYoResolveTransform,
-} from './util/transform.js';
+import { createYoRcTransform } from './util/transform.js';
 import commandMixin from './command.js';
 import generatorFeaturesMixin from './generator-features.js';
 import packageManagerMixin from './package-manager.js';
@@ -393,8 +388,6 @@ class Environment extends Base {
 
     // Store the YeomanCompose by paths and uniqueBy feature.
     this._composeStore = {};
-
-    this.enableConflicterIgnore = true;
   }
 
   /**
@@ -1088,7 +1081,7 @@ class Environment extends Base {
   start(options) {
     return new Promise((resolve, reject) => {
       if (this.conflicter === undefined) {
-        const conflicterOptions = pick(defaults({}, this.options, options), [
+        this.conflicterOptions = pick(defaults({}, this.options, options), [
           'force',
           'bail',
           'ignoreWhitespace',
@@ -1096,11 +1089,9 @@ class Environment extends Base {
           'skipYoResolve',
           'logCwd',
         ]);
-        conflicterOptions.cwd = conflicterOptions.logCwd;
+        this.conflicterOptions.cwd = this.conflicterOptions.logCwd;
 
-        this.conflicter = new Conflicter(this.adapter, conflicterOptions);
-
-        this.queueConflicter();
+        this.queueCommit();
         this.queuePackageManagerInstall();
       }
 
@@ -1322,17 +1313,11 @@ class Environment extends Base {
   commitSharedFs(stream = this.sharedFs.stream({ filter: file => isFilePending(file) })) {
     debug('committing files');
 
-    const conflicterStatus = {};
-    if (this.enableConflicterIgnore) {
-      conflicterStatus.fs = this.fs;
-    }
-
     return this.fs.commit(
       [
-        createYoResolveTransform(this.conflicter),
         createYoRcTransform(),
-        createConflicterCheckTransform(this.conflicter, conflicterStatus),
-        createConflicterStatusTransform(),
+        createYoResolveTransform(),
+        createConflicterTransform(this.adapter, this.conflicterOptions),
         // Use custom commit transform due to out of order transform.
         createCommitTransform(this.fs),
       ],
@@ -1343,7 +1328,7 @@ class Environment extends Base {
   /**
    * Queue environment's commit task.
    */
-  queueConflicter() {
+  queueCommit() {
     const queueCommit = () => {
       debug('Queueing conflicts task');
       this.queueTask(
@@ -1362,10 +1347,8 @@ class Environment extends Base {
 
           await customCommitTask();
 
-          if (this.enableConflicterIgnore) {
-            debug('Adding queueCommit event listener');
-            this.sharedFs.once('change', queueCommit);
-          }
+          debug('Adding queueCommit event listener');
+          this.sharedFs.once('change', queueCommit);
         },
         {
           once: 'write memory fs to disk',
