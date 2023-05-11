@@ -18,7 +18,7 @@ import isScoped from 'is-scoped';
 import npmlog from 'npmlog';
 import slash from 'slash';
 import { TrackerGroup } from 'are-we-there-yet';
-import { pipeline, transform } from 'p-transform';
+import { pipeline, passthrough } from '@yeoman/transform';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
 // eslint-disable-next-line n/file-extension-in-import
@@ -30,7 +30,6 @@ import TerminalAdapter from './adapter.js';
 import YeomanRepository from './util/repository.js';
 import YeomanCommand from './util/command.js';
 import { toNamespace } from './util/namespace.js';
-import { createYoRcTransform } from './util/transform.js';
 import commandMixin from './command.js';
 import generatorFeaturesMixin from './generator-features.js';
 import packageManagerMixin from './package-manager.js';
@@ -1292,12 +1291,12 @@ class Environment extends Base {
     await pipeline(
       stream,
       ...transformStreams,
-      transform(file => {
+      passthrough(file => {
         if (log) {
           log.completeWork(10);
           npmlog.info('Completed', path.relative(this.logCwd, file.path));
         }
-      }, 'environment:log'),
+      }),
     );
     if (log) {
       log.finish();
@@ -1315,7 +1314,12 @@ class Environment extends Base {
 
     return this.fs.commit(
       [
-        createYoRcTransform(),
+        passthrough(
+          file => {
+            file.conflicter = 'force';
+          },
+          { pattern: '**/{.yo-rc.json,.yo-resolve,.yo-rc-global.json}' },
+        ),
         createYoResolveTransform(),
         createConflicterTransform(this.adapter, this.conflicterOptions),
         // Use custom commit transform due to out of order transform.

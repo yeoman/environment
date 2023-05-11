@@ -27,7 +27,6 @@
     "./cli/*": "./dist/cli/*.js",
     "./lib/*": "./dist/*.js",
     "./lib/util/*": "./dist/util/*.js",
-    "./transform": "./dist/util/transform.js",
     "./package.json": "./package.json",
     "./namespace": "./dist/util/namespace.js",
     "./cli": "./dist/cli/index.js"
