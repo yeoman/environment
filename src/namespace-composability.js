@@ -1,8 +1,8 @@
 import EventEmitter from 'node:events';
 import path from 'node:path';
+import { requireNamespace } from '@yeoman/namespace';
 import createLogger from 'debug';
 import semver from 'semver';
-import { requireNamespace } from './util/namespace.js';
 
 const debug = createLogger('yeoman:environment:compose');
 

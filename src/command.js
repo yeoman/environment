@@ -1,7 +1,7 @@
+import { requireNamespace } from '@yeoman/namespace';
 import createdLogger from 'debug';
 import { Option } from 'commander';
 import YeomanCommand from './util/command.js';
-import { requireNamespace } from './util/namespace.js';
 
 const debug = createdLogger('yeoman:environment:command');
 

@@ -28,7 +28,6 @@
     "./lib/*": "./dist/*.js",
     "./lib/util/*": "./dist/util/*.js",
     "./package.json": "./package.json",
-    "./namespace": "./dist/util/namespace.js",
     "./cli": "./dist/cli/index.js"
   },
   "main": "./dist/index.js",
@@ -53,7 +52,6 @@
     "test-base": "c8 esmocha test/environment*.js test/store.js test/util.js test/adapter.js",
     "test-environment": "c8 esmocha test/environment.js",
     "test-generators": "c8 esmocha test/generators.js",
-    "test-namespace": "c8 esmocha test/namespace.js test/flags.js",
     "test-repository": "c8 esmocha test/repository.js",
     "test-resolver": "c8 esmocha test/resolver.js"
   },
@@ -63,6 +61,7 @@
   "dependencies": {
     "@npmcli/arborist": "^6.2.9",
     "@yeoman/conflicter": "^0.3.2",
+    "@yeoman/namespace": "^0.0.1",
     "@yeoman/transform": "^0.2.1",
     "@yeoman/types": "^0.0.1",
     "are-we-there-yet": "^4.0.0",

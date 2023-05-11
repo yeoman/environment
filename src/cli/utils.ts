@@ -1,17 +1,17 @@
+import { requireNamespace } from '@yeoman/namespace';
 import { groupBy } from 'lodash-es';
 import createLogger from 'debug';
 import Environment from '../index.js';
-import { toNamespace } from '../util/namespace.js';
 
 const debug = createLogger('yeoman:yoe');
 
 export const printGroupedGenerator = (generators: any) => {
   const grouped = groupBy(generators, 'packagePath');
   for (const [packagePath, group] of Object.entries(grouped)) {
-    const namespace = toNamespace(group[0].namespace);
+    const namespace = requireNamespace(group[0].namespace);
     console.log(`  ${namespace.packageNamespace} at ${packagePath}`);
     for (const generator of group) {
-      const generatorNamespace = toNamespace(generator.namespace);
+      const generatorNamespace = requireNamespace(generator.namespace);
       console.log(`    :${generatorNamespace.generator || 'app'}`);
     }
 
