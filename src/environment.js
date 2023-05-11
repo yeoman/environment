@@ -18,9 +18,7 @@ import { create as createMemFs } from 'mem-fs';
 import { create as createMemFsEditor } from 'mem-fs-editor';
 import createdLogger from 'debug';
 import isScoped from 'is-scoped';
-import npmlog from 'npmlog';
 import slash from 'slash';
-import { TrackerGroup } from 'are-we-there-yet';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
 // eslint-disable-next-line n/file-extension-in-import
@@ -1277,32 +1275,21 @@ class Environment extends Base {
       name = 'Transforming',
     } = options;
 
-    let { log = true } = options;
-
-    if (log) {
-      npmlog.tracker = new TrackerGroup();
-      npmlog.enableProgress();
-      log = npmlog.newItem(name);
-    }
-
     if (!Array.isArray(transformStreams)) {
       transformStreams = [transformStreams];
     }
-
-    await pipeline(
-      stream,
-      ...transformStreams,
-      passthrough(file => {
-        if (log) {
-          log.completeWork(10);
-          npmlog.info('Completed', path.relative(this.logCwd, file.path));
-        }
-      }),
+    await this.adapter.progress(
+      async ({ step }) => {
+        await pipeline(
+          stream,
+          ...transformStreams,
+          passthrough(file => {
+            step('Completed', path.relative(this.logCwd, file.path));
+          }),
+        );
+      },
+      { name, disabled: !(options?.log ?? true) },
     );
-    if (log) {
-      log.finish();
-      npmlog.disableProgress();
-    }
   }
 
   /**
