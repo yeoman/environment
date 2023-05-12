@@ -18,6 +18,7 @@ import { create as createMemFs } from 'mem-fs';
 import { create as createMemFsEditor } from 'mem-fs-editor';
 import createdLogger from 'debug';
 import isScoped from 'is-scoped';
+import { execa } from 'execa';
 import slash from 'slash';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
@@ -31,7 +32,6 @@ import YeomanCommand from './util/command.js';
 import commandMixin from './command.js';
 import generatorFeaturesMixin from './generator-features.js';
 import packageManagerMixin from './package-manager.js';
-import spawnCommandMixin from './spawn-command.js';
 // eslint-disable-next-line import/order
 import namespaceCompasibilityMixin from './namespace-composability.js';
 
@@ -1421,11 +1421,23 @@ class Environment extends Base {
     }
     this.runLoop.addSubQueue(priority, before);
   }
+
+  /**
+   * @private
+   * Normalize a command across OS and spawn it (asynchronously).
+   *
+   * @param {String} command program to execute
+   * @param {Array} args list of arguments to pass to the program
+   * @param {object} [opt] any execa options
+   * @return {String} spawned process reference
+   */
+  spawnCommand(command, args, opt) {
+    return execa(command, args, { stdio: 'inherit', cwd: this.cwd, ...opt });
+  }
 }
 
 Object.assign(Environment.prototype, resolver);
 Object.assign(Environment.prototype, composability);
-Object.assign(Environment.prototype, spawnCommandMixin);
 Object.assign(Environment.prototype, namespaceCompasibilityMixin);
 
 export default Environment;
