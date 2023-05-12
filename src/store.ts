@@ -1,8 +1,29 @@
 import { pathToFileURL } from 'node:url';
 import { extname, join } from 'node:path';
+import type { BaseEnvironment, BaseGenerator, GetGeneratorConstructor } from '@yeoman/types';
 import createDebug from 'debug';
 
 const debug = createDebug('yeoman:environment:store');
+
+type BaseMeta = {
+  /** The key under which the generator can be retrieved */
+  namespace: string;
+  /** The file path to the generator (used only if generator is a module) */
+  resolved?: string;
+  /** PackagePath to the generator npm package */
+  packagePath?: string;
+};
+
+type GeneratorMeta = BaseMeta & {
+  /** Import and find the Generator Class */
+  importGenerator: () => Promise<GetGeneratorConstructor>;
+  /** Import the module `import(meta.resolved)` */
+  importModule?: () => Promise<unknown>;
+  /** Intantiate the Generator `env.instantiate(await meta.importGenerator())` */
+  instantiate: (args?: string[], options?: any) => Promise<BaseGenerator>;
+  /** Intantiate the Generator passing help option */
+  instantiateHelp: () => Promise<BaseGenerator>;
+};
 
 /**
  * The Generator store
@@ -12,42 +33,36 @@ const debug = createDebug('yeoman:environment:store');
  * @private
  */
 class Store {
-  constructor(env) {
-    this.env = env;
-    this._meta = {};
-    // Store packages paths by ns
-    this._packagesPaths = {};
-    // Store packages ns
-    this._packagesNS = [];
-  }
+  private readonly _meta: Record<string, GeneratorMeta> = {};
+  // Store packages paths by ns
+  private readonly _packagesPaths: Record<string, string[]> = {};
+  // Store packages ns
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  private readonly _packagesNS: string[] = [];
+
+  constructor(private readonly env: BaseEnvironment) {}
 
   /**
    * Store a module under the namespace key
-   * @param {String}          namespace  - The key under which the generator can be retrieved
-   * @param {String|Function} generator  - A generator module or a module path
-   * @param {String}         packagePath - PackagePath to the generator npm package (optional)
-   * @param {String}          [resolved] - The file path to the generator (used only if generator is a module)
+   * @param meta
+   * @param generator - A generator module or a module path
    */
-  add(namespace, generator, resolved, packagePath) {
-    if (typeof generator === 'string') {
-      resolved = generator;
-      if (!extname(resolved)) {
-        resolved = join(resolved, 'index.js');
-      }
-      this._store({ namespace, resolved, packagePath });
-      return;
+  add(meta: BaseMeta, Generator?: unknown) {
+    if (typeof meta.resolved === 'string' && !extname(meta.resolved)) {
+      meta.resolved = join(meta.resolved, 'index.js');
     }
 
-    this._store({ namespace, resolved, packagePath }, generator);
-  }
-
-  _store(meta, Generator) {
-    let importModule;
+    let importModule: (() => Promise<unknown>) | undefined;
     if (!Generator) {
-      importModule = async () => import(pathToFileURL(meta.resolved).href);
+      if (!meta.resolved) {
+        throw new Error(`Generator Stub or resolved path is required for ${meta.namespace}`);
+      }
+
+      importModule = async () => import(pathToFileURL(meta.resolved!).href);
     }
+
     const importGenerator = async () => this._getGenerator(importModule ? await importModule() : Generator, meta);
-    const instantiate = async (args, options) => this.env.instantiate(await importGenerator(), args, options);
+    const instantiate = async (args: string[] = [], options: any = {}) => this.env.instantiate(await importGenerator(), args, options);
     const instantiateHelp = async () => instantiate([], { help: true });
 
     this._meta[meta.namespace] = {
@@ -64,14 +79,8 @@ class Store {
    * @param  {String} namespace
    * @return {Module}
    */
-  async get(namespace) {
-    const meta = this.getMeta(namespace);
-
-    if (!meta) {
-      return;
-    }
-
-    return meta.importGenerator();
+  async get(namespace: string): Promise<GetGeneratorConstructor> {
+    return this.getMeta(namespace)?.importGenerator();
   }
 
   /**
@@ -79,7 +88,7 @@ class Store {
    * @param  {String} namespace
    * @return {Module}
    */
-  getMeta(namespace) {
+  getMeta(namespace: string) {
     return this._meta[namespace];
   }
 
@@ -104,7 +113,7 @@ class Store {
    * @param {String}     packageNS - The key under which the generator can be retrieved
    * @param {String}   packagePath - The package path
    */
-  addPackage(packageNS, packagePath) {
+  addPackage(packageNS: string, packagePath: string) {
     if (this._packagesPaths[packageNS]) {
       // Yo environment allows overriding, so the last added has preference.
       if (this._packagesPaths[packageNS][0] !== packagePath) {
@@ -140,7 +149,8 @@ class Store {
    * Store a package ns
    * @param {String} packageNS - The key under which the generator can be retrieved
    */
-  addPackageNS(packageNS) {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  addPackageNS(packageNS: string) {
     if (!this._packagesNS.includes(packageNS)) {
       this._packagesNS.push(packageNS);
     }
@@ -150,13 +160,15 @@ class Store {
    * Get the stored packages namespaces.
    * @return {Array} Stored packages namespaces.
    */
-  getPackagesNS() {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  getPackagesNS(): string[] {
     return this._packagesNS;
   }
 
-  _getGenerator = async (module, meta) => {
+  _getGenerator = async (module: any, meta: BaseMeta) => {
     // CJS is imported in default, for backward compatibility we support a Generator exported as `module.exports = { default }`
     const generatorFactory = module.createGenerator ?? module.default?.createGenerator ?? module.default?.default?.createGenerator;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const Generator = (await generatorFactory?.(this.env)) ?? module.default?.default ?? module.default ?? module;
     if (typeof Generator !== 'function') {
       throw new TypeError("The generator doesn't provides a constructor.");

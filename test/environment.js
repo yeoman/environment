@@ -741,7 +741,7 @@ describe('Environment', () => {
     });
 
     it('registers the resolved path and package path', async function () {
-      assert.equal('dummy/path', (await this.env.get('dummy:resolved')).resolved);
+      assert.equal('dummy/path/index.js', (await this.env.get('dummy:resolved')).resolved);
       assert.equal('dummy/packagePath', (await this.env.get('dummy:resolved')).packagePath);
     });
 

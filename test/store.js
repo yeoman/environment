@@ -21,7 +21,7 @@ describe('Store', async () => {
 
     describe('storing as module', async () => {
       beforeEach(async function () {
-        this.store.add('foo:module', this.module, '/foo/path');
+        this.store.add({ namespace: 'foo:module', resolved: '/foo/path' }, this.module);
         this.outcome = await this.store.get('foo:module');
       });
 
@@ -31,13 +31,13 @@ describe('Store', async () => {
 
       it('assign meta data to the module', async function () {
         assert.equal(this.outcome.namespace, 'foo:module');
-        assert.equal(this.outcome.resolved, '/foo/path');
+        assert.equal(this.outcome.resolved, '/foo/path/index.js');
       });
     });
 
     describe('storing as module path', async () => {
       beforeEach(async function () {
-        this.store.add('foo:path', this.modulePath);
+        this.store.add({ namespace: 'foo:path', resolved: this.modulePath });
         this.outcome = await this.store.get('foo:path');
       });
 
@@ -55,8 +55,8 @@ describe('Store', async () => {
 
   describe('#namespaces()', async () => {
     beforeEach(async function () {
-      this.store.add('foo', {});
-      this.store.add('lab', {});
+      this.store.add({ namespace: 'foo' }, {});
+      this.store.add({ namespace: 'lab' }, {});
     });
 
     it('return stored module namespaces', async function () {

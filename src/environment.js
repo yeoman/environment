@@ -504,7 +504,7 @@ class Environment extends Base {
       return this;
     }
 
-    this.store.add(namespace, modulePath, modulePath, packagePath);
+    this.store.add({ namespace, resolved: modulePath, packagePath });
     const packageNS = Environment.namespaceToName(namespace);
     this.store.addPackageNS(packageNS);
     if (packagePath) {
@@ -535,7 +535,7 @@ class Environment extends Base {
       throw new TypeError('You must provide a namespace to register.');
     }
 
-    this.store.add(namespace, Generator, resolved, packagePath);
+    this.store.add({ namespace, resolved, packagePath }, Generator);
     const packageNS = Environment.namespaceToName(namespace);
     this.store.addPackageNS(packageNS);
     if (packagePath) {
