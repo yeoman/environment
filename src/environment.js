@@ -486,7 +486,32 @@ class Environment extends Base {
    * @param  {String} packagePath - PackagePath to the generator npm package (optional)
    * @return {Object} environment - This environment
    */
-  register(name, namespace, packagePath) {
+  register(pathOrStub, meta, ...args) {
+    if (typeof pathOrStub === 'string') {
+      if (typeof meta === 'object') {
+        return this._registerGeneratorPath(pathOrStub, meta.namespace, meta.packagePath);
+      }
+      return this._registerGeneratorPath(pathOrStub, meta, ...args);
+    }
+    if (pathOrStub) {
+      if (typeof meta === 'object') {
+        return this.registerStub(pathOrStub, meta.namespace, meta.resolved, meta.packagePath);
+      }
+      return this.registerStub(pathOrStub, meta, ...args);
+    }
+    throw new TypeError('You must provide a generator name to register.');
+  }
+
+  /**
+   * Registers a specific `generator` to this environment. This generator is stored under
+   * provided namespace, or a default namespace format if none if available.
+   *
+   * @param  {String} name      - Filepath to the a generator or a npm package name
+   * @param  {String} namespace - Namespace under which register the generator (optional)
+   * @param  {String} packagePath - PackagePath to the generator npm package (optional)
+   * @return {Object} environment - This environment
+   */
+  _registerGeneratorPath(name, namespace, packagePath) {
     if (typeof name !== 'string') {
       throw new TypeError('You must provide a generator name to register.');
     }
