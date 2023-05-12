@@ -529,14 +529,9 @@ class Environment extends Base {
       return this;
     }
 
-    this.store.add({ namespace, resolved: modulePath, packagePath });
-    const packageNS = Environment.namespaceToName(namespace);
-    this.store.addPackageNS(packageNS);
-    if (packagePath) {
-      this.store.addPackage(packageNS, packagePath);
-    }
+    const meta = this.store.add({ namespace, resolved: modulePath, packagePath });
 
-    debug('Registered %s (%s) on package %s (%s)', namespace, modulePath, packageNS, packagePath);
+    debug('Registered %s (%s) on package %s (%s)', namespace, modulePath, meta.packageNamespace, packagePath);
     return this;
   }
 
@@ -561,11 +556,6 @@ class Environment extends Base {
     }
 
     this.store.add({ namespace, resolved, packagePath }, Generator);
-    const packageNS = Environment.namespaceToName(namespace);
-    this.store.addPackageNS(packageNS);
-    if (packagePath) {
-      this.store.addPackage(packageNS, packagePath);
-    }
 
     debug('Registered %s (%s) on package (%s)', namespace, resolved, packagePath);
     return this;

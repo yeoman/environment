@@ -1,5 +1,6 @@
 import { pathToFileURL } from 'node:url';
 import { extname, join } from 'node:path';
+import { toNamespace } from '@yeoman/namespace';
 import type { BaseEnvironment, BaseGenerator, GetGeneratorConstructor } from '@yeoman/types';
 import createDebug from 'debug';
 
@@ -15,6 +16,7 @@ type BaseMeta = {
 };
 
 type GeneratorMeta = BaseMeta & {
+  packageNamespace?: string;
   /** Import and find the Generator Class */
   importGenerator: () => Promise<GetGeneratorConstructor>;
   /** Import the module `import(meta.resolved)` */
@@ -47,7 +49,7 @@ class Store {
    * @param meta
    * @param generator - A generator module or a module path
    */
-  add(meta: BaseMeta, Generator?: unknown) {
+  add(meta: BaseMeta, Generator?: unknown): GeneratorMeta {
     if (typeof meta.resolved === 'string' && !extname(meta.resolved)) {
       meta.resolved = join(meta.resolved, 'index.js');
     }
@@ -64,14 +66,26 @@ class Store {
     const importGenerator = async () => this._getGenerator(importModule ? await importModule() : Generator, meta);
     const instantiate = async (args: string[] = [], options: any = {}) => this.env.instantiate(await importGenerator(), args, options);
     const instantiateHelp = async () => instantiate([], { help: true });
+    const { packageNamespace } = toNamespace(meta.namespace) ?? {};
 
-    this._meta[meta.namespace] = {
+    const generatorMeta = {
       ...meta,
       importGenerator,
       importModule,
       instantiate,
       instantiateHelp,
+      packageNamespace,
     };
+    this._meta[meta.namespace] = generatorMeta;
+
+    if (packageNamespace) {
+      this.addPackageNamespace(packageNamespace);
+      if (meta.packagePath) {
+        this.addPackage(packageNamespace, meta.packagePath);
+      }
+    }
+
+    return generatorMeta;
   }
 
   /**
@@ -149,8 +163,7 @@ class Store {
    * Store a package ns
    * @param {String} packageNS - The key under which the generator can be retrieved
    */
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  addPackageNS(packageNS: string) {
+  addPackageNamespace(packageNS: string) {
     if (!this._packagesNS.includes(packageNS)) {
       this._packagesNS.push(packageNS);
     }
