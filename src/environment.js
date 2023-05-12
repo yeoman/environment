@@ -702,13 +702,13 @@ class Environment extends Base {
       namespace = parts.join(':');
     }
 
-    const generator =
+    return (
       (await this.store.get(namespace)) ??
       (await this.store.get(this.alias(namespace))) ??
       // Namespace is empty if namespaceOrPath contains a win32 absolute path of the form 'C:\path\to\generator'.
       // for this reason we pass namespaceOrPath to the getByPath function.
-      (await this.getByPath(namespaceOrPath));
-    return this._findGeneratorClass(generator);
+      this.getByPath(namespaceOrPath)
+    );
   }
 
   /**
@@ -734,44 +734,6 @@ class Environment extends Base {
 
       return this.get(namespace);
     }
-  }
-
-  /**
-   * Find generator's class constructor.
-   * @private
-   * @param  {Object} Generator - Object containing the class.
-   * @return {Function} Generator's constructor.
-   */
-  async _findGeneratorClass(Generator, meta = Generator) {
-    if (!Generator) {
-      return Generator;
-    }
-
-    if (Array.isArray(Generator)) {
-      meta = Generator[1];
-      Generator = Generator[0];
-    }
-
-    if (typeof Generator.default === 'function') {
-      Generator.default.resolved = meta.resolved;
-      Generator.default.namespace = meta.namespace;
-      Generator.default.packagePath = meta.packagePath;
-      return Generator.default;
-    }
-
-    if (typeof Generator.createGenerator === 'function') {
-      const maybeGenerator = await Generator.createGenerator(this);
-      maybeGenerator.resolved = meta.resolved;
-      maybeGenerator.namespace = meta.namespace;
-      maybeGenerator.packagePath = meta.packagePath;
-      return maybeGenerator;
-    }
-
-    if (typeof Generator !== 'function') {
-      throw new TypeError("The generator doesn't provides a constructor.");
-    }
-
-    return Generator;
   }
 
   /**
