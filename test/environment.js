@@ -5,6 +5,7 @@ import path, { dirname } from 'node:path';
 import util from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import { expect } from 'esmocha';
 import { QueuedAdapter } from '@yeoman/adapter';
 import sinon from 'sinon';
 import sinonTestFactory from 'sinon-test';
@@ -426,7 +427,7 @@ describe('Environment', () => {
       return this.env.run('no-constructor:app').then(
         () => assert.fail(),
         error => {
-          assert.ok(error.message.includes('provides a constructor'));
+          expect(error.message).toMatch('provides a constructor');
         },
       );
     });
@@ -493,19 +494,19 @@ describe('Environment', () => {
     it('importGenerator should return a class', async function () {
       this.env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
       const meta = this.env.getGeneratorMeta('fixtures:generator-module');
-      assert.equal(typeof (await meta.importGeneratorClass()), 'function');
+      assert.equal(typeof (await meta.importGenerator()), 'function');
     });
     it('importModule should return the generator module', async function () {
       this.env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
       const meta = this.env.getGeneratorMeta('fixtures:generator-module');
-      const Generator = await meta.importGeneratorClass();
+      const Generator = await meta.importGenerator();
       const module = await meta.importModule();
-      assert.strictEqual(Generator, module.default);
+      assert.strictEqual(Generator, module.default.default);
     });
     it('intantiate should return an instance', async function () {
       this.env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
       const meta = this.env.getGeneratorMeta('fixtures:generator-module');
-      const Generator = await meta.importGeneratorClass();
+      const Generator = await meta.importGenerator();
       const generator = await meta.instantiate();
       assert.ok(generator instanceof Generator);
     });

@@ -1,5 +1,6 @@
+import { pathToFileURL } from 'node:url';
+import { extname, join } from 'node:path';
 import createDebug from 'debug';
-import { requireOrImport } from './util/esm.js';
 
 const debug = createDebug('yeoman:environment:store');
 
@@ -11,7 +12,8 @@ const debug = createDebug('yeoman:environment:store');
  * @private
  */
 class Store {
-  constructor() {
+  constructor(env) {
+    this.env = env;
     this._meta = {};
     // Store packages paths by ns
     this._packagesPaths = {};
@@ -28,30 +30,32 @@ class Store {
    */
   add(namespace, generator, resolved, packagePath) {
     if (typeof generator === 'string') {
-      this._storeAsPath(namespace, generator, packagePath);
+      resolved = generator;
+      if (!extname(resolved)) {
+        resolved = join(resolved, 'index.js');
+      }
+      this._store({ namespace, resolved, packagePath });
       return;
     }
 
-    this._storeAsModule(namespace, generator, resolved, packagePath);
+    this._store({ namespace, resolved, packagePath }, generator);
   }
 
-  _storeAsPath(namespace, resolvedPath, packagePath) {
-    const importGenerator = () => requireOrImport(resolvedPath);
-    this._meta[namespace] = {
-      resolved: resolvedPath,
-      namespace,
-      packagePath,
-      importGenerator,
-    };
-  }
+  _store(meta, Generator) {
+    let importModule;
+    if (!Generator) {
+      importModule = async () => import(pathToFileURL(meta.resolved).href);
+    }
+    const importGenerator = async () => this._getGenerator(importModule ? await importModule() : Generator, meta);
+    const instantiate = async (args, options) => this.env.instantiate(await importGenerator(), args, options);
+    const instantiateHelp = async () => instantiate([], { help: true });
 
-  _storeAsModule(namespace, Generator, resolved, packagePath) {
-    const importGenerator = () => Generator;
-    this._meta[namespace] = {
-      resolved,
-      namespace,
-      packagePath,
+    this._meta[meta.namespace] = {
+      ...meta,
       importGenerator,
+      importModule,
+      instantiate,
+      instantiateHelp,
     };
   }
 
@@ -67,16 +71,7 @@ class Store {
       return;
     }
 
-    const { importGenerator, ...additionalMeta } = meta;
-    const maybeGenerator = importGenerator();
-
-    if (maybeGenerator.then) {
-      const esmGenerator = await maybeGenerator;
-      return [esmGenerator, additionalMeta];
-    }
-
-    Object.assign(maybeGenerator, additionalMeta);
-    return maybeGenerator;
+    return meta.importGenerator();
   }
 
   /**
@@ -158,6 +153,18 @@ class Store {
   getPackagesNS() {
     return this._packagesNS;
   }
+
+  _getGenerator = async (module, meta) => {
+    // CJS is imported in default, for backward compatibility we support a Generator exported as `module.exports = { default }`
+    const generatorFactory = module.createGenerator ?? module.default?.createGenerator ?? module.default?.default?.createGenerator;
+    const Generator = (await generatorFactory?.(this.env)) ?? module.default?.default ?? module.default ?? module;
+    if (typeof Generator !== 'function') {
+      throw new TypeError("The generator doesn't provides a constructor.");
+    }
+
+    Object.assign(Generator, meta);
+    return Generator;
+  };
 }
 
 export default Store;

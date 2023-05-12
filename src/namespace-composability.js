@@ -14,18 +14,6 @@ const composability = {};
 export default composability;
 
 /**
- * Get a generator only by namespace.
- * @private
- * @param  {YeomanNamespace|String} namespace
- * @return {Generator|null} - the generator found at the location
- */
-composability.getByNamespace = async function (namespace) {
-  const ns = requireNamespace(namespace).namespace;
-  const generator = (await this.store.get(ns)) ?? (await this.store.get(this.alias(ns)));
-  return this._findGeneratorClass(generator);
-};
-
-/**
  * Lookup and register generators from the custom local repository.
  *
  * @private

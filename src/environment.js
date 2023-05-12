@@ -7,7 +7,7 @@ import { createRequire } from 'node:module';
 import process from 'node:process';
 import { createConflicterTransform, createYoResolveTransform } from '@yeoman/conflicter';
 import { QueuedAdapter } from '@yeoman/adapter';
-import { toNamespace } from '@yeoman/namespace';
+import { requireNamespace, toNamespace } from '@yeoman/namespace';
 import { pipeline, passthrough } from '@yeoman/transform';
 import chalk from 'chalk';
 import _, { defaults, findLast, last, pick, uniq } from 'lodash-es';
@@ -32,9 +32,8 @@ import commandMixin from './command.js';
 import generatorFeaturesMixin from './generator-features.js';
 import packageManagerMixin from './package-manager.js';
 import spawnCommandMixin from './spawn-command.js';
-import namespaceCompasibilityMixin from './namespace-composability.js';
 // eslint-disable-next-line import/order
-import { requireOrImport } from './util/esm.js';
+import namespaceCompasibilityMixin from './namespace-composability.js';
 
 const debug = createdLogger('yeoman:environment');
 const require = createRequire(import.meta.url);
@@ -331,7 +330,7 @@ class Environment extends Base {
     this.cwd = this.options.cwd || process.cwd();
     this.cwd = path.resolve(this.cwd);
     this.logCwd = this.options.logCwd || this.cwd;
-    this.store = new Store();
+    this.store = new Store(this);
     this.command = this.options.command;
 
     this.runLoop = new GroupedQueue(Environment.queues, false);
@@ -500,7 +499,8 @@ class Environment extends Base {
     }
 
     // Generator is already registered and matches the current namespace.
-    if (this.store._meta[namespace] && this.store._meta[namespace].resolved === modulePath) {
+    const generatorMeta = this.store.getMeta(namespace);
+    if (generatorMeta && generatorMeta.resolved === modulePath) {
       return this;
     }
 
@@ -590,19 +590,7 @@ class Environment extends Base {
       return;
     }
 
-    const { importGenerator, resolved } = meta;
-    const importModule = async () => requireOrImport(resolved);
-    const importGeneratorClass = async () => this._findGeneratorClass(await importGenerator(), meta);
-    const instantiate = async (args, options) => this.instantiate(await importGeneratorClass(), args, options);
-    const instantiateHelp = async () => instantiate([], { help: true });
-    const newMeta = {
-      ...meta,
-      importModule,
-      importGeneratorClass,
-      instantiate,
-      instantiateHelp,
-    };
-    return newMeta;
+    return { ...meta };
   }
 
   /**
@@ -706,6 +694,17 @@ class Environment extends Base {
       // for this reason we pass namespaceOrPath to the getByPath function.
       (await this.getByPath(namespaceOrPath));
     return this._findGeneratorClass(generator);
+  }
+
+  /**
+   * Get a generator only by namespace.
+   * @private
+   * @param  {YeomanNamespace|String} namespace
+   * @return {Generator|null} - the generator found at the location
+   */
+  async getByNamespace(namespace) {
+    const ns = requireNamespace(namespace).namespace;
+    return (await this.store.get(ns)) ?? this.store.get(this.alias(ns));
   }
 
   /**

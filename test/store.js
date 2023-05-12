@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { createRequire } from 'node:module';
-import path, { dirname } from 'node:path';
+import path, { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Store from '../src/store.js';
 
@@ -47,7 +47,7 @@ describe('Store', async () => {
       });
 
       it('assign meta data to the module', async function () {
-        assert.equal(this.outcome.resolved, this.modulePath);
+        assert.equal(this.outcome.resolved, join(this.modulePath, 'index.js'));
         assert.equal(this.outcome.namespace, 'foo:path');
       });
     });
