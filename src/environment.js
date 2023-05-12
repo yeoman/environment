@@ -382,9 +382,6 @@ class Environment extends Base {
     // Store the generators by paths and uniqueBy feature.
     this._generatorsForPath = {};
     this._generators = {};
-
-    // Store the YeomanCompose by paths and uniqueBy feature.
-    this._composeStore = {};
   }
 
   /**
