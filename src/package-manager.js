@@ -55,7 +55,7 @@ const packageManagerMixin = cls =>
         return false;
       }
 
-      const customInstallTask = this.findGeneratorCustomInstallTask();
+      const { customInstallTask } = this.composedStore;
       if (customInstallTask && typeof customInstallTask !== 'function') {
         debug('Install disabled by customInstallTask');
         return false;

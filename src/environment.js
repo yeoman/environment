@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path, { isAbsolute } from 'node:path';
 import EventEmitter from 'node:events';
-import crypto from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
@@ -30,8 +29,8 @@ import resolver from './resolver.js';
 import YeomanRepository from './util/repository.js';
 import YeomanCommand from './util/command.js';
 import commandMixin from './command.js';
-import generatorFeaturesMixin from './generator-features.js';
 import packageManagerMixin from './package-manager.js';
+import { ComposedStore } from './composed-store.js';
 // eslint-disable-next-line import/order
 import namespaceCompasibilityMixin from './namespace-composability.js';
 
@@ -74,7 +73,7 @@ function getGeneratorHint(namespace) {
   return `generator-${namespace}`;
 }
 
-const mixins = [commandMixin, generatorFeaturesMixin, packageManagerMixin];
+const mixins = [commandMixin, packageManagerMixin];
 
 const Base = mixins.reduce((a, b) => b(a), EventEmitter);
 
@@ -334,6 +333,7 @@ class Environment extends Base {
     this.command = this.options.command;
 
     this.runLoop = new GroupedQueue(Environment.queues, false);
+    this.composedStore = new ComposedStore({ log: this.adapter.log });
     this.sharedFs = this.options.sharedFs || createMemFs();
 
     // Each composed generator might set listeners on these shared resources. Let's make sure
@@ -378,10 +378,6 @@ class Environment extends Base {
     if (this.sharedOptions.skipLocalCache === undefined) {
       this.sharedOptions.skipLocalCache = true;
     }
-
-    // Store the generators by paths and uniqueBy feature.
-    this._generatorsForPath = {};
-    this._generators = {};
   }
 
   /**
@@ -886,50 +882,6 @@ class Environment extends Base {
   }
 
   /**
-   * @private
-   */
-  getGeneratorsForPath(generatorRoot = this.cwd) {
-    this._generatorsForPath[generatorRoot] = this._generatorsForPath[generatorRoot] || {};
-    return this._generatorsForPath[generatorRoot];
-  }
-
-  /**
-   * @private
-   */
-  getGenerator(uniqueBy, generatorRoot = this.cwd) {
-    if (this._generators[uniqueBy]) {
-      return this._generators[uniqueBy];
-    }
-
-    return this.getGeneratorsForPath(generatorRoot)[uniqueBy];
-  }
-
-  /**
-   * @private
-   */
-  getAllGenerators() {
-    return Object.fromEntries([
-      ...Object.entries(this._generators),
-      ...Object.entries(this._generatorsForPath).flatMap(([root, generatorStore]) =>
-        Object.entries(generatorStore).map(([namespace, generator]) => [`${root}#${namespace}`, generator]),
-      ),
-    ]);
-  }
-
-  /**
-   * @private
-   */
-  setGenerator(uniqueBy, generator) {
-    if (generator.features && generator.features.uniqueGlobally) {
-      this._generators[uniqueBy] = generator;
-    } else {
-      this.getGeneratorsForPath(generator.destinationRoot())[uniqueBy] = generator;
-    }
-
-    return generator;
-  }
-
-  /**
    * Queue generator run (queue itself tasks).
    *
    * @param {Generator} generator Generator instance
@@ -937,41 +889,14 @@ class Environment extends Base {
    * @return {Generator} The generator or singleton instance.
    */
   async queueGenerator(generator, schedule = false) {
-    const generatorFeatures = generator.getFeatures ? generator.getFeatures() : {};
-    let uniqueBy;
-    let rootUniqueBy;
-    let namespaceToEmit;
-    if (generatorFeatures) {
-      uniqueBy = generatorFeatures.uniqueBy;
-      namespaceToEmit = uniqueBy;
-      if (!generatorFeatures.uniqueGlobally) {
-        rootUniqueBy = generator.destinationRoot();
-      }
+    const { added, identifier, generator: composedGenerator } = this.composedStore.addGenerator(generator);
+    if (!added) {
+      debug(`Using existing generator for namespace ${identifier}`);
+      return composedGenerator;
     }
 
-    if (!uniqueBy) {
-      const { namespace } = generator.options;
-      const instanceId = crypto.randomBytes(20).toString('hex');
-      let namespaceDefinition = toNamespace(namespace);
-      if (namespaceDefinition) {
-        namespaceDefinition = namespaceDefinition.with({ instanceId });
-        uniqueBy = namespaceDefinition.id;
-        namespaceToEmit = namespaceDefinition.namespace;
-      } else {
-        uniqueBy = `${namespace}#${instanceId}`;
-        namespaceToEmit = namespace;
-      }
-    }
-
-    const existing = this.getGenerator(uniqueBy, rootUniqueBy);
-    if (existing) {
-      debug(`Using existing generator for namespace ${uniqueBy}`);
-      return existing;
-    }
-
-    this.setGenerator(uniqueBy, generator);
-    this.emit('compose', namespaceToEmit, generator);
-    this.emit(`compose:${namespaceToEmit}`, generator);
+    this.emit('compose', identifier, generator);
+    this.emit(`compose:${identifier}`, generator);
 
     const runGenerator = async () => {
       if (generator.queueTasks) {
@@ -1299,15 +1224,10 @@ class Environment extends Base {
       this.queueTask(
         'environment:conflicts',
         async () => {
-          let customCommitTask = this.findGeneratorCustomCommitTask();
-          if (customCommitTask !== undefined && customCommitTask) {
-            if (typeof customCommitTask !== 'function') {
-              // There is a custom commit task or just disabled
-              return;
-            }
-          } else {
-            // Using default commit task
-            customCommitTask = this.commitSharedFs.bind(this);
+          const { customCommitTask = this.commitSharedFs.bind(this) } = this.composedStore;
+          if (typeof customCommitTask !== 'function') {
+            // There is a custom commit task or just disabled
+            return;
           }
 
           await customCommitTask();
