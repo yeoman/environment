@@ -12,35 +12,45 @@ import { execaOutput } from './util/util.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const PROJECT_ROOT = join(__dirname, '..');
 
-const PACKAGE_NAME_PATTERN = [JSON.parse(readFileSync(join(PROJECT_ROOT, 'package.json'))).name];
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const PACKAGE_NAME_PATTERN = [JSON.parse(readFileSync(join(PROJECT_ROOT, 'package.json')).toString()).name];
 
 const win32 = process.platform === 'win32';
 const nvm = process.env.NVM_HOME;
 
 const debug = createdLogger('yeoman:environment');
 
+type ModuleLookupOptions = {
+  /** Set true to skip lookups of globally-installed generators */
+  localOnly: boolean;
+  /** Paths to look for generators */
+  packagePaths?: string[];
+  /** Repository paths to look for generators packages */
+  npmPaths?: string[];
+  /** File pattern to look for */
+  filePatterns?: string[];
+  /** The package patterns to look for */
+  packagePatterns?: string[];
+  /** A value indicating whether the lookup should be stopped after finding the first result */
+  singleResult?: boolean;
+  /** Set true reverse npmPaths/packagePaths order */
+  reverse: boolean;
+  /** The `deep` option to pass to `globby` */
+  globbyDeep?: number;
+  globbyOptions: any;
+};
+
 export class ModuleLookup {
   /**
    * Search for npm packages.
-   *
-   * @method
-   *
-   * @param {boolean|Object} [options]
-   * @param {boolean} [options.localOnly = false] - Set true to skip lookups of
-   *                                               globally-installed generators.
-   * @param {string|Array} [options.packagePaths] - Paths to look for generators.
-   * @param {string|Array} [options.npmPaths] - Repository paths to look for generators packages.
-   * @param {string|Array} [options.filePatterns='*\/index.js'] - File pattern to look for.
-   * @param {string|Array} [options.packagePatterns='lookup'] - Package pattern to look for.
-   * @param {boolean} [options.reverse = false] - Set true reverse npmPaths/packagePaths order
-   * @param {function}     [find]  Executed for each match, return true to stop lookup.
    */
-  sync(options, find = module => module) {
+  sync(options: ModuleLookupOptions, find: <T>(arg: T) => T | undefined = module => module) {
     debug('Running lookup with options: %o', options);
     options = { ...options };
-    options.filePatterns = arrify(options.filePatterns || 'package.json').map(filePattern => slash(filePattern));
+    options.filePatterns = arrify(options.filePatterns ?? 'package.json').map(filePattern => slash(filePattern));
 
     if (options.packagePaths) {
       options.packagePaths = arrify(options.packagePaths);
@@ -48,12 +58,12 @@ export class ModuleLookup {
         options.packagePaths = options.packagePaths.reverse();
       }
     } else {
-      options.npmPaths = options.npmPaths || this.getNpmPaths(options);
+      options.npmPaths = options.npmPaths ?? this.getNpmPaths(options);
       if (options.reverse && Array.isArray(options.npmPaths)) {
         options.npmPaths = options.npmPaths.reverse();
       }
 
-      options.packagePatterns = arrify(options.packagePatterns || PACKAGE_NAME_PATTERN).map(packagePattern => slash(packagePattern));
+      options.packagePatterns = arrify(options.packagePatterns ?? PACKAGE_NAME_PATTERN).map(packagePattern => slash(packagePattern));
       options.packagePaths = this.findPackagesIn(options.npmPaths, options.packagePatterns);
     }
 
@@ -89,16 +99,16 @@ export class ModuleLookup {
    *
    * @method
    *
-   * @param {String[]} searchPaths List of search paths
-   * @param {String[]} packagePatterns Pattern of the packages
-   * @param {Object}  [globbyOptions]
-   * @return {Array} List of the generator modules path
+   * @param searchPaths List of search paths
+   * @param packagePatterns Pattern of the packages
+   * @param globbyOptions
+   * @return List of the generator modules path
    */
-  findPackagesIn(searchPaths, packagePatterns, globbyOptions) {
+  findPackagesIn(searchPaths: string[], packagePatterns: string[], globbyOptions?: any): any[] {
     searchPaths = arrify(searchPaths)
       .filter(Boolean)
       .map(npmPath => resolve(npmPath));
-    let modules = [];
+    let modules: any[] = [];
     for (const root of searchPaths) {
       if (!existsSync(root) || (!lstatSync(root).isDirectory() && !lstatSync(root).isSymbolicLink())) {
         continue;
@@ -163,7 +173,7 @@ export class ModuleLookup {
    *                       with a supported path (don't touch at NODE_PATH paths).
    * @return {Array} lookup paths
    */
-  getNpmPaths(options = {}) {
+  getNpmPaths(options: { localOnly?: boolean; filterPaths?: boolean } = {}): string[] {
     // Resolve signature where options is boolean (localOnly).
     if (typeof options === 'boolean') {
       options = { localOnly: options };
@@ -185,8 +195,8 @@ export class ModuleLookup {
    * @private
    * @return {Array} lookup paths
    */
-  _getLocalNpmPaths() {
-    const paths = [];
+  _getLocalNpmPaths(): string[] {
+    const paths: string[] = [];
 
     // Walk up the CWD and add `node_modules/` folder lookup on each level
     process
@@ -211,25 +221,25 @@ export class ModuleLookup {
    * @private
    * @return {Array} lookup paths
    */
-  _getGlobalNpmPaths(filterPaths = true) {
-    let paths = [];
+  _getGlobalNpmPaths(filterPaths = true): string[] {
+    let paths: string[] = [];
 
     // Node.js will search in the following list of GLOBAL_FOLDERS:
     // 1: $HOME/.node_modules
     // 2: $HOME/.node_libraries
     // 3: $PREFIX/lib/node
-    const filterValidNpmPath = function (path, ignore = false) {
+    const filterValidNpmPath = function (path: string, ignore = false): string[] {
       return ignore
-        ? path
+        ? [path]
         : ['/node_modules', '/.node_modules', '/.node_libraries', '/node'].some(dir => path.endsWith(dir))
-        ? path
-        : undefined;
+        ? [path]
+        : [];
     };
 
     // Default paths for each system
-    if (nvm) {
+    if (nvm && process.env.NVM_HOME) {
       paths.push(join(process.env.NVM_HOME, process.version, 'node_modules'));
-    } else if (win32) {
+    } else if (win32 && process.env.APPDATA) {
       paths.push(join(process.env.APPDATA, 'npm/node_modules'));
     } else {
       paths.push('/usr/lib/node_modules', '/usr/local/lib/node_modules');
@@ -250,7 +260,7 @@ export class ModuleLookup {
 
     // Global node_modules should be 4 or 2 directory up this one (most of the time)
     // Ex: /usr/another_global/node_modules/yeoman-denerator/node_modules/yeoman-environment/lib (1 level dependency)
-    paths.push(filterValidNpmPath(join(PROJECT_ROOT, '../../..'), !filterPaths));
+    paths.push(...filterValidNpmPath(join(PROJECT_ROOT, '../../..'), !filterPaths));
     // Ex: /usr/another_global/node_modules/yeoman-environment/lib (installed directly)
     paths.push(join(PROJECT_ROOT, '..'));
 
@@ -271,7 +281,7 @@ export class ModuleLookup {
 
     // Adds support for generator resolving when yeoman-generator has been linked
     if (process.argv[1]) {
-      paths.push(filterValidNpmPath(join(dirname(process.argv[1]), '../..'), !filterPaths));
+      paths.push(...filterValidNpmPath(join(dirname(process.argv[1]), '../..'), !filterPaths));
     }
 
     return uniq(paths.filter(Boolean).reverse());
