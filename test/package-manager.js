@@ -1,221 +1,179 @@
-import assert from 'node:assert';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sinon from 'sinon';
-import PackageManagerMixin from '../src/package-manager.js';
+import { esmocha, expect, resetAllMocks } from 'esmocha';
+
+const { execa } = await esmocha.mock('execa');
+const { default: preferredPm } = await esmocha.mock('preferred-pm');
+
+const { packageManagerInstallTask } = await import('../src/package-manager.js');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// eslint-disable-next-line new-cap
-const PackageManager = PackageManagerMixin(class {});
+const changesToPackageJson = `
+Changes to package.json were detected.`;
+const skippingInstall = `Skipping package manager install.
+`;
+const runningPackageManager = pm => `
+Running ${pm} install for you to install the required dependencies.`;
 
 describe('environment (package-manager)', () => {
-  let packageManager;
+  let adapter;
+  let memFs;
+  let packageJsonFile;
 
   beforeEach(() => {
-    packageManager = new PackageManager();
-    packageManager.adapter = {
-      log: sinon.stub(),
-    };
-    packageManager.composedStore = { customInstallTask: undefined };
-    packageManager.spawnCommand = sinon.stub().returns(Promise.resolve());
-    packageManager.options = {};
-    packageManager.sharedFs = { get: sinon.stub().returns() };
-    packageManager.cwd = path.join(__dirname, 'fixtures', 'package-manager', 'npm');
+    adapter = { log: esmocha.fn() };
+    execa.mockReturnValue();
+    memFs = { get: esmocha.fn() };
+    packageJsonFile = path.join(__dirname, 'fixtures', 'package-manager', 'npm', 'package.json');
+    preferredPm.mockResolvedValue({ name: 'npm' });
   });
 
   afterEach(() => {
-    delete packageManager.compatibilityMode;
+    resetAllMocks();
   });
 
   describe('#packageManagerInstallTask()', () => {
     describe('without a package.json', async () => {
-      beforeEach(() => packageManager.packageManagerInstallTask());
+      beforeEach(() => packageManagerInstallTask({ adapter, memFs, packageJsonFile }));
 
       it('should not log', () => {
-        assert(packageManager.adapter.log.notCalled);
+        expect(adapter.log).not.toBeCalled();
       });
 
       it('should not call spawnCommand', () => {
-        assert(packageManager.spawnCommand.notCalled);
+        expect(execa).not.toBeCalled();
       });
     });
 
     describe('with a package.json', async () => {
-      beforeEach(() => {
-        packageManager.sharedFs.get = sinon.stub().returns({});
-      });
-      describe('running generator < 5', async () => {
-        beforeEach(() => {
-          packageManager.compatibilityMode = 'v4';
-          return packageManager.packageManagerInstallTask();
-        });
-
-        it('should not call spawnCommand', () => {
-          assert(packageManager.spawnCommand.notCalled);
-        });
-      });
-
       describe('when package.json was not committed', () => {
-        beforeEach(async () => packageManager.packageManagerInstallTask());
+        beforeEach(async () => {
+          memFs.get.mockReturnValue({ committed: false });
+          await packageManagerInstallTask({ adapter, memFs, packageJsonFile });
+        });
 
         it('should log', () => {
-          assert(packageManager.adapter.log.calledOnce);
-          assert(
-            packageManager.adapter.log.getCall(0).calledWith(`
-No change to package.json was detected. No package manager install will be executed.`),
+          expect(adapter.log).toBeCalledTimes(1);
+          expect(adapter.log).toHaveBeenNthCalledWith(
+            1,
+            `
+No change to package.json was detected. No package manager install will be executed.`,
           );
         });
 
         it('should not call spawnCommand', () => {
-          assert(packageManager.spawnCommand.notCalled);
+          expect(execa).not.toBeCalled();
         });
       });
 
       describe('when package.json was committed', () => {
         beforeEach(async () => {
-          packageManager.sharedFs.get = sinon.stub().returns({ committed: true });
+          memFs.get = sinon.stub().returns({ committed: true });
         });
 
         describe('with skipInstall', () => {
           beforeEach(async () => {
-            packageManager.options = { skipInstall: true };
-            await packageManager.packageManagerInstallTask();
+            await packageManagerInstallTask({ adapter, memFs, packageJsonFile, skipInstall: true });
           });
 
           it('should log', async () => {
-            assert(packageManager.adapter.log.calledTwice);
-            assert(
-              packageManager.adapter.log.getCall(0).calledWith(`
-Changes to package.json were detected.`),
-            );
-            assert(
-              packageManager.adapter.log.getCall(1).calledWith(`Skipping package manager install.
-`),
-            );
+            expect(adapter.log).toBeCalledTimes(2);
+            expect(adapter.log).toHaveBeenNthCalledWith(1, changesToPackageJson);
+            expect(adapter.log).toHaveBeenNthCalledWith(2, skippingInstall);
           });
 
           it('should not call spawnCommand', () => {
-            assert(packageManager.spawnCommand.notCalled);
+            expect(execa).not.toBeCalled();
           });
         });
 
         describe('with npm', () => {
           beforeEach(async () => {
-            packageManager.cwd = path.join(__dirname, 'fixtures', 'package-manager', 'npm');
-            await packageManager.packageManagerInstallTask();
+            await packageManagerInstallTask({ adapter, memFs, packageJsonFile });
           });
 
           it('should log', async () => {
-            assert(packageManager.adapter.log.calledTwice);
-            assert(
-              packageManager.adapter.log.getCall(0).calledWith(`
-Changes to package.json were detected.`),
-            );
-            assert(
-              packageManager.adapter.log.getCall(1).calledWith(`
-Running npm install for you to install the required dependencies.`),
-            );
+            expect(adapter.log).toBeCalledTimes(2);
+            expect(adapter.log).toHaveBeenNthCalledWith(1, changesToPackageJson);
+            expect(adapter.log).toHaveBeenNthCalledWith(2, runningPackageManager('npm'));
           });
 
           it('should execute npm', () => {
-            assert(packageManager.spawnCommand.calledOnce);
-            assert(packageManager.spawnCommand.getCall(0).calledWith('npm', ['install']));
+            expect(execa).toBeCalled();
+            expect(execa).toBeCalledWith('npm', ['install'], expect.any(Object));
           });
         });
 
         describe('with yarn', () => {
           beforeEach(async () => {
-            packageManager.cwd = path.join(__dirname, 'fixtures', 'package-manager', 'yarn');
-            await packageManager.packageManagerInstallTask();
+            preferredPm.mockResolvedValue({ name: 'yarn' });
+            await packageManagerInstallTask({ adapter, memFs, packageJsonFile });
           });
 
           it('should log', async () => {
-            assert(packageManager.adapter.log.calledTwice);
-            assert(
-              packageManager.adapter.log.getCall(0).calledWith(`
-Changes to package.json were detected.`),
-            );
-            assert(
-              packageManager.adapter.log.getCall(1).calledWith(`
-Running yarn install for you to install the required dependencies.`),
-            );
+            expect(adapter.log).toBeCalledTimes(2);
+            expect(adapter.log).toHaveBeenNthCalledWith(1, changesToPackageJson);
+            expect(adapter.log).toHaveBeenNthCalledWith(2, runningPackageManager('yarn'));
           });
 
           it('should execute yarn', () => {
-            assert(packageManager.spawnCommand.calledOnce);
-            assert(packageManager.spawnCommand.getCall(0).calledWith('yarn', ['install']));
+            expect(execa).toBeCalled();
+            expect(execa).toBeCalledWith('yarn', ['install'], expect.any(Object));
           });
         });
 
         describe('with pnpm', () => {
           beforeEach(async () => {
-            packageManager.cwd = path.join(__dirname, 'fixtures', 'package-manager', 'pnpm');
-            await packageManager.packageManagerInstallTask();
+            preferredPm.mockResolvedValue({ name: 'pnpm' });
+            await packageManagerInstallTask({ adapter, memFs, packageJsonFile });
           });
 
           it('should log', async () => {
-            assert(packageManager.adapter.log.calledTwice);
-            assert(
-              packageManager.adapter.log.getCall(0).calledWith(`
-Changes to package.json were detected.`),
-            );
-            assert(
-              packageManager.adapter.log.getCall(1).calledWith(`
-Running pnpm install for you to install the required dependencies.`),
-            );
+            expect(adapter.log).toBeCalledTimes(2);
+            expect(adapter.log).toHaveBeenNthCalledWith(1, changesToPackageJson);
+            expect(adapter.log).toHaveBeenNthCalledWith(2, runningPackageManager('pnpm'));
           });
 
           it('should execute pnpm', () => {
-            assert(packageManager.spawnCommand.calledOnce);
-            assert(packageManager.spawnCommand.getCall(0).calledWith('pnpm', ['install']));
+            expect(execa).toBeCalled();
+            expect(execa).toBeCalledWith('pnpm', ['install'], expect.any(Object));
           });
         });
 
         describe('with an unsupported package manager', () => {
           beforeEach(async () => {
-            packageManager.cwd = path.join(__dirname, 'fixtures', 'package-manager', 'npm');
-            packageManager.options = { nodePackageManager: 'foo' };
-            await packageManager.packageManagerInstallTask();
+            await packageManagerInstallTask({ adapter, memFs, packageJsonFile, nodePackageManager: 'foo' });
           });
 
           it('should log', async () => {
-            assert(packageManager.adapter.log.calledTwice);
-            assert(
-              packageManager.adapter.log.getCall(0).calledWith(`
-Changes to package.json were detected.`),
-            );
-            assert(packageManager.adapter.log.getCall(1).calledWith('foo is not a supported package manager. Run it by yourself.'));
+            expect(adapter.log).toBeCalledTimes(2);
+            expect(adapter.log).toHaveBeenNthCalledWith(1, changesToPackageJson);
+            expect(adapter.log).toHaveBeenNthCalledWith(2, 'foo is not a supported package manager. Run it by yourself.');
           });
 
           it('should not call spawnCommand', () => {
-            assert(packageManager.spawnCommand.notCalled);
+            expect(execa).not.toBeCalled();
           });
         });
 
         describe('error detecting package manager', () => {
           beforeEach(async () => {
-            packageManager.cwd = path.join(__dirname, 'fixtures', 'package-manager', 'npm');
-            packageManager.detectPackageManager = sinon.stub().returns(null);
-            await packageManager.packageManagerInstallTask();
+            preferredPm.mockResolvedValue(null);
+            await packageManagerInstallTask({ adapter, memFs, packageJsonFile });
           });
 
           it('should log', async () => {
-            assert.equal(packageManager.adapter.log.callCount, 3);
-            assert(
-              packageManager.adapter.log.getCall(0).calledWith(`
-Changes to package.json were detected.`),
-            );
-            assert(packageManager.adapter.log.getCall(1).calledWith('Error detecting the package manager. Falling back to npm.'));
-            assert(
-              packageManager.adapter.log.getCall(2).calledWith(`
-Running npm install for you to install the required dependencies.`),
-            );
+            expect(adapter.log).toBeCalledTimes(3);
+            expect(adapter.log).toHaveBeenNthCalledWith(1, changesToPackageJson);
+            expect(adapter.log).toHaveBeenNthCalledWith(2, 'Error detecting the package manager. Falling back to npm.');
+            expect(adapter.log).toHaveBeenNthCalledWith(3, runningPackageManager('npm'));
           });
 
           it('should not call spawnCommand', () => {
-            assert(packageManager.spawnCommand.getCall(0).calledWith('npm', ['install']));
+            expect(execa).toBeCalledWith('npm', ['install'], expect.any(Object));
           });
         });
       });

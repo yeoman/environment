@@ -3,22 +3,26 @@ import { createRequire } from 'node:module';
 import sinon from 'sinon';
 import semver from 'semver';
 import Generator from 'yeoman-generator';
+import { esmocha, expect, mock } from 'esmocha';
 import helpers from './helpers.js';
+
+const { packageManagerInstallTask } = await mock('../src/package-manager.js');
+const { default: Environment } = await import('../src/environment.js');
 
 const require = createRequire(import.meta.url);
 const { version } = require('yeoman-generator/package.json');
 
-class FeaturesGenerator extends Generator {
-  getFeatures() {
-    return this.features;
-  }
-}
+class FeaturesGenerator extends Generator {}
 
 describe('environment (generator-features)', () => {
   before(function () {
     if (semver.lt(version, '5.0.0')) {
       this.skip();
     }
+  });
+
+  beforeEach(() => {
+    esmocha.resetAllMocks();
   });
 
   describe('customCommitTask feature', () => {
@@ -108,9 +112,9 @@ describe('environment (generator-features)', () => {
   describe('customInstallTask feature', () => {
     describe('without customInstallTask', () => {
       let runContext;
-      before(async () => {
+      beforeEach(async () => {
         runContext = helpers
-          .create('custom-install')
+          .create('custom-install', undefined, { createEnv: Environment.createEnv.bind(Environment) })
           .withOptions({ skipInstall: false })
           .withGenerators([
             [
@@ -121,16 +125,41 @@ describe('environment (generator-features)', () => {
               },
               'custom-install:app',
             ],
-          ])
-          .withEnvironment(env => {
-            env.isDestinationPackageJsonCommitted = sinon.stub().returns(true);
-            env.spawnCommand = sinon.stub().returns(Promise.resolve());
-          });
+          ]);
         await runContext.run();
       });
 
-      it('should call spawnCommand', () => {
-        assert.equal(runContext.env.spawnCommand.callCount, 1, 'should have been called once');
+      it('should call packageManagerInstallTask', () => {
+        expect(packageManagerInstallTask).toHaveBeenCalledWith(
+          expect.not.objectContaining({
+            customInstallTask: expect.any(Function),
+          }),
+        );
+      });
+    });
+
+    describe('v4 compatibility', () => {
+      let runContext;
+      beforeEach(async () => {
+        runContext = helpers
+          .create('custom-install', undefined, { createEnv: Environment.createEnv.bind(Environment) })
+          .withOptions({ skipInstall: false })
+          .withGenerators([
+            [
+              class extends FeaturesGenerator {
+                packageJsonTask() {
+                  this.env.compatibilityMode = 'v4';
+                  this.packageJson.set({ name: 'foo' });
+                }
+              },
+              'custom-install:app',
+            ],
+          ]);
+        await runContext.run();
+      });
+
+      it('should not call packageManagerInstallTask', () => {
+        expect(packageManagerInstallTask).not.toHaveBeenCalled();
       });
     });
 
@@ -138,7 +167,7 @@ describe('environment (generator-features)', () => {
       let runContext;
       before(async () => {
         runContext = helpers
-          .create('custom-install')
+          .create('custom-install', undefined, { createEnv: Environment.createEnv.bind(Environment) })
           .withOptions({ skipInstall: false })
           .withGenerators([
             [
@@ -153,16 +182,12 @@ describe('environment (generator-features)', () => {
               },
               'custom-install:app',
             ],
-          ])
-          .withEnvironment(env => {
-            env.isDestinationPackageJsonCommitted = sinon.stub().returns(true);
-            env.spawnCommand = sinon.stub().returns(Promise.resolve());
-          });
+          ]);
         await runContext.run();
       });
 
-      it('should not call spawnCommand', () => {
-        assert.equal(runContext.env.spawnCommand.callCount, 0, 'should not have been called');
+      it('should not call packageManagerInstallTask', () => {
+        expect(packageManagerInstallTask).not.toHaveBeenCalled();
       });
     });
 

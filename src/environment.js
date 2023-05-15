@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import path, { isAbsolute } from 'node:path';
+import path, { isAbsolute, join } from 'node:path';
 import EventEmitter from 'node:events';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
@@ -17,7 +17,6 @@ import { create as createMemFs } from 'mem-fs';
 import { create as createMemFsEditor } from 'mem-fs-editor';
 import createdLogger from 'debug';
 import isScoped from 'is-scoped';
-import { execa } from 'execa';
 import slash from 'slash';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
@@ -29,7 +28,7 @@ import resolver from './resolver.js';
 import YeomanRepository from './util/repository.js';
 import YeomanCommand from './util/command.js';
 import commandMixin from './command.js';
-import packageManagerMixin from './package-manager.js';
+import { packageManagerInstallTask } from './package-manager.js';
 import { ComposedStore } from './composed-store.js';
 // eslint-disable-next-line import/order
 import namespaceCompasibilityMixin from './namespace-composability.js';
@@ -73,7 +72,7 @@ function getGeneratorHint(namespace) {
   return `generator-${namespace}`;
 }
 
-const mixins = [commandMixin, packageManagerMixin];
+const mixins = [commandMixin];
 
 const Base = mixins.reduce((a, b) => b(a), EventEmitter);
 
@@ -1248,7 +1247,28 @@ class Environment extends Base {
    * Queue environment's package manager install task.
    */
   queuePackageManagerInstall() {
-    this.queueTask('install', () => this.packageManagerInstallTask(), { once: 'package manager install' });
+    const { adapter, sharedFs: memFs } = this;
+    const { skipInstall, nodePackageManager } = this.options;
+    const { customInstallTask } = this.composedStore;
+    this.queueTask(
+      'install',
+      () => {
+        if (this.compatibilityMode === 'v4') {
+          debug('Running in generator < 5 compatibility. Package manager install is done by the generator.');
+          return false;
+        }
+
+        return packageManagerInstallTask({
+          adapter,
+          memFs,
+          packageJsonFile: join(this.cwd, 'package.json'),
+          skipInstall,
+          nodePackageManager,
+          customInstallTask,
+        });
+      },
+      { once: 'package manager install' },
+    );
   }
 
   /**
@@ -1289,19 +1309,6 @@ class Environment extends Base {
       return;
     }
     this.runLoop.addSubQueue(priority, before);
-  }
-
-  /**
-   * @private
-   * Normalize a command across OS and spawn it (asynchronously).
-   *
-   * @param {String} command program to execute
-   * @param {Array} args list of arguments to pass to the program
-   * @param {object} [opt] any execa options
-   * @return {String} spawned process reference
-   */
-  spawnCommand(command, args, opt) {
-    return execa(command, args, { stdio: 'inherit', cwd: this.cwd, ...opt });
   }
 }
 
