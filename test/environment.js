@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/no-await-expression-member */
 import events from 'node:events';
 import fs from 'node:fs';
-import path, { dirname } from 'node:path';
+import path, { dirname, join } from 'node:path';
 import util from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
@@ -741,8 +741,8 @@ describe('Environment', () => {
     });
 
     it('registers the resolved path and package path', async function () {
-      assert.equal('dummy/path/index.js', (await this.env.get('dummy:resolved')).resolved);
-      assert.equal('dummy/packagePath', (await this.env.get('dummy:resolved')).packagePath);
+      assert.equal(join('dummy/path/index.js'), (await this.env.get('dummy:resolved')).resolved);
+      assert.equal(join('dummy/packagePath'), (await this.env.get('dummy:resolved')).packagePath);
     });
 
     it('throws if invalid generator', async function () {

@@ -31,7 +31,7 @@ describe('Store', async () => {
 
       it('assign meta data to the module', async function () {
         assert.equal(this.outcome.namespace, 'foo:module');
-        assert.equal(this.outcome.resolved, '/foo/path/index.js');
+        assert.equal(this.outcome.resolved, join('/foo/path/index.js'));
       });
     });
 
