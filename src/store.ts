@@ -3,6 +3,7 @@ import { extname, join } from 'node:path';
 import { toNamespace } from '@yeoman/namespace';
 import type { BaseEnvironment, BaseGenerator, GetGeneratorConstructor } from '@yeoman/types';
 import createDebug from 'debug';
+import slash from 'slash';
 
 const debug = createDebug('yeoman:environment:store');
 
@@ -50,8 +51,16 @@ class Store {
    * @param generator - A generator module or a module path
    */
   add(meta: BaseMeta, Generator?: unknown): GeneratorMeta {
-    if (typeof meta.resolved === 'string' && !extname(meta.resolved)) {
-      meta.resolved = join(meta.resolved, 'index.js');
+    if (typeof meta.resolved === 'string') {
+      if (!extname(meta.resolved)) {
+        meta.resolved = join(meta.resolved, 'index.js');
+      }
+
+      meta.resolved = slash(meta.resolved);
+    }
+
+    if (meta.packagePath) {
+      meta.packagePath = slash(meta.packagePath);
     }
 
     let importModule: (() => Promise<unknown>) | undefined;
