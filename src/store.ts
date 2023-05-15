@@ -50,8 +50,12 @@ class Store {
    * @param generator - A generator module or a module path
    */
   add(meta: BaseMeta, Generator?: unknown): GeneratorMeta {
-    if (typeof meta.resolved === 'string' && !extname(meta.resolved)) {
-      meta.resolved = join(meta.resolved, 'index.js');
+    if (typeof meta.resolved === 'string') {
+      meta.resolved = extname(meta.resolved) ? join(meta.resolved) : join(meta.resolved, 'index.js');
+    }
+
+    if (meta.packagePath) {
+      meta.packagePath = join(meta.packagePath);
     }
 
     let importModule: (() => Promise<unknown>) | undefined;
