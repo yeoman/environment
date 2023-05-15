@@ -1,5 +1,5 @@
 /* eslint-disable unicorn/no-await-expression-member */
-import path, { dirname, relative } from 'node:path';
+import path, { dirname, join, relative } from 'node:path';
 import assert from 'node:assert';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
@@ -137,8 +137,8 @@ describe('Environment Resolver', async function () {
       assert.ok(await this.env.get('dummy:app'));
       assert.ok(await this.env.get('dummy:yo'));
 
-      assert.ok((await this.env.get('dummy:app')).packagePath.endsWith('node_modules/generator-dummy'));
-      assert.ok((await this.env.get('dummy:app')).packagePath.endsWith('node_modules/generator-dummy'));
+      assert.ok((await this.env.get('dummy:app')).packagePath.endsWith(join('node_modules/generator-dummy')));
+      assert.ok((await this.env.get('dummy:app')).packagePath.endsWith(join('node_modules/generator-dummy')));
 
       // Registers local ts generators
       assert.ok(await this.env.get('ts:app'));
@@ -226,8 +226,8 @@ describe('Environment Resolver', async function () {
         assert.ok(await this.env.get('dummy:app'));
         assert.ok(await this.env.get('dummy:yo'));
 
-        assert.ok((await this.env.get('dummy:app')).packagePath.endsWith('node_modules/generator-dummy'));
-        assert.ok((await this.env.get('dummy:app')).packagePath.endsWith('node_modules/generator-dummy'));
+        assert.ok((await this.env.get('dummy:app')).packagePath.endsWith(join('node_modules/generator-dummy')));
+        assert.ok((await this.env.get('dummy:app')).packagePath.endsWith(join('node_modules/generator-dummy')));
 
         // Registers local ts generators
         assert.ok(await this.env.get('ts:app'));
@@ -280,8 +280,8 @@ describe('Environment Resolver', async function () {
         assert.ok(await this.env.get('dummy:app'));
         assert.ok(await this.env.get('dummy:yo'));
 
-        assert.ok((await this.env.get('dummy:app')).packagePath.endsWith('/generator-dummy'));
-        assert.ok((await this.env.get('dummy:app')).packagePath.endsWith('/generator-dummy'));
+        assert.ok((await this.env.get('dummy:app')).packagePath.endsWith(join('/generator-dummy')));
+        assert.ok((await this.env.get('dummy:app')).packagePath.endsWith(join('/generator-dummy')));
 
         // Registers local ts generators', async function () {
         assert.ok(await this.env.get('ts:app'));

@@ -712,7 +712,7 @@ describe('Environment', () => {
     it('determine registered Generator namespace and resolved path', async function () {
       assert.equal(await this.env.getPackagePath('fixtures:generator-simple'), this.simplePath);
       assert.equal(await this.env.getPackagePath('fixtures'), 'new-path');
-      assert.deepEqual(await this.env.getPackagePaths('fixtures'), ['new-path', 'dummy/packagePath', this.simplePath]);
+      assert.deepEqual(await this.env.getPackagePaths('fixtures'), ['new-path', join('dummy/packagePath'), this.simplePath]);
 
       // With alias
       assert.equal(
