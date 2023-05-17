@@ -1,9 +1,21 @@
-import path, { dirname } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import createdLogger from 'debug';
 import preferredPm from 'preferred-pm';
 import { execa } from 'execa';
+import type { MemFsEditorFile } from 'mem-fs-editor';
+import { type InputOutputAdapter } from '@yeoman/types';
+import { type Store } from 'mem-fs';
 
 const debug = createdLogger('yeoman:environment:package-manager');
+
+export type PackageManagerInstallTaskOptions = {
+  memFs: Store<MemFsEditorFile>;
+  packageJsonLocation: string;
+  adapter: InputOutputAdapter;
+  nodePackageManager?: string;
+  customInstallTask?: (nodePackageManager: string | undefined, defaultTask: () => Promise<boolean>) => boolean | Promise<boolean>;
+  skipInstall?: boolean;
+};
 
 /**
  * Executes package manager install.
@@ -16,14 +28,22 @@ const debug = createdLogger('yeoman:environment:package-manager');
   packageJsonFile: join(this.cwd, 'package.json');
 
 */
-export async function packageManagerInstallTask({ memFs, packageJsonFile, customInstallTask, adapter, nodePackageManager, skipInstall }) {
+export async function packageManagerInstallTask({
+  memFs,
+  packageJsonLocation,
+  customInstallTask,
+  adapter,
+  nodePackageManager,
+  skipInstall,
+}: PackageManagerInstallTaskOptions) {
+  packageJsonLocation = resolve(packageJsonLocation);
   /**
    * @private
    * Get the destination package.json file.
    * @return {Vinyl | undefined} a Vinyl file.
    */
   function getDestinationPackageJson() {
-    return memFs.get(path.resolve(packageJsonFile));
+    return memFs.get(join(packageJsonLocation, 'package.json'));
   }
 
   /**
@@ -61,7 +81,7 @@ Changes to package.json were detected.`);
   }
 
   // eslint-disable-next-line unicorn/no-await-expression-member
-  let packageManagerName = nodePackageManager ?? (await preferredPm(dirname(packageJsonFile)))?.name;
+  let packageManagerName = nodePackageManager ?? (await preferredPm(packageJsonLocation))?.name;
 
   const execPackageManager = async () => {
     if (!packageManagerName) {
@@ -76,17 +96,12 @@ Changes to package.json were detected.`);
 
     adapter.log(`
 Running ${packageManagerName} install for you to install the required dependencies.`);
-    await execa(packageManagerName, ['install'], { stdio: 'inherit', cwd: dirname(packageJsonFile) });
+    await execa(packageManagerName, ['install'], { stdio: 'inherit', cwd: packageJsonLocation });
     return true;
   };
 
   if (customInstallTask) {
-    const result = customInstallTask(packageManagerName, execPackageManager);
-    if (!result || !result.then) {
-      return true;
-    }
-
-    return result;
+    return customInstallTask(packageManagerName, execPackageManager);
   }
 
   return execPackageManager();

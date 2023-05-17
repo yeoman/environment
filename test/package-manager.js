@@ -21,13 +21,13 @@ Running ${pm} install for you to install the required dependencies.`;
 describe('environment (package-manager)', () => {
   let adapter;
   let memFs;
-  let packageJsonFile;
+  let packageJsonLocation;
 
   beforeEach(() => {
     adapter = { log: esmocha.fn() };
     execa.mockReturnValue();
     memFs = { get: esmocha.fn() };
-    packageJsonFile = path.join(__dirname, 'fixtures', 'package-manager', 'npm', 'package.json');
+    packageJsonLocation = path.join(__dirname, 'fixtures', 'package-manager', 'npm');
     preferredPm.mockResolvedValue({ name: 'npm' });
   });
 
@@ -37,7 +37,7 @@ describe('environment (package-manager)', () => {
 
   describe('#packageManagerInstallTask()', () => {
     describe('without a package.json', async () => {
-      beforeEach(() => packageManagerInstallTask({ adapter, memFs, packageJsonFile }));
+      beforeEach(() => packageManagerInstallTask({ adapter, memFs, packageJsonLocation }));
 
       it('should not log', () => {
         expect(adapter.log).not.toBeCalled();
@@ -52,7 +52,7 @@ describe('environment (package-manager)', () => {
       describe('when package.json was not committed', () => {
         beforeEach(async () => {
           memFs.get.mockReturnValue({ committed: false });
-          await packageManagerInstallTask({ adapter, memFs, packageJsonFile });
+          await packageManagerInstallTask({ adapter, memFs, packageJsonLocation });
         });
 
         it('should log', () => {
@@ -76,7 +76,7 @@ No change to package.json was detected. No package manager install will be execu
 
         describe('with skipInstall', () => {
           beforeEach(async () => {
-            await packageManagerInstallTask({ adapter, memFs, packageJsonFile, skipInstall: true });
+            await packageManagerInstallTask({ adapter, memFs, packageJsonLocation, skipInstall: true });
           });
 
           it('should log', async () => {
@@ -92,7 +92,7 @@ No change to package.json was detected. No package manager install will be execu
 
         describe('with npm', () => {
           beforeEach(async () => {
-            await packageManagerInstallTask({ adapter, memFs, packageJsonFile });
+            await packageManagerInstallTask({ adapter, memFs, packageJsonLocation });
           });
 
           it('should log', async () => {
@@ -110,7 +110,7 @@ No change to package.json was detected. No package manager install will be execu
         describe('with yarn', () => {
           beforeEach(async () => {
             preferredPm.mockResolvedValue({ name: 'yarn' });
-            await packageManagerInstallTask({ adapter, memFs, packageJsonFile });
+            await packageManagerInstallTask({ adapter, memFs, packageJsonLocation });
           });
 
           it('should log', async () => {
@@ -128,7 +128,7 @@ No change to package.json was detected. No package manager install will be execu
         describe('with pnpm', () => {
           beforeEach(async () => {
             preferredPm.mockResolvedValue({ name: 'pnpm' });
-            await packageManagerInstallTask({ adapter, memFs, packageJsonFile });
+            await packageManagerInstallTask({ adapter, memFs, packageJsonLocation });
           });
 
           it('should log', async () => {
@@ -145,7 +145,7 @@ No change to package.json was detected. No package manager install will be execu
 
         describe('with an unsupported package manager', () => {
           beforeEach(async () => {
-            await packageManagerInstallTask({ adapter, memFs, packageJsonFile, nodePackageManager: 'foo' });
+            await packageManagerInstallTask({ adapter, memFs, packageJsonLocation, nodePackageManager: 'foo' });
           });
 
           it('should log', async () => {
@@ -162,7 +162,7 @@ No change to package.json was detected. No package manager install will be execu
         describe('error detecting package manager', () => {
           beforeEach(async () => {
             preferredPm.mockResolvedValue(null);
-            await packageManagerInstallTask({ adapter, memFs, packageJsonFile });
+            await packageManagerInstallTask({ adapter, memFs, packageJsonLocation });
           });
 
           it('should log', async () => {

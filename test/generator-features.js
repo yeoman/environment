@@ -6,7 +6,7 @@ import Generator from 'yeoman-generator';
 import { esmocha, expect, mock } from 'esmocha';
 import helpers from './helpers.js';
 
-const { packageManagerInstallTask } = await mock('../src/package-manager.js');
+const { packageManagerInstallTask } = await mock('../src/package-manager.ts');
 const { default: Environment } = await import('../src/environment.js');
 
 const require = createRequire(import.meta.url);

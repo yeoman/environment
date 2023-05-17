@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import path, { isAbsolute, join } from 'node:path';
+import path, { isAbsolute } from 'node:path';
 import EventEmitter from 'node:events';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
@@ -1261,7 +1261,7 @@ class Environment extends Base {
         return packageManagerInstallTask({
           adapter,
           memFs,
-          packageJsonFile: join(this.cwd, 'package.json'),
+          packageJsonLocation: this.cwd,
           skipInstall,
           nodePackageManager,
           customInstallTask,
