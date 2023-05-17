@@ -23,9 +23,9 @@ const nvm = process.env.NVM_HOME;
 
 const debug = createdLogger('yeoman:environment');
 
-type ModuleLookupOptions = {
+export type ModuleLookupOptions = {
   /** Set true to skip lookups of globally-installed generators */
-  localOnly: boolean;
+  localOnly?: boolean;
   /** Paths to look for generators */
   packagePaths?: string[];
   /** Repository paths to look for generators packages */
@@ -36,17 +36,21 @@ type ModuleLookupOptions = {
   packagePatterns?: string[];
   /** A value indicating whether the lookup should be stopped after finding the first result */
   singleResult?: boolean;
+  filterPaths?: boolean;
   /** Set true reverse npmPaths/packagePaths order */
-  reverse: boolean;
+  reverse?: boolean;
   /** The `deep` option to pass to `globby` */
   globbyDeep?: number;
-  globbyOptions: any;
+  globbyOptions?: any;
 };
 
 /**
  * Search for npm packages.
  */
-export function moduleLookupSync(options: ModuleLookupOptions, find: <T>(arg: T) => T | undefined = module => module) {
+export function moduleLookupSync(
+  options: ModuleLookupOptions,
+  find: (arg: { filePath: string; packagePath: string }) => boolean | undefined = () => true,
+) {
   debug('Running lookup with options: %o', options);
   options = { ...options };
   options.filePatterns = arrify(options.filePatterns ?? 'package.json').map(filePattern => slash(filePattern));
@@ -78,8 +82,9 @@ export function moduleLookupSync(options: ModuleLookupOptions, find: <T>(arg: T)
       cwd: packagePath,
       absolute: true,
       ...options.globbyOptions,
+      objectMode: false,
     })) {
-      const module = { filePath, packagePath };
+      const module = { filePath: filePath as unknown as string, packagePath };
       if (find(module)) {
         return [module];
       }

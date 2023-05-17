@@ -1,8 +1,8 @@
 import { basename, join, relative } from 'node:path';
 import { realpathSync } from 'node:fs';
 import createdLogger from 'debug';
-import { moduleLookupSync } from './module-lookup.js';
 import { asNamespace } from './util/namespace.js';
+import { lookupGenerators } from './generator-lookup.js';
 
 const debug = createdLogger('yeoman:environment');
 
@@ -50,43 +50,33 @@ resolver.lookup = async function (options) {
 
   const { registerToScope, lookups = this.lookups } = options;
   options = {
-    // Js generators should be after, last will override registered one.
-    filePatterns: lookups.flatMap(prefix => [
-      `${prefix}/*/index.ts`,
-      `${prefix}/*/index.cts`,
-      `${prefix}/*/index.mts`,
-      `${prefix}/*/index.js`,
-      `${prefix}/*/index.cjs`,
-      `${prefix}/*/index.mjs`,
-    ]),
-    filterPaths: false,
-    packagePatterns: ['generator-*'],
-    reverse: !options.singleResult,
     ...options,
+    lookups,
   };
 
   const generators = [];
-  moduleLookupSync(options, module => {
-    const { packagePath, filePath } = module;
-    let repositoryPath = join(packagePath, '..');
-    if (basename(repositoryPath).startsWith('@')) {
-      // Scoped package
-      repositoryPath = join(repositoryPath, '..');
+  await lookupGenerators(options, module => {
+    const { packagePath, filePath, lookups } = module;
+
+    const meta = _tryRegistering({ registerToScope, env: this, filePath, packagePath, lookups });
+    if (meta) {
+      generators.push({
+        ...meta,
+        generatorPath: meta.resolved,
+        registered: true,
+      });
+
+      return options.singleResult;
     }
 
-    let namespace = asNamespace(relative(repositoryPath, filePath), { lookups });
-    if (registerToScope && !namespace.startsWith('@')) {
-      namespace = `@${registerToScope}/${namespace}`;
-    }
-
-    const registered = this._tryRegistering(filePath, packagePath, namespace);
     generators.push({
       generatorPath: filePath,
+      resolved: filePath,
       packagePath,
-      namespace,
-      registered,
+      registered: false,
     });
-    return options.singleResult && registered;
+
+    return false;
   });
 
   return generators;
@@ -102,23 +92,33 @@ resolver.lookup = async function (options) {
  * @param  {String} [namespace] - namespace of the generator.
  * @return {boolean} true if the generator have been registered.
  */
-resolver._tryRegistering = function (generatorReference, packagePath, namespace) {
-  const realPath = realpathSync(generatorReference);
-
+function _tryRegistering({ env, registerToScope, filePath, packagePath, lookups }) {
   try {
-    debug('found %s, trying to register', generatorReference);
+    debug('found %s, trying to register', filePath);
 
-    if (!namespace && realPath !== generatorReference) {
-      namespace = asNamespace(generatorReference);
+    let repositoryPath = join(packagePath, '..');
+    if (basename(repositoryPath).startsWith('@')) {
+      // Scoped package
+      repositoryPath = join(repositoryPath, '..');
     }
 
-    this.register(realPath, namespace, packagePath);
-    return true;
+    let namespace = asNamespace(relative(repositoryPath, filePath), { lookups });
+    if (registerToScope && !namespace.startsWith('@')) {
+      namespace = `@${registerToScope}/${namespace}`;
+    }
+
+    const resolved = realpathSync(filePath);
+    if (!namespace) {
+      namespace = asNamespace(resolved, { lookups });
+    }
+
+    env.store.add({ namespace, packagePath, resolved });
+    return env.getGeneratorMeta(namespace);
   } catch (error) {
-    console.error('Unable to register %s (Error: %s)', generatorReference, error.message);
+    console.error('Unable to register %s (Error: %s)', filePath, error);
     return false;
   }
-};
+}
 
 /**
  * Get or create an alias.

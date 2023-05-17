@@ -4,7 +4,6 @@ import { findLast } from 'lodash-es';
 import escapeStringRegexp from 'escape-string-regexp';
 
 type AsNamespaceOptions = {
-  filepath: string;
   lookups?: string[];
 };
 
