@@ -18,6 +18,7 @@ import { create as createMemFsEditor } from 'mem-fs-editor';
 import createdLogger from 'debug';
 import isScoped from 'is-scoped';
 import slash from 'slash';
+import { flyImport } from 'fly-import';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
 // eslint-disable-next-line n/file-extension-in-import
@@ -205,14 +206,9 @@ class Environment extends Base {
    * @return {Environment} a new Environment instance
    */
   static async createEnvWithVersion(version, ...args) {
-    const repository = new YeomanRepository({ adapter: this.adapter });
-    const installedVersion = repository.verifyInstalledVersion('yeoman-environment', version);
-    if (!installedVersion) {
-      await repository.installPackage('yeoman-environment', version);
-    }
-
-    const VersionedEnvironment = repository.requireModule('yeoman-environment', version);
-    return VersionedEnvironment.createEnv(...args);
+    const envModule = await flyImport(`yeoman-environment@${version}`);
+    const createEnv = envModule.createEnv ?? envModule.default.createEnv;
+    return createEnv(...args);
   }
 
   /**
