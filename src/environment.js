@@ -859,7 +859,8 @@ class Environment extends Base {
    * @param {Boolean} [schedule]
    * @return {Generator} The instantiated generator or the singleton instance.
    */
-  async composeWith(generator, args, options, schedule = true) {
+  async composeWith(generator, args, options, composeOptions) {
+    let schedule;
     if (typeof args === 'boolean') {
       schedule = args;
       args = undefined;
@@ -868,9 +869,10 @@ class Environment extends Base {
       schedule = options;
       options = undefined;
     }
+    schedule = typeof composeOptions === 'boolean' ? composeOptions : composeOptions?.schedule ?? true;
 
     const generatorInstance = await this.create(generator, args, options);
-    return this.queueGenerator(generatorInstance, schedule);
+    return this.queueGenerator(generatorInstance, { schedule });
   }
 
   /**
@@ -880,7 +882,8 @@ class Environment extends Base {
    * @param {boolean} [schedule=false] Whether to schedule the generator run.
    * @return {Generator} The generator or singleton instance.
    */
-  async queueGenerator(generator, schedule = false) {
+  async queueGenerator(generator, queueOptions) {
+    const schedule = typeof queueOptions === 'boolean' ? queueOptions : queueOptions?.schedule ?? false;
     const { added, identifier, generator: composedGenerator } = this.composedStore.addGenerator(generator);
     if (!added) {
       debug(`Using existing generator for namespace ${identifier}`);
@@ -924,11 +927,7 @@ class Environment extends Base {
    * @param {String|Array} args
    * @param {Object}       [options]
    */
-  async run(args, options, done) {
-    if (done || typeof options === 'function' || typeof args === 'function') {
-      throw new Error('Callback support have been removed.');
-    }
-
+  async run(args, options) {
     args = Array.isArray(args) ? args : splitArgsFromString(args);
     options = { ...options };
 

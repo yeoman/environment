@@ -56,15 +56,36 @@ resolver.lookup = async function (options) {
 
   const generators = [];
   await lookupGenerators(options, ({ packagePath, filePath, lookups }) => {
-    const meta = _tryRegistering({ registerToScope, env: this, filePath, packagePath, lookups });
-    if (meta) {
-      generators.push({
-        ...meta,
-        generatorPath: meta.resolved,
-        registered: true,
-      });
+    try {
+      debug('found %s, trying to register', filePath);
 
-      return options.singleResult;
+      let repositoryPath = join(packagePath, '..');
+      if (basename(repositoryPath).startsWith('@')) {
+        // Scoped package
+        repositoryPath = join(repositoryPath, '..');
+      }
+
+      let namespace = asNamespace(relative(repositoryPath, filePath), { lookups });
+      const resolved = realpathSync(filePath);
+      if (!namespace) {
+        namespace = asNamespace(resolved, { lookups });
+      }
+      if (registerToScope && !namespace.startsWith('@')) {
+        namespace = `@${registerToScope}/${namespace}`;
+      }
+
+      this.store.add({ namespace, packagePath, resolved });
+      const meta = this.getGeneratorMeta(namespace);
+      if (meta) {
+        generators.push({
+          ...meta,
+          generatorPath: meta.resolved,
+          registered: true,
+        });
+        return options.singleResult;
+      }
+    } catch (error) {
+      console.error('Unable to register %s (Error: %s)', filePath, error);
     }
 
     generators.push({
@@ -79,43 +100,6 @@ resolver.lookup = async function (options) {
 
   return generators;
 };
-
-/**
- * Try registering a Generator to this environment.
- *
- * @private
- *
- * @param  {String} generatorReference A generator reference, usually a file path.
- * @param  {String} [packagePath] - Generator's package path.
- * @param  {String} [namespace] - namespace of the generator.
- * @return {boolean} true if the generator have been registered.
- */
-function _tryRegistering({ env, registerToScope, filePath, packagePath, lookups }) {
-  try {
-    debug('found %s, trying to register', filePath);
-
-    let repositoryPath = join(packagePath, '..');
-    if (basename(repositoryPath).startsWith('@')) {
-      // Scoped package
-      repositoryPath = join(repositoryPath, '..');
-    }
-
-    let namespace = asNamespace(relative(repositoryPath, filePath), { lookups });
-    const resolved = realpathSync(filePath);
-    if (!namespace) {
-      namespace = asNamespace(resolved, { lookups });
-    }
-    if (registerToScope && !namespace.startsWith('@')) {
-      namespace = `@${registerToScope}/${namespace}`;
-    }
-
-    env.store.add({ namespace, packagePath, resolved });
-    return env.getGeneratorMeta(namespace);
-  } catch (error) {
-    console.error('Unable to register %s (Error: %s)', filePath, error);
-    return false;
-  }
-}
 
 /**
  * Get or create an alias.
