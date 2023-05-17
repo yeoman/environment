@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { join } from 'node:path';
 import semver from 'semver';
 import { flyImport } from 'fly-import';
 
@@ -58,6 +59,6 @@ composability.installLocalGenerators = async function (packages) {
 composability.lookupLocalPackages = async function (packagesToLookup = 'generator-*') {
   await this.lookup({
     packagePatterns: packagesToLookup,
-    npmPaths: this.repository.nodeModulesPath,
+    npmPaths: join(this.repository.repositoryPath, 'node_modules'),
   });
 };
