@@ -2,29 +2,22 @@ import assert from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
-import fs from 'fs-extra';
 import Environment from '../src/index.js';
-import YeomanRepository from '../src/util/repository.js';
+import { mkdirSync, rmSync } from 'node:fs';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-environment/light');
 
 describe('Generators plugin', () => {
-  let repository;
-
   beforeEach(function () {
-    fs.mkdirpSync(tmpdir);
+    mkdirSync(tmpdir, { recursive: true });
     this.cwd = process.cwd();
     process.chdir(tmpdir);
-    repository = new YeomanRepository();
-    if (fs.existsSync(repository.repositoryPath)) {
-      fs.removeSync(repository.repositoryPath);
-    }
   });
 
   afterEach(function () {
     this.timeout(40_000);
     process.chdir(this.cwd);
-    fs.removeSync(tmpdir);
+    rmSync(tmpdir, { recursive: true });
   });
 
   for (const extended of [undefined, 'super:app']) {

@@ -52,7 +52,6 @@
     "test-base": "c8 esmocha test/environment*.js test/store.js test/util.js test/adapter.js",
     "test-environment": "c8 esmocha test/environment.js",
     "test-generators": "c8 esmocha test/generators.js",
-    "test-repository": "c8 esmocha test/repository.js",
     "test-resolver": "c8 esmocha test/resolver.js"
   },
   "config": {
@@ -71,7 +70,7 @@
     "debug": "^4.3.4",
     "escape-string-regexp": "^5.0.0",
     "execa": "^7.1.1",
-    "fly-import": "^0.1.4",
+    "fly-import": "^0.2.0",
     "globby": "^11.0.1",
     "grouped-queue": "^2.0.0",
     "is-scoped": "^3.0.0",

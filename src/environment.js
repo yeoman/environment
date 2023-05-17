@@ -18,7 +18,7 @@ import { create as createMemFsEditor } from 'mem-fs-editor';
 import createdLogger from 'debug';
 import isScoped from 'is-scoped';
 import slash from 'slash';
-import { flyImport } from 'fly-import';
+import { flyImport, FlyRepository } from 'fly-import';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
 // eslint-disable-next-line n/file-extension-in-import
@@ -26,7 +26,6 @@ import { createCommitTransform } from 'mem-fs-editor/transform';
 import Store from './store.js';
 import composability from './composability.js';
 import resolver from './resolver.js';
-import YeomanRepository from './util/repository.js';
 import YeomanCommand, { addEnvironmentOptions } from './util/command.js';
 import commandMixin from './command.js';
 import { packageManagerInstallTask } from './package-manager.js';
@@ -354,10 +353,11 @@ class Environment extends Base {
     // Pass forwardErrorToEnvironment to generators.
     this.sharedOptions.forwardErrorToEnvironment = false;
 
-    this.repository = new YeomanRepository({
-      adapter: this.adapter,
-      repositoryPath: this.options.yeomanRepository,
-      arboristRegistry: this.options.arboristRegistry,
+    this.repository = new FlyRepository({
+      repositoryPath: this.options.yeomanRepository ?? `${this.cwd}/.yo-repository`,
+      arboristConfig: {
+        registry: this.options.arboristRegistry,
+      },
     });
 
     if (!this.options.experimental) {

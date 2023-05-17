@@ -27,7 +27,6 @@ composability.lookupLocalNamespaces = function (namespacesToLookup) {
   namespacesToLookup = Array.isArray(namespacesToLookup) ? namespacesToLookup : [namespacesToLookup];
   namespacesToLookup = namespacesToLookup.map(ns => requireNamespace(ns));
   // Keep only those packages that has a compatible version.
-  namespacesToLookup = namespacesToLookup.filter(ns => this.repository.verifyInstalledVersion(ns.generatorHint, ns.semver) !== undefined);
   return this.lookupLocalPackages(namespacesToLookup.map(ns => ns.generatorHint));
 };
 
