@@ -919,12 +919,6 @@ describe('Environment', () => {
     });
   });
 
-  describe('#error()', () => {
-    it('always throws error', async function () {
-      assert.throws(() => this.env.error(new Error('Some error')));
-    });
-  });
-
   describe('#alias()', () => {
     it('apply regex and replace with alternative value', async function () {
       this.env.alias(/^([^:]+)$/, '$1:app');
@@ -1004,7 +998,7 @@ describe('Environment', () => {
   describe('.createEnv()', () => {
     it('create an environment', () => {
       const env = Environment.createEnv();
-      assert(env instanceof Environment);
+      assert(env);
     });
   });
 

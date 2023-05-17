@@ -1,4 +1,6 @@
 import { createHelpers } from 'yeoman-test';
-import Environment from '../src/environment.js';
+import Environment from '../src/index.js';
 
-export default createHelpers({ createEnv: Environment.createEnv });
+export default createHelpers({
+  createEnv: (args, ...others) => (Array.isArray(args) ? new Environment(...others) : new Environment(args, ...others)),
+});

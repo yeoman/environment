@@ -88,6 +88,7 @@
   },
   "devDependencies": {
     "@types/lodash-es": "^4.17.7",
+    "@types/semver": "^7.5.0",
     "c8": "^7.13.0",
     "cpy-cli": "^4.2.0",
     "esmocha": "^1.0.1",

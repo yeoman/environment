@@ -1,5 +1,4 @@
 import path, { isAbsolute } from 'node:path';
-import EventEmitter from 'node:events';
 import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
@@ -20,15 +19,12 @@ import { isFilePending } from 'mem-fs-editor/state';
 // eslint-disable-next-line n/file-extension-in-import
 import { createCommitTransform } from 'mem-fs-editor/transform';
 import Store from './store.js';
-import composability from './composability.js';
-import resolver from './resolver.js';
 import YeomanCommand, { addEnvironmentOptions } from './util/command.js';
-import commandMixin from './command.js';
 import { packageManagerInstallTask } from './package-manager.js';
 import { ComposedStore } from './composed-store.js';
-import namespaceCompasibilityMixin from './namespace-composability.js';
 import { findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.js';
 import { resolveModulePath } from './util/resolve.js';
+import EnvironmentBase from './environment-base.js';
 // eslint-disable-next-line import/order
 import { asNamespace, defaultLookups } from './util/namespace.js';
 
@@ -71,11 +67,7 @@ function getGeneratorHint(namespace) {
   return `generator-${namespace}`;
 }
 
-const mixins = [commandMixin];
-
-const Base = mixins.reduce((a, b) => b(a), EventEmitter);
-
-class Environment extends Base {
+export default class Environment extends EnvironmentBase {
   static get UNKNOWN_NAMESPACE() {
     return 'unknownnamespace';
   }
@@ -332,9 +324,6 @@ class Environment extends Base {
     this.fs = createMemFsEditor(this.sharedFs);
 
     this.lookups = Environment.lookups;
-    this.aliases = [];
-
-    this.alias(/^([^:]+)$/, '$1:app');
 
     // Used sharedOptions from options if exists.
     this.sharedOptions = this.options.sharedOptions || {};
@@ -397,20 +386,6 @@ class Environment extends Base {
     ]);
     Object.assign(this.sharedOptions, optionsToShare);
     return optionsToShare;
-  }
-
-  /**
-   * @deprecated
-   * Error handler taking `err` instance of Error.
-   *
-   * The `error` event is emitted with the error object, if no `error` listener
-   * is registered, then we throw the error.
-   *
-   * @param  {Object} err
-   * @return {Error}  err
-   */
-  error(error) {
-    throw error instanceof Error ? error : new Error(error);
   }
 
   /**
@@ -698,7 +673,7 @@ class Environment extends Base {
 
   /**
    * Get a generator only by namespace.
-   * @private
+   * @protected
    * @param  {YeomanNamespace|String} namespace
    * @return {Generator|null} - the generator found at the location
    */
@@ -731,7 +706,7 @@ class Environment extends Base {
    * @param {String} namespaceOrPath
    * @param {Array} [args]
    * @param {Object} [options]
-   * @return {Generator} The instantiated generator
+   * @return {Promise<Generator>} The instantiated generator
    */
   async create(namespaceOrPath, args, options) {
     if (!Array.isArray(args) && typeof args === 'object') {
@@ -1227,9 +1202,3 @@ class Environment extends Base {
     this.runLoop.addSubQueue(priority, before);
   }
 }
-
-Object.assign(Environment.prototype, resolver);
-Object.assign(Environment.prototype, composability);
-Object.assign(Environment.prototype, namespaceCompasibilityMixin);
-
-export default Environment;

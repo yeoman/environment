@@ -1,1 +1,1 @@
-export { default } from './environment.js';
+export { default } from './environment-full.js';
