@@ -9,15 +9,13 @@ import { QueuedAdapter } from '@yeoman/adapter';
 import { requireNamespace, toNamespace } from '@yeoman/namespace';
 import { pipeline, passthrough } from '@yeoman/transform';
 import chalk from 'chalk';
-import _, { defaults, findLast, last, pick, uniq } from 'lodash-es';
+import { defaults, last, pick, uniq } from 'lodash-es';
 import GroupedQueue from 'grouped-queue';
-import escapeStrRe from 'escape-string-regexp';
 import untildify from 'untildify';
 import { create as createMemFs } from 'mem-fs';
 import { create as createMemFsEditor } from 'mem-fs-editor';
 import createdLogger from 'debug';
 import isScoped from 'is-scoped';
-import slash from 'slash';
 import { flyImport, FlyRepository } from 'fly-import';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
@@ -30,8 +28,9 @@ import YeomanCommand, { addEnvironmentOptions } from './util/command.js';
 import commandMixin from './command.js';
 import { packageManagerInstallTask } from './package-manager.js';
 import { ComposedStore } from './composed-store.js';
-// eslint-disable-next-line import/order
 import namespaceCompasibilityMixin from './namespace-composability.js';
+// eslint-disable-next-line import/order
+import { asNamespace } from './util/namespace.js';
 
 const debug = createdLogger('yeoman:environment');
 const require = createRequire(import.meta.url);
@@ -1076,55 +1075,7 @@ class Environment extends Base {
    * @param {Array} lookups paths
    */
   namespace(filepath, lookups = this.lookups) {
-    if (!filepath) {
-      throw new Error('Missing namespace');
-    }
-
-    // Normalize path
-    let ns = slash(filepath);
-
-    // Ignore path before latest node_modules
-    const REPOSITORY_PATH = '/node_modules/';
-    if (ns.includes(REPOSITORY_PATH)) {
-      ns = ns.slice(ns.lastIndexOf(REPOSITORY_PATH) + REPOSITORY_PATH.length, ns.length);
-    }
-
-    // Cleanup extension and normalize path for differents OS
-    const parsed = path.parse(ns);
-    ns = parsed.dir ? `${parsed.dir}/${parsed.name}` : parsed.name;
-
-    // Sort lookups by length so biggest are removed first
-    const nsLookups = _([...lookups, '..'])
-      .map(found => slash(found))
-      .sortBy('length')
-      .value()
-      .reverse();
-
-    // If `ns` contains a lookup dir in its path, remove it.
-    for (let lookup of nsLookups) {
-      // Only match full directory (begin with leading slash or start of input, end with trailing slash)
-      lookup = new RegExp(`(?:/|^)${escapeStrRe(lookup)}(?=/)`, 'g');
-      ns = ns.replace(lookup, '');
-    }
-
-    const folders = ns.split('/');
-    const scope = findLast(folders, folder => folder.indexOf('@') === 0);
-
-    // Cleanup `ns` from unwanted parts and then normalize slashes to `:`
-    ns = ns
-      .replace(/\/\//g, '') // Remove double `/`
-      .replace(/(.*generator-)/, '') // Remove before `generator-`
-      .replace(/\/(index|main)$/, '') // Remove `/index` or `/main`
-      .replace(/^\//, '') // Remove leading `/`
-      .replace(/\/+/g, ':'); // Replace slashes by `:`
-
-    if (scope) {
-      ns = `${scope}/${ns}`;
-    }
-
-    debug('Resolve namespaces for %s: %s', filepath, ns);
-
-    return ns;
+    return asNamespace(filepath, { lookups });
   }
 
   /**

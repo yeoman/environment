@@ -2,6 +2,7 @@ import { basename, join, relative } from 'node:path';
 import { realpathSync } from 'node:fs';
 import createdLogger from 'debug';
 import { ModuleLookup } from './module-lookup.js';
+import { asNamespace } from './util/namespace.js';
 
 const debug = createdLogger('yeoman:environment');
 
@@ -78,7 +79,7 @@ resolver.lookup = async function (options) {
       repositoryPath = join(repositoryPath, '..');
     }
 
-    let namespace = this.namespace(relative(repositoryPath, filePath), lookups);
+    let namespace = asNamespace(relative(repositoryPath, filePath), { lookups });
     if (registerToScope && !namespace.startsWith('@')) {
       namespace = `@${registerToScope}/${namespace}`;
     }
@@ -113,7 +114,7 @@ resolver._tryRegistering = function (generatorReference, packagePath, namespace)
     debug('found %s, trying to register', generatorReference);
 
     if (!namespace && realPath !== generatorReference) {
-      namespace = this.namespace(generatorReference);
+      namespace = asNamespace(generatorReference);
     }
 
     this.register(realPath, namespace, packagePath);
