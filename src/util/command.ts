@@ -1,4 +1,3 @@
-import { BaseGenerator } from '@yeoman/types';
 import { Command, Option } from 'commander';
 
 export default class YeomanCommand extends Command {
