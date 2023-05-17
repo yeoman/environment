@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import process from 'node:process';
 import arrify from 'arrify';
 import { uniq, compact } from 'lodash-es';
-import globby from 'globby';
+import { globbySync, type Options as GlobbyOptions } from 'globby';
 import slash from 'slash';
 import createdLogger from 'debug';
 import { execaOutput } from './util/util.js';
@@ -49,7 +49,7 @@ export type ModuleLookupOptions = {
  */
 export function moduleLookupSync(
   options: ModuleLookupOptions,
-  find: (arg: { filePath: string; packagePath: string }) => boolean | undefined = () => true,
+  find: (arg: { files: string[]; packagePath: string }) => string | undefined,
 ) {
   debug('Running lookup with options: %o', options);
   options = { ...options };
@@ -78,18 +78,19 @@ export function moduleLookupSync(
       continue;
     }
 
-    for (const filePath of globby.sync(options.filePatterns, {
+    const files = globbySync(options.filePatterns, {
       cwd: packagePath,
       absolute: true,
       ...options.globbyOptions,
-      objectMode: false,
-    })) {
-      const module = { filePath: filePath as unknown as string, packagePath };
-      if (find(module)) {
-        return [module];
-      }
+    } as GlobbyOptions);
 
-      modules.push(module);
+    const filePath = find({ files, packagePath });
+    if (filePath) {
+      return [{ filePath, packagePath }];
+    }
+
+    for (const filePath of files) {
+      modules.push({ filePath, packagePath });
     }
   }
 
@@ -123,38 +124,38 @@ export function findPackagesIn(searchPaths: string[], packagePatterns: string[],
     // restricted folders.
     try {
       modules = modules.concat(
-        globby.sync(packagePatterns, {
+        globbySync(packagePatterns, {
           cwd: root,
           onlyDirectories: true,
           expandDirectories: false,
           absolute: true,
           deep: 0,
           ...globbyOptions,
-        }),
+        } as GlobbyOptions),
       );
 
       // To limit recursive lookups into non-namespace folders within globby,
       // fetch all namespaces in root, then search each namespace separately
       // for generator modules
-      const scopes = globby.sync(['@*'], {
+      const scopes = globbySync(['@*'], {
         cwd: root,
         onlyDirectories: true,
         expandDirectories: false,
         absolute: true,
         deep: 0,
         ...globbyOptions,
-      });
+      } as GlobbyOptions);
 
       for (const scope of scopes) {
         modules = modules.concat(
-          globby.sync(packagePatterns, {
+          globbySync(packagePatterns, {
             cwd: scope,
             onlyDirectories: true,
             expandDirectories: false,
             absolute: true,
             deep: 0,
             ...globbyOptions,
-          }),
+          } as GlobbyOptions),
         );
       }
     } catch (error) {

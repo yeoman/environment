@@ -1,3 +1,4 @@
+import { extname } from 'node:path';
 import { type LookupOptions as LookupOptionsApi } from '@yeoman/types';
 import { type ModuleLookupOptions, moduleLookupSync } from './module-lookup.js';
 import { defaultLookups } from './util/namespace.js';
@@ -8,6 +9,8 @@ export type LookupOptions = LookupOptionsApi &
   };
 
 type LookupMeta = { filePath: string; packagePath: string; lookups: string[] };
+
+export const defaultExtensions = ['.ts', '.cts', '.mts', '.js', '.cjs', '.mjs'];
 
 /**
  * Search for generators and their sub generators.
@@ -37,23 +40,24 @@ export async function lookupGenerators(options: LookupOptions = {}, register?: (
   const { lookups = defaultLookups } = options;
   options = {
     // Js generators should be after, last will override registered one.
-    filePatterns: lookups.flatMap(prefix => [
-      `${prefix}/*/index.ts`,
-      `${prefix}/*/index.cts`,
-      `${prefix}/*/index.mts`,
-      `${prefix}/*/index.js`,
-      `${prefix}/*/index.cjs`,
-      `${prefix}/*/index.mjs`,
-    ]),
+    filePatterns: lookups.flatMap(prefix => defaultExtensions.map(ext => `${prefix}/*/index${ext}`)),
     filterPaths: false,
     packagePatterns: ['generator-*'],
     reverse: !options.singleResult,
     ...options,
   };
 
-  return moduleLookupSync(options, module => {
-    const { packagePath, filePath } = module;
-    const registered = register?.({ filePath, packagePath, lookups });
-    return options.singleResult && registered;
+  return moduleLookupSync(options, ({ packagePath, files }) => {
+    files = [...files].sort((a, b) => {
+      return defaultExtensions.indexOf(extname(a)) - defaultExtensions.indexOf(extname(b));
+    });
+    for (const filePath of files) {
+      const registered = register?.({ filePath, packagePath, lookups });
+      if (options.singleResult && registered) {
+        return filePath;
+      }
+    }
+
+    return undefined;
   });
 }

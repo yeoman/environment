@@ -249,25 +249,21 @@ class Environment extends Base {
     options.packagePaths = options.packagePaths || findPackagesIn(options.npmPaths, options.packagePatterns);
 
     let paths = options.singleResult ? undefined : [];
-    moduleLookupSync(options, module => {
-      const filename = module.filePath;
-      const fileNS = envProt.namespace(filename, Environment.lookups);
-      if (namespace === fileNS || (options.packagePath && namespace === Environment.namespaceToName(fileNS))) {
-        // Version 2.6.0 returned pattern instead of modulePath for options.packagePath
-        const returnPath = options.packagePath
-          ? module.packagePath
-          : options.generatorPath
-          ? path.posix.join(filename, '../../')
-          : filename;
-        if (options.singleResult) {
-          paths = returnPath;
-          return true;
+    moduleLookupSync(options, ({ files, packagePath }) => {
+      for (const filename of files) {
+        const fileNS = envProt.namespace(filename, Environment.lookups);
+        if (namespace === fileNS || (options.packagePath && namespace === Environment.namespaceToName(fileNS))) {
+          // Version 2.6.0 returned pattern instead of modulePath for options.packagePath
+          const returnPath = options.packagePath ? packagePath : options.generatorPath ? path.posix.join(filename, '../../') : filename;
+          if (options.singleResult) {
+            paths = returnPath;
+            return filename;
+          }
+
+          paths.push(returnPath);
         }
-
-        paths.push(returnPath);
       }
-
-      return false;
+      return undefined;
     });
 
     if (options.singleResult) {
