@@ -67,7 +67,26 @@ class Store {
       importModule = async () => import(pathToFileURL(meta.resolved!).href);
     }
 
-    const importGenerator = async () => this._getGenerator(importModule ? await importModule() : Generator, meta);
+    let importPromise: any;
+    const importGenerator = async () => {
+      if (importPromise) {
+        Generator = await importPromise;
+      }
+
+      if (importModule && !Generator) {
+        importPromise = importModule();
+        Generator = await importPromise;
+      }
+
+      const factory = this.getFactory(Generator);
+      if (typeof factory === 'function') {
+        importPromise = factory(this.env);
+        Generator = await importPromise;
+      }
+
+      return this._getGenerator(Generator, meta);
+    };
+
     const instantiate = async (args: string[] = [], options: any = {}) => this.env.instantiate(await importGenerator(), args, options);
     const instantiateHelp = async () => instantiate([], { help: true });
     const { packageNamespace } = toNamespace(meta.namespace) ?? {};
@@ -182,18 +201,21 @@ class Store {
     return this._packagesNS;
   }
 
-  _getGenerator = async (module: any, meta: BaseMeta) => {
+  private getFactory(module: any) {
     // CJS is imported in default, for backward compatibility we support a Generator exported as `module.exports = { default }`
-    const generatorFactory = module.createGenerator ?? module.default?.createGenerator ?? module.default?.default?.createGenerator;
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const Generator = (await generatorFactory?.(this.env)) ?? module.default?.default ?? module.default ?? module;
+    return module.createGenerator ?? module.default?.createGenerator ?? module.default?.default?.createGenerator;
+  }
+
+  private _getGenerator(module: any, meta: BaseMeta) {
+    // eslint-disable-next-line  @typescript-eslint/naming-convention
+    const Generator = module.default?.default ?? module.default ?? module;
     if (typeof Generator !== 'function') {
       throw new TypeError("The generator doesn't provides a constructor.");
     }
 
     Object.assign(Generator, meta);
     return Generator;
-  };
+  }
 }
 
 export default Store;
