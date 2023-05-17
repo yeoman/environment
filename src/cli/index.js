@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import process from 'node:process';
-import YeomanCommand from '../util/command.js';
+import YeomanCommand, { addEnvironmentOptions } from '../util/command.js';
 import packageJson from '../package.json';
 import Env from '../index.js';
 import { printGroupedGenerator, environmentAction } from './utils.js';
@@ -9,10 +9,11 @@ const program = new YeomanCommand();
 
 program.version(packageJson.version).allowExcessArguments(false).enablePositionalOptions();
 
-Env.addEnvironmentOptions(
+addEnvironmentOptions(
   program
     .command('run <namespace>')
-    .description('Run a generator', { namespace: 'Generator to run' })
+    .description('Run a generator')
+    .argument('<namespace>', 'Generator to run')
     .passThroughOptions()
     .allowUnknownOption()
     .allowExcessArguments(true)

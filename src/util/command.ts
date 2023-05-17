@@ -1,7 +1,8 @@
+import { BaseGenerator } from '@yeoman/types';
 import { Command, Option } from 'commander';
 
 export default class YeomanCommand extends Command {
-  createCommand(name) {
+  override createCommand(name?: string) {
     return new YeomanCommand(name);
   }
 
@@ -10,7 +11,7 @@ export default class YeomanCommand extends Command {
    * @param {Option} option
    * @return {YeomanCommand} this;
    */
-  addOption(option) {
+  addOption(option: Option) {
     if (!option.long || option.required || option.optional) {
       return super.addOption(option);
     }
@@ -31,11 +32,21 @@ export default class YeomanCommand extends Command {
   }
 
   /**
+   * Load Generator options into a commander instance.
+   *
+   * @param {Generator} generator - Generator
+   * @return {Command} return command
+   */
+  registerGenerator(generator: any) {
+    return this.addGeneratorOptions(generator._options).addGeneratorArguments(generator._arguments);
+  }
+
+  /**
    * Register arguments using generator._arguments structure.
    * @param {object[]} generatorArgs
    * @return {YeomanCommand} this;
    */
-  addGeneratorArguments(generatorArgs = []) {
+  addGeneratorArguments(generatorArgs: any[] = []) {
     if (!generatorArgs || generatorArgs.length === 0) {
       return this;
     }
@@ -56,7 +67,7 @@ export default class YeomanCommand extends Command {
    * @param {string} blueprintOptionDescription - description of the blueprint that adds the option
    * @return {YeomanCommand} this;
    */
-  addGeneratorOptions(options) {
+  addGeneratorOptions(options: Record<string, any>) {
     options = options || {};
     for (const [key, value] of Object.entries(options)) {
       this._addGeneratorOption(key, value);
@@ -65,14 +76,14 @@ export default class YeomanCommand extends Command {
     return this;
   }
 
-  _addGeneratorOption(optionName, optionDefinition, additionalDescription = '') {
+  _addGeneratorOption(optionName: string, optionDefinition: any, additionalDescription = '') {
     if (optionName === 'help') {
       return undefined;
     }
 
     const longOption = `--${optionName}`;
-    const existingOption = this._findOption(longOption);
-    if (this._findOption(longOption)) {
+    const existingOption = (this as any)._findOption(longOption);
+    if ((this as any)._findOption(longOption)) {
       return existingOption;
     }
 
@@ -89,9 +100,31 @@ export default class YeomanCommand extends Command {
     }
 
     return this.addOption(
-      new Option(cmdString, optionDefinition.description + additionalDescription)
+      new Option(cmdString, `${optionDefinition.description}${additionalDescription}`)
         .default(optionDefinition.default)
         .hideHelp(optionDefinition.hide),
     );
   }
 }
+
+/* Add Environment options */
+export const addEnvironmentOptions = (command = new YeomanCommand()) =>
+  command
+    .option('--cwd', 'Path to use as current dir')
+    /* Environment options */
+    .option('--skip-install', 'Do not automatically install dependencies', false)
+    /* Generator options */
+    .option('--skip-cache', 'Do not remember prompt answers', false)
+    .option('--local-config-only', 'Generate .yo-rc-global.json locally', false)
+    .option('--ask-answered', 'Show prompts for already configured options', false)
+    /* Conflicter options */
+    .option('--force', 'Override every file', false)
+    .option('--dry-run', 'Print conflicts', false)
+    .option('--whitespace', 'Whitespace changes will not trigger conflicts', false)
+    .option('--bail', 'Fail on first conflict', false)
+    .option('--skip-yo-resolve', 'Ignore .yo-resolve files', false)
+    /* Hidden options, used for api */
+    .addOption(new Option('--skip-local-cache', 'Skip local answers cache').default(true).hideHelp())
+    .addOption(new Option('--skip-parse-options', 'Skip legacy options parsing').default(false).hideHelp())
+    .addOption(new Option('--experimental', 'Experimental features').default(false).hideHelp())
+    .addOption(new Option('--log-cwd', 'Path for log purpose').hideHelp());

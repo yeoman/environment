@@ -26,7 +26,7 @@ import Store from './store.js';
 import composability from './composability.js';
 import resolver from './resolver.js';
 import YeomanRepository from './util/repository.js';
-import YeomanCommand from './util/command.js';
+import YeomanCommand, { addEnvironmentOptions } from './util/command.js';
 import commandMixin from './command.js';
 import { packageManagerInstallTask } from './package-manager.js';
 import { ComposedStore } from './composed-store.js';
@@ -138,7 +138,7 @@ class Environment extends Base {
    * @return {Command} Return a Command instance
    */
   static prepareCommand(GeneratorClass, command = new YeomanCommand()) {
-    command = Base.addEnvironmentOptions(command);
+    command = addEnvironmentOptions(command);
     return Environment.prepareGeneratorCommand(command, GeneratorClass);
   }
 
@@ -151,7 +151,7 @@ class Environment extends Base {
    */
   static prepareGeneratorCommand(command, GeneratorClass, namespace) {
     const generator = new GeneratorClass([], { help: true, env: {} });
-    Base.addGeneratorOptions(command, generator);
+    command.registerGenerator(generator);
 
     command.action(async function () {
       let rootCommand = this;
