@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { requireNamespace } from '@yeoman/namespace';
 import createLogger from 'debug';
-import semver from 'semver';
 
 const debug = createLogger('yeoman:environment:compose');
 
@@ -89,36 +88,7 @@ composability.prepareEnvironment = async function (namespaces) {
   updateMissing();
 
   // Install missing
-  const toInstall = {};
-
-  const findPackage = async (packageName, packageRange = '*') => {
-    try {
-      const manifest = await this.resolvePackage(packageName, packageRange);
-      toInstall[packageName] = manifest.version;
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
-  debug('Looking for peer dependecies %o', namespaces);
-  const toLookup = [];
-  for (const ns of missing) {
-    const packageName = ns.generatorHint;
-    const packageRange = ns.semver;
-    if (packageRange && !semver.validRange(packageRange)) {
-      continue;
-    }
-
-    if (this.repository.verifyInstalledVersion(packageName, packageRange)) {
-      continue;
-    }
-
-    // eslint-disable-next-line no-await-in-loop
-    if (!(await findPackage(packageName, packageRange))) {
-      toLookup.push(ns);
-    }
-  }
+  const toInstall = Object.fromEntries(missing.map(ns => [ns.generatorHint, ns.semver]));
 
   debug('Installing %o', toInstall);
   this.installLocalGenerators(toInstall);
@@ -126,9 +96,6 @@ composability.prepareEnvironment = async function (namespaces) {
   if (updateMissing().length === 0) {
     return true;
   }
-
-  // At last, try to lookup if install failed.
-  await this.lookupLocalNamespaces([...missing, ...toLookup]);
 
   assertMissing(updateMissing());
   return true;

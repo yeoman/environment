@@ -1,7 +1,5 @@
-import assert from 'node:assert';
 import { createHash } from 'node:crypto';
 import semver from 'semver';
-import pacote from 'pacote';
 import { flyImport } from 'fly-import';
 
 /**
@@ -43,11 +41,12 @@ composability.requireGenerator = async function (namespace) {
 composability.installLocalGenerators = async function (packages) {
   const entries = Object.entries(packages);
   const specs = entries.map(([packageName, version]) => `${packageName}${version ? `@${version}` : ''}`);
-  await this.repository.install(specs);
-
-  const packagesToLookup = entries.map(([packageName, _]) => packageName);
-  await this.lookupLocalPackages(packagesToLookup);
-
+  const installResult = await this.repository.install(specs);
+  const failToInstall = installResult.find(result => !result.path);
+  if (failToInstall) {
+    throw new Error(`Fail to install ${failToInstall.pkgid}`);
+  }
+  this.lookup({ packagePaths: installResult.map(result => result.path) });
   return true;
 };
 
@@ -61,32 +60,4 @@ composability.lookupLocalPackages = async function (packagesToLookup = 'generato
     packagePatterns: packagesToLookup,
     npmPaths: this.repository.nodeModulesPath,
   });
-};
-
-/**
- * Resolve a package name with version.
- *
- * @param  {string} packageName - package to resolve.
- * @param  {string} [packageVersion] - version or range to resolve.
- * @param  {string[]} Array of key, value pairs.
- */
-composability.resolvePackage = async function (packageName, packageVersion) {
-  assert(packageName, 'Parameter packageName is required');
-  if (packageVersion) {
-    packageName = `${packageName}@${packageVersion}`;
-  }
-
-  const manifest = await pacote.manifest(packageName);
-  if (!manifest) {
-    return undefined;
-  }
-
-  const from = manifest._from;
-  const index = from.lastIndexOf('@');
-  if (index > 1) {
-    const resolvedVersion = from.slice(index + 1, from.length) || manifest.version;
-    return [from.slice(0, Math.max(0, index)), resolvedVersion];
-  }
-
-  return [manifest.name, from || manifest.version];
 };
