@@ -13,6 +13,7 @@ import Generator from 'yeoman-generator';
 import assert from 'yeoman-assert';
 import semver from 'semver';
 import Environment from '../src/index.js';
+import { resolveModulePath } from '../src/util/resolve.js';
 
 const require = createRequire(import.meta.url);
 const generatorPackageJson = require('yeoman-generator/package.json');
@@ -641,21 +642,21 @@ describe('Environment', () => {
     });
   });
 
-  describe('#registerModulePath()', () => {
+  describe('#resolveModulePath()', async () => {
     it('resolves to a directory if no file type specified', async function () {
       const modulePath = path.join(__dirname, 'fixtures/generator-scoped/package');
       const specifiedJS = path.join(__dirname, 'fixtures/generator-scoped/package/index.js');
       const specifiedJSON = path.join(__dirname, 'fixtures/generator-scoped/package.json');
       const specifiedNode = path.join(__dirname, 'fixtures/generator-scoped/package/nodefile.node');
 
-      assert.equal(specifiedJS, this.env.resolveModulePath(modulePath));
-      assert.equal(specifiedJS, this.env.resolveModulePath(specifiedJS));
-      assert.equal(specifiedJSON, this.env.resolveModulePath(specifiedJSON));
-      assert.equal(specifiedNode, this.env.resolveModulePath(specifiedNode));
+      assert.equal(specifiedJS, await resolveModulePath(modulePath));
+      assert.equal(specifiedJS, await resolveModulePath(specifiedJS));
+      assert.equal(specifiedJSON, await resolveModulePath(specifiedJSON));
+      assert.equal(specifiedNode, await resolveModulePath(specifiedNode));
 
       const aModulePath = path.join(__dirname, 'fixtures/generator-scoped/app');
       const aSpecifiedJS = path.join(__dirname, 'fixtures/generator-scoped/app/index.js');
-      assert.equal(aSpecifiedJS, this.env.resolveModulePath(aModulePath));
+      assert.equal(aSpecifiedJS, await resolveModulePath(aModulePath));
     });
   });
 

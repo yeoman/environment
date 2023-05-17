@@ -74,6 +74,7 @@
     "globby": "^13.1.4",
     "grouped-queue": "^2.0.0",
     "is-scoped": "^3.0.0",
+    "locate-path": "^7.2.0",
     "lodash-es": "^4.17.21",
     "log-symbols": "^5.1.0",
     "mem-fs": "^3.0.0",

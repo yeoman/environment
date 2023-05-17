@@ -1,4 +1,3 @@
-import fs from 'node:fs';
 import path, { isAbsolute } from 'node:path';
 import EventEmitter from 'node:events';
 import { pathToFileURL } from 'node:url';
@@ -11,7 +10,6 @@ import { pipeline, passthrough } from '@yeoman/transform';
 import chalk from 'chalk';
 import { defaults, last, pick, uniq } from 'lodash-es';
 import GroupedQueue from 'grouped-queue';
-import untildify from 'untildify';
 import { create as createMemFs } from 'mem-fs';
 import { create as createMemFsEditor } from 'mem-fs-editor';
 import createdLogger from 'debug';
@@ -30,8 +28,9 @@ import { packageManagerInstallTask } from './package-manager.js';
 import { ComposedStore } from './composed-store.js';
 import namespaceCompasibilityMixin from './namespace-composability.js';
 import { findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.js';
+import { resolveModulePath } from './util/resolve.js';
 // eslint-disable-next-line import/order
-import { asNamespace } from './util/namespace.js';
+import { asNamespace, defaultLookups } from './util/namespace.js';
 
 const debug = createdLogger('yeoman:environment');
 const require = createRequire(import.meta.url);
@@ -102,7 +101,7 @@ class Environment extends Base {
   }
 
   static get lookups() {
-    return ['.', 'generators', 'lib/generators', 'dist/generators'];
+    return [...defaultLookups];
   }
 
   /**
@@ -242,7 +241,6 @@ class Environment extends Base {
 
     const name = Environment.namespaceToName(namespace);
     options.packagePatterns = options.packagePatterns || getGeneratorHint(name);
-    const envProt = Environment.prototype;
 
     options.npmPaths = options.npmPaths || getNpmPaths({ localOnly: options.localOnly, filePaths: false }).reverse();
     options.packagePatterns = options.packagePatterns || 'generator-*';
@@ -251,7 +249,7 @@ class Environment extends Base {
     let paths = options.singleResult ? undefined : [];
     moduleLookupSync(options, ({ files, packagePath }) => {
       for (const filename of files) {
-        const fileNS = envProt.namespace(filename, Environment.lookups);
+        const fileNS = asNamespace(filename, { lookups: Environment.lookups });
         if (namespace === fileNS || (options.packagePath && namespace === Environment.namespaceToName(fileNS))) {
           // Version 2.6.0 returned pattern instead of modulePath for options.packagePath
           const returnPath = options.packagePath ? packagePath : options.generatorPath ? path.posix.join(filename, '../../') : filename;
@@ -495,13 +493,16 @@ class Environment extends Base {
    * @param  {String} packagePath - PackagePath to the generator npm package (optional)
    * @return {Object} environment - This environment
    */
-  _registerGeneratorPath(name, namespace, packagePath) {
-    if (typeof name !== 'string') {
+  _registerGeneratorPath(generatorPath, namespace, packagePath) {
+    if (typeof generatorPath !== 'string') {
       throw new TypeError('You must provide a generator name to register.');
     }
 
-    const modulePath = this.resolveModulePath(name);
-    namespace = namespace || this.namespace(modulePath);
+    if (!isAbsolute(generatorPath)) {
+      throw new Error(`An absolute path is required to register`);
+    }
+
+    namespace = namespace || this.namespace(generatorPath);
 
     if (!namespace) {
       throw new Error('Unable to determine namespace.');
@@ -509,13 +510,13 @@ class Environment extends Base {
 
     // Generator is already registered and matches the current namespace.
     const generatorMeta = this.store.getMeta(namespace);
-    if (generatorMeta && generatorMeta.resolved === modulePath) {
+    if (generatorMeta && generatorMeta.resolved === generatorPath) {
       return this;
     }
 
-    const meta = this.store.add({ namespace, resolved: modulePath, packagePath });
+    const meta = this.store.add({ namespace, resolved: generatorPath, packagePath });
 
-    debug('Registered %s (%s) on package %s (%s)', namespace, modulePath, meta.packageNamespace, packagePath);
+    debug('Registered %s (%s) on package %s (%s)', namespace, generatorPath, meta.packageNamespace, packagePath);
     return this;
   }
 
@@ -712,12 +713,12 @@ class Environment extends Base {
    * @return {Generator|null} - the generator found at the location
    */
   async getByPath(path) {
-    if (fs.existsSync(path)) {
-      const namespace = this.namespace(path);
-      this.register(path, namespace);
-
+    try {
+      const resolved = await resolveModulePath(path);
+      const namespace = this.namespace(resolved);
+      this.store.add({ resolved, namespace });
       return this.get(namespace);
-    }
+    } catch {}
   }
 
   /**
@@ -1073,34 +1074,6 @@ class Environment extends Base {
    */
   namespace(filepath, lookups = this.lookups) {
     return asNamespace(filepath, { lookups });
-  }
-
-  /**
-   * Resolve a module path
-   * @param  {String} moduleId - Filepath or module name
-   * @return {String}          - The resolved path leading to the module
-   */
-  resolveModulePath(moduleId) {
-    if (moduleId[0] === '.') {
-      moduleId = path.resolve(moduleId);
-    }
-
-    moduleId = untildify(moduleId);
-    moduleId = path.normalize(moduleId);
-
-    if (path.extname(moduleId) === '') {
-      moduleId += path.sep;
-    }
-
-    let resolved;
-    // Win32: moduleId is resolving as moduleId.js or moduleId.json instead of moduleId/index.js, workaround it.
-    if (process.platform === 'win32' && path.extname(moduleId) === '') {
-      try {
-        resolved = require.resolve(path.join(moduleId, 'index'));
-      } catch {}
-    }
-
-    return resolved || require.resolve(moduleId);
   }
 
   /**

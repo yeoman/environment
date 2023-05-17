@@ -71,32 +71,19 @@ composability.lookupNamespaces = async function (namespaces, options = {}) {
 composability.prepareEnvironment = async function (namespaces) {
   debug('prepareEnvironment %o', namespaces);
   namespaces = Array.isArray(namespaces) ? namespaces : [namespaces];
-  let missing = namespaces.map(ns => requireNamespace(ns));
-
-  const updateMissing = () => {
-    // Remove already loaded namespaces
-    missing = missing.filter(ns => !this.getByNamespace(ns));
-    return missing;
-  };
-
-  const assertMissing = missing => {
-    if (missing.length > 0) {
-      throw new Error(`Error preparing environment for ${missing.map(ns => ns.complete).join(',')}`);
-    }
-  };
-
-  updateMissing();
+  let missing = namespaces.map(ns => requireNamespace(ns)).filter(ns => !this.getByNamespace(ns));
 
   // Install missing
   const toInstall = Object.fromEntries(missing.map(ns => [ns.generatorHint, ns.semver]));
 
   debug('Installing %o', toInstall);
-  this.installLocalGenerators(toInstall);
+  await this.installLocalGenerators(toInstall);
   debug('done %o', toInstall);
-  if (updateMissing().length === 0) {
+
+  missing = missing.filter(ns => !this.getByNamespace(ns));
+  if (missing.length === 0) {
     return true;
   }
 
-  assertMissing(updateMissing());
-  return true;
+  throw new Error(`Error preparing environment for ${missing.map(ns => ns.complete).join(',')}`);
 };

@@ -48,16 +48,14 @@ resolver.lookup = async function (options) {
     options = options || { localOnly: false };
   }
 
-  const { registerToScope, lookups = this.lookups } = options;
+  const { registerToScope, lookups = this.lookups, ...remainingOptions } = options;
   options = {
-    ...options,
+    ...remainingOptions,
     lookups,
   };
 
   const generators = [];
-  await lookupGenerators(options, module => {
-    const { packagePath, filePath, lookups } = module;
-
+  await lookupGenerators(options, ({ packagePath, filePath, lookups }) => {
     const meta = _tryRegistering({ registerToScope, env: this, filePath, packagePath, lookups });
     if (meta) {
       generators.push({
@@ -103,13 +101,12 @@ function _tryRegistering({ env, registerToScope, filePath, packagePath, lookups 
     }
 
     let namespace = asNamespace(relative(repositoryPath, filePath), { lookups });
-    if (registerToScope && !namespace.startsWith('@')) {
-      namespace = `@${registerToScope}/${namespace}`;
-    }
-
     const resolved = realpathSync(filePath);
     if (!namespace) {
       namespace = asNamespace(resolved, { lookups });
+    }
+    if (registerToScope && !namespace.startsWith('@')) {
+      namespace = `@${registerToScope}/${namespace}`;
     }
 
     env.store.add({ namespace, packagePath, resolved });
