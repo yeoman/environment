@@ -29,6 +29,7 @@ import commandMixin from './command.js';
 import { packageManagerInstallTask } from './package-manager.js';
 import { ComposedStore } from './composed-store.js';
 import namespaceCompasibilityMixin from './namespace-composability.js';
+import { findPackagesIn, moduleLookupSync } from './module-lookup.js';
 // eslint-disable-next-line import/order
 import { asNamespace } from './util/namespace.js';
 
@@ -245,10 +246,10 @@ class Environment extends Base {
 
     options.npmPaths = options.npmPaths || envProt.getNpmPaths(options.localOnly).reverse();
     options.packagePatterns = options.packagePatterns || 'generator-*';
-    options.packagePaths = options.packagePaths || resolver.packageLookup.findPackagesIn(options.npmPaths, options.packagePatterns);
+    options.packagePaths = options.packagePaths || findPackagesIn(options.npmPaths, options.packagePatterns);
 
     let paths = options.singleResult ? undefined : [];
-    resolver.packageLookup.sync(options, module => {
+    moduleLookupSync(options, module => {
       const filename = module.filePath;
       const fileNS = envProt.namespace(filename, Environment.lookups);
       if (namespace === fileNS || (options.packagePath && namespace === Environment.namespaceToName(fileNS))) {

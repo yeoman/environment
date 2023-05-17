@@ -10,6 +10,7 @@ import { execaSync } from 'execa';
 import slash from 'slash';
 import Environment from '../src/index.js';
 import { execaOutput } from '../src/util/util.js';
+import { findPackagesIn } from '../src/module-lookup.js';
 
 const require = createRequire(import.meta.url);
 
@@ -706,7 +707,7 @@ describe('Environment Resolver', async function () {
     describe('when passing package patterns without scope', async () => {
       it('finds it', async function () {
         const packageToFind = 'generator-dummy';
-        const actual = this.env.packageLookup.findPackagesIn(['node_modules'], [packageToFind]);
+        const actual = findPackagesIn(['node_modules'], [packageToFind]);
         assert.equal(actual.length, 1);
         assert.ok(actual[0].endsWith(packageToFind));
       });
@@ -715,7 +716,7 @@ describe('Environment Resolver', async function () {
     describe('when passing package patterns with scope', async () => {
       it('finds it', async function () {
         const packageToFind = '@dummyscope/generator-scoped';
-        const actual = this.env.packageLookup.findPackagesIn(['node_modules'], [packageToFind]);
+        const actual = findPackagesIn(['node_modules'], [packageToFind]);
         assert.equal(actual.length, 1);
         assert.ok(actual[0].endsWith(packageToFind));
       });

@@ -1,7 +1,7 @@
 import { basename, join, relative } from 'node:path';
 import { realpathSync } from 'node:fs';
 import createdLogger from 'debug';
-import { ModuleLookup } from './module-lookup.js';
+import { getNpmPaths, moduleLookupSync } from './module-lookup.js';
 import { asNamespace } from './util/namespace.js';
 
 const debug = createdLogger('yeoman:environment');
@@ -12,11 +12,6 @@ const debug = createdLogger('yeoman:environment');
  */
 const resolver = {};
 export default resolver;
-
-/**
- * @private
- */
-resolver.packageLookup = new ModuleLookup();
 
 /**
  * Search for generators and their sub generators.
@@ -71,7 +66,7 @@ resolver.lookup = async function (options) {
   };
 
   const generators = [];
-  this.packageLookup.sync(options, module => {
+  moduleLookupSync(options, module => {
     const { packagePath, filePath } = module;
     let repositoryPath = join(packagePath, '..');
     if (basename(repositoryPath).startsWith('@')) {
@@ -146,7 +141,7 @@ resolver.getNpmPaths = function (options = {}) {
   // Backward compatibility
   options.filterPaths = options.filterPaths === undefined ? false : options.filterPaths;
 
-  return this.packageLookup.getNpmPaths(options);
+  return getNpmPaths(options);
 };
 
 /**
