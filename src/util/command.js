@@ -36,7 +36,7 @@ export default class YeomanCommand extends Command {
    * @return {YeomanCommand} this;
    */
   addGeneratorArguments(generatorArgs = []) {
-    if (!generatorArgs) {
+    if (!generatorArgs || generatorArgs.length === 0) {
       return this;
     }
 
@@ -93,20 +93,5 @@ export default class YeomanCommand extends Command {
         .default(optionDefinition.default)
         .hideHelp(optionDefinition.hide),
     );
-  }
-
-  /**
-   * Override to reject errors instead of throwing and add command to error.
-   * @return promise this
-   */
-  parseAsync(argv, parseOptions) {
-    try {
-      this.parse(argv, parseOptions);
-    } catch (commanderError) {
-      commanderError.command = this;
-      return Promise.reject(commanderError);
-    }
-
-    return Promise.all(this._actionResults).then(() => this);
   }
 }
