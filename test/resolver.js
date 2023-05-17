@@ -10,7 +10,7 @@ import { execaSync } from 'execa';
 import slash from 'slash';
 import Environment from '../src/index.js';
 import { execaOutput } from '../src/util/util.js';
-import { findPackagesIn } from '../src/module-lookup.js';
+import { findPackagesIn, getNpmPaths } from '../src/module-lookup.js';
 
 const require = createRequire(import.meta.url);
 
@@ -588,34 +588,34 @@ describe('Environment Resolver', async function () {
       });
 
       it('walk up the CWD lookups dir', async function () {
-        const paths = this.env.getNpmPaths();
+        const paths = getNpmPaths({ localOnly: false, filterPaths: false });
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
         assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
       });
 
       it('append NODE_PATH', async function () {
-        assert(this.env.getNpmPaths().includes(process.env.NODE_PATH));
+        assert(getNpmPaths({ localOnly: false, filterPaths: false }).includes(process.env.NODE_PATH));
       });
     });
 
     describe('without NODE_PATH', async () => {
       it('walk up the CWD lookups dir', async function () {
-        const paths = this.env.getNpmPaths();
+        const paths = getNpmPaths({ localOnly: false, filterPaths: false });
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
         const prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
         assert.equal(paths[1], path.join(prevdir, 'node_modules'));
       });
 
       it('append best bet if NODE_PATH is unset', async function () {
-        assert(this.env.getNpmPaths().includes(this.bestBet));
-        assert(this.env.getNpmPaths().includes(this.bestBet2));
+        assert(getNpmPaths({ localOnly: false, filterPaths: false }).includes(this.bestBet));
+        assert(getNpmPaths({ localOnly: false, filterPaths: false }).includes(this.bestBet2));
       });
 
       it('append default NPM dir depending on your OS', async function () {
         if (process.platform === 'win32') {
-          assert(this.env.getNpmPaths().includes(path.join(process.env.APPDATA, 'npm/node_modules')));
+          assert(getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(process.env.APPDATA, 'npm/node_modules')));
         } else {
-          assert(this.env.getNpmPaths().includes('/usr/lib/node_modules'));
+          assert(getNpmPaths({ localOnly: false, filterPaths: false }).includes('/usr/lib/node_modules'));
         }
       });
     });
@@ -626,55 +626,59 @@ describe('Environment Resolver', async function () {
       });
 
       it('walk up the CWD lookups dir', async function () {
-        const paths = this.env.getNpmPaths();
+        const paths = getNpmPaths({ localOnly: false, filterPaths: false });
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
         assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
       });
 
       it('append NVM_PATH', async function () {
-        assert(this.env.getNpmPaths().includes(path.join(path.dirname(process.env.NVM_PATH), 'node_modules')));
+        assert(
+          getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(path.dirname(process.env.NVM_PATH), 'node_modules')),
+        );
       });
     });
 
     describe('without NVM_PATH', async () => {
       it('walk up the CWD lookups dir', async function () {
-        const paths = this.env.getNpmPaths();
+        const paths = getNpmPaths({ localOnly: false, filterPaths: false });
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
         assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
       });
 
       it('append best bet if NVM_PATH is unset', async function () {
-        assert(this.env.getNpmPaths().includes(path.join(this.bestBet, 'node_modules')));
-        assert(this.env.getNpmPaths().includes(this.bestBet2));
+        assert(getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(this.bestBet, 'node_modules')));
+        assert(getNpmPaths({ localOnly: false, filterPaths: false }).includes(this.bestBet2));
       });
     });
 
     describe('when localOnly argument is true', async () => {
       it('walk up the CWD lookups dir', async function () {
-        const paths = this.env.getNpmPaths();
+        const paths = getNpmPaths({ localOnly: false, filterPaths: false });
         assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
         assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
       });
 
       it('does not append NODE_PATH', async function () {
         process.env.NODE_PATH = '/some/dummy/path';
-        assert(!this.env.getNpmPaths(true).includes(process.env.NODE_PATH));
+        assert(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(process.env.NODE_PATH));
       });
 
       it('does not append NVM_PATH', async function () {
         process.env.NVM_PATH = '/some/dummy/path';
-        assert(!this.env.getNpmPaths(true).includes(path.join(path.dirname(process.env.NVM_PATH), 'node_modules')));
+        assert(
+          !getNpmPaths({ localOnly: true, filterPaths: false }).includes(path.join(path.dirname(process.env.NVM_PATH), 'node_modules')),
+        );
       });
 
       it('does not append best bet', async function () {
-        assert(!this.env.getNpmPaths(true).includes(this.bestBet));
+        assert(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(this.bestBet));
       });
 
       it('does not append default NPM dir depending on your OS', async function () {
         if (process.platform === 'win32') {
-          assert(!this.env.getNpmPaths(true).includes(path.join(process.env.APPDATA, 'npm/node_modules')));
+          assert(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(path.join(process.env.APPDATA, 'npm/node_modules')));
         } else {
-          assert(!this.env.getNpmPaths(true).includes('/usr/lib/node_modules'));
+          assert(!getNpmPaths({ localOnly: true, filterPaths: false }).includes('/usr/lib/node_modules'));
         }
       });
     });
@@ -683,9 +687,9 @@ describe('Environment Resolver', async function () {
       it('append npm modules path depending on your OS', async function () {
         const npmPrefix = execaOutput('npm', ['prefix', '-g']);
         if (process.platform === 'win32') {
-          assert(this.env.getNpmPaths().indexOf(path.resolve(npmPrefix, 'node_modules')) > 0);
+          assert(getNpmPaths({ localOnly: false, filterPaths: false }).indexOf(path.resolve(npmPrefix, 'node_modules')) > 0);
         } else {
-          assert(this.env.getNpmPaths().indexOf(path.resolve(npmPrefix, 'lib/node_modules')) > 0);
+          assert(getNpmPaths({ localOnly: false, filterPaths: false }).indexOf(path.resolve(npmPrefix, 'lib/node_modules')) > 0);
         }
       });
     });

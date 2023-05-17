@@ -29,7 +29,7 @@ import commandMixin from './command.js';
 import { packageManagerInstallTask } from './package-manager.js';
 import { ComposedStore } from './composed-store.js';
 import namespaceCompasibilityMixin from './namespace-composability.js';
-import { findPackagesIn, moduleLookupSync } from './module-lookup.js';
+import { findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.js';
 // eslint-disable-next-line import/order
 import { asNamespace } from './util/namespace.js';
 
@@ -244,7 +244,7 @@ class Environment extends Base {
     options.packagePatterns = options.packagePatterns || getGeneratorHint(name);
     const envProt = Environment.prototype;
 
-    options.npmPaths = options.npmPaths || envProt.getNpmPaths(options.localOnly).reverse();
+    options.npmPaths = options.npmPaths || getNpmPaths({ localOnly: options.localOnly, filePaths: false }).reverse();
     options.packagePatterns = options.packagePatterns || 'generator-*';
     options.packagePaths = options.packagePaths || findPackagesIn(options.npmPaths, options.packagePatterns);
 

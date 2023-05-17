@@ -1,7 +1,7 @@
 import { basename, join, relative } from 'node:path';
 import { realpathSync } from 'node:fs';
 import createdLogger from 'debug';
-import { getNpmPaths, moduleLookupSync } from './module-lookup.js';
+import { moduleLookupSync } from './module-lookup.js';
 import { asNamespace } from './util/namespace.js';
 
 const debug = createdLogger('yeoman:environment');
@@ -118,30 +118,6 @@ resolver._tryRegistering = function (generatorReference, packagePath, namespace)
     console.error('Unable to register %s (Error: %s)', generatorReference, error.message);
     return false;
   }
-};
-
-/**
- * Get the npm lookup directories (`node_modules/`)
- *
- * @deprecated
- *
- * @param {boolean|Object} [options]
- * @param {boolean} [options.localOnly = false] - Set true to skip lookups of
- *                                               globally-installed generators.
- * @param {boolean} [options.filterPaths = false] - Remove paths that don't ends
- *                       with a supported path (don't touch at NODE_PATH paths).
- * @return {Array} lookup paths
- */
-resolver.getNpmPaths = function (options = {}) {
-  // Resolve signature where options is boolean (localOnly).
-  if (typeof options === 'boolean') {
-    options = { localOnly: options };
-  }
-
-  // Backward compatibility
-  options.filterPaths = options.filterPaths === undefined ? false : options.filterPaths;
-
-  return getNpmPaths(options);
 };
 
 /**
