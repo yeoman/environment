@@ -1,3 +1,6 @@
+export const UNKNOWN_NAMESPACE = 'unknownnamespace';
+export const UNKNOWN_RESOLVED = 'unknown';
+
 export const defaultQueues = [
   'environment:run',
   'initializing',

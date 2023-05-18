@@ -12,10 +12,12 @@ import type {
   BaseGenerator,
   BaseGeneratorConstructor,
   BaseGeneratorMeta,
+  ComposeOptions,
   GeneratorMeta,
   GetGeneratorConstructor,
   GetGeneratorOptions,
   InputOutputAdapter,
+  InstantiateOptions,
   LookupGeneratorMeta,
 } from '@yeoman/types';
 import { type Store as MemFs, create as createMemFs } from 'mem-fs';
@@ -33,7 +35,7 @@ import Store from './store.js';
 import type YeomanCommand from './util/command.js';
 import { asNamespace, defaultLookups } from './util/namespace.js';
 import { type LookupOptions, lookupGenerators } from './generator-lookup.js';
-import { defaultQueues } from './constants.js';
+import { UNKNOWN_NAMESPACE, UNKNOWN_RESOLVED, defaultQueues } from './constants.js';
 // eslint-disable-next-line import/order
 import { resolveModulePath } from './util/resolve.js';
 
@@ -52,6 +54,54 @@ type EnvironmentOptions = BaseEnvironmentOptions &
     yeomanRepository?: string;
     arboristRegistry?: string;
   };
+
+
+/**
+ * Two-step argument splitting function that first splits arguments in quotes,
+ * and then splits up the remaining arguments if they are not part of a quote.
+ */
+function splitArgsFromString(argsString: string) {
+  let result: string[] = [];
+  if (!argsString) {
+    return result;
+  }
+
+  const quoteSeparatedArgs = argsString.split(/("[^"]*")/).filter(Boolean);
+  for (const arg of quoteSeparatedArgs) {
+    if (arg.match('\u0022')) {
+      result.push(arg.replace(/"/g, ''));
+    } else {
+      result = result.concat(arg.trim().split(' '));
+    }
+  }
+
+  return result;
+}
+
+const getComposeOptions = (args?: any, options?: any, composeOptions: any): ComposeOptions => {
+  if (typeof composeOptions === 'object') {
+    composeOptions.generatorArgs = args;
+    composeOptions.generatorOptions = options;
+    return composeOptions;
+  }
+  return composeOptions;
+}
+const getInstantiateOptions = (args?: any, options?: any): InstantiateOptions => {
+  if (Array.isArray(args)) {
+    return { generatorArgs: args, generatorOptions: options };
+  }
+  if (typeof args === 'string') {
+    return { generatorArgs: splitArgsFromString(args), generatorOptions: options };
+  }
+  if ('generatorOptions' in args || 'generatorArgs' in args) {
+    return args;
+  }
+  if ('options' in args || 'arguments' in args || 'args' in args) {
+    const { args, arguments: generatorArgs = args, options: generatorOptions, ...remainingOptions } = options;
+    return { generatorArgs, generatorOptions: generatorOptions ?? remainingOptions };
+  }
+  return { generatorOptions: options };
+};
 
 export default class EnvironmentBase extends EventEmitter implements BaseEnvironment {
   cwd: string;
@@ -210,12 +260,43 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     throw new Error('Method not implemented.');
   }
 
+  /**
+   * Instantiate a Generator with metadatas
+   *
+   * @param  generator   Generator class
+   * @param    Arguments to pass the instance
+   * @param    options   Options to pass the instance
+   * @return The instantiated generator
+   */
   async instantiate<G extends BaseGenerator = BaseGenerator>(
     generator: GetGeneratorConstructor<G>,
-    args: string[],
-    options?: Partial<Omit<GetGeneratorOptions<G>, 'env' | 'resolved' | 'namespace'>> | undefined,
+    composeOptions?: ComposeOptions<G>,
+  ): Promise<G>;
+  async instantiate<G extends BaseGenerator = BaseGenerator>(
+    constructor: GetGeneratorConstructor<G>,
+    ...args: any[]
   ): Promise<G> {
-    throw new Error('Method not implemented.');
+    const composeOptions = getInstantiateOptions(...args) as InstantiateOptions<G>;
+
+    const { namespace = UNKNOWN_NAMESPACE, resolved = UNKNOWN_RESOLVED } = constructor as any;
+    const environmentOptions = { env: this, resolved, namespace };
+    const generator = new constructor(composeOptions.generatorArgs ?? [], {
+      ...this.sharedOptions,
+      ...composeOptions.generatorOptions,
+      ...environmentOptions,
+    } as unknown as GetGeneratorOptions<G>);
+
+    (generator as any)._environmentOptions = {
+      ...this.options,
+      ...this.sharedOptions,
+      ...environmentOptions,
+    };
+
+    if (!composeOptions.generatorOptions?.help && generator._postConstruct) {
+      await generator._postConstruct();
+    }
+
+    return generator as unknown as G;
   }
 
   /**

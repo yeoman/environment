@@ -565,50 +565,6 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
-   * Instantiate a Generator with metadatas
-   *
-   * @param {Class<Generator>} generator   Generator class
-   * @param {Array}            [args]      Arguments to pass the instance
-   * @param {Object}           [options]   Options to pass the instance
-   * @return {Generator}       The instantiated generator
-   */
-  async instantiate(Generator, args, options) {
-    if (!Array.isArray(args) && typeof args === 'object') {
-      options = args.options || args;
-      args = args.arguments || args.args || [];
-    } else {
-      args = Array.isArray(args) ? args : splitArgsFromString(args);
-      options = options || {};
-    }
-
-    const { namespace = Environment.UNKNOWN_NAMESPACE } = Generator;
-
-    const environmentOptions = {
-      env: this,
-      resolved: Generator.resolved || Environment.UNKNOWN_RESOLVED,
-      namespace,
-    };
-
-    const generator = new Generator(args, {
-      ...this.sharedOptions,
-      ...options,
-      ...environmentOptions,
-    });
-
-    generator._environmentOptions = {
-      ...this.options,
-      ...this.sharedOptions,
-      ...environmentOptions,
-    };
-
-    if (!options.help && generator._postConstruct) {
-      await generator._postConstruct();
-    }
-
-    return generator;
-  }
-
-  /**
    * Compose with the generator.
    *
    * @param {String} namespaceOrPath
