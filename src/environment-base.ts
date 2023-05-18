@@ -30,6 +30,7 @@ import GroupedQueue from 'grouped-queue';
 import { isFilePending } from 'mem-fs-editor/state';
 import { passthrough, pipeline } from '@yeoman/transform';
 import { type YeomanNamespace, toNamespace } from '@yeoman/namespace';
+import chalk from 'chalk';
 import { ComposedStore } from './composed-store.js';
 import Store from './store.js';
 import type YeomanCommand from './util/command.js';
@@ -55,12 +56,15 @@ type EnvironmentOptions = BaseEnvironmentOptions &
     arboristRegistry?: string;
   };
 
-
 /**
  * Two-step argument splitting function that first splits arguments in quotes,
  * and then splits up the remaining arguments if they are not part of a quote.
  */
-function splitArgsFromString(argsString: string) {
+function splitArgsFromString(argsString: string | string[]): string[] {
+  if (Array.isArray(argsString)) {
+    return argsString;
+  }
+
   let result: string[] = [];
   if (!argsString) {
     return result;
@@ -68,7 +72,7 @@ function splitArgsFromString(argsString: string) {
 
   const quoteSeparatedArgs = argsString.split(/("[^"]*")/).filter(Boolean);
   for (const arg of quoteSeparatedArgs) {
-    if (arg.match('\u0022')) {
+    if (arg.includes('"')) {
       result.push(arg.replace(/"/g, ''));
     } else {
       result = result.concat(arg.trim().split(' '));
@@ -78,28 +82,32 @@ function splitArgsFromString(argsString: string) {
   return result;
 }
 
-const getComposeOptions = (args?: any, options?: any, composeOptions: any): ComposeOptions => {
+const getComposeOptions = (args?: any, options?: any, composeOptions?: any): ComposeOptions => {
   if (typeof composeOptions === 'object') {
     composeOptions.generatorArgs = args;
     composeOptions.generatorOptions = options;
     return composeOptions;
   }
+
   return composeOptions;
-}
+};
+
 const getInstantiateOptions = (args?: any, options?: any): InstantiateOptions => {
-  if (Array.isArray(args)) {
-    return { generatorArgs: args, generatorOptions: options };
-  }
-  if (typeof args === 'string') {
+  if (Array.isArray(args) || typeof args === 'string') {
     return { generatorArgs: splitArgsFromString(args), generatorOptions: options };
   }
-  if ('generatorOptions' in args || 'generatorArgs' in args) {
-    return args;
+
+  if (args !== undefined) {
+    if ('generatorOptions' in args || 'generatorArgs' in args) {
+      return args;
+    }
+
+    if ('options' in args || 'arguments' in args || 'args' in args) {
+      const { args: insideArgs, arguments: generatorArgs = insideArgs, options: generatorOptions, ...remainingOptions } = args;
+      return { generatorArgs: splitArgsFromString(generatorArgs), generatorOptions: generatorOptions ?? remainingOptions };
+    }
   }
-  if ('options' in args || 'arguments' in args || 'args' in args) {
-    const { args, arguments: generatorArgs = args, options: generatorOptions, ...remainingOptions } = options;
-    return { generatorArgs, generatorOptions: generatorOptions ?? remainingOptions };
-  }
+
   return { generatorOptions: options };
 };
 
@@ -245,39 +253,98 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       if (resolved) {
         const namespace = this.namespace(resolved);
         this.store.add({ resolved, namespace });
-        return await this.store.get(namespace) as C;
+        return (await this.store.get(namespace)) as C;
       }
     } catch {}
 
     return undefined;
   }
 
+  /**
+   * Create is the Generator factory. It takes a namespace to lookup and optional
+   * hash of options, that lets you define `arguments` and `options` to
+   * instantiate the generator with.
+   *
+   * An error is raised on invalid namespace.
+   *
+   * @param namespaceOrPath
+   * @param instantiateOptions
+   * @return The instantiated generator
+   */
   async create<G extends BaseGenerator = BaseGenerator>(
     namespaceOrPath: string | GetGeneratorConstructor<G>,
-    args: string[],
-    options?: Partial<Omit<GetGeneratorOptions<G>, 'env' | 'resolved' | 'namespace'>> | undefined,
-  ): Promise<G> {
-    throw new Error('Method not implemented.');
+    instantiateOptions?: InstantiateOptions<G>,
+  ): Promise<G>;
+  async create<G extends BaseGenerator = BaseGenerator>(namespaceOrPath: string | GetGeneratorConstructor<G>, ...args: any[]): Promise<G> {
+    let constructor;
+    const namespace = typeof namespaceOrPath === 'string' ? toNamespace(namespaceOrPath) : undefined;
+    if (typeof namespaceOrPath === 'string') {
+      constructor = await this.get(namespaceOrPath);
+      if (namespace && !constructor) {
+        // Await this.lookupLocalNamespaces(namespace);
+        // constructor = await this.get(namespace);
+      }
+    } else {
+      constructor = namespaceOrPath;
+    }
+
+    const checkGenerator = (Generator: any) => {
+      const generatorNamespace = Generator?.namespace;
+      if (namespace && generatorNamespace !== namespace.namespace && generatorNamespace !== UNKNOWN_NAMESPACE) {
+        // Update namespace object in case of aliased namespace.
+        try {
+          namespace.namespace = Generator.namespace;
+        } catch {
+          // Invalid namespace can be aliased to a valid one.
+        }
+      }
+
+      if (typeof Generator !== 'function') {
+        throw new TypeError(
+          chalk.red(`You don't seem to have a generator with the name “${namespace?.generatorHint}” installed.`) +
+            '\n' +
+            'But help is on the way:\n\n' +
+            'You can see available generators via ' +
+            chalk.yellow('npm search yeoman-generator') +
+            ' or via ' +
+            chalk.yellow('http://yeoman.io/generators/') +
+            '. \n' +
+            'Install them with ' +
+            chalk.yellow(`npm install ${namespace?.generatorHint}`) +
+            '.\n\n' +
+            'To see all your installed generators run ' +
+            chalk.yellow('yo --generators') +
+            '. ' +
+            'Adding the ' +
+            chalk.yellow('--help') +
+            ' option will also show subgenerators. \n\n' +
+            'If ' +
+            chalk.yellow('yo') +
+            ' cannot find the generator, run ' +
+            chalk.yellow('yo doctor') +
+            ' to troubleshoot your system.',
+        );
+      }
+
+      return Generator;
+    };
+
+    return this.instantiate(checkGenerator(constructor), ...args);
   }
 
   /**
    * Instantiate a Generator with metadatas
    *
    * @param  generator   Generator class
-   * @param    Arguments to pass the instance
-   * @param    options   Options to pass the instance
+   * @param instantiateOptions
    * @return The instantiated generator
    */
   async instantiate<G extends BaseGenerator = BaseGenerator>(
     generator: GetGeneratorConstructor<G>,
-    composeOptions?: ComposeOptions<G>,
+    instantiateOptions?: InstantiateOptions<G>,
   ): Promise<G>;
-  async instantiate<G extends BaseGenerator = BaseGenerator>(
-    constructor: GetGeneratorConstructor<G>,
-    ...args: any[]
-  ): Promise<G> {
-    const composeOptions = getInstantiateOptions(...args) as InstantiateOptions<G>;
-
+  async instantiate<G extends BaseGenerator = BaseGenerator>(constructor: GetGeneratorConstructor<G>, ...args: any[]): Promise<G> {
+    const composeOptions = args.length > 0 ? (getInstantiateOptions(...args) as InstantiateOptions<G>) : {};
     const { namespace = UNKNOWN_NAMESPACE, resolved = UNKNOWN_RESOLVED } = constructor as any;
     const environmentOptions = { env: this, resolved, namespace };
     const generator = new constructor(composeOptions.generatorArgs ?? [], {

@@ -4,7 +4,6 @@ import { createConflicterTransform, createYoResolveTransform } from '@yeoman/con
 import { QueuedAdapter } from '@yeoman/adapter';
 import { toNamespace } from '@yeoman/namespace';
 import { passthrough } from '@yeoman/transform';
-import chalk from 'chalk';
 import { defaults, pick, uniq } from 'lodash-es';
 import GroupedQueue from 'grouped-queue';
 import { create as createMemFs } from 'mem-fs';
@@ -484,84 +483,6 @@ export default class Environment extends EnvironmentBase {
    */
   getPackagePaths(namespace) {
     return this.store.getPackagesPaths()[namespace] || this.store.getPackagesPaths()[Environment.namespaceToName(this.alias(namespace))];
-  }
-
-  /**
-   * Create is the Generator factory. It takes a namespace to lookup and optional
-   * hash of options, that lets you define `arguments` and `options` to
-   * instantiate the generator with.
-   *
-   * An error is raised on invalid namespace.
-   *
-   * @param {String} namespaceOrPath
-   * @param {Array} [args]
-   * @param {Object} [options]
-   * @return {Promise<Generator>} The instantiated generator
-   */
-  async create(namespaceOrPath, args, options) {
-    if (!Array.isArray(args) && typeof args === 'object') {
-      options = args.options || args;
-      args = args.arguments || args.args || [];
-    } else {
-      args = Array.isArray(args) ? args : splitArgsFromString(args);
-      options = options || {};
-    }
-
-    const namespace = toNamespace(namespaceOrPath);
-
-    let maybeGenerator = this.get(namespaceOrPath);
-    if (!maybeGenerator) {
-      await this.lookupLocalNamespaces(namespace);
-      maybeGenerator = await this.get(namespace);
-    }
-
-    const checkGenerator = Generator => {
-      if (
-        namespace &&
-        Generator &&
-        Generator.namespace &&
-        Generator.namespace !== namespace.namespace &&
-        Generator.namespace !== Environment.UNKNOWN_NAMESPACE
-      ) {
-        // Update namespace object in case of aliased namespace.
-        try {
-          namespace.namespace = Generator.namespace;
-        } catch {
-          // Invalid namespace can be aliased to a valid one.
-        }
-      }
-
-      if (typeof Generator !== 'function') {
-        throw new TypeError(
-          chalk.red(`You don't seem to have a generator with the name “${namespace?.generatorHint}” installed.`) +
-            '\n' +
-            'But help is on the way:\n\n' +
-            'You can see available generators via ' +
-            chalk.yellow('npm search yeoman-generator') +
-            ' or via ' +
-            chalk.yellow('http://yeoman.io/generators/') +
-            '. \n' +
-            'Install them with ' +
-            chalk.yellow(`npm install ${namespace?.generatorHint}`) +
-            '.\n\n' +
-            'To see all your installed generators run ' +
-            chalk.yellow('yo --generators') +
-            '. ' +
-            'Adding the ' +
-            chalk.yellow('--help') +
-            ' option will also show subgenerators. \n\n' +
-            'If ' +
-            chalk.yellow('yo') +
-            ' cannot find the generator, run ' +
-            chalk.yellow('yo doctor') +
-            ' to troubleshoot your system.',
-        );
-      }
-
-      return Generator;
-    };
-
-    return this.instantiate(checkGenerator(await maybeGenerator), args, options);
   }
 
   /**
