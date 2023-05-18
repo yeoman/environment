@@ -92,14 +92,16 @@ const getComposeOptions = (...varargs: any[]): ComposeOptions => {
   let generatorArgs;
   let generatorOptions;
   if (args !== undefined) {
-    if (typeof args === 'object') {
+    if (Array.isArray(args)) {
+      generatorArgs = args;
+    } else if (typeof args === 'string') {
+      generatorArgs = splitArgsFromString(String(args));
+    } else if (typeof args === 'object') {
       if ('generatorOptions' in args || 'generatorArgs' in args || 'schedule' in args) {
         return args;
       }
 
       generatorOptions = args;
-    } else {
-      generatorArgs = Array.isArray(args) ? args : splitArgsFromString(String(args));
     }
   }
 
