@@ -11,6 +11,7 @@ import slash from 'slash';
 import Environment from '../src/index.js';
 import { execaOutput } from '../src/util/util.js';
 import { findPackagesIn, getNpmPaths } from '../src/module-lookup.js';
+import { lookupGenerator } from '../src/generator-lookup.js';
 
 const require = createRequire(import.meta.url);
 
@@ -749,34 +750,34 @@ describe('Environment Resolver', async function () {
 
     describe('Find generator', async () => {
       it('Scoped lookup', async () => {
-        const modulePath = Environment.lookupGenerator('@dummyscope/scoped:app');
+        const modulePath = lookupGenerator('@dummyscope/scoped:app');
         assert.ok(modulePath.endsWith('node_modules/@dummyscope/generator-scoped/app/index.js'));
-        const packagePath = Environment.lookupGenerator('@dummyscope/scoped:app', { packagePath: true });
+        const packagePath = lookupGenerator('@dummyscope/scoped:app', { packagePath: true });
         assert.ok(packagePath.endsWith('node_modules/@dummyscope/generator-scoped'));
       });
       it('Lookup', async () => {
-        const modulePath = Environment.lookupGenerator('extend:support');
+        const modulePath = lookupGenerator('extend:support');
         assert.ok(modulePath.endsWith('node_modules/generator-extend/support/index.js'));
 
-        const packagePath = Environment.lookupGenerator('extend:support', {
+        const packagePath = lookupGenerator('extend:support', {
           packagePath: true,
         });
-        const packagePath3 = Environment.lookupGenerator('extend', {
+        const packagePath3 = lookupGenerator('extend', {
           packagePath: true,
         });
         assert.ok(packagePath.endsWith('node_modules/generator-extend'));
         assert.ok(packagePath3.endsWith('node_modules/generator-extend'));
       });
       it('Module Lookup', async () => {
-        const modulePath = Environment.lookupGenerator('module:app');
+        const modulePath = lookupGenerator('module:app');
         assert.ok(modulePath.endsWith('node_modules/generator-module/generators/app/index.js'), modulePath);
 
-        const packagePath = Environment.lookupGenerator('module:app', {
+        const packagePath = lookupGenerator('module:app', {
           packagePath: true,
         });
         assert.ok(packagePath.endsWith('node_modules/generator-module'), packagePath);
 
-        const generatorPath = Environment.lookupGenerator('module:app', {
+        const generatorPath = lookupGenerator('module:app', {
           generatorPath: true,
         });
         assert.ok(generatorPath.endsWith('node_modules/generator-module/generators/'), generatorPath);
@@ -811,17 +812,17 @@ describe('Environment Resolver', async function () {
 
     describe('Find generator', async () => {
       it('Module Lookup', async () => {
-        const modulePath = Environment.lookupGenerator('module:app');
+        const modulePath = lookupGenerator('module:app');
         assert.ok(modulePath.endsWith('node_modules/generator-module/generators/app/index.js'));
 
-        const multiplePath = Environment.lookupGenerator('module:app', {
-          multiple: true,
+        const multiplePath = lookupGenerator('module:app', {
+          singleResult: false,
         });
         assert.equal(multiplePath.length, 2);
         assert.ok(multiplePath[0].endsWith('lookup-custom/node_modules/generator-module/generators/app/index.js'));
         assert.ok(multiplePath[1].endsWith('lookup-custom/node_modules/foo/node_modules/generator-module/generators/app/index.js'));
 
-        const multiplePath2 = Environment.lookupGenerator('module:app', {
+        const multiplePath2 = lookupGenerator('module:app', {
           singleResult: false,
         });
         assert.equal(multiplePath2.length, 2);

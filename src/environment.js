@@ -1,11 +1,7 @@
 import EventEmitter from 'node:events';
-import path, { isAbsolute } from 'node:path';
-import { pathToFileURL } from 'node:url';
 import { requireNamespace, toNamespace } from '@yeoman/namespace';
 import { defaults, pick, uniq } from 'lodash-es';
 import createdLogger from 'debug';
-import { findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.js';
-import { asNamespace, defaultLookups } from './util/namespace.js';
 
 const debug = createdLogger('yeoman:environment');
 
@@ -47,57 +43,6 @@ function splitArgsFromString(argsString) {
  *
  */
 export default class Environment extends EventEmitter {
-  /**
-   * Lookup for a specific generator.
-   *
-   * @param  {String} namespace
-   * @param  {Object} [options]
-   * @param {Boolean} [options.localOnly=false] - Set true to skip lookups of
-   *                                                     globally-installed generators.
-   * @param {Boolean} [options.packagePath=false] - Set true to return the package
-   *                                                       path instead of generators file.
-   * @param {Boolean} [options.singleResult=true] - Set false to return multiple values.
-   * @return {String} generator
-   */
-  static lookupGenerator(namespace, options) {
-    options =
-      typeof options === 'boolean'
-        ? { singleResult: true, localOnly: options }
-        : { singleResult: !(options && options.multiple), ...options };
-
-    options.filePatterns = options.filePatterns || defaultLookups.map(prefix => path.join(prefix, '*/index.{js,ts}'));
-    options.packagePatterns = options.packagePatterns || toNamespace(namespace)?.generatorHint;
-
-    options.npmPaths = options.npmPaths || getNpmPaths({ localOnly: options.localOnly, filePaths: false }).reverse();
-    options.packagePatterns = options.packagePatterns || 'generator-*';
-    options.packagePaths = options.packagePaths || findPackagesIn(options.npmPaths, options.packagePatterns);
-
-    let paths = options.singleResult ? undefined : [];
-    moduleLookupSync(options, ({ files, packagePath }) => {
-      for (const filename of files) {
-        const fileNS = asNamespace(filename, { lookups: defaultLookups });
-        const ns = toNamespace(fileNS);
-        if (namespace === fileNS || (options.packagePath && namespace === ns?.packageNamespace)) {
-          // Version 2.6.0 returned pattern instead of modulePath for options.packagePath
-          const returnPath = options.packagePath ? packagePath : options.generatorPath ? path.posix.join(filename, '../../') : filename;
-          if (options.singleResult) {
-            paths = returnPath;
-            return filename;
-          }
-
-          paths.push(returnPath);
-        }
-      }
-      return undefined;
-    });
-
-    if (options.singleResult) {
-      return paths && isAbsolute(paths) ? pathToFileURL(paths).toString() : paths;
-    }
-
-    return paths.map(gen => (isAbsolute(gen) ? pathToFileURL(gen).toString() : gen));
-  }
-
   /**
    * @protected
    * Load options passed to the Generator that should be used by the Environment.
