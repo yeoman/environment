@@ -4,10 +4,11 @@ import sinon from 'sinon';
 import semver from 'semver';
 import Generator from 'yeoman-generator';
 import { esmocha, expect, mock } from 'esmocha';
-import helpers from './helpers.js';
+import helpers, { getCreateEnv } from './helpers.js';
 
+const { commitSharedFsTask } = await mock('../src/commit.ts');
 const { packageManagerInstallTask } = await mock('../src/package-manager.ts');
-const { default: BasicEnvironment } = await import('../src/environment.js');
+const { default: BasicEnvironment } = await import('../src/environment-base.js');
 const { default: Environment } = await import('../src/index.js');
 
 const require = createRequire(import.meta.url);
@@ -28,20 +29,15 @@ describe('environment (generator-features)', () => {
 
   describe('customCommitTask feature', () => {
     describe('without customInstallTask', () => {
-      let runContext;
-      before(async () => {
-        runContext = helpers
-          .create('custom-commit')
+      beforeEach(async () => {
+        await helpers
+          .run('custom-commit', undefined, { createEnv: getCreateEnv(BasicEnvironment) })
           .withOptions({ skipInstall: true })
-          .withGenerators([[helpers.createMockedGenerator(), 'custom-commit:app']])
-          .withEnvironment(env => {
-            env.commitSharedFs = sinon.stub().returns(Promise.resolve());
-          });
-        await runContext.run();
+          .withGenerators([[helpers.createMockedGenerator(), 'custom-commit:app']]);
       });
 
       it('should call commitSharedFs', () => {
-        assert.equal(runContext.env.commitSharedFs.callCount, 1, 'should have been called once');
+        expect(commitSharedFsTask).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -49,7 +45,7 @@ describe('environment (generator-features)', () => {
       let runContext;
       before(async () => {
         runContext = helpers
-          .create('custom-commit')
+          .create('custom-commit', undefined, { createEnv: getCreateEnv(BasicEnvironment) })
           .withOptions({ skipInstall: true })
           .withGenerators([
             [
@@ -62,15 +58,12 @@ describe('environment (generator-features)', () => {
               ),
               'custom-commit:app',
             ],
-          ])
-          .withEnvironment(env => {
-            env.commitSharedFs = sinon.stub().returns(Promise.resolve());
-          });
+          ]);
         await runContext.run();
       });
 
       it('should not call commitSharedFs', () => {
-        assert.equal(runContext.env.commitSharedFs.callCount, 0, 'should not have been called');
+        expect(commitSharedFsTask).not.toHaveBeenCalled();
       });
     });
 
@@ -115,7 +108,7 @@ describe('environment (generator-features)', () => {
       let runContext;
       beforeEach(async () => {
         runContext = helpers
-          .create('custom-install', undefined, { createEnv: BasicEnvironment.createEnv.bind(BasicEnvironment) })
+          .create('custom-install', undefined, { createEnv: getCreateEnv(BasicEnvironment) })
           .withOptions({ skipInstall: false })
           .withGenerators([
             [
@@ -131,6 +124,7 @@ describe('environment (generator-features)', () => {
       });
 
       it('should call packageManagerInstallTask', () => {
+        expect(packageManagerInstallTask).toHaveBeenCalledTimes(1);
         expect(packageManagerInstallTask).toHaveBeenCalledWith(
           expect.not.objectContaining({
             customInstallTask: expect.any(Function),
@@ -143,7 +137,7 @@ describe('environment (generator-features)', () => {
       let runContext;
       beforeEach(async () => {
         runContext = helpers
-          .create('custom-install', undefined, { createEnv: BasicEnvironment.createEnv.bind(BasicEnvironment) })
+          .create('custom-install', undefined, { createEnv: getCreateEnv(BasicEnvironment) })
           .withOptions({ skipInstall: false })
           .withGenerators([
             [

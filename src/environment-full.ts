@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { flyImport } from 'fly-import';
 import semver from 'semver';
-import { requireNamespace } from '@yeoman/namespace';
+import { type YeomanNamespace, requireNamespace } from '@yeoman/namespace';
 import Environment from './environment.js';
 import { type LookupOptions } from './generator-lookup.js';
 import YeomanCommand from './util/command.js';
@@ -16,14 +16,14 @@ class FullEnvironment extends Environment {
    */
   async execute(generatorNamespace: string, args = []) {
     const namespace = requireNamespace(generatorNamespace);
-    if (!this.get(namespace.namespace)) {
+    if (!(await this.get(namespace.namespace))) {
       await this.lookup({
         packagePatterns: [namespace.generatorHint],
         singleResult: true,
       });
     }
 
-    if (!this.get(namespace.namespace)) {
+    if (!(await this.get(namespace.namespace))) {
       await this.installLocalGenerators({
         [namespace.generatorHint]: namespace.semver,
       });
@@ -33,7 +33,7 @@ class FullEnvironment extends Environment {
     namespaceCommand.usage('[generator-options]');
 
     // Instantiate the generator for options
-    const generator = await this.create(namespace.namespace, [], { help: true });
+    const generator = await this.create(namespace.namespace, { generatorArgs: [], generatorOptions: { help: true } });
     namespaceCommand.registerGenerator(generator);
 
     (namespaceCommand as any)._parseCommand([], args);
@@ -158,14 +158,21 @@ class FullEnvironment extends Environment {
    */
   async prepareEnvironment(namespaces: string | string[]) {
     namespaces = Array.isArray(namespaces) ? namespaces : [namespaces];
-    let missing = namespaces.map(ns => requireNamespace(ns)).filter(ns => !this.get(ns));
+    let missing = namespaces.map(ns => requireNamespace(ns));
+    const updateMissing = async () => {
+      const entries = await Promise.all(missing.map(async ns => [ns, await this.get(ns)]));
+      missing = entries.filter(([_ns, gen]) => Boolean(gen)).map(([ns]) => ns) as YeomanNamespace[];
+    };
+
+    await updateMissing();
 
     // Install missing
     const toInstall: Record<string, string | undefined> = Object.fromEntries(missing.map(ns => [ns.generatorHint, ns.semver]));
 
     await this.installLocalGenerators(toInstall);
 
-    missing = missing.filter(ns => !this.get(ns));
+    await updateMissing();
+
     if (missing.length === 0) {
       return true;
     }

@@ -13,7 +13,7 @@ export type PackageManagerInstallTaskOptions = {
   packageJsonLocation: string;
   adapter: InputOutputAdapter;
   nodePackageManager?: string;
-  customInstallTask?: (nodePackageManager: string | undefined, defaultTask: () => Promise<boolean>) => boolean | Promise<boolean>;
+  customInstallTask?: boolean | ((nodePackageManager: string | undefined, defaultTask: () => Promise<boolean>) => void | Promise<void>);
   skipInstall?: boolean;
 };
 

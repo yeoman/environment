@@ -1,21 +1,14 @@
 import path, { isAbsolute } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { createConflicterTransform, createYoResolveTransform } from '@yeoman/conflicter';
 import { QueuedAdapter } from '@yeoman/adapter';
 import { toNamespace } from '@yeoman/namespace';
-import { passthrough } from '@yeoman/transform';
 import { defaults, pick, uniq } from 'lodash-es';
 import GroupedQueue from 'grouped-queue';
 import { create as createMemFs } from 'mem-fs';
 import { create as createMemFsEditor } from 'mem-fs-editor';
 import createdLogger from 'debug';
 import { flyImport } from 'fly-import';
-// eslint-disable-next-line n/file-extension-in-import
-import { isFilePending } from 'mem-fs-editor/state';
-// eslint-disable-next-line n/file-extension-in-import
-import { createCommitTransform } from 'mem-fs-editor/transform';
 import YeomanCommand, { addEnvironmentOptions } from './util/command.js';
-import { packageManagerInstallTask } from './package-manager.js';
 import { findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.js';
 import EnvironmentBase from './environment-base.js';
 import { asNamespace, defaultLookups } from './util/namespace.js';
@@ -348,93 +341,6 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
-   * Registers a specific `generator` to this environment. This generator is stored under
-   * provided namespace, or a default namespace format if none if available.
-   *
-   * @param  {String} name      - Filepath to the a generator or a npm package name
-   * @param  {String} namespace - Namespace under which register the generator (optional)
-   * @param  {String} packagePath - PackagePath to the generator npm package (optional)
-   * @return {Object} environment - This environment
-   */
-  register(pathOrStub, meta, ...args) {
-    if (typeof pathOrStub === 'string') {
-      if (typeof meta === 'object') {
-        return this._registerGeneratorPath(pathOrStub, meta.namespace, meta.packagePath);
-      }
-      return this._registerGeneratorPath(pathOrStub, meta, ...args);
-    }
-    if (pathOrStub) {
-      if (typeof meta === 'object') {
-        return this.registerStub(pathOrStub, meta.namespace, meta.resolved, meta.packagePath);
-      }
-      return this.registerStub(pathOrStub, meta, ...args);
-    }
-    throw new TypeError('You must provide a generator name to register.');
-  }
-
-  /**
-   * Registers a specific `generator` to this environment. This generator is stored under
-   * provided namespace, or a default namespace format if none if available.
-   *
-   * @param  {String} name      - Filepath to the a generator or a npm package name
-   * @param  {String} namespace - Namespace under which register the generator (optional)
-   * @param  {String} packagePath - PackagePath to the generator npm package (optional)
-   * @return {Object} environment - This environment
-   */
-  _registerGeneratorPath(generatorPath, namespace, packagePath) {
-    if (typeof generatorPath !== 'string') {
-      throw new TypeError('You must provide a generator name to register.');
-    }
-
-    if (!isAbsolute(generatorPath)) {
-      throw new Error(`An absolute path is required to register`);
-    }
-
-    namespace = namespace || this.namespace(generatorPath);
-
-    if (!namespace) {
-      throw new Error('Unable to determine namespace.');
-    }
-
-    // Generator is already registered and matches the current namespace.
-    const generatorMeta = this.store.getMeta(namespace);
-    if (generatorMeta && generatorMeta.resolved === generatorPath) {
-      return this;
-    }
-
-    const meta = this.store.add({ namespace, resolved: generatorPath, packagePath });
-
-    debug('Registered %s (%s) on package %s (%s)', namespace, generatorPath, meta.packageNamespace, packagePath);
-    return this;
-  }
-
-  /**
-   * Register a stubbed generator to this environment. This method allow to register raw
-   * functions under the provided namespace. `registerStub` will enforce the function passed
-   * to extend the Base generator automatically.
-   *
-   * @param  {Function} Generator  - A Generator constructor or a simple function
-   * @param  {String}   namespace  - Namespace under which register the generator
-   * @param  {String}   [resolved] - The file path to the generator
-   * @param  {String} [packagePath] - The generator's package path
-   * @return {this}
-   */
-  registerStub(Generator, namespace, resolved = Environment.UNKNOWN_RESOLVED, packagePath = undefined) {
-    if (typeof Generator !== 'function' && typeof Generator.createGenerator !== 'function') {
-      throw new TypeError('You must provide a stub function to register.');
-    }
-
-    if (typeof namespace !== 'string') {
-      throw new TypeError('You must provide a namespace to register.');
-    }
-
-    this.store.add({ namespace, resolved, packagePath }, Generator);
-
-    debug('Registered %s (%s) on package (%s)', namespace, resolved, packagePath);
-    return this;
-  }
-
-  /**
    * Returns the list of registered namespace.
    * @return {Array}
    */
@@ -551,87 +457,5 @@ export default class Environment extends EnvironmentBase {
     }
 
     return this.runGenerator(generator);
-  }
-
-  /**
-   * Commits the MemFs to the disc.
-   * @param {Stream} [stream] - files stream, defaults to this.sharedFs.stream().
-   * @return {Promise}
-   */
-  commitSharedFs(stream = this.sharedFs.stream({ filter: file => isFilePending(file) })) {
-    debug('committing files');
-
-    return this.fs.commit(
-      [
-        passthrough(
-          file => {
-            file.conflicter = 'force';
-          },
-          { pattern: '**/{.yo-rc.json,.yo-resolve,.yo-rc-global.json}' },
-        ),
-        createYoResolveTransform(),
-        createConflicterTransform(this.adapter, this.conflicterOptions),
-        // Use custom commit transform due to out of order transform.
-        createCommitTransform(this.fs),
-      ],
-      stream,
-    );
-  }
-
-  /**
-   * Queue environment's commit task.
-   */
-  queueCommit() {
-    const queueCommit = () => {
-      debug('Queueing conflicts task');
-      this.queueTask(
-        'environment:conflicts',
-        async () => {
-          const { customCommitTask = this.commitSharedFs.bind(this) } = this.composedStore;
-          if (typeof customCommitTask !== 'function') {
-            // There is a custom commit task or just disabled
-            return;
-          }
-
-          await customCommitTask();
-
-          debug('Adding queueCommit event listener');
-          this.sharedFs.once('change', queueCommit);
-        },
-        {
-          once: 'write memory fs to disk',
-        },
-      );
-    };
-
-    queueCommit();
-  }
-
-  /**
-   * Queue environment's package manager install task.
-   */
-  queuePackageManagerInstall() {
-    const { adapter, sharedFs: memFs } = this;
-    const { skipInstall, nodePackageManager } = this.options;
-    const { customInstallTask } = this.composedStore;
-    this.queueTask(
-      'install',
-      () => {
-        if (this.compatibilityMode === 'v4') {
-          debug('Running in generator < 5 compatibility. Package manager install is done by the generator.');
-          return false;
-        }
-
-        return packageManagerInstallTask({
-          adapter,
-          memFs,
-          packageJsonLocation: this.cwd,
-          skipInstall,
-          nodePackageManager,
-          customInstallTask,
-        });
-      },
-      { once: 'package manager install' },
-    );
   }
 }

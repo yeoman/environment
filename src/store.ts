@@ -66,7 +66,8 @@ class Store {
       return this._getGenerator(Generator, meta);
     };
 
-    const instantiate = async (args: string[] = [], options: any = {}) => this.env.instantiate(await importGenerator(), args, options);
+    const instantiate = async (args: string[] = [], options: any = {}) =>
+      this.env.instantiate(await importGenerator(), { generatorArgs: args, generatorOptions: options });
     const instantiateHelp = async () => instantiate([], { help: true });
     const { packageNamespace } = toNamespace(meta.namespace) ?? {};
 
