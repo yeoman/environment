@@ -158,14 +158,14 @@ class FullEnvironment extends Environment {
    */
   async prepareEnvironment(namespaces: string | string[]) {
     namespaces = Array.isArray(namespaces) ? namespaces : [namespaces];
-    let missing = namespaces.map(ns => requireNamespace(ns)).filter(ns => !this.getByNamespace(ns));
+    let missing = namespaces.map(ns => requireNamespace(ns)).filter(ns => !this.get(ns));
 
     // Install missing
     const toInstall: Record<string, string | undefined> = Object.fromEntries(missing.map(ns => [ns.generatorHint, ns.semver]));
 
     await this.installLocalGenerators(toInstall);
 
-    missing = missing.filter(ns => !this.getByNamespace(ns));
+    missing = missing.filter(ns => !this.get(ns));
     if (missing.length === 0) {
       return true;
     }

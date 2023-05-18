@@ -27,13 +27,15 @@ import GroupedQueue from 'grouped-queue';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
 import { passthrough, pipeline } from '@yeoman/transform';
+import { type YeomanNamespace, toNamespace } from '@yeoman/namespace';
 import { ComposedStore } from './composed-store.js';
 import Store from './store.js';
 import type YeomanCommand from './util/command.js';
 import { asNamespace, defaultLookups } from './util/namespace.js';
 import { type LookupOptions, lookupGenerators } from './generator-lookup.js';
-// eslint-disable-next-line import/order
 import { defaultQueues } from './constants.js';
+// eslint-disable-next-line import/order
+import { resolveModulePath } from './util/resolve.js';
 
 const require = createRequire(import.meta.url);
 
@@ -158,8 +160,46 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     );
   }
 
-  async get<C extends BaseGeneratorConstructor = BaseGeneratorConstructor>(namespaceOrPath: string): Promise<C | undefined> {
-    throw new Error('Method not implemented.');
+  /**
+   * Get a single generator from the registered list of generators. The lookup is
+   * based on generator's namespace, "walking up" the namespaces until a matching
+   * is found. Eg. if an `angular:common` namespace is registered, and we try to
+   * get `angular:common:all` then we get `angular:common` as a fallback (unless
+   * an `angular:common:all` generator is registered).
+   *
+   * @param   namespaceOrPath
+   * @return the generator registered under the namespace
+   */
+  async get<C extends BaseGeneratorConstructor = BaseGeneratorConstructor>(
+    namespaceOrPath: string | YeomanNamespace,
+  ): Promise<C | undefined> {
+    // Stop the recursive search if nothing is left
+    if (!namespaceOrPath) {
+      return;
+    }
+
+    const parsed = toNamespace(namespaceOrPath);
+    if (typeof namespaceOrPath !== 'string' || parsed) {
+      const ns = parsed!.namespace;
+      const maybeGenerator = (await this.store.get(ns)) ?? this.store.get(this.alias(ns));
+      return maybeGenerator as C;
+    }
+
+    const maybeGenerator = (await this.store.get(namespaceOrPath)) ?? (await this.store.get(this.alias(namespaceOrPath)));
+    if (maybeGenerator) {
+      return maybeGenerator as C;
+    }
+
+    try {
+      const resolved = await resolveModulePath(namespaceOrPath);
+      if (resolved) {
+        const namespace = this.namespace(resolved);
+        this.store.add({ resolved, namespace });
+        return await this.store.get(namespace) as C;
+      }
+    } catch {}
+
+    return undefined;
   }
 
   async create<G extends BaseGenerator = BaseGenerator>(
@@ -381,6 +421,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return { ...meta } as GeneratorMeta;
   }
 

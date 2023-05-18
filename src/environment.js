@@ -2,10 +2,10 @@ import path, { isAbsolute } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { createConflicterTransform, createYoResolveTransform } from '@yeoman/conflicter';
 import { QueuedAdapter } from '@yeoman/adapter';
-import { requireNamespace, toNamespace } from '@yeoman/namespace';
+import { toNamespace } from '@yeoman/namespace';
 import { passthrough } from '@yeoman/transform';
 import chalk from 'chalk';
-import { defaults, last, pick, uniq } from 'lodash-es';
+import { defaults, pick, uniq } from 'lodash-es';
 import GroupedQueue from 'grouped-queue';
 import { create as createMemFs } from 'mem-fs';
 import { create as createMemFsEditor } from 'mem-fs-editor';
@@ -18,7 +18,6 @@ import { createCommitTransform } from 'mem-fs-editor/transform';
 import YeomanCommand, { addEnvironmentOptions } from './util/command.js';
 import { packageManagerInstallTask } from './package-manager.js';
 import { findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.js';
-import { resolveModulePath } from './util/resolve.js';
 import EnvironmentBase from './environment-base.js';
 import { asNamespace, defaultLookups } from './util/namespace.js';
 import { defaultQueues } from './constants.js';
@@ -488,79 +487,6 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
-   * Get a single generator from the registered list of generators. The lookup is
-   * based on generator's namespace, "walking up" the namespaces until a matching
-   * is found. Eg. if an `angular:common` namespace is registered, and we try to
-   * get `angular:common:all` then we get `angular:common` as a fallback (unless
-   * an `angular:common:all` generator is registered).
-   *
-   * @param  {String} namespaceOrPath
-   * @return {import('@yeoman/api').BaseGenerator|Promise<import('@yeoman/api').BaseGenerator>|null} - the generator registered under the namespace
-   */
-  async get(namespaceOrPath) {
-    // Stop the recursive search if nothing is left
-    if (!namespaceOrPath) {
-      return;
-    }
-
-    const parsed = toNamespace(namespaceOrPath);
-    if (parsed && this.getByNamespace) {
-      return this.getByNamespace(parsed);
-    }
-
-    let namespace = namespaceOrPath;
-
-    // Legacy yeoman-generator `#hookFor()` function is passing the generator path as part
-    // of the namespace. If we find a path delimiter in the namespace, then ignore the
-    // last part of the namespace.
-    const parts = namespaceOrPath.split(':');
-    const maybePath = last(parts);
-    if (parts.length > 1 && /[/\\]/.test(maybePath)) {
-      parts.pop();
-
-      // We also want to remove the drive letter on windows
-      if (maybePath.includes('\\') && last(parts).length === 1) {
-        parts.pop();
-      }
-
-      namespace = parts.join(':');
-    }
-
-    return (
-      (await this.store.get(namespace)) ??
-      (await this.store.get(this.alias(namespace))) ??
-      // Namespace is empty if namespaceOrPath contains a win32 absolute path of the form 'C:\path\to\generator'.
-      // for this reason we pass namespaceOrPath to the getByPath function.
-      this.getByPath(namespaceOrPath)
-    );
-  }
-
-  /**
-   * Get a generator only by namespace.
-   * @protected
-   * @param  {YeomanNamespace|String} namespace
-   * @return {Generator|null} - the generator found at the location
-   */
-  async getByNamespace(namespace) {
-    const ns = requireNamespace(namespace).namespace;
-    return (await this.store.get(ns)) ?? this.store.get(this.alias(ns));
-  }
-
-  /**
-   * Get a generator by path instead of namespace.
-   * @param  {String} path
-   * @return {Generator|null} - the generator found at the location
-   */
-  async getByPath(path) {
-    try {
-      const resolved = await resolveModulePath(path);
-      const namespace = this.namespace(resolved);
-      this.store.add({ resolved, namespace });
-      return this.get(namespace);
-    } catch {}
-  }
-
-  /**
    * Create is the Generator factory. It takes a namespace to lookup and optional
    * hash of options, that lets you define `arguments` and `options` to
    * instantiate the generator with.
@@ -583,13 +509,10 @@ export default class Environment extends EnvironmentBase {
 
     const namespace = toNamespace(namespaceOrPath);
 
-    let maybeGenerator;
-    if (namespace && this.getByNamespace) {
-      maybeGenerator = await this.getByNamespace(namespace);
-      if (!maybeGenerator) {
-        await this.lookupLocalNamespaces(namespace);
-        maybeGenerator = await this.getByNamespace(namespace);
-      }
+    let maybeGenerator = this.get(namespaceOrPath);
+    if (!maybeGenerator) {
+      await this.lookupLocalNamespaces(namespace);
+      maybeGenerator = await this.get(namespace);
     }
 
     const checkGenerator = Generator => {
@@ -637,8 +560,6 @@ export default class Environment extends EnvironmentBase {
 
       return Generator;
     };
-
-    maybeGenerator = maybeGenerator || this.get(namespaceOrPath);
 
     return this.instantiate(checkGenerator(await maybeGenerator), args, options);
   }

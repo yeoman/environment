@@ -8,7 +8,6 @@ import { createRequire } from 'node:module';
 import { expect } from 'esmocha';
 import { QueuedAdapter } from '@yeoman/adapter';
 import sinon from 'sinon';
-import sinonTestFactory from 'sinon-test';
 import Generator from 'yeoman-generator';
 import assert from 'yeoman-assert';
 import semver from 'semver';
@@ -24,8 +23,6 @@ const __dirname = dirname(__filename);
 const ENVIRONMENT_VERSION = require('../package.json').version;
 const INQUIRER_VERSION = require('inquirer/package.json').version;
 const GROUPED_QUEUE_VERSION = require('grouped-queue/package.json').version;
-
-const sinonTest = sinonTestFactory(sinon);
 
 describe('Environment', () => {
   let mockedDefault;
@@ -882,26 +879,6 @@ describe('Environment', () => {
       assert.equal(await this.env.get('mocha:generator'), this.generator);
       assert.equal(await this.env.get('fixtures:generator-mocha'), this.generator);
     });
-
-    it('remove paths from namespace at resolution (for backward compatibility)', async function () {
-      assert.equal(await this.env.get('mocha:generator:/a/dummy/path/'), this.generator);
-      assert.equal(await this.env.get('mocha:generator:C:\\foo\\bar'), this.generator);
-    });
-
-    it(
-      "works with Windows' absolute paths",
-      sinonTest(async function () {
-        const absolutePath = 'C:\\foo\\bar';
-
-        const envMock = this.mock(this.env);
-
-        envMock.expects('getByPath').once().withExactArgs(absolutePath).returns(null);
-
-        await this.env.get(absolutePath);
-
-        envMock.verify();
-      }),
-    );
 
     it('fallback to requiring generator from a file path', async function () {
       assert.equal(await this.env.get(path.join(__dirname, './fixtures/generator-mocha')), this.generator);
