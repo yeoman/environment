@@ -1,7 +1,6 @@
-/** @module env/util */
-import { execaSync } from 'execa';
+import { execaSync, type SyncOptions } from 'execa';
 
-const execaOutput = (cmg, args, options) => {
+const execaOutput = (cmg: string, args: string[], options: SyncOptions) => {
   try {
     const result = execaSync(cmg, args, options);
     if (!result.failed) {
