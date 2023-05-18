@@ -1,36 +1,29 @@
 import path, { isAbsolute } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { createRequire } from 'node:module';
-import process from 'node:process';
 import { createConflicterTransform, createYoResolveTransform } from '@yeoman/conflicter';
 import { QueuedAdapter } from '@yeoman/adapter';
 import { requireNamespace, toNamespace } from '@yeoman/namespace';
-import { pipeline, passthrough } from '@yeoman/transform';
+import { passthrough } from '@yeoman/transform';
 import chalk from 'chalk';
 import { defaults, last, pick, uniq } from 'lodash-es';
 import GroupedQueue from 'grouped-queue';
 import { create as createMemFs } from 'mem-fs';
 import { create as createMemFsEditor } from 'mem-fs-editor';
 import createdLogger from 'debug';
-import { flyImport, FlyRepository } from 'fly-import';
+import { flyImport } from 'fly-import';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
 // eslint-disable-next-line n/file-extension-in-import
 import { createCommitTransform } from 'mem-fs-editor/transform';
-import Store from './store.js';
 import YeomanCommand, { addEnvironmentOptions } from './util/command.js';
 import { packageManagerInstallTask } from './package-manager.js';
-import { ComposedStore } from './composed-store.js';
 import { findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.js';
 import { resolveModulePath } from './util/resolve.js';
 import EnvironmentBase from './environment-base.js';
-// eslint-disable-next-line import/order
 import { asNamespace, defaultLookups } from './util/namespace.js';
+import { defaultQueues } from './constants.js';
 
 const debug = createdLogger('yeoman:environment');
-const require = createRequire(import.meta.url);
-
-const ENVIRONMENT_VERSION = require('../package.json').version;
 
 /**
  * Two-step argument splitting function that first splits arguments in quotes,
@@ -64,19 +57,7 @@ export default class Environment extends EnvironmentBase {
   }
 
   static get queues() {
-    return [
-      'environment:run',
-      'initializing',
-      'prompting',
-      'configuring',
-      'default',
-      'writing',
-      'transform',
-      'conflicts',
-      'environment:conflicts',
-      'install',
-      'end',
-    ];
+    return [...defaultQueues];
   }
 
   static get lookups() {
@@ -281,63 +262,10 @@ export default class Environment extends EnvironmentBase {
    *                                     you'd interface Yeoman with a GUI or an editor.
    */
   constructor(options, adapter) {
-    super();
-
-    this.setMaxListeners(100);
-
-    this.options = options || {};
-    this.adapter =
-      adapter ||
-      new QueuedAdapter({
-        console: this.options.console,
-        stdin: this.options.stdin,
-        stderr: this.options.stderr,
-      });
-    this.cwd = this.options.cwd || process.cwd();
-    this.cwd = path.resolve(this.cwd);
-    this.logCwd = this.options.logCwd || this.cwd;
-    this.store = new Store(this);
-    this.command = this.options.command;
-
-    this.runLoop = new GroupedQueue(Environment.queues, false);
-    this.composedStore = new ComposedStore({ log: this.adapter.log });
-    this.sharedFs = this.options.sharedFs || createMemFs();
-
-    // Each composed generator might set listeners on these shared resources. Let's make sure
-    // Node won't complain about event listeners leaks.
-    this.runLoop.setMaxListeners(0);
-    this.sharedFs.setMaxListeners(0);
-
-    this.fs = createMemFsEditor(this.sharedFs);
-
-    this.lookups = Environment.lookups;
-
-    // Used sharedOptions from options if exists.
-    this.sharedOptions = this.options.sharedOptions || {};
-    // Remove Unecessary sharedOptions from options
-    delete this.options.sharedOptions;
-
-    // Create a default sharedData.
-    this.sharedOptions.sharedData = this.sharedOptions.sharedData || {};
-
-    // Pass forwardErrorToEnvironment to generators.
-    this.sharedOptions.forwardErrorToEnvironment = false;
-
-    this.repository = new FlyRepository({
-      repositoryPath: this.options.yeomanRepository ?? `${this.cwd}/.yo-repository`,
-      arboristConfig: {
-        registry: this.options.arboristRegistry,
-      },
-    });
-
-    if (!this.options.experimental) {
-      for (const value of process.argv) {
-        if (value === '--experimental') {
-          this.options.experimental = true;
-          debug('Set environment as experimental');
-        }
-      }
+    if (adapter) {
+      options.adapter = adapter;
     }
+    super(options);
 
     this.loadSharedOptions(this.options);
     if (this.sharedOptions.skipLocalCache === undefined) {
@@ -517,42 +445,11 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
-   * Returns the environment or dependency version.
-   * @param  {String} packageName - Module to get version.
-   * @return {String} Environment version.
-   */
-  getVersion(packageName) {
-    if (packageName && packageName !== 'yeoman-environment') {
-      try {
-        return require(`${packageName}/package.json`).version;
-      } catch {
-        return undefined;
-      }
-    }
-
-    return ENVIRONMENT_VERSION;
-  }
-
-  /**
    * Returns stored generators meta
    * @return {Object}
    */
   getGeneratorsMeta() {
     return this.store.getGeneratorsMeta();
-  }
-
-  /**
-   * Returns stored generators meta
-   * @param {string} namespace
-   * @return {any}
-   */
-  getGeneratorMeta(namespace) {
-    const meta = this.store.getMeta(namespace) ?? this.store.getMeta(this.alias(namespace));
-    if (!meta) {
-      return;
-    }
-
-    return { ...meta };
   }
 
   /**
@@ -562,26 +459,6 @@ export default class Environment extends EnvironmentBase {
    */
   getGeneratorNames() {
     return uniq(Object.keys(this.getGeneratorsMeta()).map(namespace => Environment.namespaceToName(namespace)));
-  }
-
-  /**
-   * Verify if a package namespace already have been registered.
-   *
-   * @param  {String} [packageNS] - namespace of the package.
-   * @return {boolean} - true if any generator of the package has been registered
-   */
-  isPackageRegistered(packageNS) {
-    const registeredPackages = this.getRegisteredPackages();
-    return registeredPackages.includes(packageNS) || registeredPackages.includes(this.alias(packageNS).split(':', 2)[0]);
-  }
-
-  /**
-   * Get all registered packages namespaces.
-   *
-   * @return {Array} - array of namespaces.
-   */
-  getRegisteredPackages() {
-    return this.store.getPackagesNS();
   }
 
   /**
@@ -911,7 +788,7 @@ export default class Environment extends EnvironmentBase {
       return this.runGenerator(generator);
     };
 
-    if (this.options.experimental && !this.get(name)) {
+    if (this.experimental && !this.get(name)) {
       debug(`Generator ${name} was not found, trying to install it`);
       try {
         await this.prepareEnvironment(name);
@@ -1003,69 +880,6 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
-   * Get the first generator that was queued to run in this environment.
-   *
-   * @return {Generator} generator queued to run in this environment.
-   */
-  rootGenerator() {
-    return this._rootGenerator;
-  }
-
-  /**
-   * Given a String `filepath`, tries to figure out the relative namespace.
-   *
-   * ### Examples:
-   *
-   *     this.namespace('backbone/all/index.js');
-   *     // => backbone:all
-   *
-   *     this.namespace('generator-backbone/model');
-   *     // => backbone:model
-   *
-   *     this.namespace('backbone.js');
-   *     // => backbone
-   *
-   *     this.namespace('generator-mocha/backbone/model/index.js');
-   *     // => mocha:backbone:model
-   *
-   * @param {String} filepath
-   * @param {Array} lookups paths
-   */
-  namespace(filepath, lookups = this.lookups) {
-    return asNamespace(filepath, { lookups });
-  }
-
-  /**
-   * Apply transform streams to file in MemFs.
-   * @param {Transform[]} transformStreams - transform streams to be applied.
-   * @param {Stream} [stream] - files stream, defaults to this.sharedFs.stream().
-   * @return {Promise<void>}
-   */
-  async applyTransforms(transformStreams, options = {}) {
-    const {
-      streamOptions = { filter: file => isFilePending(file) },
-      stream = this.sharedFs.stream(streamOptions),
-      name = 'Transforming',
-    } = options;
-
-    if (!Array.isArray(transformStreams)) {
-      transformStreams = [transformStreams];
-    }
-    await this.adapter.progress(
-      async ({ step }) => {
-        await pipeline(
-          stream,
-          ...transformStreams,
-          passthrough(file => {
-            step('Completed', path.relative(this.logCwd, file.path));
-          }),
-        );
-      },
-      { name, disabled: !(options?.log ?? true) },
-    );
-  }
-
-  /**
    * Commits the MemFs to the disc.
    * @param {Stream} [stream] - files stream, defaults to this.sharedFs.stream().
    * @return {Promise}
@@ -1145,45 +959,5 @@ export default class Environment extends EnvironmentBase {
       },
       { once: 'package manager install' },
     );
-  }
-
-  /**
-   * Queue tasks
-   * @param {string} priority
-   * @param {(...args: any[]) => void | Promise<void>} task
-   * @param {{ once?: string, startQueue?: boolean }} [options]
-   */
-  queueTask(priority, task, options) {
-    return new Promise((resolve, reject) => {
-      this.runLoop.add(
-        priority,
-        async (done, stop) => {
-          try {
-            const result = await task();
-            done(result);
-            resolve(result);
-          } catch (error) {
-            stop(error);
-            reject(error);
-          }
-        },
-        {
-          once: options.once,
-          run: options.startQueue ?? false,
-        },
-      );
-    });
-  }
-
-  /**
-   * Add priority
-   * @param {string} priority
-   * @param {string} [before]
-   */
-  addPriority(priority, before) {
-    if (this.runLoop.queueNames.includes(priority)) {
-      return;
-    }
-    this.runLoop.addSubQueue(priority, before);
   }
 }

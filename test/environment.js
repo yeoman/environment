@@ -53,7 +53,7 @@ describe('Environment', () => {
   describe('constructor', () => {
     it('take options parameter', () => {
       const options = { foo: 'bar' };
-      assert.equal(new Environment(options).options, options);
+      expect(new Environment(options).options).toMatchObject(options);
     });
 
     it('instantiates a QueuedAdapter if none provided', async function () {
@@ -62,7 +62,7 @@ describe('Environment', () => {
 
     it('uses the provided object as adapter if any', () => {
       const dummyAdapter = {};
-      const env = new Environment(null, dummyAdapter);
+      const env = new Environment({ adapter: dummyAdapter });
       assert.equal(env.adapter, dummyAdapter, 'Not the adapter provided');
     });
 

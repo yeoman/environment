@@ -1,13 +1,10 @@
 import { createHash } from 'node:crypto';
-import { basename, join, relative } from 'node:path';
-import { realpathSync } from 'node:fs';
-import { type LookupGeneratorMeta } from '@yeoman/types';
+import { join } from 'node:path';
 import { flyImport } from 'fly-import';
 import semver from 'semver';
 import { requireNamespace } from '@yeoman/namespace';
 import Environment from './environment.js';
-import { type LookupOptions, lookupGenerators } from './generator-lookup.js';
-import { asNamespace } from './util/namespace.js';
+import { type LookupOptions } from './generator-lookup.js';
 import YeomanCommand from './util/command.js';
 
 class FullEnvironment extends Environment {
@@ -39,97 +36,10 @@ class FullEnvironment extends Environment {
     const generator = await this.create(namespace.namespace, [], { help: true });
     namespaceCommand.registerGenerator(generator);
 
-    namespaceCommand._parseCommand([], args);
+    (namespaceCommand as any)._parseCommand([], args);
     return this.run([namespace.namespace, ...namespaceCommand.args], {
       ...namespaceCommand.opts(),
     });
-  }
-
-  /**
-   * Search for generators and their sub generators.
-   *
-   * A generator is a `:lookup/:name/index.js` file placed inside an npm package.
-   *
-   * Defaults lookups are:
-   *   - ./
-   *   - generators/
-   *   - lib/generators/
-   *
-   * So this index file `node_modules/generator-dummy/lib/generators/yo/index.js` would be
-   * registered as `dummy:yo` generator.
-   *
-   * @param {boolean|Object} [options]
-   * @param {boolean} [options.localOnly = false] - Set true to skip lookups of
-   *                                               globally-installed generators.
-   * @param {string|Array} [options.packagePaths] - Paths to look for generators.
-   * @param {string|Array} [options.npmPaths] - Repository paths to look for generators packages.
-   * @param {string|Array} [options.filePatterns='*\/index.js'] - File pattern to look for.
-   * @param {string|Array} [options.packagePatterns='generator-*'] - Package pattern to look for.
-   * @param {boolean}      [options.singleResult=false] - Set true to stop lookup on the first match.
-   * @param {Number}       [options.globbyDeep] - Deep option to be passed to globby.
-   * @return {Promise<Object[]>} List of generators
-   */
-  async lookup(options: LookupOptions & { registerToScope?: string }) {
-    // Resolve signature where options is omitted.
-    if (typeof options === 'function') {
-      throw new TypeError('Callback support have been removed.');
-      // Resolve signature where options is boolean.
-    } else if (typeof options === 'boolean') {
-      options = { localOnly: options };
-    } else {
-      options = options || { localOnly: false };
-    }
-
-    const { registerToScope, lookups = this.lookups, ...remainingOptions } = options;
-    options = {
-      ...remainingOptions,
-      lookups,
-    };
-
-    const generators: LookupGeneratorMeta[] = [];
-    await lookupGenerators(options, ({ packagePath, filePath, lookups }) => {
-      try {
-        let repositoryPath = join(packagePath, '..');
-        if (basename(repositoryPath).startsWith('@')) {
-          // Scoped package
-          repositoryPath = join(repositoryPath, '..');
-        }
-
-        let namespace = asNamespace(relative(repositoryPath, filePath), { lookups });
-        const resolved = realpathSync(filePath);
-        if (!namespace) {
-          namespace = asNamespace(resolved, { lookups });
-        }
-
-        if (registerToScope && !namespace.startsWith('@')) {
-          namespace = `@${registerToScope}/${namespace}`;
-        }
-
-        this.store.add({ namespace, packagePath, resolved });
-        const meta = this.getGeneratorMeta(namespace);
-        if (meta) {
-          generators.push({
-            ...meta,
-            generatorPath: meta.resolved,
-            registered: true,
-          });
-          return Boolean(options.singleResult);
-        }
-      } catch (error) {
-        console.error('Unable to register %s (Error: %s)', filePath, error);
-      }
-
-      generators.push({
-        generatorPath: filePath,
-        resolved: filePath,
-        packagePath,
-        registered: false,
-      } as any);
-
-      return false;
-    });
-
-    return generators;
   }
 
   async requireGenerator(namespace: string) {

@@ -306,7 +306,7 @@ describe('Environment Resolver', async function () {
       beforeEach(async function () {
         this.env = new Environment();
         assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-        await this.env.lookup(true);
+        await this.env.lookup({ localOnly: true });
         this.env.alias('dummy-alias', 'dummy');
       });
 

@@ -1,31 +1,10 @@
 import { pathToFileURL } from 'node:url';
 import { extname, join } from 'node:path';
 import { toNamespace } from '@yeoman/namespace';
-import type { BaseEnvironment, BaseGenerator, GetGeneratorConstructor } from '@yeoman/types';
+import type { BaseEnvironment, GetGeneratorConstructor, GeneratorMeta, BaseGeneratorMeta } from '@yeoman/types';
 import createDebug from 'debug';
 
 const debug = createDebug('yeoman:environment:store');
-
-type BaseMeta = {
-  /** The key under which the generator can be retrieved */
-  namespace: string;
-  /** The file path to the generator (used only if generator is a module) */
-  resolved?: string;
-  /** PackagePath to the generator npm package */
-  packagePath?: string;
-};
-
-type GeneratorMeta = BaseMeta & {
-  packageNamespace?: string;
-  /** Import and find the Generator Class */
-  importGenerator: () => Promise<GetGeneratorConstructor>;
-  /** Import the module `import(meta.resolved)` */
-  importModule?: () => Promise<unknown>;
-  /** Intantiate the Generator `env.instantiate(await meta.importGenerator())` */
-  instantiate: (args?: string[], options?: any) => Promise<BaseGenerator>;
-  /** Intantiate the Generator passing help option */
-  instantiateHelp: () => Promise<BaseGenerator>;
-};
 
 /**
  * The Generator store
@@ -49,7 +28,7 @@ class Store {
    * @param meta
    * @param generator - A generator module or a module path
    */
-  add(meta: BaseMeta, Generator?: unknown): GeneratorMeta {
+  add(meta: BaseGeneratorMeta, Generator?: unknown): GeneratorMeta {
     if (typeof meta.resolved === 'string') {
       meta.resolved = extname(meta.resolved) ? join(meta.resolved) : join(meta.resolved, 'index.js');
     }
@@ -125,7 +104,7 @@ class Store {
    * @param  {String} namespace
    * @return {Module}
    */
-  getMeta(namespace: string) {
+  getMeta(namespace: string): GeneratorMeta {
     return this._meta[namespace];
   }
 
@@ -206,7 +185,7 @@ class Store {
     return module.createGenerator ?? module.default?.createGenerator ?? module.default?.default?.createGenerator;
   }
 
-  private _getGenerator(module: any, meta: BaseMeta) {
+  private _getGenerator(module: any, meta: BaseGeneratorMeta) {
     // eslint-disable-next-line  @typescript-eslint/naming-convention
     const Generator = module.default?.default ?? module.default ?? module;
     if (typeof Generator !== 'function') {
