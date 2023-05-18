@@ -1,5 +1,13 @@
+import { type BaseGeneratorConstructor, type GeneratorMeta } from '@yeoman/types';
 import YeomanCommand, { addEnvironmentOptions } from './util/command.js';
 import { createEnv } from './index.js';
+
+export type CommandPreparation = {
+  resolved?: string;
+  command?: YeomanCommand;
+  generator?: BaseGeneratorConstructor;
+  namespace?: string;
+};
 
 /**
  * Prepare a commander instance for cli support.
@@ -8,9 +16,22 @@ import { createEnv } from './index.js';
  * @param  generatorPath - Generator to create Command
  * @return {Command} return command
  */
-export const prepareGeneratorCommand = async (command: YeomanCommand, generatorPath: string, namespace?: string) => {
+export const prepareGeneratorCommand = async ({
+  command = addEnvironmentOptions(new YeomanCommand()),
+  resolved,
+  generator,
+  namespace,
+}: CommandPreparation) => {
   const env = createEnv();
-  const meta = env.register(generatorPath, { namespace });
+  let meta: GeneratorMeta;
+  if (generator && namespace) {
+    meta = env.register(generator, { namespace, resolved });
+  } else if (resolved) {
+    meta = env.register(resolved, { namespace });
+  } else {
+    throw new Error(`A generator with namespace or a generator path is required`);
+  }
+
   command.env = env;
   command.registerGenerator(await meta.instantiateHelp());
   command.action(async function (this: YeomanCommand) {
@@ -32,7 +53,8 @@ export const prepareGeneratorCommand = async (command: YeomanCommand, generatorP
  * @param generatorPaht - Generator to create Command
  * @return Return a Command instance
  */
-export const prepareCommand = async (generatorPath: string, command = new YeomanCommand()) => {
-  command = addEnvironmentOptions(command);
-  return prepareGeneratorCommand(command, generatorPath);
+export const prepareCommand = async (options: CommandPreparation) => {
+  options.command = options.command ?? new YeomanCommand();
+  addEnvironmentOptions(options.command);
+  return prepareGeneratorCommand(options);
 };

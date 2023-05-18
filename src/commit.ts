@@ -19,9 +19,9 @@ export const commitSharedFsTask = ({
   sharedFs,
   stream,
 }: {
-  sharedFs: Store<MemFsEditorFile>;
   adapter: InputOutputAdapter;
   conflicterOptions?: ConflicterOptions;
+  sharedFs: Store<MemFsEditorFile>;
   stream?: PassThrough;
 }) => {
   const fs = createMemFsEditor(sharedFs);

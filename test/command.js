@@ -131,7 +131,9 @@ describe('environment (command)', () => {
         let env;
 
         beforeEach(async () => {
-          const command = await prepareCommand(require.resolve('./fixtures/generator-commands/generators/arguments/index.js'));
+          const command = await prepareCommand({
+            resolved: require.resolve('./fixtures/generator-commands/generators/arguments/index.js'),
+          });
           console.log('beforeEach', command);
           await command.parseAsync(['node', 'yo', 'bar']);
 
@@ -152,7 +154,7 @@ describe('environment (command)', () => {
         let env;
 
         beforeEach(async () => {
-          const command = await prepareCommand(require.resolve('./fixtures/generator-commands/generators/options/index.js'));
+          const command = await prepareCommand({ resolved: require.resolve('./fixtures/generator-commands/generators/options/index.js') });
           await command.parseAsync([
             'node',
             'yo',

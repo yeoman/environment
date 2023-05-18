@@ -13,7 +13,7 @@ const debug = createDebug('yeoman:environment:store');
  * @constructor
  * @private
  */
-class Store {
+export default class Store {
   private readonly _meta: Record<string, GeneratorMeta> = {};
   // Store packages paths by ns
   private readonly _packagesPaths: Record<string, string[]> = {};
@@ -197,5 +197,3 @@ class Store {
     return Generator;
   }
 }
-
-export default Store;
