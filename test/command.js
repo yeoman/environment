@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import sinon from 'sinon';
 import semver from 'semver';
+import { prepareCommand } from '../src/commands.js';
 import Environment from '../src/index.js';
 
 const require = createRequire(import.meta.url);
@@ -130,7 +131,8 @@ describe('environment (command)', () => {
         let env;
 
         beforeEach(async () => {
-          const command = Environment.prepareCommand(require('./fixtures/generator-commands/generators/arguments/index.js'));
+          const command = await prepareCommand(require.resolve('./fixtures/generator-commands/generators/arguments/index.js'));
+          console.log('beforeEach', command);
           await command.parseAsync(['node', 'yo', 'bar']);
 
           env = command.env;
@@ -150,7 +152,7 @@ describe('environment (command)', () => {
         let env;
 
         beforeEach(async () => {
-          const command = Environment.prepareCommand(require('./fixtures/generator-commands/generators/options/index.js'));
+          const command = await prepareCommand(require.resolve('./fixtures/generator-commands/generators/options/index.js'));
           await command.parseAsync([
             'node',
             'yo',

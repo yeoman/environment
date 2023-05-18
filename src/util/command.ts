@@ -1,6 +1,9 @@
 import { Command, Option } from 'commander';
+import type BaseEnvironment from '../environment-base.js';
 
 export default class YeomanCommand extends Command {
+  env?: BaseEnvironment;
+
   override createCommand(name?: string) {
     return new YeomanCommand(name);
   }

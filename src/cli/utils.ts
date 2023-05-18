@@ -1,7 +1,7 @@
 import { requireNamespace } from '@yeoman/namespace';
 import { groupBy } from 'lodash-es';
 import createLogger from 'debug';
-import Environment from '../index.js';
+import Environment, { createEnv } from '../index.js';
 
 const debug = createLogger('yeoman:yoe');
 
@@ -33,7 +33,7 @@ export const environmentAction = async function (this: any, generatorNamespace: 
     return;
   }
 
-  this.env = Environment.createEnv([], { ...options, command: this });
+  this.env = createEnv({ ...options, command: this });
   await this.env.lookupLocalPackages();
 
   return this.env.execute(generatorNamespace, command.args.splice(1));

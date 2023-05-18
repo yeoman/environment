@@ -3,11 +3,11 @@ import { join } from 'node:path';
 import { flyImport } from 'fly-import';
 import semver from 'semver';
 import { type YeomanNamespace, requireNamespace } from '@yeoman/namespace';
-import Environment from './environment.js';
 import { type LookupOptions } from './generator-lookup.js';
 import YeomanCommand from './util/command.js';
+import EnvironmentBase from './environment-base.js';
 
-class FullEnvironment extends Environment {
+class FullEnvironment extends EnvironmentBase {
   /**
    * Generate a command for the generator and execute.
    *

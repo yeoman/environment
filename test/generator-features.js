@@ -9,7 +9,6 @@ import helpers, { getCreateEnv } from './helpers.js';
 const { commitSharedFsTask } = await mock('../src/commit.ts');
 const { packageManagerInstallTask } = await mock('../src/package-manager.ts');
 const { default: BasicEnvironment } = await import('../src/environment-base.js');
-const { default: Environment } = await import('../src/index.js');
 
 const require = createRequire(import.meta.url);
 const { version } = require('yeoman-generator/package.json');
@@ -162,7 +161,7 @@ describe('environment (generator-features)', () => {
       let runContext;
       before(async () => {
         runContext = helpers
-          .create('custom-install', undefined, { createEnv: Environment.createEnv.bind(Environment) })
+          .create('custom-install', undefined, { createEnv: getCreateEnv(BasicEnvironment) })
           .withOptions({ skipInstall: false })
           .withGenerators([
             [

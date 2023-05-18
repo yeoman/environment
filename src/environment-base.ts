@@ -1,4 +1,3 @@
-import EventEmitter from 'node:events';
 import { createRequire } from 'node:module';
 import { basename, isAbsolute, join, relative, resolve } from 'node:path';
 import process from 'node:process';
@@ -35,13 +34,13 @@ import { type ConflicterOptions } from '@yeoman/conflicter';
 import { defaults, pick } from 'lodash-es';
 import { ComposedStore } from './composed-store.js';
 import Store from './store.js';
+import Environment from './environment.js';
 import type YeomanCommand from './util/command.js';
 import { asNamespace, defaultLookups } from './util/namespace.js';
 import { type LookupOptions, lookupGenerators } from './generator-lookup.js';
 import { UNKNOWN_NAMESPACE, UNKNOWN_RESOLVED, defaultQueues } from './constants.js';
 import { resolveModulePath } from './util/resolve.js';
 import { commitSharedFsTask } from './commit.js';
-// eslint-disable-next-line import/order
 import { packageManagerInstallTask } from './package-manager.js';
 
 const require = createRequire(import.meta.url);
@@ -51,7 +50,7 @@ const ENVIRONMENT_VERSION = require('../package.json').version;
 
 const debug = createdLogger('yeoman:environment');
 
-type EnvironmentOptions = BaseEnvironmentOptions &
+export type EnvironmentOptions = BaseEnvironmentOptions &
   Omit<TerminalAdapterOptions, 'promptModule'> & {
     adapter?: InputOutputAdapter;
     logCwd?: string;
@@ -116,7 +115,7 @@ const getInstantiateOptions = (args?: any, options?: any): InstantiateOptions =>
   return { generatorOptions: options };
 };
 
-export default class EnvironmentBase extends EventEmitter implements BaseEnvironment {
+export default class EnvironmentBase extends Environment implements BaseEnvironment {
   cwd: string;
   adapter: QueuedAdapter;
   sharedFs: MemFs<MemFsEditorFile>;
@@ -137,7 +136,12 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   protected _rootGenerator?: BaseGenerator;
   protected compatibilityMode?: false | 'v4';
 
-  constructor(options: EnvironmentOptions = {}) {
+  constructor(options?: EnvironmentOptions);
+  constructor(options: EnvironmentOptions = {}, adapterCompat?: InputOutputAdapter) {
+    if (adapterCompat) {
+      options.adapter = adapterCompat;
+    }
+
     super();
 
     this.setMaxListeners(100);
@@ -198,6 +202,11 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     this.experimental = experimental || process.argv.includes('--experimental');
 
     this.alias(/^([^:]+)$/, '$1:app');
+
+    this.loadSharedOptions(this.options);
+    if (this.sharedOptions.skipLocalCache === undefined) {
+      this.sharedOptions.skipLocalCache = true;
+    }
   }
 
   async applyTransforms(transformStreams: Transform[], options: ApplyTransformsOptions = {}): Promise<void> {
@@ -546,9 +555,9 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * @param  packagePath - PackagePath to the generator npm package (optional)
    * @return environment - This environment
    */
-  register(filePath: string, meta?: Partial<BaseGeneratorMeta> | undefined): void;
-  register(generator: unknown, meta: BaseGeneratorMeta): void;
-  register(pathOrStub: unknown, meta?: Partial<BaseGeneratorMeta> | BaseGeneratorMeta, ...args: any[]): this {
+  register(filePath: string, meta?: Partial<BaseGeneratorMeta> | undefined): GeneratorMeta;
+  register(generator: unknown, meta: BaseGeneratorMeta): GeneratorMeta;
+  register(pathOrStub: unknown, meta?: Partial<BaseGeneratorMeta> | BaseGeneratorMeta, ...args: any[]): GeneratorMeta {
     if (typeof pathOrStub === 'string') {
       if (typeof meta === 'object') {
         return this.registerGeneratorPath(pathOrStub, meta.namespace, meta.packagePath);
@@ -832,7 +841,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * @param   packagePath - PackagePath to the generator npm package (optional)
    * @return  environment - This environment
    */
-  protected registerGeneratorPath(generatorPath: string, namespace?: string, packagePath?: string): this {
+  protected registerGeneratorPath(generatorPath: string, namespace?: string, packagePath?: string): GeneratorMeta {
     if (typeof generatorPath !== 'string') {
       throw new TypeError('You must provide a generator name to register.');
     }
@@ -850,13 +859,13 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     // Generator is already registered and matches the current namespace.
     const generatorMeta = this.store.getMeta(namespace);
     if (generatorMeta && generatorMeta.resolved === generatorPath) {
-      return this;
+      return generatorMeta;
     }
 
     const meta = this.store.add({ namespace, resolved: generatorPath, packagePath });
 
     debug('Registered %s (%s) on package %s (%s)', namespace, generatorPath, meta.packageNamespace, packagePath);
-    return this;
+    return meta;
   }
 
   /**
@@ -869,7 +878,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * @param  resolved - The file path to the generator
    * @param  packagePath - The generator's package path
    */
-  protected registerStub(Generator: any, namespace: string, resolved = UNKNOWN_RESOLVED, packagePath?: string): this {
+  protected registerStub(Generator: any, namespace: string, resolved = UNKNOWN_RESOLVED, packagePath?: string): GeneratorMeta {
     if (typeof Generator !== 'function' && typeof Generator.createGenerator !== 'function') {
       throw new TypeError('You must provide a stub function to register.');
     }
@@ -878,9 +887,9 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       throw new TypeError('You must provide a namespace to register.');
     }
 
-    this.store.add({ namespace, resolved, packagePath }, Generator);
+    const meta = this.store.add({ namespace, resolved, packagePath }, Generator);
 
     debug('Registered %s (%s) on package (%s)', namespace, resolved, packagePath);
-    return this;
+    return meta;
   }
 }

@@ -11,7 +11,7 @@ import sinon from 'sinon';
 import Generator from 'yeoman-generator';
 import assert from 'yeoman-assert';
 import semver from 'semver';
-import Environment from '../src/index.js';
+import Environment, { createEnv } from '../src/index.js';
 import { resolveModulePath } from '../src/util/resolve.js';
 
 const require = createRequire(import.meta.url);
@@ -662,7 +662,8 @@ describe('Environment', () => {
       this.simplePath = path.join(__dirname, 'fixtures/generator-simple');
       this.extendPath = path.join(__dirname, './fixtures/generator-extend/support');
       assert.equal(this.env.namespaces().length, 0, 'env should be empty');
-      await this.env.register(this.simplePath, 'fixtures:generator-simple', this.simplePath).register(this.extendPath, 'scaffold');
+      this.env.register(this.simplePath, 'fixtures:generator-simple', this.simplePath);
+      this.env.register(this.extendPath, 'scaffold');
     });
 
     it('store registered generators', async function () {
@@ -728,10 +729,9 @@ describe('Environment', () => {
       this.resolvedDummy = sinon.spy();
       this.completeDummy = function () {};
       util.inherits(this.completeDummy, Generator);
-      this.env
-        .registerStub(this.simpleDummy, 'dummy:simple')
-        .registerStub(this.completeDummy, 'dummy:complete')
-        .registerStub(this.resolvedDummy, 'dummy:resolved', 'dummy/path', 'dummy/packagePath');
+      this.env.registerStub(this.simpleDummy, 'dummy:simple');
+      this.env.registerStub(this.completeDummy, 'dummy:complete');
+      this.env.registerStub(this.resolvedDummy, 'dummy:resolved', 'dummy/path', 'dummy/packagePath');
     });
 
     it('register a function under a namespace', async function () {
@@ -943,38 +943,9 @@ describe('Environment', () => {
     });
   });
 
-  describe('.enforceUpdate()', () => {
-    beforeEach(async function () {
-      this.env = new Environment();
-      delete this.env.adapter;
-      delete this.env.runLoop;
-      delete this.env.sharedFs;
-    });
-
-    it('add an adapter', async function () {
-      Environment.enforceUpdate(this.env);
-      assert(this.env.adapter);
-    });
-
-    it('add a runLoop', async function () {
-      Environment.enforceUpdate(this.env);
-      assert(this.env.runLoop);
-    });
-
-    it('add a shared mem-fs instance', async function () {
-      Environment.enforceUpdate(this.env);
-      assert(this.env.sharedFs);
-    });
-
-    it('add a shared fs instance', async function () {
-      Environment.enforceUpdate(this.env);
-      assert(this.env.fs);
-    });
-  });
-
   describe('.createEnv()', () => {
     it('create an environment', () => {
-      const env = Environment.createEnv();
+      const env = createEnv();
       assert(env);
     });
   });

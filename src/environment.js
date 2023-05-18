@@ -1,18 +1,11 @@
+import EventEmitter from 'node:events';
 import path, { isAbsolute } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { QueuedAdapter } from '@yeoman/adapter';
 import { toNamespace } from '@yeoman/namespace';
 import { defaults, pick, uniq } from 'lodash-es';
-import GroupedQueue from 'grouped-queue';
-import { create as createMemFs } from 'mem-fs';
-import { create as createMemFsEditor } from 'mem-fs-editor';
 import createdLogger from 'debug';
-import { flyImport } from 'fly-import';
-import YeomanCommand, { addEnvironmentOptions } from './util/command.js';
 import { findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.js';
-import EnvironmentBase from './environment-base.js';
 import { asNamespace, defaultLookups } from './util/namespace.js';
-import { defaultQueues } from './constants.js';
 
 const debug = createdLogger('yeoman:environment');
 
@@ -38,114 +31,22 @@ function splitArgsFromString(argsString) {
   return result;
 }
 
-export default class Environment extends EnvironmentBase {
-  static get UNKNOWN_NAMESPACE() {
-    return 'unknownnamespace';
-  }
-
-  static get UNKNOWN_RESOLVED() {
-    return 'unknown';
-  }
-
-  static get queues() {
-    return [...defaultQueues];
-  }
-
-  static get lookups() {
-    return [...defaultLookups];
-  }
-
   /**
-   * Make sure the Environment present expected methods if an old version is
-   * passed to a Generator.
-   * @param  {Environment} env
-   * @return {Environment} The updated env
-   */
-  static enforceUpdate(env) {
-    if (!env.adapter) {
-      env.adapter = new QueuedAdapter();
-    }
-
-    if (!env.runLoop) {
-      env.runLoop = new GroupedQueue(Environment.queues, false);
-    }
-
-    if (!env.sharedFs) {
-      env.sharedFs = createMemFs();
-    }
-
-    if (!env.fs) {
-      env.fs = createMemFsEditor(env.sharedFs);
-    }
-
-    return env;
-  }
-
-  /**
-   * Prepare a commander instance for cli support.
+   * @classdesc `Environment` object is responsible of handling the lifecyle and bootstrap
+   * of generators in a specific environment (your app).
    *
-   * @param {Class} GeneratorClass - Generator to create Command
-   * @return {Command} Return a Command instance
-   */
-  static prepareCommand(GeneratorClass, command = new YeomanCommand()) {
-    command = addEnvironmentOptions(command);
-    return Environment.prepareGeneratorCommand(command, GeneratorClass);
-  }
-
-  /**
-   * Prepare a commander instance for cli support.
+   * It provides a high-level API to create and run generators, as well as further
+   * tuning where and how a generator is resolved.
    *
-   * @param {Command} command - Command to be prepared
-   * @param {Class} GeneratorClass - Generator to create Command
-   * @return {Command} return command
-   */
-  static prepareGeneratorCommand(command, GeneratorClass, namespace) {
-    const generator = new GeneratorClass([], { help: true, env: {} });
-    command.registerGenerator(generator);
-
-    command.action(async function () {
-      let rootCommand = this;
-      while (rootCommand.parent) {
-        rootCommand = rootCommand.parent;
-      }
-
-      command.env = await Environment.createEnv(rootCommand.opts());
-
-      rootCommand.emit('yeoman:environment', command.env);
-
-      if (namespace) {
-        await command.env.run([namespace, ...(this.args || [])], this.opts());
-        return command.env;
-      }
-
-      const generator = await command.env.instantiate(GeneratorClass, this.args, this.opts());
-      await command.env.queueGenerator(generator);
-      await command.env.start();
-      return command.env;
-    });
-    return command;
-  }
-
-  /**
-   * Factory method to create an environment instance. Take same parameters as the
-   * Environment constructor.
+   * An environment is created using a list of `arguments` and a Hash of
+   * `options`. Usually, this is the list of arguments you get back from your CLI
+   * options parser.
    *
-   * @deprecated
-   * @param {string[]} [args] - arguments.
-   * @param {object} [options] - Environment options.
-   * @param {Adapter} [adapter] - Terminal adapter.
+   * An optional adapter can be passed to provide interaction in non-CLI environment
+   * (e.g. IDE plugins), otherwise a `QueuedAdapter` is instantiated by default
    *
-   * @return {Environment} a new Environment instance
    */
-  static createEnv(args, options, adapter) {
-    if (args && !Array.isArray(args)) {
-      options = args;
-    }
-
-    options = options || {};
-    return new Environment(options, adapter);
-  }
-
+  export default class Environment extends EventEmitter {
   /**
    * Convert a generators namespace to its name
    *
@@ -174,7 +75,7 @@ export default class Environment extends EnvironmentBase {
         ? { singleResult: true, localOnly: options }
         : { singleResult: !(options && options.multiple), ...options };
 
-    options.filePatterns = options.filePatterns || Environment.lookups.map(prefix => path.join(prefix, '*/index.{js,ts}'));
+    options.filePatterns = options.filePatterns || defaultLookups.map(prefix => path.join(prefix, '*/index.{js,ts}'));
 
     const name = Environment.namespaceToName(namespace);
     options.packagePatterns = options.packagePatterns || toNamespace(name)?.generatorHint;
@@ -186,7 +87,7 @@ export default class Environment extends EnvironmentBase {
     let paths = options.singleResult ? undefined : [];
     moduleLookupSync(options, ({ files, packagePath }) => {
       for (const filename of files) {
-        const fileNS = asNamespace(filename, { lookups: Environment.lookups });
+        const fileNS = asNamespace(filename, { lookups: defaultLookups });
         if (namespace === fileNS || (options.packagePath && namespace === Environment.namespaceToName(fileNS))) {
           // Version 2.6.0 returned pattern instead of modulePath for options.packagePath
           const returnPath = options.packagePath ? packagePath : options.generatorPath ? path.posix.join(filename, '../../') : filename;
@@ -209,48 +110,7 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
-   * @classdesc `Environment` object is responsible of handling the lifecyle and bootstrap
-   * of generators in a specific environment (your app).
-   *
-   * It provides a high-level API to create and run generators, as well as further
-   * tuning where and how a generator is resolved.
-   *
-   * An environment is created using a list of `arguments` and a Hash of
-   * `options`. Usually, this is the list of arguments you get back from your CLI
-   * options parser.
-   *
-   * An optional adapter can be passed to provide interaction in non-CLI environment
-   * (e.g. IDE plugins), otherwise a `QueuedAdapter` is instantiated by default
-   *
-   * @constructor
-   * @implements {import('@yeoman/types').BaseEnvironment}
-   * @mixes env/resolver
-   * @mixes env/composability
-   * @param {String|Array}          args
-   * @param {Object}                opts
-   * @param {Boolean} [opts.experimental]
-   * @param {Object} [opts.sharedOptions]
-   * @param {Console}      [opts.console]
-   * @param {Stream}         [opts.stdin]
-   * @param {Stream}        [opts.stdout]
-   * @param {Stream}        [opts.stderr]
-   * @param {QueuedAdapter} [adapter] - A QueuedAdapter instance or another object
-   *                                     implementing this adapter interface. This is how
-   *                                     you'd interface Yeoman with a GUI or an editor.
-   */
-  constructor(options, adapter) {
-    if (adapter) {
-      options.adapter = adapter;
-    }
-    super(options);
-
-    this.loadSharedOptions(this.options);
-    if (this.sharedOptions.skipLocalCache === undefined) {
-      this.sharedOptions.skipLocalCache = true;
-    }
-  }
-
-  /**
+   * @protected
    * Load options passed to the Generator that should be used by the Environment.
    *
    * @param {Object} options
@@ -262,6 +122,7 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
+   * @protected
    * Load options passed to the Environment that should be forwarded to the Generator.
    *
    * @param {Object} options
@@ -281,6 +142,7 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
+   * @protected
    * Outputs the general help and usage. Optionally, if generators have been
    * registered, the list of available generators is also displayed.
    *
@@ -327,6 +189,7 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
+   * @protected
    * Returns the list of registered namespace.
    * @return {Array}
    */
@@ -335,6 +198,7 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
+   * @protected
    * Returns stored generators meta
    * @return {Object}
    */
@@ -343,6 +207,7 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
+   * @protected
    * Get registered generators names
    *
    * @return {Array}
@@ -352,6 +217,7 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
+   * @protected
    * Get last added path for a namespace
    *
    * @param  {String} - namespace
@@ -368,6 +234,7 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
+   * @protected
    * Get paths for a namespace
    *
    * @param  {String} - namespace
@@ -378,6 +245,7 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
+   * @protected
    * Compose with the generator.
    *
    * @param {String} namespaceOrPath
@@ -403,6 +271,7 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
+   * @protected
    * Tries to locate and run a specific generator. The lookup is done depending
    * on the provided arguments, options and the list of registered generators.
    *
