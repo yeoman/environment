@@ -147,20 +147,6 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
-   * Factory method to create an environment instance. Take same parameters as the
-   * Environment constructor.
-   *
-   * @param {String} version - Version of the Environment
-   * @param {...any} args - Same arguments as {@link Environment}#createEnv.
-   * @return {Environment} a new Environment instance
-   */
-  static async createEnvWithVersion(version, ...args) {
-    const envModule = await flyImport(`yeoman-environment@${version}`);
-    const createEnv = envModule.createEnv ?? envModule.default.createEnv;
-    return createEnv(...args);
-  }
-
-  /**
    * Convert a generators namespace to its name
    *
    * @param  {String} namespace
