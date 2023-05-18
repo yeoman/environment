@@ -12,7 +12,6 @@ import GroupedQueue from 'grouped-queue';
 import { create as createMemFs } from 'mem-fs';
 import { create as createMemFsEditor } from 'mem-fs-editor';
 import createdLogger from 'debug';
-import isScoped from 'is-scoped';
 import { flyImport, FlyRepository } from 'fly-import';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
@@ -53,18 +52,6 @@ function splitArgsFromString(argsString) {
   }
 
   return result;
-}
-
-/**
- * Hint of generator module name
- */
-function getGeneratorHint(namespace) {
-  if (isScoped(namespace)) {
-    const splitName = namespace.split('/');
-    return `${splitName[0]}/generator-${splitName[1]}`;
-  }
-
-  return `generator-${namespace}`;
 }
 
 export default class Environment extends EnvironmentBase {
@@ -232,7 +219,7 @@ export default class Environment extends EnvironmentBase {
     options.filePatterns = options.filePatterns || Environment.lookups.map(prefix => path.join(prefix, '*/index.{js,ts}'));
 
     const name = Environment.namespaceToName(namespace);
-    options.packagePatterns = options.packagePatterns || getGeneratorHint(name);
+    options.packagePatterns = options.packagePatterns || toNamespace(name)?.generatorHint;
 
     options.npmPaths = options.npmPaths || getNpmPaths({ localOnly: options.localOnly, filePaths: false }).reverse();
     options.packagePatterns = options.packagePatterns || 'generator-*';
@@ -560,7 +547,7 @@ export default class Environment extends EnvironmentBase {
    * @return {any}
    */
   getGeneratorMeta(namespace) {
-    const meta = this.store.getMeta(namespace) || this.store.getMeta(this.alias(namespace));
+    const meta = this.store.getMeta(namespace) ?? this.store.getMeta(this.alias(namespace));
     if (!meta) {
       return;
     }
@@ -745,10 +732,8 @@ export default class Environment extends EnvironmentBase {
       }
 
       if (typeof Generator !== 'function') {
-        const generatorHint = namespace ? namespace.generatorHint : getGeneratorHint(namespaceOrPath);
-
-        throw new Error(
-          chalk.red("You don't seem to have a generator with the name “" + namespaceOrPath + '” installed.') +
+        throw new TypeError(
+          chalk.red(`You don't seem to have a generator with the name “${namespace?.generatorHint}” installed.`) +
             '\n' +
             'But help is on the way:\n\n' +
             'You can see available generators via ' +
@@ -757,7 +742,7 @@ export default class Environment extends EnvironmentBase {
             chalk.yellow('http://yeoman.io/generators/') +
             '. \n' +
             'Install them with ' +
-            chalk.yellow(`npm install ${generatorHint}`) +
+            chalk.yellow(`npm install ${namespace?.generatorHint}`) +
             '.\n\n' +
             'To see all your installed generators run ' +
             chalk.yellow('yo --generators') +

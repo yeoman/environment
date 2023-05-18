@@ -419,7 +419,7 @@ describe('Environment', () => {
       return this.env.run('some:unknown:generator').then(
         () => assert.fail(),
         error => {
-          assert.ok(error.message.includes('some:unknown:generator'));
+          expect(error.message).toMatch('“generator-some”');
         },
       );
     });
