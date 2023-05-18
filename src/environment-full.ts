@@ -1,13 +1,163 @@
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
+import type { InputOutputAdapter } from '@yeoman/types';
+import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
 import { flyImport } from 'fly-import';
+import { defaults, pick, uniq } from 'lodash-es';
 import semver from 'semver';
-import { type YeomanNamespace, requireNamespace } from '@yeoman/namespace';
 import { type LookupOptions } from './generator-lookup.js';
 import YeomanCommand from './util/command.js';
-import EnvironmentBase from './environment-base.js';
+import EnvironmentBase, { type EnvironmentOptions } from './environment-base.js';
+import { splitArgsFromString } from './util/util.js';
 
 class FullEnvironment extends EnvironmentBase {
+  constructor(options?: EnvironmentOptions);
+  constructor(options: EnvironmentOptions = {}, adapterCompat?: InputOutputAdapter) {
+    if (adapterCompat) {
+      options.adapter = adapterCompat;
+    }
+
+    super(options);
+
+    this.loadSharedOptions(this.options);
+    if (this.sharedOptions.skipLocalCache === undefined) {
+      this.sharedOptions.skipLocalCache = true;
+    }
+  }
+
+  /**
+   * Load options passed to the Generator that should be used by the Environment.
+   *
+   * @param {Object} options
+   */
+  loadEnvironmentOptions(options: EnvironmentOptions) {
+    const environmentOptions = pick(options, ['skipInstall', 'nodePackageManager']);
+    defaults(this.options, environmentOptions);
+    return environmentOptions;
+  }
+
+  /**
+   * Load options passed to the Environment that should be forwarded to the Generator.
+   *
+   * @param {Object} options
+   */
+  loadSharedOptions(options: EnvironmentOptions) {
+    const optionsToShare = pick(options, [
+      'skipInstall',
+      'forceInstall',
+      'skipCache',
+      'skipLocalCache',
+      'skipParseOptions',
+      'localConfigOnly',
+      'askAnswered',
+    ]);
+    Object.assign(this.sharedOptions, optionsToShare);
+    return optionsToShare;
+  }
+
+  /**
+   * @protected
+   * Outputs the general help and usage. Optionally, if generators have been
+   * registered, the list of available generators is also displayed.
+   *
+   * @param {String} name
+   */
+  help(name = 'init') {
+    const out = [
+      'Usage: :binary: GENERATOR [args] [options]',
+      '',
+      'General options:',
+      "  --help       # Print generator's options and usage",
+      '  -f, --force  # Overwrite files that already exist',
+      '',
+      'Please choose a generator below.',
+      '',
+    ];
+
+    const ns = this.namespaces();
+
+    const groups: Record<string, string[]> = {};
+    for (const namespace of ns) {
+      const base = namespace.split(':')[0];
+
+      if (!groups[base]) {
+        groups[base] = [];
+      }
+
+      groups[base].push(namespace);
+    }
+
+    for (const key of Object.keys(groups).sort()) {
+      const group = groups[key];
+
+      if (group.length > 0) {
+        out.push('', key.charAt(0).toUpperCase() + key.slice(1));
+      }
+
+      for (const ns of groups[key]) {
+        out.push(`  ${ns}`);
+      }
+    }
+
+    return out.join('\n').replace(/:binary:/g, name);
+  }
+
+  /**
+   * @protected
+   * Returns the list of registered namespace.
+   * @return {Array}
+   */
+  namespaces() {
+    return this.store.namespaces();
+  }
+
+  /**
+   * @protected
+   * Returns stored generators meta
+   * @return {Object}
+   */
+  getGeneratorsMeta() {
+    return this.store.getGeneratorsMeta();
+  }
+
+  /**
+   * @protected
+   * Get registered generators names
+   *
+   * @return {Array}
+   */
+  getGeneratorNames() {
+    return uniq(Object.keys(this.getGeneratorsMeta()).map(namespace => toNamespace(namespace)?.packageNamespace));
+  }
+
+  /**
+   * Get last added path for a namespace
+   *
+   * @param  {String} - namespace
+   * @return {String} - path of the package
+   */
+  getPackagePath(namespace: string) {
+    if (namespace.includes(':')) {
+      const generator = this.getGeneratorMeta(namespace);
+      return generator?.packagePath;
+    }
+
+    const packagePaths = this.getPackagePaths(namespace) || [];
+    return packagePaths[0];
+  }
+
+  /**
+   * Get paths for a namespace
+   *
+   * @param - namespace
+   * @return array of paths.
+   */
+  getPackagePaths(namespace: string) {
+    return (
+      this.store.getPackagesPaths()[namespace] || this.store.getPackagesPaths()[requireNamespace(this.alias(namespace)).packageNamespace]
+    );
+  }
+
   /**
    * Generate a command for the generator and execute.
    *
@@ -178,6 +328,48 @@ class FullEnvironment extends EnvironmentBase {
     }
 
     throw new Error(`Error preparing environment for ${missing.map(ns => ns.complete).join(',')}`);
+  }
+
+  /**
+   * Tries to locate and run a specific generator. The lookup is done depending
+   * on the provided arguments, options and the list of registered generators.
+   *
+   * When the environment was unable to resolve a generator, an error is raised.
+   *
+   * @param {String|Array} args
+   * @param {Object}       [options]
+   */
+  async run(args?: string[], options?: any) {
+    args = Array.isArray(args) ? args : splitArgsFromString(args as unknown as string);
+    options = { ...options };
+
+    const name = args.shift();
+    if (!name) {
+      throw new Error('Must provide at least one argument, the generator namespace to invoke.');
+    }
+
+    this.loadEnvironmentOptions(options);
+
+    if (this.experimental && !this.getGeneratorMeta(name)) {
+      try {
+        await this.prepareEnvironment(name);
+      } catch {}
+    }
+
+    const generator = await this.create(name, {
+      generatorArgs: args,
+      generatorOptions: {
+        ...options,
+        initialGenerator: true,
+      },
+    });
+
+    if (options.help) {
+      console.log((generator as any).help());
+      return undefined;
+    }
+
+    return this.runGenerator(generator);
   }
 }
 

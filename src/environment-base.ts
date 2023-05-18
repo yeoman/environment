@@ -1,3 +1,4 @@
+import EventEmitter from 'node:events';
 import { createRequire } from 'node:module';
 import { basename, isAbsolute, join, relative, resolve } from 'node:path';
 import process from 'node:process';
@@ -34,15 +35,15 @@ import { type ConflicterOptions } from '@yeoman/conflicter';
 import { defaults, pick } from 'lodash-es';
 import { ComposedStore } from './composed-store.js';
 import Store from './store.js';
-import Environment from './environment.js';
 import type YeomanCommand from './util/command.js';
 import { asNamespace, defaultLookups } from './util/namespace.js';
 import { type LookupOptions, lookupGenerators } from './generator-lookup.js';
 import { UNKNOWN_NAMESPACE, UNKNOWN_RESOLVED, defaultQueues } from './constants.js';
 import { resolveModulePath } from './util/resolve.js';
 import { commitSharedFsTask } from './commit.js';
-// eslint-disable-next-line import/order
 import { packageManagerInstallTask } from './package-manager.js';
+// eslint-disable-next-line import/order
+import { splitArgsFromString } from './util/util.js';
 
 const require = createRequire(import.meta.url);
 
@@ -60,42 +61,6 @@ export type EnvironmentOptions = BaseEnvironmentOptions &
     arboristRegistry?: string;
     nodePackageManager?: string;
   };
-
-/**
- * Two-step argument splitting function that first splits arguments in quotes,
- * and then splits up the remaining arguments if they are not part of a quote.
- */
-function splitArgsFromString(argsString: string | string[]): string[] {
-  if (Array.isArray(argsString)) {
-    return argsString;
-  }
-
-  let result: string[] = [];
-  if (!argsString) {
-    return result;
-  }
-
-  const quoteSeparatedArgs = argsString.split(/("[^"]*")/).filter(Boolean);
-  for (const arg of quoteSeparatedArgs) {
-    if (arg.includes('"')) {
-      result.push(arg.replace(/"/g, ''));
-    } else {
-      result = result.concat(arg.trim().split(' '));
-    }
-  }
-
-  return result;
-}
-
-const getComposeOptions = (args?: any, options?: any, composeOptions?: any): ComposeOptions => {
-  if (typeof composeOptions === 'object') {
-    composeOptions.generatorArgs = args;
-    composeOptions.generatorOptions = options;
-    return composeOptions;
-  }
-
-  return composeOptions;
-};
 
 const getInstantiateOptions = (args?: any, options?: any): InstantiateOptions => {
   if (Array.isArray(args) || typeof args === 'string') {
@@ -116,7 +81,42 @@ const getInstantiateOptions = (args?: any, options?: any): InstantiateOptions =>
   return { generatorOptions: options };
 };
 
-export default class EnvironmentBase extends Environment implements BaseEnvironment {
+const getComposeOptions = (...varargs: any[]): ComposeOptions => {
+  if (varargs.filter(Boolean).length === 0) return {};
+
+  const [args, options, composeOptions] = varargs;
+  if (typeof args === 'boolean') {
+    return { schedule: args };
+  }
+
+  let generatorArgs;
+  let generatorOptions;
+  if (args !== undefined) {
+    if (typeof args === 'object') {
+      if ('generatorOptions' in args || 'generatorArgs' in args || 'schedule' in args) {
+        return args;
+      }
+
+      generatorOptions = args;
+    } else {
+      generatorArgs = Array.isArray(args) ? args : splitArgsFromString(String(args));
+    }
+  }
+
+  if (typeof options === 'boolean') {
+    return { generatorArgs, generatorOptions, schedule: options };
+  }
+
+  generatorOptions = generatorOptions ?? options;
+
+  if (typeof composeOptions === 'boolean') {
+    return { generatorArgs, generatorOptions, schedule: composeOptions };
+  }
+
+  return composeOptions;
+};
+
+export default class EnvironmentBase extends EventEmitter implements BaseEnvironment {
   cwd: string;
   adapter: QueuedAdapter;
   sharedFs: MemFs<MemFsEditorFile>;
@@ -137,12 +137,7 @@ export default class EnvironmentBase extends Environment implements BaseEnvironm
   protected _rootGenerator?: BaseGenerator;
   protected compatibilityMode?: false | 'v4';
 
-  constructor(options?: EnvironmentOptions);
-  constructor(options: EnvironmentOptions = {}, adapterCompat?: InputOutputAdapter) {
-    if (adapterCompat) {
-      options.adapter = adapterCompat;
-    }
-
+  constructor(options: EnvironmentOptions = {}) {
     super();
 
     this.setMaxListeners(100);
@@ -203,11 +198,6 @@ export default class EnvironmentBase extends Environment implements BaseEnvironm
     this.experimental = experimental || process.argv.includes('--experimental');
 
     this.alias(/^([^:]+)$/, '$1:app');
-
-    this.loadSharedOptions(this.options);
-    if (this.sharedOptions.skipLocalCache === undefined) {
-      this.sharedOptions.skipLocalCache = true;
-    }
   }
 
   async applyTransforms(transformStreams: Transform[], options: ApplyTransformsOptions = {}): Promise<void> {
@@ -381,6 +371,25 @@ export default class EnvironmentBase extends Environment implements BaseEnvironm
     }
 
     return generator as unknown as G;
+  }
+
+  /**
+   * @protected
+   * Compose with the generator.
+   *
+   * @param {String} namespaceOrPath
+   * @return {Generator} The instantiated generator or the singleton instance.
+   */
+  async composeWith<G extends BaseGenerator = BaseGenerator>(
+    generator: string | GetGeneratorConstructor<G>,
+    composeOptions?: ComposeOptions<G>,
+  ): Promise<G>;
+  async composeWith<G extends BaseGenerator = BaseGenerator>(generator: string | GetGeneratorConstructor<G>, ...args: any[]): Promise<G> {
+    const options = getComposeOptions(...args) as ComposeOptions<G>;
+    const { schedule = true, ...instantiateOptions } = options;
+
+    const generatorInstance = await this.create(generator, instantiateOptions);
+    return this.queueGenerator(generatorInstance, { schedule });
   }
 
   /**
