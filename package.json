@@ -22,19 +22,18 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./dist/index.d.js",
       "import": "./dist/index.js"
     },
-    "./cli/*": "./dist/cli/*.js",
-    "./lib/*": "./dist/*.js",
-    "./lib/util/*": "./dist/util/*.js",
-    "./package.json": "./package.json",
-    "./cli": "./dist/cli/index.js"
+    "./package.json": "./package.json"
   },
   "main": "./dist/index.js",
+  "types": "./dist/index.d.js",
   "bin": {
-    "yoe": "dist/cli/index.js"
+    "yoe": "bin/bin.cjs"
   },
   "files": [
+    "bin",
     "dist"
   ],
   "scripts": {

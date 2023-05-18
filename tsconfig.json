@@ -12,9 +12,8 @@
 
     /* Emit */
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,
-    "declaration": false,
-    "sourceMap": true,
-    "allowJs": true,
+    "declaration": true,
+    "sourceMap": false,
 
     /* Interop Constraints */
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,

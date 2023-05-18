@@ -25,6 +25,12 @@
         "import/order": "off",
         "max-nested-callbacks": "off"
       }
+    },
+    {
+      "files": "bin/bin.cjs",
+      "rules": {
+        "unicorn/prefer-top-level-await": "off"
+      }
     }
   ]
 }
