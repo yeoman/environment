@@ -41,6 +41,7 @@ import { type LookupOptions, lookupGenerators } from './generator-lookup.js';
 import { UNKNOWN_NAMESPACE, UNKNOWN_RESOLVED, defaultQueues } from './constants.js';
 import { resolveModulePath } from './util/resolve.js';
 import { commitSharedFsTask } from './commit.js';
+// eslint-disable-next-line import/order
 import { packageManagerInstallTask } from './package-manager.js';
 
 const require = createRequire(import.meta.url);

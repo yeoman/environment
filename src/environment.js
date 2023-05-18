@@ -1,7 +1,7 @@
 import EventEmitter from 'node:events';
 import path, { isAbsolute } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { toNamespace } from '@yeoman/namespace';
+import { requireNamespace, toNamespace } from '@yeoman/namespace';
 import { defaults, pick, uniq } from 'lodash-es';
 import createdLogger from 'debug';
 import { findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.js';
@@ -31,32 +31,22 @@ function splitArgsFromString(argsString) {
   return result;
 }
 
-  /**
-   * @classdesc `Environment` object is responsible of handling the lifecyle and bootstrap
-   * of generators in a specific environment (your app).
-   *
-   * It provides a high-level API to create and run generators, as well as further
-   * tuning where and how a generator is resolved.
-   *
-   * An environment is created using a list of `arguments` and a Hash of
-   * `options`. Usually, this is the list of arguments you get back from your CLI
-   * options parser.
-   *
-   * An optional adapter can be passed to provide interaction in non-CLI environment
-   * (e.g. IDE plugins), otherwise a `QueuedAdapter` is instantiated by default
-   *
-   */
-  export default class Environment extends EventEmitter {
-  /**
-   * Convert a generators namespace to its name
-   *
-   * @param  {String} namespace
-   * @return {String}
-   */
-  static namespaceToName(namespace) {
-    return namespace.split(':')[0];
-  }
-
+/**
+ * @classdesc `Environment` object is responsible of handling the lifecyle and bootstrap
+ * of generators in a specific environment (your app).
+ *
+ * It provides a high-level API to create and run generators, as well as further
+ * tuning where and how a generator is resolved.
+ *
+ * An environment is created using a list of `arguments` and a Hash of
+ * `options`. Usually, this is the list of arguments you get back from your CLI
+ * options parser.
+ *
+ * An optional adapter can be passed to provide interaction in non-CLI environment
+ * (e.g. IDE plugins), otherwise a `QueuedAdapter` is instantiated by default
+ *
+ */
+export default class Environment extends EventEmitter {
   /**
    * Lookup for a specific generator.
    *
@@ -76,9 +66,7 @@ function splitArgsFromString(argsString) {
         : { singleResult: !(options && options.multiple), ...options };
 
     options.filePatterns = options.filePatterns || defaultLookups.map(prefix => path.join(prefix, '*/index.{js,ts}'));
-
-    const name = Environment.namespaceToName(namespace);
-    options.packagePatterns = options.packagePatterns || toNamespace(name)?.generatorHint;
+    options.packagePatterns = options.packagePatterns || toNamespace(namespace)?.generatorHint;
 
     options.npmPaths = options.npmPaths || getNpmPaths({ localOnly: options.localOnly, filePaths: false }).reverse();
     options.packagePatterns = options.packagePatterns || 'generator-*';
@@ -88,7 +76,8 @@ function splitArgsFromString(argsString) {
     moduleLookupSync(options, ({ files, packagePath }) => {
       for (const filename of files) {
         const fileNS = asNamespace(filename, { lookups: defaultLookups });
-        if (namespace === fileNS || (options.packagePath && namespace === Environment.namespaceToName(fileNS))) {
+        const ns = toNamespace(fileNS);
+        if (namespace === fileNS || (options.packagePath && namespace === ns?.packageNamespace)) {
           // Version 2.6.0 returned pattern instead of modulePath for options.packagePath
           const returnPath = options.packagePath ? packagePath : options.generatorPath ? path.posix.join(filename, '../../') : filename;
           if (options.singleResult) {
@@ -213,7 +202,7 @@ function splitArgsFromString(argsString) {
    * @return {Array}
    */
   getGeneratorNames() {
-    return uniq(Object.keys(this.getGeneratorsMeta()).map(namespace => Environment.namespaceToName(namespace)));
+    return uniq(Object.keys(this.getGeneratorsMeta()).map(namespace => toNamespace(namespace)?.packageNamespace));
   }
 
   /**
@@ -241,7 +230,9 @@ function splitArgsFromString(argsString) {
    * @return  {Array} - array of paths.
    */
   getPackagePaths(namespace) {
-    return this.store.getPackagesPaths()[namespace] || this.store.getPackagesPaths()[Environment.namespaceToName(this.alias(namespace))];
+    return (
+      this.store.getPackagesPaths()[namespace] || this.store.getPackagesPaths()[requireNamespace(this.alias(namespace)).packageNamespace]
+    );
   }
 
   /**
