@@ -31,6 +31,8 @@ import { isFilePending } from 'mem-fs-editor/state';
 import { passthrough, pipeline } from '@yeoman/transform';
 import { type YeomanNamespace, toNamespace } from '@yeoman/namespace';
 import chalk from 'chalk';
+import { type ConflicterOptions } from '@yeoman/conflicter';
+import { defaults, pick } from 'lodash-es';
 import { ComposedStore } from './composed-store.js';
 import Store from './store.js';
 import type YeomanCommand from './util/command.js';
@@ -115,6 +117,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   cwd: string;
   adapter: QueuedAdapter;
   sharedFs: MemFs<MemFsEditorFile>;
+  conflicterOptions?: ConflicterOptions;
 
   protected logCwd: string;
   protected readonly options: EnvironmentOptions;
@@ -128,7 +131,8 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   protected sharedOptions: Record<string, any>;
   protected repository: FlyRepository;
   protected experimental: boolean;
-  private readonly _rootGenerator?: BaseGenerator;
+  protected _rootGenerator?: BaseGenerator;
+  protected compatibilityMode?: false | 'v4';
 
   constructor(options: EnvironmentOptions = {}) {
     super();
@@ -409,8 +413,47 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     return ENVIRONMENT_VERSION;
   }
 
-  async queueGenerator<G extends BaseGenerator = BaseGenerator>(generator: G, schedule?: boolean | undefined): Promise<G> {
-    throw new Error('Method not implemented.');
+  /**
+   * Queue generator run (queue itself tasks).
+   *
+   * @param {Generator} generator Generator instance
+   * @param {boolean} [schedule=false] Whether to schedule the generator run.
+   * @return {Generator} The generator or singleton instance.
+   */
+  async queueGenerator<G extends BaseGenerator = BaseGenerator>(generator: G, queueOptions?: { schedule?: boolean }): Promise<G> {
+    const schedule = typeof queueOptions === 'boolean' ? queueOptions : queueOptions?.schedule ?? false;
+    const { added, identifier, generator: composedGenerator } = this.composedStore.addGenerator(generator);
+    if (!added) {
+      debug(`Using existing generator for namespace ${identifier}`);
+      return composedGenerator;
+    }
+
+    this.emit('compose', identifier, generator);
+    this.emit(`compose:${identifier}`, generator);
+
+    const runGenerator = async () => {
+      if (generator.queueTasks) {
+        // Generator > 5
+        this.once('run', () => (generator as any).emit('run'));
+        this.once('end', () => (generator as any).emit('end'));
+        await generator.queueTasks();
+        return;
+      }
+
+      if (!(generator.options as any).forwardErrorToEnvironment) {
+        (generator as any).on('error', (error: any) => this.emit('error', error));
+      }
+
+      (generator as any).promise = (generator as any).run();
+    };
+
+    if (schedule) {
+      this.queueTask('environment:run', async () => runGenerator());
+    } else {
+      await runGenerator();
+    }
+
+    return generator;
   }
 
   /**
@@ -423,7 +466,72 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   }
 
   async runGenerator(generator: BaseGenerator): Promise<void> {
-    throw new Error('Method not implemented.');
+    generator = await this.queueGenerator(generator);
+
+    this.compatibilityMode = generator.queueTasks ? false : 'v4';
+    this._rootGenerator = this._rootGenerator ?? generator;
+
+    return this.start(generator.options);
+  }
+
+  /**
+   * Start Environment queue
+   * @param {Object} options - Conflicter options.
+   */
+  async start(options: any) {
+    return new Promise<void>((resolve, reject) => {
+      this.conflicterOptions = pick(defaults({}, this.options, options), ['force', 'bail', 'ignoreWhitespace', 'dryRun', 'skipYoResolve']);
+      this.conflicterOptions.cwd = this.logCwd;
+
+      (this as any).queueCommit();
+      (this as any).queuePackageManagerInstall();
+
+      /*
+       * Listen to errors and reject if emmited.
+       * Some cases the generator relied at the behavior that the running process
+       * would be killed if an error is thrown to environment.
+       * Make sure to not rely on that behavior.
+       */
+      this.on('error', error => {
+        reject(error);
+        this.adapter.close();
+      });
+
+      this.once('end', () => {
+        resolve();
+        this.adapter.close();
+      });
+
+      /*
+       * For backward compatibility
+       */
+      this.on('generator:reject', error => {
+        this.emit('error', error);
+      });
+
+      /*
+       * For backward compatibility
+       */
+      this.on('generator:resolve', () => {
+        this.emit('end');
+      });
+
+      this.runLoop.on('error', (error: any) => {
+        this.emit('error', error);
+      });
+
+      this.runLoop.on('paused', () => {
+        this.emit('paused');
+      });
+
+      /* If runLoop has ended, the environment has ended too. */
+      this.runLoop.once('end', () => {
+        this.emit('end');
+      });
+
+      this.emit('run');
+      this.runLoop.start();
+    });
   }
 
   register(filePath: string, meta?: Partial<BaseGeneratorMeta> | undefined): void;

@@ -511,49 +511,6 @@ export default class Environment extends EnvironmentBase {
   }
 
   /**
-   * Queue generator run (queue itself tasks).
-   *
-   * @param {Generator} generator Generator instance
-   * @param {boolean} [schedule=false] Whether to schedule the generator run.
-   * @return {Generator} The generator or singleton instance.
-   */
-  async queueGenerator(generator, queueOptions) {
-    const schedule = typeof queueOptions === 'boolean' ? queueOptions : queueOptions?.schedule ?? false;
-    const { added, identifier, generator: composedGenerator } = this.composedStore.addGenerator(generator);
-    if (!added) {
-      debug(`Using existing generator for namespace ${identifier}`);
-      return composedGenerator;
-    }
-
-    this.emit('compose', identifier, generator);
-    this.emit(`compose:${identifier}`, generator);
-
-    const runGenerator = async () => {
-      if (generator.queueTasks) {
-        // Generator > 5
-        this.once('run', () => generator.emit('run'));
-        this.once('end', () => generator.emit('end'));
-        await generator.queueTasks();
-        return;
-      }
-
-      if (!generator.options.forwardErrorToEnvironment) {
-        generator.on('error', error => this.emit('error', error));
-      }
-
-      generator.promise = generator.run();
-    };
-
-    if (schedule) {
-      this.queueTask('environment:run', () => runGenerator());
-    } else {
-      await runGenerator();
-    }
-
-    return generator;
-  }
-
-  /**
    * Tries to locate and run a specific generator. The lookup is done depending
    * on the provided arguments, options and the list of registered generators.
    *
@@ -573,19 +530,6 @@ export default class Environment extends EnvironmentBase {
 
     this.loadEnvironmentOptions(options);
 
-    const instantiateAndRun = async () => {
-      const generator = await this.create(name, args, {
-        ...options,
-        initialGenerator: true,
-      });
-      if (options.help) {
-        console.log(generator.help());
-        return undefined;
-      }
-
-      return this.runGenerator(generator);
-    };
-
     if (this.experimental && !this.get(name)) {
       debug(`Generator ${name} was not found, trying to install it`);
       try {
@@ -593,88 +537,20 @@ export default class Environment extends EnvironmentBase {
       } catch {}
     }
 
-    return instantiateAndRun();
-  }
-
-  /**
-   * Start Environment queue
-   * @param {Object} options - Conflicter options.
-   */
-  start(options) {
-    return new Promise((resolve, reject) => {
-      if (this.conflicter === undefined) {
-        this.conflicterOptions = pick(defaults({}, this.options, options), [
-          'force',
-          'bail',
-          'ignoreWhitespace',
-          'dryRun',
-          'skipYoResolve',
-          'logCwd',
-        ]);
-        this.conflicterOptions.cwd = this.conflicterOptions.logCwd;
-
-        this.queueCommit();
-        this.queuePackageManagerInstall();
-      }
-
-      /*
-       * Listen to errors and reject if emmited.
-       * Some cases the generator relied at the behavior that the running process
-       * would be killed if an error is thrown to environment.
-       * Make sure to not rely on that behavior.
-       */
-      this.on('error', error => {
-        reject(error);
-      });
-
-      /*
-       * For backward compatibility
-       */
-      this.on('generator:reject', error => {
-        reject(error);
-      });
-
-      this.on('generator:resolve', error => {
-        resolve(error);
-      });
-
-      this.runLoop.on('error', error => {
-        this.emit('error', error);
-        this.adapter.close();
-      });
-
-      this.runLoop.on('paused', () => {
-        this.emit('paused');
-      });
-
-      this.once('end', () => {
-        resolve();
-      });
-
-      /* If runLoop has ended, the environment has ended too. */
-      this.runLoop.once('end', () => {
-        this.emit('end');
-      });
-
-      this.emit('run');
-      this.runLoop.start();
+    const generator = await this.create(name, {
+      generatorArgs: args,
+      generatorOptions: {
+        ...options,
+        initialGenerator: true,
+      },
     });
-  }
 
-  /**
-   * Convenience method to run the generator with callbackWrapper.
-   * See https://github.com/yeoman/environment/pull/101
-   *
-   * @param {Object}       generator
-   */
-  async runGenerator(generator) {
-    generator = await generator;
-    generator = await this.queueGenerator(generator);
+    if (options.help) {
+      console.log(generator.help());
+      return undefined;
+    }
 
-    this.compatibilityMode = generator.queueTasks ? false : 'v4';
-    this._rootGenerator = this._rootGenerator || generator;
-
-    return this.start(generator.options);
+    return this.runGenerator(generator);
   }
 
   /**
