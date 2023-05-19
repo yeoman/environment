@@ -499,66 +499,6 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   }
 
   /**
-   * Start Environment queue
-   * @param {Object} options - Conflicter options.
-   */
-  async start(options: any) {
-    return new Promise<void>((resolve, reject) => {
-      this.conflicterOptions = pick(defaults({}, this.options, options), ['force', 'bail', 'ignoreWhitespace', 'dryRun', 'skipYoResolve']);
-      this.conflicterOptions.cwd = this.logCwd;
-
-      this.queueCommit();
-      this.queuePackageManagerInstall();
-
-      /*
-       * Listen to errors and reject if emmited.
-       * Some cases the generator relied at the behavior that the running process
-       * would be killed if an error is thrown to environment.
-       * Make sure to not rely on that behavior.
-       */
-      this.on('error', error => {
-        reject(error);
-        this.adapter.close();
-      });
-
-      this.once('end', () => {
-        resolve();
-        this.adapter.close();
-      });
-
-      /*
-       * For backward compatibility
-       */
-      this.on('generator:reject', error => {
-        this.emit('error', error);
-      });
-
-      /*
-       * For backward compatibility
-       */
-      this.on('generator:resolve', () => {
-        this.emit('end');
-      });
-
-      this.runLoop.on('error', (error: any) => {
-        this.emit('error', error);
-      });
-
-      this.runLoop.on('paused', () => {
-        this.emit('paused');
-      });
-
-      /* If runLoop has ended, the environment has ended too. */
-      this.runLoop.once('end', () => {
-        this.emit('end');
-      });
-
-      this.emit('run');
-      this.runLoop.start();
-    });
-  }
-
-  /**
    * Registers a specific `generator` to this environment. This generator is stored under
    * provided namespace, or a default namespace format if none if available.
    *
@@ -785,6 +725,66 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
 
       return resolved.replace(alias.match, alias.value);
     }, match);
+  }
+
+  /**
+   * Start Environment queue
+   * @param {Object} options - Conflicter options.
+   */
+  protected async start(options: any) {
+    return new Promise<void>((resolve, reject) => {
+      this.conflicterOptions = pick(defaults({}, this.options, options), ['force', 'bail', 'ignoreWhitespace', 'dryRun', 'skipYoResolve']);
+      this.conflicterOptions.cwd = this.logCwd;
+
+      this.queueCommit();
+      this.queuePackageManagerInstall();
+
+      /*
+       * Listen to errors and reject if emmited.
+       * Some cases the generator relied at the behavior that the running process
+       * would be killed if an error is thrown to environment.
+       * Make sure to not rely on that behavior.
+       */
+      this.on('error', error => {
+        reject(error);
+        this.adapter.close();
+      });
+
+      this.once('end', () => {
+        resolve();
+        this.adapter.close();
+      });
+
+      /*
+       * For backward compatibility
+       */
+      this.on('generator:reject', error => {
+        this.emit('error', error);
+      });
+
+      /*
+       * For backward compatibility
+       */
+      this.on('generator:resolve', () => {
+        this.emit('end');
+      });
+
+      this.runLoop.on('error', (error: any) => {
+        this.emit('error', error);
+      });
+
+      this.runLoop.on('paused', () => {
+        this.emit('paused');
+      });
+
+      /* If runLoop has ended, the environment has ended too. */
+      this.runLoop.once('end', () => {
+        this.emit('end');
+      });
+
+      this.emit('run');
+      this.runLoop.start();
+    });
   }
 
   /**
