@@ -115,7 +115,7 @@ const getComposeOptions = (...varargs: any[]): ComposeOptions => {
     return { generatorArgs, generatorOptions, schedule: composeOptions };
   }
 
-  return composeOptions;
+  return {};
 };
 
 export default class EnvironmentBase extends EventEmitter implements BaseEnvironment {
