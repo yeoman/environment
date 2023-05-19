@@ -1,11 +1,13 @@
 import { requireNamespace } from '@yeoman/namespace';
+import type { BaseGeneratorMeta } from '@yeoman/types';
 import { groupBy } from 'lodash-es';
 import createLogger from 'debug';
-import Environment, { createEnv } from '../index.js';
+import { createEnv } from '../index.js';
+import type YeomanCommand from '../util/command.js';
 
 const debug = createLogger('yeoman:yoe');
 
-export const printGroupedGenerator = (generators: any) => {
+export const printGroupedGenerator = (generators: BaseGeneratorMeta[]) => {
   const grouped = groupBy(generators, 'packagePath');
   for (const [packagePath, group] of Object.entries(grouped)) {
     const namespace = requireNamespace(group[0].namespace);
@@ -27,14 +29,15 @@ export const printGroupedGenerator = (generators: any) => {
  * @param {*} command
  * @returns
  */
-export const environmentAction = async function (this: any, generatorNamespace: string, options: any, command: any) {
+export const environmentAction = async function (this: YeomanCommand, generatorNamespace: string, options: any, command: any) {
   debug('Handling operands %o', generatorNamespace);
   if (!generatorNamespace) {
     return;
   }
 
-  this.env = createEnv({ ...options, command: this });
-  await this.env.lookupLocalPackages();
+  const env = createEnv({ ...options, command: this });
+  this.env = env;
+  await env.lookupLocalPackages();
 
-  return this.env.execute(generatorNamespace, command.args.splice(1));
+  return env.execute(generatorNamespace, command.args.splice(1));
 };

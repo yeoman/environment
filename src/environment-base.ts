@@ -2,7 +2,6 @@ import EventEmitter from 'node:events';
 import { createRequire } from 'node:module';
 import { basename, isAbsolute, join, relative, resolve } from 'node:path';
 import process from 'node:process';
-import { type Transform } from 'node:stream';
 import { realpathSync } from 'node:fs';
 import { QueuedAdapter, type TerminalAdapterOptions } from '@yeoman/adapter';
 import type {
@@ -28,7 +27,7 @@ import createdLogger from 'debug';
 import GroupedQueue from 'grouped-queue';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
-import { passthrough, pipeline } from '@yeoman/transform';
+import { passthrough, pipelineFile, type FilePipelineTransform } from '@yeoman/transform';
 import { type YeomanNamespace, toNamespace } from '@yeoman/namespace';
 import chalk from 'chalk';
 import { type ConflicterOptions } from '@yeoman/conflicter';
@@ -202,7 +201,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     this.alias(/^([^:]+)$/, '$1:app');
   }
 
-  async applyTransforms(transformStreams: Transform[], options: ApplyTransformsOptions = {}): Promise<void> {
+  async applyTransforms(transformStreams: FilePipelineTransform[], options: ApplyTransformsOptions = {}): Promise<void> {
     const {
       streamOptions = { filter: file => isFilePending(file) },
       stream = this.sharedFs.stream(streamOptions),
@@ -215,9 +214,9 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
 
     await this.adapter.progress(
       async ({ step }) => {
-        await pipeline(
-          stream as any,
-          ...(transformStreams as any[]),
+        await pipelineFile(
+          stream,
+          ...transformStreams,
           passthrough(file => {
             step('Completed', relative(this.logCwd, file.path));
           }),
@@ -458,14 +457,14 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     const runGenerator = async () => {
       if (generator.queueTasks) {
         // Generator > 5
-        this.once('run', () => (generator as any).emit('run'));
-        this.once('end', () => (generator as any).emit('end'));
+        this.once('run', () => generator.emit('run'));
+        this.once('end', () => generator.emit('end'));
         await generator.queueTasks();
         return;
       }
 
       if (!(generator.options as any).forwardErrorToEnvironment) {
-        (generator as any).on('error', (error: any) => this.emit('error', error));
+        generator.on('error', (error: any) => this.emit('error', error));
       }
 
       (generator as any).promise = (generator as any).run();
@@ -594,14 +593,14 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
 
     const generators: LookupGeneratorMeta[] = [];
     await lookupGenerators(options, ({ packagePath, filePath, lookups }) => {
-      try {
-        let repositoryPath = join(packagePath, '..');
-        if (basename(repositoryPath).startsWith('@')) {
-          // Scoped package
-          repositoryPath = join(repositoryPath, '..');
-        }
+      let repositoryPath = join(packagePath, '..');
+      if (basename(repositoryPath).startsWith('@')) {
+        // Scoped package
+        repositoryPath = join(repositoryPath, '..');
+      }
 
-        let namespace = asNamespace(relative(repositoryPath, filePath), { lookups });
+      let namespace = asNamespace(relative(repositoryPath, filePath), { lookups });
+      try {
         const resolved = realpathSync(filePath);
         if (!namespace) {
           namespace = asNamespace(resolved, { lookups });
@@ -611,12 +610,10 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
           namespace = `@${registerToScope}/${namespace}`;
         }
 
-        this.store.add({ namespace, packagePath, resolved });
-        const meta = this.getGeneratorMeta(namespace);
+        const meta = this.store.add({ namespace, packagePath, resolved });
         if (meta) {
           generators.push({
             ...meta,
-            generatorPath: meta.resolved,
             registered: true,
           });
           return Boolean(options?.singleResult);
@@ -626,11 +623,11 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       }
 
       generators.push({
-        generatorPath: filePath,
         resolved: filePath,
+        namespace,
         packagePath,
         registered: false,
-      } as any);
+      });
 
       return false;
     });

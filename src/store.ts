@@ -28,7 +28,7 @@ export default class Store {
    * @param meta
    * @param generator - A generator module or a module path
    */
-  add(meta: BaseGeneratorMeta, Generator?: unknown): GeneratorMeta {
+  add<M extends BaseGeneratorMeta>(meta: M, Generator?: unknown): GeneratorMeta & M {
     if (typeof meta.resolved === 'string') {
       meta.resolved = extname(meta.resolved) ? join(meta.resolved) : join(meta.resolved, 'index.js');
     }

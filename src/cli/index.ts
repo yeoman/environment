@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import process from 'node:process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { type RegisteredLookupGeneratorMeta } from '@yeoman/types';
 import YeomanCommand, { addEnvironmentOptions } from '../util/command.js';
 import { createEnv } from '../index.js';
 import { printGroupedGenerator, environmentAction } from './utils.js';
@@ -29,8 +30,7 @@ program
   .description('Find installed generators')
   .action(async () => {
     const env = createEnv();
-    const generators = await env.lookup();
-    printGroupedGenerator(generators);
+    printGroupedGenerator(await env.lookup());
   });
 
 program
