@@ -285,15 +285,6 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   async create<G extends BaseGenerator = BaseGenerator>(namespaceOrPath: string | GetGeneratorConstructor<G>, ...args: any[]): Promise<G> {
     let constructor;
     const namespace = typeof namespaceOrPath === 'string' ? toNamespace(namespaceOrPath) : undefined;
-    if (typeof namespaceOrPath === 'string') {
-      constructor = await this.get(namespaceOrPath);
-      if (namespace && !constructor) {
-        // Await this.lookupLocalNamespaces(namespace);
-        // constructor = await this.get(namespace);
-      }
-    } else {
-      constructor = namespaceOrPath;
-    }
 
     const checkGenerator = (Generator: any) => {
       const generatorNamespace = Generator?.namespace;
@@ -335,6 +326,20 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
 
       return Generator;
     };
+
+    if (typeof namespaceOrPath !== 'string') {
+      return this.instantiate(checkGenerator(namespaceOrPath), ...args);
+    }
+
+    if (typeof namespaceOrPath === 'string') {
+      constructor = await this.get(namespaceOrPath);
+      if (namespace && !constructor) {
+        // Await this.lookupLocalNamespaces(namespace);
+        // constructor = await this.get(namespace);
+      }
+    } else {
+      constructor = namespaceOrPath;
+    }
 
     return this.instantiate(checkGenerator(constructor), ...args);
   }
