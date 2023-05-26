@@ -117,6 +117,16 @@ const getComposeOptions = (...varargs: any[]): ComposeOptions => {
   return {};
 };
 
+/**
+ * Copy and remove null and undefined values
+ * @param object
+ * @returns
+ */
+
+export function removePropertiesWithNullishValues(object: Record<string, any>): Record<string, any> {
+  return Object.fromEntries(Object.entries(object).filter(([_key, value]) => value !== undefined && value !== null));
+}
+
 export default class EnvironmentBase extends EventEmitter implements BaseEnvironment {
   cwd: string;
   adapter: QueuedAdapter;
@@ -734,6 +744,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    */
   protected async start(options: any) {
     return new Promise<void>((resolve, reject) => {
+      Object.assign(this.options, removePropertiesWithNullishValues(pick(options, ['skipInstall', 'nodePackageManager'])));
       this.conflicterOptions = pick(defaults({}, this.options, options), ['force', 'bail', 'ignoreWhitespace', 'dryRun', 'skipYoResolve']);
       this.conflicterOptions.cwd = this.logCwd;
 
