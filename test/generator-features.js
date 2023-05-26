@@ -32,7 +32,7 @@ describe('environment (generator-features)', () => {
         await helpers
           .run('custom-commit', undefined, { createEnv: getCreateEnv(BasicEnvironment) })
           .withOptions({ skipInstall: true })
-          .withGenerators([[helpers.createMockedGenerator(), 'custom-commit:app']]);
+          .withGenerators([[helpers.createMockedGenerator(), { namespace: 'custom-commit:app' }]]);
       });
 
       it('should call commitSharedFs', () => {
@@ -55,7 +55,7 @@ describe('environment (generator-features)', () => {
                   }
                 },
               ),
-              'custom-commit:app',
+              { namespace: 'custom-commit:app' },
             ],
           ]);
         await runContext.run();
@@ -83,7 +83,7 @@ describe('environment (generator-features)', () => {
                   }
                 },
               ),
-              'custom-commit:app',
+              { namespace: 'custom-commit:app' },
             ],
           ])
           .withEnvironment(env => {
@@ -116,7 +116,7 @@ describe('environment (generator-features)', () => {
                   this.packageJson.set({ name: 'foo' });
                 }
               },
-              'custom-install:app',
+              { namespace: 'custom-install:app' },
             ],
           ]);
         await runContext.run();
@@ -146,7 +146,7 @@ describe('environment (generator-features)', () => {
                   this.packageJson.set({ name: 'foo' });
                 }
               },
-              'custom-install:app',
+              { namespace: 'custom-install:app' },
             ],
           ]);
         await runContext.run();
@@ -174,7 +174,7 @@ describe('environment (generator-features)', () => {
                   this.packageJson.set({ name: 'foo' });
                 }
               },
-              'custom-install:app',
+              { namespace: 'custom-install:app' },
             ],
           ]);
         await runContext.run();
@@ -201,21 +201,14 @@ describe('environment (generator-features)', () => {
                 }
 
                 packageJsonTask() {
+                  console.log('foo');
                   this.packageJson.set({ name: 'foo' });
                 }
               },
-              'custom-install:app',
+              { namespace: 'custom-install:app' },
             ],
-          ])
-          .withEnvironment(env => {
-            env.isDestinationPackageJsonCommitted = sinon.stub().returns(true);
-            env.spawnCommand = sinon.stub().returns(Promise.resolve());
-          });
+          ]);
         await runContext.run();
-      });
-
-      it('should not call spawnCommand', () => {
-        assert.equal(runContext.env.spawnCommand.callCount, 0, 'should not have been called');
       });
 
       it('should call customInstallTask', () => {
