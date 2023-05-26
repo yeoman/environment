@@ -134,7 +134,6 @@ describe('environment (command)', () => {
           const command = await prepareCommand({
             resolved: require.resolve('./fixtures/generator-commands/generators/arguments/index.js'),
           });
-          console.log('beforeEach', command);
           await command.parseAsync(['node', 'yo', 'bar']);
 
           env = command.env;
