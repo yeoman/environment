@@ -27,7 +27,7 @@ import createdLogger from 'debug';
 import GroupedQueue from 'grouped-queue';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
-import { passthrough, filePipeline, type FilePipelineTransform } from '@yeoman/transform';
+import { transform, filePipeline, type FilePipelineTransform } from '@yeoman/transform';
 import { type YeomanNamespace, toNamespace } from '@yeoman/namespace';
 import chalk from 'chalk';
 import { type ConflicterOptions } from '@yeoman/conflicter';
@@ -225,9 +225,10 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     await this.adapter.progress(
       async ({ step }) => {
         await filePipeline(stream, [
-          ...transformStreams,
-          passthrough(file => {
+          ...(transformStreams as any),
+          transform(file => {
             step('Completed', relative(this.logCwd, file.path));
+            return undefined;
           }),
         ]);
       },
