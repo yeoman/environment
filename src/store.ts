@@ -1,10 +1,12 @@
 import { pathToFileURL } from 'node:url';
 import { extname, join } from 'node:path';
+import { createRequire } from 'node:module';
 import { toNamespace } from '@yeoman/namespace';
 import type { BaseEnvironment, GetGeneratorConstructor, GeneratorMeta, BaseGeneratorMeta } from '@yeoman/types';
 import createDebug from 'debug';
 
 const debug = createDebug('yeoman:environment:store');
+const require = createRequire(import.meta.url);
 
 /**
  * The Generator store
@@ -30,7 +32,17 @@ export default class Store {
    */
   add<M extends BaseGeneratorMeta>(meta: M, Generator?: unknown): GeneratorMeta & M {
     if (typeof meta.resolved === 'string') {
-      meta.resolved = extname(meta.resolved) ? join(meta.resolved) : join(meta.resolved, 'index.js');
+      if (extname(meta.resolved)) {
+        meta.resolved = join(meta.resolved);
+      } else {
+        try {
+          // Resolve if meta.resolved is a package path.
+          meta.resolved = require.resolve(meta.resolved);
+        } catch {
+          // Import must be a file, append index.js to directories
+          meta.resolved = join(meta.resolved, 'index.js');
+        }
+      }
     }
 
     if (meta.packagePath) {
