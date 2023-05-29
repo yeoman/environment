@@ -1,7 +1,7 @@
 const assert = require('assert');
 const path = require('path');
 const sinon = require('sinon');
-const {pipeline, passthrough} = require('p-transform');
+const {passthrough} = require('p-transform');
 const {
   fileIsModified,
   getConflicterStatusForFile,
@@ -9,6 +9,10 @@ const {
   createYoRcTransform,
   createConflicterStatusTransform
 } = require('yeoman-environment/transform');
+const readableStream = require('readable-stream');
+const {Readable} = require('stream');
+
+const {pipeline} = readableStream.promises;
 
 describe('Transform stream', () => {
   let unmodifiedFile;
@@ -51,11 +55,7 @@ describe('Transform stream', () => {
     sinonTransformPre = sinon.stub().callsFake(() => {});
     sinonTransformPost = sinon.stub().callsFake(() => {});
 
-    stream = passthrough();
-    for (const file of files) {
-      stream.write(file);
-    }
-    stream.end();
+    stream = Readable.from(files);
   });
 
   describe('fileIsModified()', () => {
