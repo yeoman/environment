@@ -9,10 +9,10 @@ const {
   createYoRcTransform,
   createConflicterStatusTransform
 } = require('yeoman-environment/transform');
-const readableStream = require('readable-stream');
+const {Stream} = require('readable-stream');
 const {Readable} = require('stream');
 
-const {pipeline} = readableStream.promises;
+const {pipeline} = Stream.promises;
 
 describe('Transform stream', () => {
   let unmodifiedFile;
