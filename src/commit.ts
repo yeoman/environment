@@ -1,4 +1,4 @@
-import type { PassThrough } from 'node:stream';
+import type { PipelineSource } from 'node:stream';
 import type { InputOutputAdapter } from '@yeoman/types';
 import { type ConflicterOptions, createConflicterTransform, createYoResolveTransform, forceYoFiles } from '@yeoman/conflicter';
 import type { Store } from 'mem-fs';
@@ -22,7 +22,7 @@ export const commitSharedFsTask = ({
   adapter: InputOutputAdapter;
   conflicterOptions?: ConflicterOptions;
   sharedFs: Store<MemFsEditorFile>;
-  stream?: PassThrough;
+  stream?: PipelineSource<any>;
 }) => {
   const fs = createMemFsEditor(sharedFs);
   stream = stream ?? fs.store.stream({ filter: file => isFilePending(file) });
