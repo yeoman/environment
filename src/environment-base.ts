@@ -746,6 +746,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   protected async start(options: any) {
     return new Promise<void>((resolve, reject) => {
       Object.assign(this.options, removePropertiesWithNullishValues(pick(options, ['skipInstall', 'nodePackageManager'])));
+      this.logCwd = options.logCwd ?? this.logCwd;
       this.conflicterOptions = pick(defaults({}, this.options, options), ['force', 'bail', 'ignoreWhitespace', 'dryRun', 'skipYoResolve']);
       this.conflicterOptions.cwd = this.logCwd;
 
