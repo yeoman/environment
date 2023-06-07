@@ -162,11 +162,11 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       arboristRegistry,
       sharedOptions = {},
       experimental,
-      console,
+      console: adapterConsole,
       stdin,
       stderr,
       stdout,
-      adapter = new QueuedAdapter({ console, stdin, stdout, stderr }),
+      adapter = new QueuedAdapter({ console: adapterConsole, stdin, stdout, stderr }),
       ...remainingOptions
     } = options;
 
