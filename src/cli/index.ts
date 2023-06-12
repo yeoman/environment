@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import process from 'node:process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { type RegisteredLookupGeneratorMeta } from '@yeoman/types';
 import YeomanCommand, { addEnvironmentOptions } from '../util/command.js';
 import { createEnv } from '../index.js';
 import { printGroupedGenerator, environmentAction } from './utils.js';

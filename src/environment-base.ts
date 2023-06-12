@@ -761,6 +761,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
        */
       this.on('error', error => {
         reject(error);
+        this.runLoop.pause();
         this.adapter.close();
       });
 
