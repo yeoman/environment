@@ -1,7 +1,6 @@
 import { parse } from 'node:path';
 import slash from 'slash';
-import { findLast } from 'lodash-es';
-import escapeStringRegexp from 'escape-string-regexp';
+import { findLast, escapeRegExp } from 'lodash-es';
 
 type AsNamespaceOptions = {
   lookups?: string[];
@@ -56,7 +55,7 @@ export const asNamespace = (filepath: string, { lookups = defaultLookups }: AsNa
   // If `ns` contains a lookup dir in its path, remove it.
   for (const lookup of nsLookups) {
     // Only match full directory (begin with leading slash or start of input, end with trailing slash)
-    ns = ns.replace(new RegExp(`(?:/|^)${escapeStringRegexp(lookup)}(?=/)`, 'g'), '');
+    ns = ns.replace(new RegExp(`(?:/|^)${escapeRegExp(lookup)}(?=/)`, 'g'), '');
   }
 
   const folders = ns.split('/');

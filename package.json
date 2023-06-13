@@ -65,21 +65,18 @@
     "chalk": "^5.2.0",
     "commander": "^10.0.1",
     "debug": "^4.3.4",
-    "escape-string-regexp": "^5.0.0",
     "execa": "^7.1.1",
-    "fly-import": "^0.2.0",
+    "fly-import": "^0.3.0",
     "globby": "^13.1.4",
     "grouped-queue": "^2.0.0",
     "locate-path": "^7.2.0",
     "lodash-es": "^4.17.21",
-    "log-symbols": "^5.1.0",
     "mem-fs": "^3.0.0",
     "mem-fs-editor": "^10.0.1",
-    "npmlog": "^7.0.1",
     "preferred-pm": "^3.0.3",
     "semver": "^7.5.0",
     "slash": "^5.0.1",
-    "untildify": "^4.0.0"
+    "untildify": "^5.0.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.8",
@@ -102,7 +99,7 @@
     "xo": "0.54.2",
     "yeoman-assert": "^3.1.1",
     "yeoman-generator": "^5.9.0",
-    "yeoman-test": "^8.0.0-rc.0"
+    "yeoman-test": "^8.0.0-rc.1"
   },
   "peerDependencies": {
     "@yeoman/types": "^1.0.1",
