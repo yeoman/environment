@@ -1,6 +1,9 @@
 import crypto from 'node:crypto';
 import { toNamespace } from '@yeoman/namespace';
 import type { Logger, BaseGenerator } from '@yeoman/types';
+import createdLogger from 'debug';
+
+const debug = createdLogger('yeoman:environment:composed-store');
 
 type UniqueFeatureType = 'customCommitTask' | 'customInstallTask';
 const uniqueFeatureValues: UniqueFeatureType[] = ['customCommitTask', 'customInstallTask'];
@@ -51,7 +54,7 @@ export class ComposedStore {
     const generatorRoot = generator.destinationRoot();
     const uniqueByMap = uniqueGlobally ? this.uniqueGloballyMap : this.getUniqueByPathMap(generatorRoot);
     if (uniqueByMap.has(uniqueBy)) {
-      return { uniqueBy, added: false, generator: uniqueByMap.get(uniqueBy) };
+      return { uniqueBy, identifier, added: false, generator: uniqueByMap.get(uniqueBy) };
     }
 
     uniqueByMap.set(uniqueBy, generator);
@@ -61,6 +64,7 @@ export class ComposedStore {
       if (feature) {
         const existingFeature = this.uniqueFeatures.get(feature);
         if (typeof existingFeature !== 'function') {
+          debug(`Feature ${featureName} provided by ${uniqueBy}`);
           this.uniqueFeatures.set(featureName, feature);
         } else if (typeof feature === 'function') {
           this.log?.info?.(`Multiple ${featureName} tasks found. Using the first.`);

@@ -1,4 +1,4 @@
-import { dirname, join, resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 import createdLogger from 'debug';
 import preferredPm from 'preferred-pm';
 import { execa } from 'execa';
@@ -36,6 +36,7 @@ export async function packageManagerInstallTask({
   nodePackageManager,
   skipInstall,
 }: PackageManagerInstallTaskOptions) {
+  debug('Running packageManagerInstallTask');
   packageJsonLocation = resolve(packageJsonLocation);
   /**
    * @private
