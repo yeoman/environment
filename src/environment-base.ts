@@ -759,13 +759,15 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
        * would be killed if an error is thrown to environment.
        * Make sure to not rely on that behavior.
        */
-      this.on('error', error => {
-        reject(error);
+      this.on('error', async error => {
         this.runLoop.pause();
+        await this.adapter.onIdle?.();
+        reject(error);
         this.adapter.close();
       });
 
-      this.once('end', () => {
+      this.once('end', async () => {
+        await this.adapter.onIdle?.();
         resolve();
         this.adapter.close();
       });
@@ -811,15 +813,16 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       this.queueTask(
         'environment:conflicts',
         async () => {
+          debug('Running conflicts');
+
           const { customCommitTask = () => commitSharedFsTask(this) } = this.composedStore;
-          if (typeof customCommitTask !== 'function') {
-            // There is a custom commit task or just disabled
-            return;
+          if (typeof customCommitTask === 'function') {
+            await customCommitTask();
+          } else {
+            debug('Ignoring commit, custom commit was provided');
           }
 
-          await customCommitTask();
-
-          debug('Adding queueCommit event listener');
+          debug('Adding queueCommit listener');
           this.sharedFs.once('change', queueCommit);
         },
         {
@@ -853,6 +856,10 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
           skipInstall,
           nodePackageManager,
           customInstallTask,
+        });
+
+        memFs.once('change', file => {
+          if (file === join(this.cwd, 'package.json')) this.queuePackageManagerInstall();
         });
       },
       { once: 'package manager install' },
