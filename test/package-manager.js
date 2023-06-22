@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import { esmocha, expect, resetAllMocks } from 'esmocha';
 
 const { execa } = await esmocha.mock('execa');
-const { default: preferredPm } = await esmocha.mock('preferred-pm');
+const { whichPackageManager } = await esmocha.mock('which-package-manager');
 
 const { packageManagerInstallTask } = await import('../src/package-manager.js');
 
@@ -28,7 +28,7 @@ describe('environment (package-manager)', () => {
     execa.mockReturnValue();
     memFs = { get: esmocha.fn() };
     packageJsonLocation = path.join(__dirname, 'fixtures', 'package-manager', 'npm');
-    preferredPm.mockResolvedValue({ name: 'npm' });
+    whichPackageManager.mockResolvedValue('npm');
   });
 
   afterEach(() => {
@@ -109,7 +109,7 @@ No change to package.json was detected. No package manager install will be execu
 
         describe('with yarn', () => {
           beforeEach(async () => {
-            preferredPm.mockResolvedValue({ name: 'yarn' });
+            whichPackageManager.mockResolvedValue('yarn');
             await packageManagerInstallTask({ adapter, memFs, packageJsonLocation });
           });
 
@@ -127,7 +127,7 @@ No change to package.json was detected. No package manager install will be execu
 
         describe('with pnpm', () => {
           beforeEach(async () => {
-            preferredPm.mockResolvedValue({ name: 'pnpm' });
+            whichPackageManager.mockResolvedValue('pnpm');
             await packageManagerInstallTask({ adapter, memFs, packageJsonLocation });
           });
 
@@ -161,7 +161,7 @@ No change to package.json was detected. No package manager install will be execu
 
         describe('error detecting package manager', () => {
           beforeEach(async () => {
-            preferredPm.mockResolvedValue(null);
+            whichPackageManager.mockResolvedValue(undefined);
             await packageManagerInstallTask({ adapter, memFs, packageJsonLocation });
           });
 

@@ -73,10 +73,10 @@
     "lodash-es": "^4.17.21",
     "mem-fs": "^3.0.0",
     "mem-fs-editor": "^10.0.1",
-    "preferred-pm": "^3.0.3",
     "semver": "^7.5.0",
     "slash": "^5.0.1",
-    "untildify": "^5.0.0"
+    "untildify": "^5.0.0",
+    "which-package-manager": "^0.0.1"
   },
   "devDependencies": {
     "@types/debug": "^4.1.8",

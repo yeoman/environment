@@ -1,6 +1,6 @@
 import { join, resolve } from 'node:path';
 import createdLogger from 'debug';
-import preferredPm from 'preferred-pm';
+import { whichPackageManager } from 'which-package-manager';
 import { execa } from 'execa';
 import type { MemFsEditorFile } from 'mem-fs-editor';
 import { type InputOutputAdapter } from '@yeoman/types';
@@ -81,8 +81,7 @@ Changes to package.json were detected.`);
     return false;
   }
 
-  // eslint-disable-next-line unicorn/no-await-expression-member
-  let packageManagerName = nodePackageManager ?? (await preferredPm(packageJsonLocation))?.name;
+  let packageManagerName = nodePackageManager ?? (await whichPackageManager({ cwd: packageJsonLocation }));
 
   const execPackageManager = async () => {
     if (!packageManagerName) {
