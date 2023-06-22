@@ -463,7 +463,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     const { added, identifier, generator: composedGenerator } = this.composedStore.addGenerator(generator);
     if (!added) {
       debug(`Using existing generator for namespace ${identifier}`);
-      return composedGenerator;
+      return composedGenerator as G;
     }
 
     this.emit('compose', identifier, generator);

@@ -6,33 +6,31 @@ import createdLogger from 'debug';
 const debug = createdLogger('yeoman:environment:composed-store');
 
 type UniqueFeatureType = 'customCommitTask' | 'customInstallTask';
-const uniqueFeatureValues: UniqueFeatureType[] = ['customCommitTask', 'customInstallTask'];
 
 export class ComposedStore {
   private readonly log?;
   private readonly generators: Record<string, BaseGenerator> = {};
   private readonly uniqueByPathMap = new Map<string, Map<string, BaseGenerator>>();
   private readonly uniqueGloballyMap = new Map<string, BaseGenerator>();
-  private readonly uniqueFeatures = new Map<UniqueFeatureType, true | (() => Promise<void>)>();
 
   constructor({ log }: { log?: Logger } = {}) {
     this.log = log;
   }
 
   get customCommitTask() {
-    return this.uniqueFeatures.get('customCommitTask');
+    return this.getFeature('customCommitTask');
   }
 
   get customInstallTask() {
-    return this.uniqueFeatures.get('customInstallTask');
+    return this.getFeature('customInstallTask');
   }
 
   getGenerators(): Record<string, BaseGenerator> {
     return { ...this.generators };
   }
 
-  addGenerator(generator: any) {
-    const features = generator.getFeatures?.() ?? {};
+  addGenerator(generator: BaseGenerator) {
+    const { features = (generator as any).getFeatures?.() ?? {} } = generator;
     let { uniqueBy } = features;
     const { uniqueGlobally } = features;
 
@@ -59,19 +57,6 @@ export class ComposedStore {
 
     uniqueByMap.set(uniqueBy, generator);
 
-    for (const featureName of uniqueFeatureValues) {
-      const feature = features[featureName];
-      if (feature) {
-        const existingFeature = this.uniqueFeatures.get(feature);
-        if (typeof existingFeature !== 'function') {
-          debug(`Feature ${featureName} provided by ${uniqueBy}`);
-          this.uniqueFeatures.set(featureName, feature);
-        } else if (typeof feature === 'function') {
-          this.log?.info?.(`Multiple ${featureName} tasks found. Using the first.`);
-        }
-      }
-    }
-
     this.generators[uniqueGlobally ? uniqueBy : `${generatorRoot}#${uniqueBy}`] = generator;
     return { identifier, added: true, generator };
   }
@@ -82,5 +67,29 @@ export class ComposedStore {
     }
 
     return this.uniqueByPathMap.get(root)!;
+  }
+
+  private getFeature(featureName: UniqueFeatureType) {
+    const providedFeatures: any[] = Object.entries(this.generators)
+      .map(([generatorId, generator]) => {
+        const { features = (generator as any).getFeatures?.() } = generator;
+        const feature = features?.[featureName];
+        return feature ? [generatorId, feature] : undefined;
+      })
+      .filter(Boolean);
+
+    if (providedFeatures.length > 0) {
+      if (providedFeatures.length > 1) {
+        this.log?.info?.(
+          `Multiple ${featureName} tasks found (${providedFeatures.map(([generatorId]) => generatorId).join(', ')}). Using the first.`,
+        );
+      }
+
+      const [generatorId, feature] = providedFeatures[0];
+      debug(`Feature ${featureName} provided by ${generatorId}`);
+      return feature;
+    }
+
+    return undefined;
   }
 }

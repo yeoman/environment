@@ -229,9 +229,11 @@ describe('Environment', () => {
   describe('#composeWith()', () => {
     beforeEach(async function () {
       class NewGenerator extends Generator {
-        getFeatures() {
-          return { uniqueBy: this.options.namespace };
+        constructor(args, options, features) {
+          super(args, options, { uniqueBy: options.namespace, ...features });
         }
+
+        aTask() {}
       }
       this.Generator = NewGenerator;
       this.env.registerStub(this.Generator, 'stub');
