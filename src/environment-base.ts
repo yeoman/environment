@@ -838,9 +838,6 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * Queue environment's package manager install task.
    */
   protected queuePackageManagerInstall() {
-    const { adapter, sharedFs: memFs } = this;
-    const { skipInstall, nodePackageManager } = this.options;
-    const { customInstallTask } = this.composedStore;
     this.queueTask(
       'install',
       async () => {
@@ -849,6 +846,9 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
           return;
         }
 
+        const { adapter, sharedFs: memFs } = this;
+        const { skipInstall, nodePackageManager } = this.options;
+        const { customInstallTask } = this.composedStore;
         await packageManagerInstallTask({
           adapter,
           memFs,
