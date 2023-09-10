@@ -94,7 +94,6 @@
     "sinon": "^15.0.4",
     "sinon-test": "^3.1.5",
     "strip-ansi": "^7.0.1",
-    "tui-jsdoc-template": "^1.2.2",
     "typescript": "^5.0.4",
     "xo": "0.54.2",
     "yeoman-assert": "^3.1.1",
