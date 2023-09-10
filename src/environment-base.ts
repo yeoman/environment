@@ -127,6 +127,7 @@ export function removePropertiesWithNullishValues(object: Record<string, any>): 
   return Object.fromEntries(Object.entries(object).filter(([_key, value]) => value !== undefined && value !== null));
 }
 
+// eslint-disable-next-line unicorn/prefer-event-target
 export default class EnvironmentBase extends EventEmitter implements BaseEnvironment {
   cwd: string;
   adapter: QueuedAdapter;

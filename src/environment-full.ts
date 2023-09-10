@@ -99,7 +99,7 @@ class FullEnvironment extends EnvironmentBase {
       }
     }
 
-    return out.join('\n').replace(/:binary:/g, name);
+    return out.join('\n').replaceAll(':binary:', name);
   }
 
   /**

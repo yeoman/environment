@@ -55,7 +55,7 @@ export const asNamespace = (filepath: string, { lookups = defaultLookups }: AsNa
   // If `ns` contains a lookup dir in its path, remove it.
   for (const lookup of nsLookups) {
     // Only match full directory (begin with leading slash or start of input, end with trailing slash)
-    ns = ns.replace(new RegExp(`(?:/|^)${escapeRegExp(lookup)}(?=/)`, 'g'), '');
+    ns = ns.replaceAll(new RegExp(`(?:/|^)${escapeRegExp(lookup)}(?=/)`, 'g'), '');
   }
 
   const folders = ns.split('/');
@@ -63,11 +63,11 @@ export const asNamespace = (filepath: string, { lookups = defaultLookups }: AsNa
 
   // Cleanup `ns` from unwanted parts and then normalize slashes to `:`
   ns = ns
-    .replace(/\/\//g, '') // Remove double `/`
+    .replaceAll('//', '') // Remove double `/`
     .replace(/(.*generator-)/, '') // Remove before `generator-`
     .replace(/\/(index|main)$/, '') // Remove `/index` or `/main`
     .replace(/^\//, '') // Remove leading `/`
-    .replace(/\/+/g, ':'); // Replace slashes by `:`
+    .replaceAll(/\/+/g, ':'); // Replace slashes by `:`
 
   if (scope) {
     ns = `${scope}/${ns}`;

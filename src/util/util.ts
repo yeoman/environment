@@ -28,7 +28,7 @@ export function splitArgsFromString(argsString: string | string[]): string[] {
   const quoteSeparatedArgs = argsString.split(/("[^"]*")/).filter(Boolean);
   for (const arg of quoteSeparatedArgs) {
     if (arg.includes('"')) {
-      result.push(arg.replace(/"/g, ''));
+      result.push(arg.replaceAll('"', ''));
     } else {
       result = result.concat(arg.trim().split(' '));
     }
