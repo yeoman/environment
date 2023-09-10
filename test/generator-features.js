@@ -201,7 +201,6 @@ describe('environment (generator-features)', () => {
                 }
 
                 packageJsonTask() {
-                  console.log('foo');
                   this.packageJson.set({ name: 'foo' });
                 }
               },
@@ -221,6 +220,59 @@ describe('environment (generator-features)', () => {
 
       it('should forward default execution callback', () => {
         assert.equal(typeof customInstallTask.getCall(0).args[1], 'function');
+      });
+    });
+
+    describe('with function customInstallTask and custom path', () => {
+      let runContext;
+      let customInstallTask;
+      let installTask;
+      beforeEach(async () => {
+        customInstallTask = sinon.stub();
+        installTask = (pm, defaultTask) => defaultTask(pm);
+        runContext = helpers
+          .create('custom-install', undefined, { createEnv: getCreateEnv(BasicEnvironment) })
+          .withOptions({ skipInstall: false })
+          .withGenerators([
+            [
+              class extends FeaturesGenerator {
+                constructor(args, options) {
+                  super(args, options, { customInstallTask });
+                  this.destinationRoot(this.destinationPath('foo'));
+                  this.env.watchForPackageManagerInstall({
+                    cwd: this.destinationPath(),
+                    installTask,
+                  });
+                }
+
+                packageJsonTask() {
+                  this.packageJson.set({ name: 'foo' });
+                }
+              },
+              { namespace: 'custom-install:app' },
+            ],
+          ]);
+        await runContext.run();
+      });
+
+      it('should not call customInstallTask', () => {
+        assert.equal(customInstallTask.callCount, 0, 'should not have been called');
+      });
+
+      it('should call packageManagerInstallTask twice', () => {
+        expect(packageManagerInstallTask).toHaveBeenCalledTimes(2);
+        expect(packageManagerInstallTask).toHaveBeenNthCalledWith(
+          2,
+          expect.objectContaining({
+            customInstallTask,
+          }),
+        );
+        expect(packageManagerInstallTask).toHaveBeenNthCalledWith(
+          1,
+          expect.objectContaining({
+            customInstallTask: installTask,
+          }),
+        );
       });
     });
   });

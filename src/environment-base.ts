@@ -740,6 +740,59 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   }
 
   /**
+   * Watch for package.json and queue package manager install task.
+   */
+  public watchForPackageManagerInstall({
+    cwd,
+    queueTask,
+    installTask,
+  }: {
+    cwd?: string;
+    queueTask?: boolean;
+    installTask?: (nodePackageManager: string | undefined, defaultTask: () => Promise<boolean>) => void | Promise<void>;
+  } = {}) {
+    if (cwd && !installTask) {
+      throw new Error(`installTask is required when using a custom cwd`);
+    }
+
+    const npmCwd = cwd ?? this.cwd;
+
+    const queueInstallTask = () => {
+      this.queueTask(
+        'install',
+        async () => {
+          if (this.compatibilityMode === 'v4') {
+            debug('Running in generator < 5 compatibility. Package manager install is done by the generator.');
+            return;
+          }
+
+          const { adapter, sharedFs: memFs } = this;
+          const { skipInstall, nodePackageManager } = this.options;
+          await packageManagerInstallTask({
+            adapter,
+            memFs,
+            packageJsonLocation: npmCwd,
+            skipInstall,
+            nodePackageManager,
+            customInstallTask: installTask ?? this.composedStore.customInstallTask,
+          });
+        },
+        { once: `package manager install ${npmCwd}` },
+      );
+    };
+
+    this.sharedFs.on('change', file => {
+      if (file === join(npmCwd, 'package.json')) {
+        queueInstallTask();
+      }
+    });
+
+    if (queueTask) {
+      queueInstallTask();
+    }
+  }
+
+  /**
    * Start Environment queue
    * @param {Object} options - Conflicter options.
    */
@@ -751,7 +804,10 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       this.conflicterOptions.cwd = this.logCwd;
 
       this.queueCommit();
-      this.queuePackageManagerInstall();
+      this.queueTask('install', () => {
+        // Postpone watchForPackageManagerInstall to install priority since env's cwd can be changed by generators
+        this.watchForPackageManagerInstall({ queueTask: true });
+      });
 
       /*
        * Listen to errors and reject if emmited.
@@ -832,38 +888,6 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     };
 
     queueCommit();
-  }
-
-  /**
-   * Queue environment's package manager install task.
-   */
-  protected queuePackageManagerInstall() {
-    this.queueTask(
-      'install',
-      async () => {
-        if (this.compatibilityMode === 'v4') {
-          debug('Running in generator < 5 compatibility. Package manager install is done by the generator.');
-          return;
-        }
-
-        const { adapter, sharedFs: memFs } = this;
-        const { skipInstall, nodePackageManager } = this.options;
-        const { customInstallTask } = this.composedStore;
-        await packageManagerInstallTask({
-          adapter,
-          memFs,
-          packageJsonLocation: this.cwd,
-          skipInstall,
-          nodePackageManager,
-          customInstallTask,
-        });
-
-        memFs.once('change', file => {
-          if (file === join(this.cwd, 'package.json')) this.queuePackageManagerInstall();
-        });
-      },
-      { once: 'package manager install' },
-    );
   }
 
   /**
