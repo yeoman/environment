@@ -870,17 +870,17 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       this.queueTask(
         'environment:conflicts',
         async () => {
-          debug('Running conflicts');
+          debug('Adding queueCommit listener');
+          // Conflicter can change files add listener before commit task.
+          this.sharedFs.once('change', queueCommit);
 
+          debug('Running conflicts');
           const { customCommitTask = () => commitSharedFsTask(this) } = this.composedStore;
           if (typeof customCommitTask === 'function') {
             await customCommitTask();
           } else {
             debug('Ignoring commit, custom commit was provided');
           }
-
-          debug('Adding queueCommit listener');
-          this.sharedFs.once('change', queueCommit);
         },
         {
           once: 'write memory fs to disk',
