@@ -19,10 +19,10 @@ jobs:
       - uses: actions/setup-node@v3
       - run: npm install -g npm@latest
         continue-on-error: true
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: source
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: yeoman-environment-doc
