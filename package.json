@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@yeoman/adapter": "^1.1.0",
-    "@yeoman/conflicter": "^1.0.7",
+    "@yeoman/conflicter": "^1.0.10",
     "@yeoman/namespace": "^1.0.0",
     "@yeoman/transform": "^1.2.0",
     "arrify": "^3.0.0",
