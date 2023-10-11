@@ -57,8 +57,8 @@
     "doc_path": "./yeoman-environment-doc"
   },
   "dependencies": {
-    "@yeoman/adapter": "^1.1.0",
-    "@yeoman/conflicter": "^1.0.10",
+    "@yeoman/adapter": "^1.4.0",
+    "@yeoman/conflicter": "^1.1.0",
     "@yeoman/namespace": "^1.0.0",
     "@yeoman/transform": "^1.2.0",
     "arrify": "^3.0.0",
@@ -101,8 +101,11 @@
     "yeoman-test": "^8.0.0-rc.1"
   },
   "peerDependencies": {
-    "@yeoman/types": "^1.0.1",
+    "@yeoman/types": "^1.1.0",
     "mem-fs": "^3.0.0"
+  },
+  "acceptDependencies": {
+    "mem-fs": "^4.0.0-beta.1"
   },
   "engines": {
     "node": "^18.17.0 || >=20.5.0"
