@@ -6,8 +6,6 @@ import type { Store } from 'mem-fs';
 import { create as createMemFsEditor, type MemFsEditorFile } from 'mem-fs-editor';
 // eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
-// eslint-disable-next-line n/file-extension-in-import
-import { createCommitTransform } from 'mem-fs-editor/transform';
 
 const debug = createdLogger('yeoman:environment:commit');
 
@@ -30,14 +28,5 @@ export const commitSharedFsTask = ({
   debug('Running commitSharedFsTask');
   const fs = createMemFsEditor(sharedFs);
   stream = stream ?? fs.store.stream({ filter: file => isFilePending(file) });
-  return fs.commit(
-    [
-      createYoResolveTransform(),
-      forceYoFiles(),
-      createConflicterTransform(adapter, conflicterOptions),
-      // Use custom commit transform due to out of order transform.
-      createCommitTransform(fs),
-    ],
-    stream,
-  );
+  return fs.commit([createYoResolveTransform(), forceYoFiles(), createConflicterTransform(adapter, conflicterOptions)], stream);
 };

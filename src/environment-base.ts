@@ -20,7 +20,7 @@ import type {
   LookupGeneratorMeta,
 } from '@yeoman/types';
 import { type Store as MemFs, create as createMemFs } from 'mem-fs';
-import { type MemFsEditor, type MemFsEditorFile, create as createMemFsEditor } from 'mem-fs-editor';
+import { type MemFsEditorFile } from 'mem-fs-editor';
 import { FlyRepository } from 'fly-import';
 import createdLogger from 'debug';
 // @ts-expect-error grouped-queue don't have types
@@ -141,7 +141,6 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   protected command?: YeomanCommand;
   protected runLoop: GroupedQueue;
   protected composedStore: ComposedStore;
-  protected fs: MemFsEditor;
   protected lookups: string[];
   protected sharedOptions: Record<string, any>;
   protected repository: FlyRepository;
@@ -186,8 +185,6 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     // Node won't complain about event listeners leaks.
     this.runLoop.setMaxListeners(0);
     this.sharedFs.setMaxListeners(0);
-
-    this.fs = createMemFsEditor(sharedFs);
 
     this.lookups = defaultLookups;
 
