@@ -130,11 +130,11 @@ export function removePropertiesWithNullishValues(object: Record<string, any>): 
 // eslint-disable-next-line unicorn/prefer-event-target
 export default class EnvironmentBase extends EventEmitter implements BaseEnvironment {
   cwd: string;
+  logCwd: string;
   adapter: QueuedAdapter;
   sharedFs: MemFs<MemFsEditorFile>;
   conflicterOptions?: ConflicterOptions;
 
-  protected logCwd: string;
   protected readonly options: EnvironmentOptions;
   protected readonly aliases: Array<{ match: RegExp; value: string }> = [];
   protected store: Store;
