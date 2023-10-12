@@ -1,4 +1,4 @@
-import Generator from 'yeoman-generator';
+import Generator from 'yeoman-generator-6';
 
 class NewGenerator extends Generator {
   default() {}
