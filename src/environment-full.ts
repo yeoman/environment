@@ -195,7 +195,7 @@ class FullEnvironment extends EnvironmentBase {
   async requireGenerator(namespace: string) {
     if (namespace === undefined) {
       try {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
+        // eslint-disable-next-line @typescript-eslint/naming-convention, import/no-extraneous-dependencies
         const { default: Generator } = await import('yeoman-generator');
         return Generator;
       } catch {}
