@@ -1,4 +1,4 @@
-const Generator = require("yeoman-generator");
+const Generator = require("yeoman-generator-5");
 
 class DummyTsGenerator extends Generator {
   constructor(args, opts){

@@ -22,27 +22,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [16.x, 18.x]
-        generator-version: ['']
-        include:
-          - os: ubuntu-latest
-            node-version: 16.x
-            generator-version: '2.0.5'
-          - os: ubuntu-latest
-            node-version: 16.x
-            generator-version: '^4'
-
+        node-version: [18.x]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - run: npm install -g npm@^8
-        if: matrix.node-version == '14.x'
       - run: npm ci
-      - run: npm install yeoman-generator@${{ matrix.generator-version }}
-        if: matrix.generator-version != ''
       - run: npm test
         env:
           CI: true
