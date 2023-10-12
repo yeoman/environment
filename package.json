@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@yeoman/adapter": "^1.4.0",
-    "@yeoman/conflicter": "^1.1.0",
+    "@yeoman/conflicter": "^2.0.0-alpha.1",
     "@yeoman/namespace": "^1.0.0",
     "@yeoman/transform": "^1.2.0",
     "arrify": "^3.0.0",
@@ -71,7 +71,6 @@
     "grouped-queue": "^2.0.0",
     "locate-path": "^7.2.0",
     "lodash-es": "^4.17.21",
-    "mem-fs": "^3.0.0",
     "mem-fs-editor": "^10.0.1",
     "semver": "^7.5.0",
     "slash": "^5.0.1",
@@ -98,13 +97,10 @@
     "xo": "0.56.0",
     "yeoman-assert": "^3.1.1",
     "yeoman-generator": "^5.9.0",
-    "yeoman-test": "^8.0.0-rc.1"
+    "yeoman-test": "^8.1.0-beta.0"
   },
   "peerDependencies": {
-    "@yeoman/types": "^1.1.0",
-    "mem-fs": "^3.0.0"
-  },
-  "acceptDependencies": {
+    "@yeoman/types": "^1.1.1",
     "mem-fs": "^4.0.0-beta.1"
   },
   "engines": {

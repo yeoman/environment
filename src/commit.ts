@@ -1,4 +1,4 @@
-import type { PipelineSource } from 'node:stream';
+import { Duplex, type PipelineSource } from 'node:stream';
 import type { InputOutputAdapter } from '@yeoman/types';
 import { type ConflicterOptions, createConflicterTransform, createYoResolveTransform, forceYoFiles } from '@yeoman/conflicter';
 import createdLogger from 'debug';
@@ -14,7 +14,7 @@ const debug = createdLogger('yeoman:environment:commit');
  * @param {Stream} [stream] - files stream, defaults to this.sharedFs.stream().
  * @return {Promise}
  */
-export const commitSharedFsTask = ({
+export const commitSharedFsTask = async ({
   adapter,
   conflicterOptions,
   sharedFs,
@@ -26,7 +26,17 @@ export const commitSharedFsTask = ({
   stream?: PipelineSource<any>;
 }) => {
   debug('Running commitSharedFsTask');
-  const fs = createMemFsEditor(sharedFs);
-  stream = stream ?? fs.store.stream({ filter: file => isFilePending(file) });
-  return fs.commit([createYoResolveTransform(), forceYoFiles(), createConflicterTransform(adapter, conflicterOptions)], stream);
+  const editor = createMemFsEditor(sharedFs);
+  await sharedFs.pipeline(
+    { filter: (file: MemFsEditorFile) => isFilePending(file) || file.path.endsWith('.yo-resolve') },
+    createYoResolveTransform(),
+    forceYoFiles(),
+    createConflicterTransform(adapter, conflicterOptions),
+    Duplex.from(async function* (source: AsyncGenerator<MemFsEditorFile>) {
+      for await (const file of source) {
+        await editor.commitFileAsync(file);
+        yield file;
+      }
+    }),
+  );
 };

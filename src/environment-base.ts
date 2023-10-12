@@ -872,7 +872,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
           this.sharedFs.once('change', queueCommit);
 
           debug('Running conflicts');
-          const { customCommitTask = () => commitSharedFsTask(this) } = this.composedStore;
+          const { customCommitTask = async () => commitSharedFsTask(this) } = this.composedStore;
           if (typeof customCommitTask === 'function') {
             await customCommitTask();
           } else {
