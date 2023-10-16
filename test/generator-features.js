@@ -177,12 +177,11 @@ for (const generatorVersion of ['yeoman-generator-5', 'yeoman-generator-6']) {
       });
 
       describe('with function customInstallTask', () => {
-        let runContext;
         let customInstallTask;
         before(async () => {
           customInstallTask = sinon.stub();
-          runContext = helpers
-            .create('custom-install')
+          await helpers
+            .run('custom-install')
             .withOptions({ skipInstall: false })
             .withGenerators([
               [
@@ -198,7 +197,6 @@ for (const generatorVersion of ['yeoman-generator-5', 'yeoman-generator-6']) {
                 { namespace: 'custom-install:app' },
               ],
             ]);
-          await runContext.run();
         });
 
         it('should call customInstallTask', () => {
