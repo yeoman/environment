@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
-import type { InputOutputAdapter } from '@yeoman/types';
+import type { BaseGeneratorConstructor, InputOutputAdapter } from '@yeoman/types';
 import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
 import { flyImport } from 'fly-import';
 import { defaults, pick, uniq } from 'lodash-es';
@@ -192,11 +192,12 @@ class FullEnvironment extends EnvironmentBase {
     });
   }
 
-  async requireGenerator(namespace: string) {
+  async requireGenerator(namespace: string): Promise<BaseGeneratorConstructor | undefined> {
     if (namespace === undefined) {
       try {
-        // eslint-disable-next-line @typescript-eslint/naming-convention, import/no-extraneous-dependencies
-        const { default: Generator } = await import('yeoman-generator');
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
+        // @ts-ignore
+        const { default: Generator } = await import('yeoman-generator'); // eslint-disable-line @typescript-eslint/naming-convention
         return Generator;
       } catch {}
 

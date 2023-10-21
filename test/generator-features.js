@@ -2,12 +2,13 @@ import assert from 'node:assert';
 import sinon from 'sinon';
 import { esmocha, expect, mock } from 'esmocha';
 import helpers, { getCreateEnv } from './helpers.js';
+import { greaterThan5 } from './generator-versions.js';
 
 const { commitSharedFsTask } = await mock('../src/commit.ts');
 const { packageManagerInstallTask } = await mock('../src/package-manager.ts');
 const { default: BasicEnvironment } = await import('../src/environment-base.js');
 
-for (const generatorVersion of ['yeoman-generator-5', 'yeoman-generator-6']) {
+for (const generatorVersion of greaterThan5) {
   // eslint-disable-next-line no-await-in-loop
   const { default: Generator } = await import(generatorVersion);
   class FeaturesGenerator extends Generator {}

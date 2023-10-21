@@ -11,6 +11,7 @@ import sinon from 'sinon';
 import assert from 'yeoman-assert';
 import Environment, { createEnv } from '../src/index.js';
 import { resolveModulePath } from '../src/util/resolve.js';
+import { allVersions, importGenerator, isGreaterThan6, isLegacyVersion } from './generator-versions.js';
 
 const require = createRequire(import.meta.url);
 
@@ -21,9 +22,9 @@ const ENVIRONMENT_VERSION = require('../package.json').version;
 const INQUIRER_VERSION = require('inquirer/package.json').version;
 const GROUPED_QUEUE_VERSION = require('grouped-queue/package.json').version;
 
-for (const generatorVersion of ['yeoman-generator-2', 'yeoman-generator-4', 'yeoman-generator-5', 'yeoman-generator-6']) {
+for (const generatorVersion of allVersions) {
   // eslint-disable-next-line no-await-in-loop
-  const { default: Generator } = await import(generatorVersion);
+  const Generator = await importGenerator(generatorVersion);
 
   describe(`Environment with ${generatorVersion}`, () => {
     let mockedDefault;
@@ -257,7 +258,7 @@ for (const generatorVersion of ['yeoman-generator-2', 'yeoman-generator-4', 'yeo
         it('should not schedule generator', async function () {
           this.env.queueTask = sinon.spy();
           await this.env.composeWith('stub', { generatorArgs: [], schedule: false });
-          if (generatorVersion === 'yeoman-generator-6') {
+          if (isGreaterThan6(generatorVersion)) {
             assert(this.env.queueTask.calledOnce);
             assert(this.env.queueTask.getCall(0).firstArg !== 'environment:run');
           } else {
@@ -294,7 +295,7 @@ for (const generatorVersion of ['yeoman-generator-2', 'yeoman-generator-4', 'yeo
       describe('when the generator should be a singleton and is already composed', () => {
         let composed;
         beforeEach(function (done) {
-          if (['yeoman-generator-2', 'yeoman-generator-4'].includes(generatorVersion)) {
+          if (isLegacyVersion(generatorVersion)) {
             this.skip();
             return;
           }
@@ -360,7 +361,7 @@ for (const generatorVersion of ['yeoman-generator-2', 'yeoman-generator-4', 'yeo
           }
         };
 
-        const runName = ['yeoman-generator-2', 'yeoman-generator-4'].includes(generatorVersion) ? 'run' : 'queueTasks';
+        const runName = isLegacyVersion(generatorVersion) ? 'run' : 'queueTasks';
         this.runMethod = sinon.spy(Generator.prototype, runName);
         this.env.registerStub(this.Stub, 'stub:run');
         this.env.registerStub(this.WritingStub, 'writingstub:run');
@@ -380,7 +381,7 @@ for (const generatorVersion of ['yeoman-generator-2', 'yeoman-generator-4', 'yeo
       });
 
       it('runs a registered writing generator with bail option', async function () {
-        if (['yeoman-generator-2', 'yeoman-generator-4'].includes(generatorVersion)) {
+        if (isLegacyVersion(generatorVersion)) {
           this.skip();
         }
 
