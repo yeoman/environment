@@ -18,6 +18,9 @@
     "unicorn/no-this-assignment": "off",
     "unicorn/prefer-spread": "off"
   },
+  "settings": {
+    "import/core-modules": [ "yeoman-generator" ]
+  },
   "overrides": [
     {
       "files": "test/*",
