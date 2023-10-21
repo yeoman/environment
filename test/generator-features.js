@@ -24,7 +24,7 @@ for (const generatorVersion of greaterThan5) {
           await helpers
             .run('custom-commit', undefined, { createEnv: getCreateEnv(BasicEnvironment) })
             .withOptions({ skipInstall: true })
-            .withGenerators([[helpers.createMockedGenerator(), { namespace: 'custom-commit:app' }]]);
+            .withGenerators([[helpers.createMockedGenerator(Generator), { namespace: 'custom-commit:app' }]]);
         });
 
         it('should call commitSharedFs', () => {

@@ -3,7 +3,6 @@ import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import sinon from 'sinon';
-import semver from 'semver';
 import { prepareCommand } from '../src/commands.js';
 import Environment from '../src/index.js';
 
@@ -121,10 +120,6 @@ describe('environment (command)', () => {
   });
 
   describe('#prepareCommand()', () => {
-    if (!semver.satisfies(require('../node_modules/yeoman-generator/package.json').version, '>=5.0.0-beta.1')) {
-      return;
-    }
-
     describe('generator with arguments', () => {
       describe('passing bar argument', () => {
         let generator;

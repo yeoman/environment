@@ -2,16 +2,17 @@ export const generator2 = 'yeoman-generator-2';
 export const generator4 = 'yeoman-generator-4';
 export const generator5 = 'yeoman-generator-5';
 export const generator6 = 'yeoman-generator-6';
+export const generator7 = 'yeoman-generator-7';
 
 export const allVersions = [generator6, generator5, generator4, generator2];
 const legacyVersions = new Set([generator2, generator4]);
 export const isLegacyVersion = version => legacyVersions.has(version);
 
-export const greaterThan5 = new Set([generator5, generator6]);
-export const isGreaterThan5 = version => greaterThan5.has(version);
-
-const greaterThan6 = new Set([generator6]);
+const greaterThan6 = new Set([generator6, generator7]);
 export const isGreaterThan6 = version => greaterThan6.has(version);
+
+export const greaterThan5 = new Set([generator5, ...greaterThan6]);
+export const isGreaterThan5 = version => greaterThan5.has(version);
 
 export const importGenerator = async generatorVersion => {
   // eslint-disable-next-line no-warning-comments

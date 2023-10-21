@@ -1,4 +1,4 @@
-import Generator from 'yeoman-generator-6';
+import Generator from 'yeoman-generator-7';
 
 class NewGenerator extends Generator {
   _postConstruct() {}
