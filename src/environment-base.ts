@@ -209,6 +209,10 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     this.alias(/^([^:]+)$/, '$1:app');
   }
 
+  findFeature(featureName: string): any[] {
+    return this.composedStore.findFeature(featureName);
+  }
+
   async applyTransforms(transformStreams: FilePipelineTransform[], options: ApplyTransformsOptions = {}): Promise<void> {
     const {
       streamOptions = { filter: file => isFilePending(file) },
