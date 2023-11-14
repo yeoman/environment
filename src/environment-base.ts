@@ -209,7 +209,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     this.alias(/^([^:]+)$/, '$1:app');
   }
 
-  findFeature(featureName: string): any[] {
+  findFeature(featureName: string): Array<{ generatorId: string; feature: any }> {
     return this.composedStore.findFeature(featureName);
   }
 

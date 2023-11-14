@@ -69,14 +69,14 @@ export class ComposedStore {
     return this.uniqueByPathMap.get(root)!;
   }
 
-  findFeature(featureName: string): any[] {
+  findFeature(featureName: string): Array<{ generatorId: string; feature: any }> {
     return Object.entries(this.generators)
       .map(([generatorId, generator]) => {
         const { features = (generator as any).getFeatures?.() } = generator;
         const feature = features?.[featureName];
-        return feature ? [generatorId, feature] : undefined;
+        return feature ? { generatorId, feature } : undefined;
       })
-      .filter(Boolean);
+      .filter(Boolean) as any;
   }
 
   private findUniqueFeature(featureName: UniqueFeatureType) {
@@ -84,11 +84,11 @@ export class ComposedStore {
     if (providedFeatures.length > 0) {
       if (providedFeatures.length > 1) {
         this.log?.info?.(
-          `Multiple ${featureName} tasks found (${providedFeatures.map(([generatorId]) => generatorId).join(', ')}). Using the first.`,
+          `Multiple ${featureName} tasks found (${providedFeatures.map(({ generatorId }) => generatorId).join(', ')}). Using the first.`,
         );
       }
 
-      const [generatorId, feature] = providedFeatures[0];
+      const { generatorId, feature } = providedFeatures[0];
       debug(`Feature ${featureName} provided by ${generatorId}`);
       return feature;
     }
