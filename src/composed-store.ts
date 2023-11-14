@@ -18,11 +18,11 @@ export class ComposedStore {
   }
 
   get customCommitTask() {
-    return this.getFeature('customCommitTask');
+    return this.findUniqueFeature('customCommitTask');
   }
 
   get customInstallTask() {
-    return this.getFeature('customInstallTask');
+    return this.findUniqueFeature('customInstallTask');
   }
 
   getGenerators(): Record<string, BaseGenerator> {
@@ -69,15 +69,18 @@ export class ComposedStore {
     return this.uniqueByPathMap.get(root)!;
   }
 
-  private getFeature(featureName: UniqueFeatureType) {
-    const providedFeatures: any[] = Object.entries(this.generators)
+  findFeature(featureName: string): any[] {
+    return Object.entries(this.generators)
       .map(([generatorId, generator]) => {
         const { features = (generator as any).getFeatures?.() } = generator;
         const feature = features?.[featureName];
         return feature ? [generatorId, feature] : undefined;
       })
       .filter(Boolean);
+  }
 
+  private findUniqueFeature(featureName: UniqueFeatureType) {
+    const providedFeatures = this.findFeature(featureName);
     if (providedFeatures.length > 0) {
       if (providedFeatures.length > 1) {
         this.log?.info?.(
