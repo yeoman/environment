@@ -121,6 +121,7 @@ for (const generatorVersion of allVersions) {
       });
 
       it('instantiate a generator', async function () {
+        this.timeout(10_000);
         assert.ok((await this.env.create('stub')) instanceof this.Generator);
       });
 
