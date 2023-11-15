@@ -873,7 +873,8 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
         async () => {
           debug('Adding queueCommit listener');
           // Conflicter can change files add listener before commit task.
-          const changedFileHandler = (file: MemFsEditorFile) => {
+          const changedFileHandler = (filePath: string) => {
+            const file = this.sharedFs.get(filePath);
             if (isFilePending(file)) {
               queueCommit();
               this.sharedFs.removeListener('change', changedFileHandler);
