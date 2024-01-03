@@ -14,8 +14,6 @@ export async function resolveModulePath(specifier: string, resolvedOrigin?: stri
   if (maybeResolved.startsWith('.')) {
     if (resolvedOrigin) {
       maybeResolved = resolve(dirname(resolvedOrigin), '..', maybeResolved);
-    } else {
-      throw new Error(`Specifier ${maybeResolved} could not be calculated`);
     }
   }
 
