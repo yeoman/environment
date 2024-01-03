@@ -11,10 +11,8 @@ import { defaultExtensions } from '../generator-lookup.js';
  */
 export async function resolveModulePath(specifier: string, resolvedOrigin?: string) {
   let maybeResolved = specifier;
-  if (maybeResolved.startsWith('.')) {
-    if (resolvedOrigin) {
-      maybeResolved = resolve(dirname(resolvedOrigin), '..', maybeResolved);
-    }
+  if (maybeResolved.startsWith('.') && resolvedOrigin) {
+    maybeResolved = resolve(dirname(resolvedOrigin), '..', maybeResolved);
   }
 
   maybeResolved = untildify(maybeResolved);
