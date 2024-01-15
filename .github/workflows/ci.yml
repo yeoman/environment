@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [18.x]
+        node-version: [18.18.2]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
