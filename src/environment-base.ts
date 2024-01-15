@@ -50,6 +50,13 @@ const ENVIRONMENT_VERSION = require('../package.json').version;
 
 const debug = createdLogger('yeoman:environment');
 
+export type EnvironmentLookupOptions = LookupOptions & {
+  /** Add a scope to the namespace if there is no scope */
+  registerToScope?: string;
+  /** Customize the namespace to be registered */
+  customizeNamespace?: (ns?: string) => string;
+};
+
 export type EnvironmentOptions = BaseEnvironmentOptions &
   Omit<TerminalAdapterOptions, 'promptModule'> & {
     adapter?: InputOutputAdapter;
@@ -600,8 +607,13 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * So this index file `node_modules/generator-dummy/lib/generators/yo/index.js` would be
    * registered as `dummy:yo` generator.
    */
-  async lookup(options?: LookupOptions & { registerToScope?: string }): Promise<LookupGeneratorMeta[]> {
-    const { registerToScope, lookups = this.lookups, ...remainingOptions } = options ?? { localOnly: false };
+  async lookup(options?: EnvironmentLookupOptions): Promise<LookupGeneratorMeta[]> {
+    const {
+      registerToScope,
+      customizeNamespace = (ns: string) => ns,
+      lookups = this.lookups,
+      ...remainingOptions
+    } = options ?? { localOnly: false };
     options = {
       ...remainingOptions,
       lookups,
@@ -615,11 +627,11 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
         repositoryPath = join(repositoryPath, '..');
       }
 
-      let namespace = asNamespace(relative(repositoryPath, filePath), { lookups });
+      let namespace = customizeNamespace(asNamespace(relative(repositoryPath, filePath), { lookups }));
       try {
         const resolved = realpathSync(filePath);
         if (!namespace) {
-          namespace = asNamespace(resolved, { lookups });
+          namespace = customizeNamespace(asNamespace(resolved, { lookups }));
         }
 
         if (registerToScope && !namespace.startsWith('@')) {
