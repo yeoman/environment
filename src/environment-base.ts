@@ -25,7 +25,6 @@ import { FlyRepository } from 'fly-import';
 import createdLogger from 'debug';
 // @ts-expect-error grouped-queue don't have types
 import GroupedQueue from 'grouped-queue';
-// eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
 import { transform, filePipeline, type FilePipelineTransform } from '@yeoman/transform';
 import { type YeomanNamespace, toNamespace } from '@yeoman/namespace';

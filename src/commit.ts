@@ -4,9 +4,7 @@ import { type ConflicterOptions, createConflicterTransform, createYoResolveTrans
 import createdLogger from 'debug';
 import type { Store } from 'mem-fs';
 import { create as createMemFsEditor, type MemFsEditorFile } from 'mem-fs-editor';
-// eslint-disable-next-line n/file-extension-in-import
 import { createCommitTransform } from 'mem-fs-editor/transform';
-// eslint-disable-next-line n/file-extension-in-import
 import { isFilePending } from 'mem-fs-editor/state';
 
 const debug = createdLogger('yeoman:environment:commit');
