@@ -54,7 +54,7 @@ export type EnvironmentLookupOptions = LookupOptions & {
   /** Add a scope to the namespace if there is no scope */
   registerToScope?: string;
   /** Customize the namespace to be registered */
-  customizeNamespace?: (ns?: string) => string;
+  customizeNamespace?: (ns?: string) => string | undefined;
 };
 
 export type EnvironmentOptions = BaseEnvironmentOptions &
