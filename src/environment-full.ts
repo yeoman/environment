@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import type { BaseGeneratorConstructor, InputOutputAdapter } from '@yeoman/types';
 import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
 import { flyImport } from 'fly-import';
@@ -343,9 +343,13 @@ class FullEnvironment extends EnvironmentBase {
     args = Array.isArray(args) ? args : splitArgsFromString(args as unknown as string);
     options = { ...options };
 
-    const name = args.shift();
+    let name = args.shift();
     if (!name) {
       throw new Error('Must provide at least one argument, the generator namespace to invoke.');
+    }
+
+    if (name.startsWith('.')) {
+      name = resolve(name);
     }
 
     this.loadEnvironmentOptions(options);
