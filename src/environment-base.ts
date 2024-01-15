@@ -634,6 +634,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
           namespace = customizeNamespace(asNamespace(resolved, { lookups }));
         }
 
+        namespace = namespace!;
         if (registerToScope && !namespace.startsWith('@')) {
           namespace = `@${registerToScope}/${namespace}`;
         }
@@ -652,7 +653,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
 
       generators.push({
         resolved: filePath,
-        namespace,
+        namespace: namespace!,
         packagePath,
         registered: false,
       });
