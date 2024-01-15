@@ -1,11 +1,22 @@
 import assert from 'node:assert';
+import { Module } from 'node:module';
 import sinon from 'sinon';
-import { esmocha, expect, mock } from 'esmocha';
+import { after, before, esmocha, expect } from 'esmocha';
+import quibble from 'quibble';
 import helpers, { getCreateEnv } from './helpers.js';
 import { greaterThan5 } from './generator-versions.js';
+import * as execaModule from 'execa';
 
-const { commitSharedFsTask } = await mock('../src/commit.ts');
-const { packageManagerInstallTask } = await mock('../src/package-manager.ts');
+if (!Module.register) {
+  throw new Error('Node greater than v18.19.0 or v20.6.0 is required to test this module.');
+}
+
+const commitSharedFsTask = esmocha.fn();
+const packageManagerInstallTask = esmocha.fn();
+const execa = esmocha.fn();
+await quibble.esm('../src/commit.ts', { commitSharedFsTask });
+await quibble.esm('../src/package-manager.ts', { packageManagerInstallTask });
+await quibble.esm('execa', { ...execaModule, execa });
 const { default: BasicEnvironment } = await import('../src/environment-base.js');
 
 for (const generatorVersion of greaterThan5) {
@@ -14,8 +25,11 @@ for (const generatorVersion of greaterThan5) {
   class FeaturesGenerator extends Generator {}
 
   describe(`environment (generator-features) using ${generatorVersion}`, () => {
-    beforeEach(() => {
+    afterEach(() => {
       esmocha.resetAllMocks();
+    });
+    after(() => {
+      quibble.reset();
     });
 
     describe('customCommitTask feature', () => {
@@ -172,8 +186,8 @@ for (const generatorVersion of greaterThan5) {
           await runContext.run();
         });
 
-        it('should not call packageManagerInstallTask', () => {
-          expect(packageManagerInstallTask).not.toHaveBeenCalled();
+        it('should not call execa', () => {
+          expect(execa).not.toHaveBeenCalled();
         });
       });
 
