@@ -399,6 +399,19 @@ describe('Environment Resolver', async function () {
       assert.ok(this.env.getRegisteredPackages().length === 1);
     });
 
+    it('with customizeNamespace', async function () {
+      await this.env.lookup({
+        localOnly: true,
+        packagePaths: ['node_modules/generator-module'],
+        customizeNamespace: ns => ns.replace('module', 'custom'),
+      });
+
+      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+
+      assert.ok(await this.env.get('custom:app'));
+      assert.ok(this.env.getRegisteredPackages().length === 1);
+    });
+
     it('with scope and packagePaths', async function () {
       await this.env.lookup({
         localOnly: true,
