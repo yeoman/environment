@@ -2,6 +2,7 @@
 import events from 'node:events';
 import fs from 'node:fs';
 import path, { dirname, join } from 'node:path';
+import process from 'node:process';
 import util from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
@@ -378,6 +379,20 @@ for (const generatorVersion of allVersions) {
       it('runs a registered generator', async function () {
         return this.env.run(['stub:run']).then(() => {
           assert.ok(this.runMethod.calledOnce);
+        });
+      });
+
+      describe('using relative paths', () => {
+        let oldCwd;
+        before(() => {
+          oldCwd = process.cwd();
+          process.chdir(dirname(fileURLToPath(import.meta.url)));
+        });
+        after(() => {
+          process.chdir(oldCwd);
+        });
+        it('runs a generator', async function () {
+          return this.env.run(['./fixtures/generator-esm/generators/app/index.js']);
         });
       });
 
