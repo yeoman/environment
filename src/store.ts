@@ -108,7 +108,7 @@ export default class Store {
    * @param  {String} namespace
    * @return {Module}
    */
-  async get(namespace: string): Promise<GetGeneratorConstructor> {
+  async get(namespace: string): Promise<GetGeneratorConstructor | undefined> {
     return this.getMeta(namespace)?.importGenerator();
   }
 
@@ -117,7 +117,7 @@ export default class Store {
    * @param  {String} namespace
    * @return {Module}
    */
-  getMeta(namespace: string): GeneratorMeta {
+  getMeta(namespace: string): GeneratorMeta | undefined {
     return this._meta[namespace];
   }
 
