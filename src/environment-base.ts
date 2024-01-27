@@ -701,7 +701,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * @param namespace
    */
   getGeneratorMeta(namespace: string): GeneratorMeta | undefined {
-    const meta: GeneratorMeta = this.store.getMeta(namespace) ?? this.store.getMeta(this.alias(namespace));
+    const meta = this.store.getMeta(namespace) ?? this.store.getMeta(this.alias(namespace));
     if (!meta) {
       return;
     }
