@@ -249,6 +249,10 @@ for (const generatorVersion of allVersions) {
         assert.ok((await this.env.composeWith('stub')) instanceof this.Generator);
       });
 
+      it('should instantiate a genarator and set _meta', async function () {
+        assert.ok((await this.env.composeWith('stub'))._meta);
+      });
+
       it('should schedule generator queue', async function () {
         this.env.queueTask = sinon.spy();
         await this.env.composeWith('stub');
