@@ -26,7 +26,7 @@ jobs:
         with:
           ref: gh-pages
           path: yeoman-environment-doc
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-gh-pages
