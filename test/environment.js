@@ -272,6 +272,18 @@ for (const generatorVersion of allVersions) {
           }
         });
       });
+      describe('passing function schedule parameter', () => {
+        it('returning false should not schedule generator', async function () {
+          this.env.queueTask = sinon.spy();
+          await this.env.composeWith('stub', { generatorArgs: [], schedule: () => false });
+          if (isGreaterThan6(generatorVersion)) {
+            assert(this.env.queueTask.calledOnce);
+            assert(this.env.queueTask.getCall(0).firstArg !== 'environment:run');
+          } else {
+            assert(this.env.queueTask.notCalled);
+          }
+        });
+      });
 
       it('should emit a compose event', function (done) {
         this.env.once('compose', (namespace, generator) => {
