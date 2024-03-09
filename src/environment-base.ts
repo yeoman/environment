@@ -425,6 +425,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     const { schedule = true, ...instantiateOptions } = options;
 
     const generatorInstance = await this.create(generator, instantiateOptions);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
     // @ts-ignore: keep type compatibility with old @yeoman/types
     return this.queueGenerator(generatorInstance, { schedule: typeof schedule === 'function' ? schedule(generatorInstance) : schedule });
   }
