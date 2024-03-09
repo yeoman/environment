@@ -425,7 +425,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     const { schedule = true, ...instantiateOptions } = options;
 
     const generatorInstance = await this.create(generator, instantiateOptions);
-    return this.queueGenerator(generatorInstance, { schedule });
+    return this.queueGenerator(generatorInstance, { schedule: typeof schedule === 'function' ? schedule(generatorInstance) : schedule });
   }
 
   /**
