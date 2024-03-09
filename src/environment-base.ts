@@ -425,7 +425,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     const { schedule: passedSchedule = true, ...instantiateOptions } = options;
 
     const generatorInstance = await this.create(generator, instantiateOptions);
-    // Keep type compatibility with old @yeoman/types
+    // Convert to function to keep type compatibility with old @yeoman/types where schedule is boolean only
     const schedule: (gen: G) => boolean = typeof passedSchedule === 'function' ? passedSchedule : () => passedSchedule;
     return this.queueGenerator(generatorInstance, { schedule: schedule(generatorInstance) });
   }
