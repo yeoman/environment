@@ -422,12 +422,12 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   ): Promise<G>;
   async composeWith<G extends BaseGenerator = BaseGenerator>(generator: string | GetGeneratorConstructor<G>, ...args: any[]): Promise<G> {
     const options = getComposeOptions(...args) as ComposeOptions<G>;
-    const { schedule = true, ...instantiateOptions } = options;
+    const { schedule = true: passedSchedule, ...instantiateOptions } = options;
 
     const generatorInstance = await this.create(generator, instantiateOptions);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
-    // @ts-ignore: keep type compatibility with old @yeoman/types
-    return this.queueGenerator(generatorInstance, { schedule: typeof schedule === 'function' ? schedule(generatorInstance) : schedule });
+    // Keep type compatibility with old @yeoman/types
+    const schedule: (G) => boolean = typeof schedule === 'function' ? schedule : () => schedule;
+    return this.queueGenerator(generatorInstance, { schedule: schedule(generatorInstance) });
   }
 
   /**
