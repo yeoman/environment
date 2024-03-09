@@ -422,7 +422,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   ): Promise<G>;
   async composeWith<G extends BaseGenerator = BaseGenerator>(generator: string | GetGeneratorConstructor<G>, ...args: any[]): Promise<G> {
     const options = getComposeOptions(...args) as ComposeOptions<G>;
-    const { schedule = true: passedSchedule, ...instantiateOptions } = options;
+    const { schedule: passedSchedule = true, ...instantiateOptions } = options;
 
     const generatorInstance = await this.create(generator, instantiateOptions);
     // Keep type compatibility with old @yeoman/types
