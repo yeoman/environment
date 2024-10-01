@@ -20,7 +20,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const ENVIRONMENT_VERSION = require('../package.json').version;
-const INQUIRER_VERSION = require('inquirer/package.json').version;
 const GROUPED_QUEUE_VERSION = require('grouped-queue/package.json').version;
 
 for (const generatorVersion of allVersions) {
@@ -76,12 +75,6 @@ for (const generatorVersion of allVersions) {
         const version = this.env.getVersion();
         assert.ok(version);
         assert.textEqual(version, ENVIRONMENT_VERSION);
-      });
-
-      it('output the inquirer version number', async function () {
-        const version = this.env.getVersion('inquirer');
-        assert.ok(version);
-        assert.textEqual(version, INQUIRER_VERSION);
       });
 
       it('output the grouped-queue version number', async function () {
