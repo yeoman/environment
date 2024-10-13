@@ -89,7 +89,7 @@ Changes to package.json were detected.`);
       adapter.log('Error detecting the package manager. Falling back to npm.');
     }
 
-    if (!['npm', 'yarn', 'pnpm'].includes(packageManagerName)) {
+    if (!['npm', 'yarn', 'pnpm', 'bun'].includes(packageManagerName)) {
       adapter.log(`${packageManagerName} is not a supported package manager. Run it by yourself.`);
       return false;
     }

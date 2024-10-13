@@ -50,6 +50,13 @@ const ENVIRONMENT_VERSION = require('../package.json').version;
 
 const debug = createdLogger('yeoman:environment');
 
+export type EnvironmentLookupOptions = LookupOptions & {
+  /** Add a scope to the namespace if there is no scope */
+  registerToScope?: string;
+  /** Customize the namespace to be registered */
+  customizeNamespace?: (ns?: string) => string | undefined;
+};
+
 export type EnvironmentOptions = BaseEnvironmentOptions &
   Omit<TerminalAdapterOptions, 'promptModule'> & {
     adapter?: InputOutputAdapter;
@@ -238,6 +245,37 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   }
 
   /**
+   * @param   namespaceOrPath
+   * @return the generator meta registered under the namespace
+   */
+  async findMeta(namespaceOrPath: string | YeomanNamespace): Promise<GeneratorMeta | undefined> {
+    // Stop the recursive search if nothing is left
+    if (!namespaceOrPath) {
+      return;
+    }
+
+    const parsed = toNamespace(namespaceOrPath);
+    if (typeof namespaceOrPath !== 'string' || parsed) {
+      const ns = parsed!.namespace;
+      return this.store.getMeta(ns) ?? this.store.getMeta(this.alias(ns));
+    }
+
+    const maybeMeta = this.store.getMeta(namespaceOrPath) ?? this.store.getMeta(this.alias(namespaceOrPath));
+    if (maybeMeta) {
+      return maybeMeta;
+    }
+
+    try {
+      const resolved = await resolveModulePath(namespaceOrPath);
+      if (resolved) {
+        return this.store.add({ resolved, namespace: this.namespace(resolved) });
+      }
+    } catch {}
+
+    return undefined;
+  }
+
+  /**
    * Get a single generator from the registered list of generators. The lookup is
    * based on generator's namespace, "walking up" the namespaces until a matching
    * is found. Eg. if an `angular:common` namespace is registered, and we try to
@@ -250,33 +288,8 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   async get<C extends BaseGeneratorConstructor = BaseGeneratorConstructor>(
     namespaceOrPath: string | YeomanNamespace,
   ): Promise<C | undefined> {
-    // Stop the recursive search if nothing is left
-    if (!namespaceOrPath) {
-      return;
-    }
-
-    const parsed = toNamespace(namespaceOrPath);
-    if (typeof namespaceOrPath !== 'string' || parsed) {
-      const ns = parsed!.namespace;
-      const maybeGenerator = (await this.store.get(ns)) ?? this.store.get(this.alias(ns));
-      return maybeGenerator as C;
-    }
-
-    const maybeGenerator = (await this.store.get(namespaceOrPath)) ?? (await this.store.get(this.alias(namespaceOrPath)));
-    if (maybeGenerator) {
-      return maybeGenerator as C;
-    }
-
-    try {
-      const resolved = await resolveModulePath(namespaceOrPath);
-      if (resolved) {
-        const namespace = this.namespace(resolved);
-        this.store.add({ resolved, namespace });
-        return (await this.store.get(namespace)) as C;
-      }
-    } catch {}
-
-    return undefined;
+    const meta = await this.findMeta(namespaceOrPath);
+    return meta?.importGenerator() as Promise<C>;
   }
 
   /**
@@ -344,10 +357,15 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     }
 
     if (typeof namespaceOrPath === 'string') {
-      constructor = await this.get(namespaceOrPath);
+      const meta = await this.findMeta(namespaceOrPath);
+      constructor = await meta?.importGenerator();
       if (namespace && !constructor) {
         // Await this.lookupLocalNamespaces(namespace);
         // constructor = await this.get(namespace);
+      }
+
+      if (constructor) {
+        (constructor as any)._meta = meta;
       }
     } else {
       constructor = namespaceOrPath;
@@ -369,7 +387,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   ): Promise<G>;
   async instantiate<G extends BaseGenerator = BaseGenerator>(constructor: GetGeneratorConstructor<G>, ...args: any[]): Promise<G> {
     const composeOptions = args.length > 0 ? (getInstantiateOptions(...args) as InstantiateOptions<G>) : {};
-    const { namespace = UNKNOWN_NAMESPACE, resolved = UNKNOWN_RESOLVED } = constructor as any;
+    const { namespace = UNKNOWN_NAMESPACE, resolved = UNKNOWN_RESOLVED, _meta } = constructor as any;
     const environmentOptions = { env: this, resolved, namespace };
     const generator = new constructor(composeOptions.generatorArgs ?? [], {
       ...this.sharedOptions,
@@ -377,6 +395,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       ...environmentOptions,
     } as unknown as GetGeneratorOptions<G>);
 
+    (generator as any)._meta = _meta;
     (generator as any)._environmentOptions = {
       ...this.options,
       ...this.sharedOptions,
@@ -403,10 +422,12 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   ): Promise<G>;
   async composeWith<G extends BaseGenerator = BaseGenerator>(generator: string | GetGeneratorConstructor<G>, ...args: any[]): Promise<G> {
     const options = getComposeOptions(...args) as ComposeOptions<G>;
-    const { schedule = true, ...instantiateOptions } = options;
+    const { schedule: passedSchedule = true, ...instantiateOptions } = options;
 
     const generatorInstance = await this.create(generator, instantiateOptions);
-    return this.queueGenerator(generatorInstance, { schedule });
+    // Convert to function to keep type compatibility with old @yeoman/types where schedule is boolean only
+    const schedule: (gen: G) => boolean = typeof passedSchedule === 'function' ? passedSchedule : () => passedSchedule;
+    return this.queueGenerator(generatorInstance, { schedule: schedule(generatorInstance) });
   }
 
   /**
@@ -600,8 +621,13 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * So this index file `node_modules/generator-dummy/lib/generators/yo/index.js` would be
    * registered as `dummy:yo` generator.
    */
-  async lookup(options?: LookupOptions & { registerToScope?: string }): Promise<LookupGeneratorMeta[]> {
-    const { registerToScope, lookups = this.lookups, ...remainingOptions } = options ?? { localOnly: false };
+  async lookup(options?: EnvironmentLookupOptions): Promise<LookupGeneratorMeta[]> {
+    const {
+      registerToScope,
+      customizeNamespace = (ns: string) => ns,
+      lookups = this.lookups,
+      ...remainingOptions
+    } = options ?? { localOnly: false };
     options = {
       ...remainingOptions,
       lookups,
@@ -615,13 +641,14 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
         repositoryPath = join(repositoryPath, '..');
       }
 
-      let namespace = asNamespace(relative(repositoryPath, filePath), { lookups });
+      let namespace = customizeNamespace(asNamespace(relative(repositoryPath, filePath), { lookups }));
       try {
         const resolved = realpathSync(filePath);
         if (!namespace) {
-          namespace = asNamespace(resolved, { lookups });
+          namespace = customizeNamespace(asNamespace(resolved, { lookups }));
         }
 
+        namespace = namespace!;
         if (registerToScope && !namespace.startsWith('@')) {
           namespace = `@${registerToScope}/${namespace}`;
         }
@@ -640,7 +667,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
 
       generators.push({
         resolved: filePath,
-        namespace,
+        namespace: namespace!,
         packagePath,
         registered: false,
       });
@@ -676,7 +703,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * @param namespace
    */
   getGeneratorMeta(namespace: string): GeneratorMeta | undefined {
-    const meta: GeneratorMeta = this.store.getMeta(namespace) ?? this.store.getMeta(this.alias(namespace));
+    const meta = this.store.getMeta(namespace) ?? this.store.getMeta(this.alias(namespace));
     if (!meta) {
       return;
     }

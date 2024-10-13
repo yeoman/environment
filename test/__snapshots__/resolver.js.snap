@@ -930,6 +930,21 @@ exports[`Environment Resolver #lookup() with options with 3 packagePaths 1`] = `
 }
 `;
 
+exports[`Environment Resolver #lookup() with options with customizeNamespace 1`] = `
+{
+  "custom:app": {
+    "importGenerator": [Function],
+    "importModule": [Function],
+    "instantiate": [Function],
+    "instantiateHelp": [Function],
+    "namespace": "custom:app",
+    "packageNamespace": "custom",
+    "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "resolved": "fixtures/generator-module/generators/app/index.js",
+  },
+}
+`;
+
 exports[`Environment Resolver #lookup() with options with npmPaths 1`] = `
 {
   "@scoped/scoped:app": {

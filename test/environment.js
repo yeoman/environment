@@ -20,7 +20,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const ENVIRONMENT_VERSION = require('../package.json').version;
-const INQUIRER_VERSION = require('inquirer/package.json').version;
 const GROUPED_QUEUE_VERSION = require('grouped-queue/package.json').version;
 
 for (const generatorVersion of allVersions) {
@@ -76,12 +75,6 @@ for (const generatorVersion of allVersions) {
         const version = this.env.getVersion();
         assert.ok(version);
         assert.textEqual(version, ENVIRONMENT_VERSION);
-      });
-
-      it('output the inquirer version number', async function () {
-        const version = this.env.getVersion('inquirer');
-        assert.ok(version);
-        assert.textEqual(version, INQUIRER_VERSION);
       });
 
       it('output the grouped-queue version number', async function () {
@@ -249,6 +242,10 @@ for (const generatorVersion of allVersions) {
         assert.ok((await this.env.composeWith('stub')) instanceof this.Generator);
       });
 
+      it('should instantiate a genarator and set _meta', async function () {
+        assert.ok((await this.env.composeWith('stub'))._meta);
+      });
+
       it('should schedule generator queue', async function () {
         this.env.queueTask = sinon.spy();
         await this.env.composeWith('stub');
@@ -260,6 +257,18 @@ for (const generatorVersion of allVersions) {
         it('should not schedule generator', async function () {
           this.env.queueTask = sinon.spy();
           await this.env.composeWith('stub', { generatorArgs: [], schedule: false });
+          if (isGreaterThan6(generatorVersion)) {
+            assert(this.env.queueTask.calledOnce);
+            assert(this.env.queueTask.getCall(0).firstArg !== 'environment:run');
+          } else {
+            assert(this.env.queueTask.notCalled);
+          }
+        });
+      });
+      describe('passing function schedule parameter', () => {
+        it('returning false should not schedule generator', async function () {
+          this.env.queueTask = sinon.spy();
+          await this.env.composeWith('stub', { generatorArgs: [], schedule: () => false });
           if (isGreaterThan6(generatorVersion)) {
             assert(this.env.queueTask.calledOnce);
             assert(this.env.queueTask.getCall(0).firstArg !== 'environment:run');

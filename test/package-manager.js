@@ -154,6 +154,24 @@ No change to package.json was detected. No package manager install will be execu
           });
         });
 
+        describe('with bun', () => {
+          beforeEach(async () => {
+            whichPackageManager.mockResolvedValue('bun');
+            await packageManagerInstallTask({ adapter, memFs, packageJsonLocation });
+          });
+
+          it('should log', async () => {
+            expect(adapter.log).toBeCalledTimes(2);
+            expect(adapter.log).toHaveBeenNthCalledWith(1, changesToPackageJson);
+            expect(adapter.log).toHaveBeenNthCalledWith(2, runningPackageManager('bun'));
+          });
+
+          it('should execute bun', () => {
+            expect(execa).toBeCalled();
+            expect(execa).toBeCalledWith('bun', ['install'], expect.any(Object));
+          });
+        });
+
         describe('with an unsupported package manager', () => {
           beforeEach(async () => {
             await packageManagerInstallTask({ adapter, memFs, packageJsonLocation, nodePackageManager: 'foo' });
