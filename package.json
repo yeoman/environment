@@ -1,6 +1,6 @@
 {
   "name": "yeoman-environment",
-  "version": "4.4.2",
+  "version": "4.4.3",
   "description": "Handles the lifecyle and bootstrapping of generators in a specific environment",
   "keywords": [
     "development",
@@ -67,7 +67,7 @@
     "commander": "^11.1.0",
     "debug": "^4.3.4",
     "execa": "^8.0.1",
-    "fly-import": "^0.4.0",
+    "fly-import": "^0.4.1",
     "globby": "^14.0.0",
     "grouped-queue": "^2.0.0",
     "locate-path": "^7.2.0",
@@ -170,7 +170,8 @@
     "mem-fs": "^4.0.0"
   },
   "acceptDependencies": {
-    "@yeoman/adapter": "^2.0.0"
+    "@yeoman/adapter": "^2.0.0",
+    "@yeoman/transform": "^2.1.0"
   },
   "engines": {
     "node": "^18.17.0 || >=20.5.0"
