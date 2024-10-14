@@ -1,6 +1,6 @@
 import { parse } from 'node:path';
 import slash from 'slash';
-import { findLast, escapeRegExp } from 'lodash-es';
+import { escapeRegExp, findLast } from 'lodash-es';
 
 type AsNamespaceOptions = {
   lookups?: string[];
@@ -39,7 +39,7 @@ export const asNamespace = (filepath: string, { lookups = defaultLookups }: AsNa
   // Ignore path before latest node_modules
   const nodeModulesPath = '/node_modules/';
   if (ns.includes(nodeModulesPath)) {
-    ns = ns.slice(ns.lastIndexOf(nodeModulesPath) + nodeModulesPath.length, ns.length);
+    ns = ns.slice(ns.lastIndexOf(nodeModulesPath) + nodeModulesPath.length);
   }
 
   // Cleanup extension and normalize path for differents OS

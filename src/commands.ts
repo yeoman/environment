@@ -1,6 +1,6 @@
 import { type BaseGeneratorConstructor, type GeneratorMeta } from '@yeoman/types';
 import YeomanCommand, { addEnvironmentOptions } from './util/command.js';
-import { createEnv } from './index.js';
+import { createEnv as createEnvironment } from './index.js';
 
 export type CommandPreparation = {
   resolved?: string;
@@ -22,27 +22,26 @@ export const prepareGeneratorCommand = async ({
   generator,
   namespace,
 }: CommandPreparation) => {
-  const env = createEnv();
+  const environment = createEnvironment();
   let meta: GeneratorMeta;
   if (generator && namespace) {
-    meta = env.register(generator, { namespace, resolved });
+    meta = environment.register(generator, { namespace, resolved });
   } else if (resolved) {
-    meta = env.register(resolved, { namespace });
+    meta = environment.register(resolved, { namespace });
   } else {
     throw new Error(`A generator with namespace or a generator path is required`);
   }
 
-  command.env = env;
+  command.env = environment;
   command.registerGenerator(await meta.instantiateHelp());
   command.action(async function (this: YeomanCommand) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
     let rootCommand: YeomanCommand = this;
     while (rootCommand.parent) {
       rootCommand = rootCommand.parent as YeomanCommand;
     }
 
     const generator = await meta.instantiate(this.args, this.opts());
-    await env.runGenerator(generator);
+    await environment.runGenerator(generator);
   });
   return command;
 };

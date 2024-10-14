@@ -2,6 +2,7 @@ import assert from 'node:assert';
 import { createRequire } from 'node:module';
 import path, { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { beforeEach, describe, it } from 'esmocha';
 import Store from '../src/store.js';
 
 const require = createRequire(import.meta.url);

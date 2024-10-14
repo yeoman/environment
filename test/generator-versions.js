@@ -15,7 +15,6 @@ export const greaterThan5 = new Set([generator5, ...greaterThan6]);
 export const isGreaterThan5 = version => greaterThan5.has(version);
 
 export const importGenerator = async generatorVersion => {
-  // eslint-disable-next-line no-warning-comments
   /*
    TODO use dynamic install works for yeoman-generator@4, but not for v2
   if (isLegacyVersion(generatorVersion)) {

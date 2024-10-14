@@ -3,8 +3,8 @@ import { delimiter, dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import process from 'node:process';
 import arrify from 'arrify';
-import { uniq, compact } from 'lodash-es';
-import { globbySync, type Options as GlobbyOptions } from 'globby';
+import { compact, uniq } from 'lodash-es';
+import { type Options as GlobbyOptions, globbySync } from 'globby';
 import slash from 'slash';
 import createdLogger from 'debug';
 import { execaOutput } from './util/util.js';
@@ -12,10 +12,8 @@ import { execaOutput } from './util/util.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const PROJECT_ROOT = join(__dirname, '..');
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const PACKAGE_NAME_PATTERN = [JSON.parse(readFileSync(join(PROJECT_ROOT, 'package.json')).toString()).name];
 
 const win32 = process.platform === 'win32';
@@ -49,7 +47,7 @@ export type ModuleLookupOptions = {
  */
 export function moduleLookupSync(
   options: ModuleLookupOptions,
-  find: (arg: { files: string[]; packagePath: string }) => string | undefined,
+  find: (argument: { files: string[]; packagePath: string }) => string | undefined,
 ) {
   debug('Running lookup with options: %o', options);
   options = { ...options };
@@ -207,8 +205,8 @@ function getLocalNpmPaths(): string[] {
   process
     .cwd()
     .split(sep)
-    .forEach((part, i, parts) => {
-      let lookup = join(...parts.slice(0, i + 1), 'node_modules');
+    .forEach((part, index, parts) => {
+      let lookup = join(...parts.slice(0, index + 1), 'node_modules');
 
       if (!win32) {
         lookup = `/${lookup}`;

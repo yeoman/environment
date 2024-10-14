@@ -48,18 +48,18 @@ export default class YeomanCommand extends Command {
    * @param {object[]} generatorArgs
    * @return {YeomanCommand} this;
    */
-  addGeneratorArguments(generatorArgs: any[] = []) {
-    if (!generatorArgs || generatorArgs.length === 0) {
+  addGeneratorArguments(generatorArguments: any[] = []) {
+    if (!generatorArguments || generatorArguments.length === 0) {
       return this;
     }
 
-    const args = generatorArgs
+    const arguments_ = generatorArguments
       .map(argument => {
-        const argName = argument.type === Array ? `${argument.name}...` : argument.name;
-        return argument.required ? `<${argName}>` : `[${argName}]`;
+        const argumentName = argument.type === Array ? `${argument.name}...` : argument.name;
+        return argument.required ? `<${argumentName}>` : `[${argumentName}]`;
       })
       .join(' ');
-    this.arguments(args);
+    this.arguments(arguments_);
     return this;
   }
 
@@ -80,7 +80,7 @@ export default class YeomanCommand extends Command {
 
   _addGeneratorOption(optionName: string, optionDefinition: any, additionalDescription = '') {
     if (optionName === 'help') {
-      return undefined;
+      return;
     }
 
     const longOption = `--${optionName}`;

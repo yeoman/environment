@@ -26,7 +26,7 @@ import createdLogger from 'debug';
 // @ts-expect-error grouped-queue don't have types
 import GroupedQueue from 'grouped-queue';
 import { isFilePending } from 'mem-fs-editor/state';
-import { transform, filePipeline, type FilePipelineTransform } from '@yeoman/transform';
+import { type FilePipelineTransform, filePipeline, transform } from '@yeoman/transform';
 import { type YeomanNamespace, toNamespace } from '@yeoman/namespace';
 import chalk from 'chalk';
 import { type ConflicterOptions } from '@yeoman/conflicter';
@@ -40,12 +40,10 @@ import { UNKNOWN_NAMESPACE, UNKNOWN_RESOLVED, defaultQueues } from './constants.
 import { resolveModulePath } from './util/resolve.js';
 import { commitSharedFsTask } from './commit.js';
 import { packageManagerInstallTask } from './package-manager.js';
-// eslint-disable-next-line import/order
-import { splitArgsFromString } from './util/util.js';
+import { splitArgsFromString as splitArgumentsFromString } from './util/util.js';
 
 const require = createRequire(import.meta.url);
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 const ENVIRONMENT_VERSION = require('../package.json').version;
 
 const debug = createdLogger('yeoman:environment');
@@ -67,19 +65,24 @@ export type EnvironmentOptions = BaseEnvironmentOptions &
     nodePackageManager?: string;
   };
 
-const getInstantiateOptions = (args?: any, options?: any): InstantiateOptions => {
-  if (Array.isArray(args) || typeof args === 'string') {
-    return { generatorArgs: splitArgsFromString(args), generatorOptions: options };
+const getInstantiateOptions = (arguments_?: any, options?: any): InstantiateOptions => {
+  if (Array.isArray(arguments_) || typeof arguments_ === 'string') {
+    return { generatorArgs: splitArgumentsFromString(arguments_), generatorOptions: options };
   }
 
-  if (args !== undefined) {
-    if ('generatorOptions' in args || 'generatorArgs' in args) {
-      return args;
+  if (arguments_ !== undefined) {
+    if ('generatorOptions' in arguments_ || 'generatorArgs' in arguments_) {
+      return arguments_;
     }
 
-    if ('options' in args || 'arguments' in args || 'args' in args) {
-      const { args: insideArgs, arguments: generatorArgs = insideArgs, options: generatorOptions, ...remainingOptions } = args;
-      return { generatorArgs: splitArgsFromString(generatorArgs), generatorOptions: generatorOptions ?? remainingOptions };
+    if ('options' in arguments_ || 'arguments' in arguments_ || 'args' in arguments_) {
+      const {
+        args: insideArguments,
+        arguments: generatorArguments = insideArguments,
+        options: generatorOptions,
+        ...remainingOptions
+      } = arguments_;
+      return { generatorArgs: splitArgumentsFromString(generatorArguments), generatorOptions: generatorOptions ?? remainingOptions };
     }
   }
 
@@ -89,35 +92,35 @@ const getInstantiateOptions = (args?: any, options?: any): InstantiateOptions =>
 const getComposeOptions = (...varargs: any[]): ComposeOptions => {
   if (varargs.filter(Boolean).length === 0) return {};
 
-  const [args, options, composeOptions] = varargs;
-  if (typeof args === 'boolean') {
-    return { schedule: args };
+  const [arguments_, options, composeOptions] = varargs;
+  if (typeof arguments_ === 'boolean') {
+    return { schedule: arguments_ };
   }
 
-  let generatorArgs;
+  let generatorArguments;
   let generatorOptions;
-  if (args !== undefined) {
-    if (Array.isArray(args)) {
-      generatorArgs = args;
-    } else if (typeof args === 'string') {
-      generatorArgs = splitArgsFromString(String(args));
-    } else if (typeof args === 'object') {
-      if ('generatorOptions' in args || 'generatorArgs' in args || 'schedule' in args) {
-        return args;
+  if (arguments_ !== undefined) {
+    if (Array.isArray(arguments_)) {
+      generatorArguments = arguments_;
+    } else if (typeof arguments_ === 'string') {
+      generatorArguments = splitArgumentsFromString(String(arguments_));
+    } else if (typeof arguments_ === 'object') {
+      if ('generatorOptions' in arguments_ || 'generatorArgs' in arguments_ || 'schedule' in arguments_) {
+        return arguments_;
       }
 
-      generatorOptions = args;
+      generatorOptions = arguments_;
     }
   }
 
   if (typeof options === 'boolean') {
-    return { generatorArgs, generatorOptions, schedule: options };
+    return { generatorArgs: generatorArguments, generatorOptions, schedule: options };
   }
 
   generatorOptions = generatorOptions ?? options;
 
   if (typeof composeOptions === 'boolean') {
-    return { generatorArgs, generatorOptions, schedule: composeOptions };
+    return { generatorArgs: generatorArguments, generatorOptions, schedule: composeOptions };
   }
 
   return {};
@@ -209,7 +212,6 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       },
     });
 
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     this.experimental = experimental || process.argv.includes('--experimental');
 
     this.alias(/^([^:]+)$/, '$1:app');
@@ -236,6 +238,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
           ...(transformStreams as any),
           transform(file => {
             step('Completed', relative(this.logCwd, file.path));
+            // eslint-disable-next-line unicorn/no-useless-undefined
             return undefined;
           }),
         ]);
@@ -270,7 +273,9 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       if (resolved) {
         return this.store.add({ resolved, namespace: this.namespace(resolved) });
       }
-    } catch {}
+    } catch {
+      // ignore error
+    }
 
     return undefined;
   }
@@ -307,7 +312,10 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     namespaceOrPath: string | GetGeneratorConstructor<G>,
     instantiateOptions?: InstantiateOptions<G>,
   ): Promise<G>;
-  async create<G extends BaseGenerator = BaseGenerator>(namespaceOrPath: string | GetGeneratorConstructor<G>, ...args: any[]): Promise<G> {
+  async create<G extends BaseGenerator = BaseGenerator>(
+    namespaceOrPath: string | GetGeneratorConstructor<G>,
+    ...arguments_: any[]
+  ): Promise<G> {
     let constructor;
     const namespace = typeof namespaceOrPath === 'string' ? toNamespace(namespaceOrPath) : undefined;
 
@@ -324,28 +332,15 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
 
       if (typeof Generator !== 'function') {
         throw new TypeError(
-          chalk.red(`You don't seem to have a generator with the name “${namespace?.generatorHint}” installed.`) +
-            '\n' +
-            'But help is on the way:\n\n' +
-            'You can see available generators via ' +
-            chalk.yellow('npm search yeoman-generator') +
-            ' or via ' +
-            chalk.yellow('http://yeoman.io/generators/') +
-            '. \n' +
-            'Install them with ' +
-            chalk.yellow(`npm install ${namespace?.generatorHint}`) +
-            '.\n\n' +
-            'To see all your installed generators run ' +
-            chalk.yellow('yo --generators') +
-            '. ' +
-            'Adding the ' +
-            chalk.yellow('--help') +
-            ' option will also show subgenerators. \n\n' +
-            'If ' +
-            chalk.yellow('yo') +
-            ' cannot find the generator, run ' +
-            chalk.yellow('yo doctor') +
-            ' to troubleshoot your system.',
+          `${chalk.red(`You don't seem to have a generator with the name “${namespace?.generatorHint}” installed.`)}\n` +
+            `But help is on the way:\n\n` +
+            `You can see available generators via ${chalk.yellow('npm search yeoman-generator')} or via ${chalk.yellow(
+              'http://yeoman.io/generators/',
+            )}. \n` +
+            `Install them with ${chalk.yellow(`npm install ${namespace?.generatorHint}`)}.\n\n` +
+            `To see all your installed generators run ${chalk.yellow('yo --generators')}. ` +
+            `Adding the ${chalk.yellow('--help')} option will also show subgenerators. \n\n` +
+            `If ${chalk.yellow('yo')} cannot find the generator, run ${chalk.yellow('yo doctor')} to troubleshoot your system.`,
         );
       }
 
@@ -353,7 +348,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     };
 
     if (typeof namespaceOrPath !== 'string') {
-      return this.instantiate(checkGenerator(namespaceOrPath), ...args);
+      return this.instantiate(checkGenerator(namespaceOrPath), ...arguments_);
     }
 
     if (typeof namespaceOrPath === 'string') {
@@ -371,7 +366,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       constructor = namespaceOrPath;
     }
 
-    return this.instantiate(checkGenerator(constructor), ...args);
+    return this.instantiate(checkGenerator(constructor), ...arguments_);
   }
 
   /**
@@ -385,8 +380,8 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     generator: GetGeneratorConstructor<G>,
     instantiateOptions?: InstantiateOptions<G>,
   ): Promise<G>;
-  async instantiate<G extends BaseGenerator = BaseGenerator>(constructor: GetGeneratorConstructor<G>, ...args: any[]): Promise<G> {
-    const composeOptions = args.length > 0 ? (getInstantiateOptions(...args) as InstantiateOptions<G>) : {};
+  async instantiate<G extends BaseGenerator = BaseGenerator>(constructor: GetGeneratorConstructor<G>, ...arguments_: any[]): Promise<G> {
+    const composeOptions = arguments_.length > 0 ? (getInstantiateOptions(...arguments_) as InstantiateOptions<G>) : {};
     const { namespace = UNKNOWN_NAMESPACE, resolved = UNKNOWN_RESOLVED, _meta } = constructor as any;
     const environmentOptions = { env: this, resolved, namespace };
     const generator = new constructor(composeOptions.generatorArgs ?? [], {
@@ -420,8 +415,11 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     generator: string | GetGeneratorConstructor<G>,
     composeOptions?: ComposeOptions<G>,
   ): Promise<G>;
-  async composeWith<G extends BaseGenerator = BaseGenerator>(generator: string | GetGeneratorConstructor<G>, ...args: any[]): Promise<G> {
-    const options = getComposeOptions(...args) as ComposeOptions<G>;
+  async composeWith<G extends BaseGenerator = BaseGenerator>(
+    generator: string | GetGeneratorConstructor<G>,
+    ...arguments_: any[]
+  ): Promise<G> {
+    const options = getComposeOptions(...arguments_) as ComposeOptions<G>;
     const { schedule: passedSchedule = true, ...instantiateOptions } = options;
 
     const generatorInstance = await this.create(generator, instantiateOptions);
@@ -545,14 +543,14 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    */
   register(filePath: string, meta?: Partial<BaseGeneratorMeta> | undefined): GeneratorMeta;
   register(generator: unknown, meta: BaseGeneratorMeta): GeneratorMeta;
-  register(pathOrStub: unknown, meta?: Partial<BaseGeneratorMeta> | BaseGeneratorMeta, ...args: any[]): GeneratorMeta {
+  register(pathOrStub: unknown, meta?: Partial<BaseGeneratorMeta> | BaseGeneratorMeta, ...arguments_: any[]): GeneratorMeta {
     if (typeof pathOrStub === 'string') {
       if (typeof meta === 'object') {
         return this.registerGeneratorPath(pathOrStub, meta.namespace, meta.packagePath);
       }
 
       // Backward compatibility
-      return this.registerGeneratorPath(pathOrStub, meta, ...args);
+      return this.registerGeneratorPath(pathOrStub, meta, ...arguments_);
     }
 
     if (pathOrStub) {
@@ -561,7 +559,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       }
 
       // Backward compatibility
-      return this.registerStub(pathOrStub, meta as unknown as string, ...args);
+      return this.registerStub(pathOrStub, meta as unknown as string, ...arguments_);
     }
 
     throw new TypeError('You must provide a generator name to register.');
@@ -580,7 +578,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   ): void {
     this.runLoop.add(
       priority,
-      async (done: () => Record<string, unknown>, stop: (arg: any) => Record<string, unknown>) => {
+      async (done: () => Record<string, unknown>, stop: (argument: any) => Record<string, unknown>) => {
         try {
           await task();
           done();
@@ -708,7 +706,6 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return { ...meta } as GeneratorMeta;
   }
 

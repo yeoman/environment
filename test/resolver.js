@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
 import fs from 'fs-extra';
-import { expect } from 'esmocha';
+import { after, afterEach, before, beforeEach, describe, expect, it } from 'esmocha';
 import { execaSync } from 'execa';
 import slash from 'slash';
 import Environment from '../src/index.js';
@@ -36,30 +36,30 @@ const linkGenerator = (generator, scope) => {
     fs.mkdirSync(nodeModulesPath);
   }
 
-  let dest = path.join(nodeModulesPath, generator);
+  let destination = path.join(nodeModulesPath, generator);
   if (scope) {
     const scopeDir = path.join(nodeModulesPath, scope);
-    dest = path.join(scopeDir, generator);
+    destination = path.join(scopeDir, generator);
     if (!fs.existsSync(scopeDir)) {
       fs.mkdirSync(scopeDir, { recursive: true });
     }
   }
 
-  if (!fs.existsSync(dest)) {
-    fs.symlinkSync(path.resolve(path.join(__dirname, 'fixtures', generator)), path.resolve(dest), 'dir');
+  if (!fs.existsSync(destination)) {
+    fs.symlinkSync(path.resolve(path.join(__dirname, 'fixtures', generator)), path.resolve(destination), 'dir');
   }
 };
 
 const unlinkGenerator = (generator, scope) => {
-  let dest = path.resolve(path.join('node_modules', generator));
+  let destination = path.resolve(path.join('node_modules', generator));
   let scopeDir;
   if (scope) {
     scopeDir = path.resolve(path.join('node_modules', scope));
-    dest = path.join(scopeDir, generator);
+    destination = path.join(scopeDir, generator);
   }
 
-  if (fs.existsSync(dest)) {
-    fs.unlinkSync(dest);
+  if (fs.existsSync(destination)) {
+    fs.unlinkSync(destination);
   }
 
   if (scopeDir && fs.existsSync(scopeDir)) {

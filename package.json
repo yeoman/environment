@@ -44,9 +44,9 @@
     "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path/global.html || true",
     "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path",
     "doc:prettier": "prettier $npm_package_config_doc_path --write --ignore-path .prettierignore-doc",
-    "fix": "xo --fix",
+    "fix": "eslint --fix && prettier . --write",
     "prepare": "npm run build",
-    "pretest": "xo",
+    "pretest": "eslint && prettier . --check",
     "test": "c8 esmocha --forbid-only",
     "test-base": "c8 esmocha test/environment*.js test/store.js test/util.js test/adapter.js",
     "test-environment": "c8 esmocha test/environment.js",
@@ -80,6 +80,7 @@
     "which-package-manager": "^0.0.1"
   },
   "devDependencies": {
+    "@yeoman/eslint": "0.2.0",
     "@types/debug": "^4.1.9",
     "@types/lodash-es": "^4.17.9",
     "@types/semver": "^7.5.3",
@@ -96,7 +97,7 @@
     "sinon-test": "^3.1.5",
     "strip-ansi": "^7.1.0",
     "typescript": "5.2.2",
-    "xo": "0.56.0",
+    "eslint": "9.12.0",
     "yeoman-assert": "^3.1.1",
     "yeoman-environment": "file:./",
     "yeoman-generator-2": "npm:yeoman-generator@^2.0.5",

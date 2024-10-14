@@ -2,7 +2,7 @@ import { extname, isAbsolute, join, posix } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { type LookupOptions as LookupOptionsApi } from '@yeoman/types';
 import { requireNamespace, toNamespace } from '@yeoman/namespace';
-import { type ModuleLookupOptions, moduleLookupSync, getNpmPaths, findPackagesIn } from './module-lookup.js';
+import { type ModuleLookupOptions, findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.js';
 import { asNamespace, defaultLookups } from './util/namespace.js';
 
 export type LookupOptions = LookupOptionsApi &
@@ -42,7 +42,7 @@ export async function lookupGenerators(options: LookupOptions = {}, register?: (
   const { lookups = defaultLookups } = options;
   options = {
     // Js generators should be after, last will override registered one.
-    filePatterns: lookups.flatMap(prefix => defaultExtensions.map(ext => `${prefix}/*/index${ext}`)),
+    filePatterns: lookups.flatMap(prefix => defaultExtensions.map(extension => `${prefix}/*/index${extension}`)),
     filterPaths: false,
     packagePatterns: ['generator-*'],
     reverse: !options.singleResult,
@@ -60,7 +60,7 @@ export async function lookupGenerators(options: LookupOptions = {}, register?: (
       }
     }
 
-    return undefined;
+    return;
   });
 }
 
@@ -105,7 +105,7 @@ export function lookupGenerator(namespace: string, options?: ModuleLookupOptions
       }
     }
 
-    return undefined;
+    return;
   });
 
   if (options.singleResult) {

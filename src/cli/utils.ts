@@ -2,7 +2,7 @@ import { requireNamespace } from '@yeoman/namespace';
 import type { BaseGeneratorMeta } from '@yeoman/types';
 import { groupBy } from 'lodash-es';
 import createLogger from 'debug';
-import { createEnv } from '../index.js';
+import { createEnv as createEnvironment } from '../index.js';
 import type YeomanCommand from '../util/command.js';
 
 const debug = createLogger('yeoman:yoe');
@@ -35,9 +35,9 @@ export const environmentAction = async function (this: YeomanCommand, generatorN
     return;
   }
 
-  const env = createEnv({ ...options, command: this });
-  this.env = env;
-  await env.lookupLocalPackages();
+  const environment = createEnvironment({ ...options, command: this });
+  this.env = environment;
+  await environment.lookupLocalPackages();
 
-  return env.execute(generatorNamespace, command.args.splice(1));
+  return environment.execute(generatorNamespace, command.args.splice(1));
 };

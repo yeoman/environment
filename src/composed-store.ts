@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import { toNamespace } from '@yeoman/namespace';
-import type { Logger, BaseGenerator } from '@yeoman/types';
+import type { BaseGenerator, Logger } from '@yeoman/types';
 import createdLogger from 'debug';
 
 const debug = createdLogger('yeoman:environment:composed-store');
@@ -88,11 +88,11 @@ export class ComposedStore {
         );
       }
 
-      const { generatorId, feature } = providedFeatures[0];
+      const [{ generatorId, feature }] = providedFeatures;
       debug(`Feature ${featureName} provided by ${generatorId}`);
       return feature;
     }
 
-    return undefined;
+    return;
   }
 }
