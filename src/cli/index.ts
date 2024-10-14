@@ -3,8 +3,8 @@ import process from 'node:process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import YeomanCommand, { addEnvironmentOptions } from '../util/command.js';
-import { createEnv } from '../index.js';
-import { printGroupedGenerator, environmentAction } from './utils.js';
+import { createEnv as createEnvironment } from '../index.js';
+import { environmentAction, printGroupedGenerator } from './utils.js';
 
 const program = new YeomanCommand();
 
@@ -28,17 +28,17 @@ program
   .command('find')
   .description('Find installed generators')
   .action(async () => {
-    const env = createEnv();
-    printGroupedGenerator(await env.lookup());
+    const environment = createEnvironment();
+    printGroupedGenerator(await environment.lookup());
   });
 
 program
   .command('list')
   .description('List generators available to be used')
   .action(async () => {
-    const env = createEnv();
-    await env.lookup();
-    printGroupedGenerator(Object.values(env.getGeneratorsMeta()));
+    const environment = createEnvironment();
+    await environment.lookup();
+    printGroupedGenerator(Object.values(environment.getGeneratorsMeta()));
   });
 
 try {

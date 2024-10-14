@@ -1,9 +1,9 @@
 import assert from 'node:assert';
 import { Module } from 'node:module';
 import sinon from 'sinon';
-import { after, before, esmocha, expect } from 'esmocha';
+import { after, afterEach, before, beforeEach, describe, esmocha, expect, it } from 'esmocha';
 import quibble from 'quibble';
-import helpers, { getCreateEnv } from './helpers.js';
+import helpers, { getCreateEnv as getCreateEnvironment } from './helpers.js';
 import { greaterThan5 } from './generator-versions.js';
 import * as execaModule from 'execa';
 
@@ -20,7 +20,6 @@ await quibble.esm('execa', { ...execaModule, execa });
 const { default: BasicEnvironment } = await import('../src/environment-base.js');
 
 for (const generatorVersion of greaterThan5) {
-  // eslint-disable-next-line no-await-in-loop
   const { default: Generator } = await import(generatorVersion);
   class FeaturesGenerator extends Generator {}
 
@@ -36,7 +35,7 @@ for (const generatorVersion of greaterThan5) {
       describe('without customInstallTask', () => {
         beforeEach(async () => {
           await helpers
-            .run('custom-commit', undefined, { createEnv: getCreateEnv(BasicEnvironment) })
+            .run('custom-commit', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
             .withOptions({ skipInstall: true })
             .withGenerators([[helpers.createMockedGenerator(Generator), { namespace: 'custom-commit:app' }]]);
         });
@@ -50,14 +49,14 @@ for (const generatorVersion of greaterThan5) {
         let runContext;
         before(async () => {
           runContext = helpers
-            .create('custom-commit', undefined, { createEnv: getCreateEnv(BasicEnvironment) })
+            .create('custom-commit', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
             .withOptions({ skipInstall: true })
             .withGenerators([
               [
                 helpers.createMockedGenerator(
                   class extends FeaturesGenerator {
-                    constructor(args, options) {
-                      super(args, options, { customCommitTask: true });
+                    constructor(arguments_, options) {
+                      super(arguments_, options, { customCommitTask: true });
                     }
                   },
                 ),
@@ -84,16 +83,16 @@ for (const generatorVersion of greaterThan5) {
               [
                 helpers.createMockedGenerator(
                   class extends FeaturesGenerator {
-                    constructor(args, options) {
-                      super(args, options, { customCommitTask });
+                    constructor(arguments_, options) {
+                      super(arguments_, options, { customCommitTask });
                     }
                   },
                 ),
                 { namespace: 'custom-commit:app' },
               ],
             ])
-            .withEnvironment(env => {
-              env.commitSharedFs = sinon.stub().returns(Promise.resolve());
+            .withEnvironment(environment => {
+              environment.commitSharedFs = sinon.stub().returns(Promise.resolve());
             });
           await runContext.run();
         });
@@ -113,7 +112,7 @@ for (const generatorVersion of greaterThan5) {
         let runContext;
         beforeEach(async () => {
           runContext = helpers
-            .create('custom-install', undefined, { createEnv: getCreateEnv(BasicEnvironment) })
+            .create('custom-install', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
             .withOptions({ skipInstall: false })
             .withGenerators([
               [
@@ -142,7 +141,7 @@ for (const generatorVersion of greaterThan5) {
         let runContext;
         beforeEach(async () => {
           runContext = helpers
-            .create('custom-install', undefined, { createEnv: getCreateEnv(BasicEnvironment) })
+            .create('custom-install', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
             .withOptions({ skipInstall: false })
             .withGenerators([
               [
@@ -167,13 +166,13 @@ for (const generatorVersion of greaterThan5) {
         let runContext;
         before(async () => {
           runContext = helpers
-            .create('custom-install', undefined, { createEnv: getCreateEnv(BasicEnvironment) })
+            .create('custom-install', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
             .withOptions({ skipInstall: false })
             .withGenerators([
               [
                 class extends FeaturesGenerator {
-                  constructor(args, options) {
-                    super(args, options, { customInstallTask: true });
+                  constructor(arguments_, options) {
+                    super(arguments_, options, { customInstallTask: true });
                   }
 
                   packageJsonTask() {
@@ -201,8 +200,8 @@ for (const generatorVersion of greaterThan5) {
             .withGenerators([
               [
                 class extends FeaturesGenerator {
-                  constructor(args, options) {
-                    super(args, options, { customInstallTask });
+                  constructor(arguments_, options) {
+                    super(arguments_, options, { customInstallTask });
                   }
 
                   packageJsonTask() {
@@ -235,13 +234,13 @@ for (const generatorVersion of greaterThan5) {
           customInstallTask = sinon.stub();
           installTask = (pm, defaultTask) => defaultTask(pm);
           runContext = helpers
-            .create('custom-install', undefined, { createEnv: getCreateEnv(BasicEnvironment) })
+            .create('custom-install', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
             .withOptions({ skipInstall: false })
             .withGenerators([
               [
                 class extends FeaturesGenerator {
-                  constructor(args, options) {
-                    super(args, options, { customInstallTask });
+                  constructor(arguments_, options) {
+                    super(arguments_, options, { customInstallTask });
                     this.destinationRoot(this.destinationPath('foo'));
                     this.env.watchForPackageManagerInstall({
                       cwd: this.destinationPath(),

@@ -4,11 +4,11 @@ import type { BaseGeneratorConstructor, InputOutputAdapter } from '@yeoman/types
 import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
 import { flyImport } from 'fly-import';
 import { defaults, pick, uniq } from 'lodash-es';
-import semver from 'semver';
+import { valid } from 'semver';
 import { type LookupOptions } from './generator-lookup.js';
 import YeomanCommand from './util/command.js';
 import EnvironmentBase, { type EnvironmentOptions } from './environment-base.js';
-import { splitArgsFromString } from './util/util.js';
+import { splitArgsFromString as splitArgumentsFromString } from './util/util.js';
 
 class FullEnvironment extends EnvironmentBase {
   constructor(options?: EnvironmentOptions);
@@ -164,7 +164,7 @@ class FullEnvironment extends EnvironmentBase {
    * @param {string} generatorNamespace
    * @param {string[]} args
    */
-  async execute(generatorNamespace: string, args = []) {
+  async execute(generatorNamespace: string, arguments_ = []) {
     const namespace = requireNamespace(generatorNamespace);
     if (!(await this.get(namespace.namespace))) {
       await this.lookup({
@@ -186,7 +186,7 @@ class FullEnvironment extends EnvironmentBase {
     const generator = await this.create(namespace.namespace, { generatorArgs: [], generatorOptions: { help: true } });
     namespaceCommand.registerGenerator(generator);
 
-    (namespaceCommand as any)._parseCommand([], args);
+    (namespaceCommand as any)._parseCommand([], arguments_);
     return this.run([namespace.namespace, ...namespaceCommand.args], {
       ...namespaceCommand.opts(),
     });
@@ -195,22 +195,24 @@ class FullEnvironment extends EnvironmentBase {
   async requireGenerator(namespace: string): Promise<BaseGeneratorConstructor | undefined> {
     if (namespace === undefined) {
       try {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment, @typescript-eslint/prefer-ts-expect-error
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const { default: Generator } = await import('yeoman-generator'); // eslint-disable-line @typescript-eslint/naming-convention
+        // eslint-disable-next-line import-x/no-unresolved
+        const { default: Generator } = await import('yeoman-generator');
         return Generator;
-      } catch {}
+      } catch {
+        // ignore error
+      }
 
-      // eslint-disable-next-line @typescript-eslint/naming-convention
       const { default: Generator } = await flyImport('yeoman-generator');
       return Generator;
     }
 
     // Namespace is a version
-    if (semver.valid(namespace)) {
+    if (valid(namespace)) {
       // Create a hash to install any version range in the local repository
       const hash = createHash('shake256', { outputLength: 2 }).update(namespace, 'utf8').digest('hex');
-      // eslint-disable-next-line @typescript-eslint/naming-convention
+
       const { default: Generator } = await flyImport(`@yeoman/generator-impl-${hash}@npm:yeoman-generator@${namespace}`);
       return Generator;
     }
@@ -339,11 +341,11 @@ class FullEnvironment extends EnvironmentBase {
    * @param {String|Array} args
    * @param {Object}       [options]
    */
-  async run(args?: string[], options?: any) {
-    args = Array.isArray(args) ? args : splitArgsFromString(args as unknown as string);
+  async run(arguments_?: string[], options?: any) {
+    arguments_ = Array.isArray(arguments_) ? arguments_ : splitArgumentsFromString(arguments_ as unknown as string);
     options = { ...options };
 
-    let name = args.shift();
+    let name = arguments_.shift();
     if (!name) {
       throw new Error('Must provide at least one argument, the generator namespace to invoke.');
     }
@@ -357,11 +359,13 @@ class FullEnvironment extends EnvironmentBase {
     if (this.experimental && !this.getGeneratorMeta(name)) {
       try {
         await this.prepareEnvironment(name);
-      } catch {}
+      } catch {
+        // ignore error
+      }
     }
 
     const generator = await this.create(name, {
-      generatorArgs: args,
+      generatorArgs: arguments_,
       generatorOptions: {
         ...options,
         initialGenerator: true,
@@ -370,7 +374,7 @@ class FullEnvironment extends EnvironmentBase {
 
     if (options.help) {
       console.log((generator as any).help());
-      return undefined;
+      return;
     }
 
     return this.runGenerator(generator);

@@ -3,6 +3,7 @@ import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import sinon from 'sinon';
+import { beforeEach, describe, it } from 'esmocha';
 import { prepareCommand } from '../src/commands.js';
 import Environment from '../src/index.js';
 
@@ -12,20 +13,20 @@ const __dirname = dirname(__filename);
 
 describe('environment (command)', () => {
   describe('#execute() with options', () => {
-    let env;
+    let environment;
 
     beforeEach(async () => {
-      env = new Environment([], { skipInstall: true, dryRun: true });
-      env.adapter.log = sinon.stub();
-      await env.register(path.join(__dirname, 'fixtures/generator-commands/generators/options'));
+      environment = new Environment([], { skipInstall: true, dryRun: true });
+      environment.adapter.log = sinon.stub();
+      await environment.register(path.join(__dirname, 'fixtures/generator-commands/generators/options'));
     });
 
     describe('generator with options', () => {
       describe('without options', () => {
         let generator;
         beforeEach(async () => {
-          await env.execute('commands:options');
-          const generators = Object.values(env.composedStore.getGenerators());
+          await environment.execute('commands:options');
+          const generators = Object.values(environment.composedStore.getGenerators());
           assert(generators.length === 1);
           generator = generators[0];
         });
@@ -42,9 +43,16 @@ describe('environment (command)', () => {
       describe('with options', () => {
         let generator;
         beforeEach(async () => {
-          await env.execute('commands:options', ['--bool', '--no-bool-default', '--string', 'customValue', '--string-default', 'newValue']);
+          await environment.execute('commands:options', [
+            '--bool',
+            '--no-bool-default',
+            '--string',
+            'customValue',
+            '--string-default',
+            'newValue',
+          ]);
 
-          const generators = Object.values(env.composedStore.getGenerators());
+          const generators = Object.values(environment.composedStore.getGenerators());
           assert(generators.length === 1);
           generator = generators[0];
         });
@@ -61,8 +69,8 @@ describe('environment (command)', () => {
       describe('using aliases', () => {
         let generator;
         beforeEach(async () => {
-          await env.execute('commands:options', ['-b', '-s', 'customValue']);
-          const generators = Object.values(env.composedStore.getGenerators());
+          await environment.execute('commands:options', ['-b', '-s', 'customValue']);
+          const generators = Object.values(environment.composedStore.getGenerators());
           assert(generators.length === 1);
           generator = generators[0];
         });
@@ -76,20 +84,20 @@ describe('environment (command)', () => {
   });
 
   describe('#execute() with arguments', () => {
-    let env;
+    let environment;
 
     beforeEach(() => {
-      env = new Environment([], { skipInstall: true, dryRun: true });
-      env.adapter.log = sinon.stub();
-      env.register(path.join(__dirname, 'fixtures/generator-commands/generators/arguments'));
+      environment = new Environment([], { skipInstall: true, dryRun: true });
+      environment.adapter.log = sinon.stub();
+      environment.register(path.join(__dirname, 'fixtures/generator-commands/generators/arguments'));
     });
 
     describe('generator with arguments', () => {
       describe('without arguments', () => {
         let generator;
         beforeEach(async () => {
-          await env.execute('commands:arguments');
-          const generators = Object.values(env.composedStore.getGenerators());
+          await environment.execute('commands:arguments');
+          const generators = Object.values(environment.composedStore.getGenerators());
           assert(generators.length === 1);
           generator = generators[0];
         });
@@ -102,8 +110,8 @@ describe('environment (command)', () => {
       describe('with arguments', () => {
         let generator;
         beforeEach(async () => {
-          await env.execute('commands:arguments', ['foo']);
-          const generators = Object.values(env.composedStore.getGenerators());
+          await environment.execute('commands:arguments', ['foo']);
+          const generators = Object.values(environment.composedStore.getGenerators());
           assert(generators.length === 1);
           generator = generators[0];
         });
@@ -123,7 +131,7 @@ describe('environment (command)', () => {
     describe('generator with arguments', () => {
       describe('passing bar argument', () => {
         let generator;
-        let env;
+        let environment;
 
         beforeEach(async () => {
           const command = await prepareCommand({
@@ -131,8 +139,8 @@ describe('environment (command)', () => {
           });
           await command.parseAsync(['node', 'yo', 'bar']);
 
-          env = command.env;
-          const generators = Object.values(env.composedStore.getGenerators());
+          environment = command.env;
+          const generators = Object.values(environment.composedStore.getGenerators());
           assert(generators.length === 1);
           generator = generators[0];
         });
@@ -145,7 +153,7 @@ describe('environment (command)', () => {
     describe('generator with options', () => {
       describe('passing options', () => {
         let generator;
-        let env;
+        let environment;
 
         beforeEach(async () => {
           const command = await prepareCommand({ resolved: require.resolve('./fixtures/generator-commands/generators/options/index.js') });
@@ -160,8 +168,8 @@ describe('environment (command)', () => {
             'newValue',
           ]);
 
-          env = command.env;
-          const generators = Object.values(env.composedStore.getGenerators());
+          environment = command.env;
+          const generators = Object.values(environment.composedStore.getGenerators());
           assert(generators.length === 1);
           generator = generators[0];
         });

@@ -37,9 +37,11 @@ export async function resolveModulePath(specifier: string, resolvedOrigin?: stri
     }
 
     if (specStat.isDirectory()) {
-      return await locatePath(defaultExtensions.map(ext => `index${ext}`).map(file => join(maybeResolved, file)));
+      return await locatePath(defaultExtensions.map(extension => `index${extension}`).map(file => join(maybeResolved, file)));
     }
-  } catch {}
+  } catch {
+    // ignore error
+  }
 
   throw new Error(`Error resolving ${specifier}`);
 }

@@ -2,7 +2,7 @@ import { Module } from 'node:module';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sinon from 'sinon';
-import { esmocha, expect } from 'esmocha';
+import { after, afterEach, beforeEach, describe, esmocha, expect, it } from 'esmocha';
 import quibble from 'quibble';
 
 if (!Module.register) {
@@ -190,7 +190,7 @@ No change to package.json was detected. No package manager install will be execu
 
         describe('error detecting package manager', () => {
           beforeEach(async () => {
-            whichPackageManager.mockResolvedValue(undefined);
+            whichPackageManager.mockResolvedValue();
             await packageManagerInstallTask({ adapter, memFs, packageJsonLocation });
           });
 

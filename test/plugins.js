@@ -2,8 +2,9 @@ import assert from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
-import Environment from '../src/index.js';
 import { mkdirSync, rmSync } from 'node:fs';
+import { afterEach, beforeEach, describe, it } from 'esmocha';
+import Environment from '../src/index.js';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-environment/light');
 
@@ -30,8 +31,8 @@ describe('Generators plugin', () => {
 
         const self = this;
         const superGenerator = {
-          async createGenerator(env) {
-            const Generator = await env.requireGenerator(undefined);
+          async createGenerator(environment) {
+            const Generator = await environment.requireGenerator();
             return class extends Generator {
               exec() {}
             };
@@ -40,8 +41,8 @@ describe('Generators plugin', () => {
         this.env.registerStub(superGenerator, 'super:app');
 
         const dummy = {
-          async createGenerator(env) {
-            return class extends (await env.requireGenerator(extended)) {
+          async createGenerator(environment) {
+            return class extends (await environment.requireGenerator(extended)) {
               exec() {
                 self.execValue = 'done';
               }

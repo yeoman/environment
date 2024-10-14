@@ -6,11 +6,11 @@ import process from 'node:process';
 import util from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
-import { expect } from 'esmocha';
+import { after, afterEach, before, beforeEach, describe, expect, it } from 'esmocha';
 import { QueuedAdapter } from '@yeoman/adapter';
 import sinon from 'sinon';
 import assert from 'yeoman-assert';
-import Environment, { createEnv } from '../src/index.js';
+import Environment, { createEnv as createEnvironment } from '../src/index.js';
 import { resolveModulePath } from '../src/util/resolve.js';
 import { allVersions, importGenerator, isGreaterThan6, isLegacyVersion } from './generator-versions.js';
 
@@ -23,7 +23,6 @@ const ENVIRONMENT_VERSION = require('../package.json').version;
 const GROUPED_QUEUE_VERSION = require('grouped-queue/package.json').version;
 
 for (const generatorVersion of allVersions) {
-  // eslint-disable-next-line no-await-in-loop
   const Generator = await importGenerator(generatorVersion);
 
   describe(`Environment with ${generatorVersion}`, () => {
@@ -61,8 +60,8 @@ for (const generatorVersion of allVersions) {
 
       it('uses the provided object as adapter if any', () => {
         const dummyAdapter = {};
-        const env = new Environment({ adapter: dummyAdapter });
-        assert.equal(env.adapter, dummyAdapter, 'Not the adapter provided');
+        const environment = new Environment({ adapter: dummyAdapter });
+        assert.equal(environment.adapter, dummyAdapter, 'Not the adapter provided');
       });
 
       it('instantiates a mem-fs instance', async function () {
@@ -124,48 +123,48 @@ for (const generatorVersion of allVersions) {
       });
 
       it('pass args parameter', async function () {
-        const args = ['foo', 'bar'];
-        const generator = await this.env.create('stub', args);
-        assert.deepEqual(generator.arguments, args);
+        const arguments_ = ['foo', 'bar'];
+        const generator = await this.env.create('stub', arguments_);
+        assert.deepEqual(generator.arguments, arguments_);
       });
 
       it('pass options parameter', async function () {
-        const args = [];
+        const arguments_ = [];
         const options = { foo: 'bar' };
-        const generator = await this.env.create('stub', args, options);
+        const generator = await this.env.create('stub', arguments_, options);
         assert.equal(generator.options.foo, 'bar');
       });
 
       it('pass options.arguments', async function () {
-        const args = ['foo', 'bar'];
-        const generator = await this.env.create('stub', { arguments: args });
-        assert.deepEqual(generator.arguments, args);
+        const arguments_ = ['foo', 'bar'];
+        const generator = await this.env.create('stub', { arguments: arguments_ });
+        assert.deepEqual(generator.arguments, arguments_);
       });
 
       it('pass options.arguments as string', async function () {
-        const args = 'foo bar';
-        const generator = await this.env.create('stub', { arguments: args });
-        assert.deepEqual(generator.arguments, args.split(' '));
+        const arguments_ = 'foo bar';
+        const generator = await this.env.create('stub', { arguments: arguments_ });
+        assert.deepEqual(generator.arguments, arguments_.split(' '));
       });
 
       it('pass options.args (as `arguments` alias)', async function () {
-        const args = ['foo', 'bar'];
-        const generator = await this.env.create('stub', { args });
-        assert.deepEqual(generator.arguments, args);
+        const arguments_ = ['foo', 'bar'];
+        const generator = await this.env.create('stub', { args: arguments_ });
+        assert.deepEqual(generator.arguments, arguments_);
       });
 
       it('prefer options.arguments over options.args', async function () {
-        const args1 = ['yo', 'unicorn'];
-        const args = ['foo', 'bar'];
-        const generator = await this.env.create('stub', { arguments: args1, args });
-        assert.deepEqual(generator.arguments, args1);
+        const arguments1 = ['yo', 'unicorn'];
+        const arguments_ = ['foo', 'bar'];
+        const generator = await this.env.create('stub', { arguments: arguments1, args: arguments_ });
+        assert.deepEqual(generator.arguments, arguments1);
       });
 
       it('default arguments to `env.arguments`', async function () {
-        const args = ['foo', 'bar'];
-        this.env.arguments = args;
+        const arguments_ = ['foo', 'bar'];
+        this.env.arguments = arguments_;
         const generator = await this.env.create('stub');
-        assert.notEqual(generator.arguments, args, 'expect arguments to not be passed by reference');
+        assert.notEqual(generator.arguments, arguments_, 'expect arguments to not be passed by reference');
       });
 
       it('pass options.options', async function () {
@@ -226,8 +225,8 @@ for (const generatorVersion of allVersions) {
     describe('#composeWith()', () => {
       beforeEach(async function () {
         class NewGenerator extends Generator {
-          constructor(args, options, features) {
-            super(args, options, { uniqueBy: options.namespace, ...features });
+          constructor(arguments_, options, features) {
+            super(arguments_, options, { uniqueBy: options.namespace, ...features });
           }
 
           aTask() {}
@@ -341,18 +340,18 @@ for (const generatorVersion of allVersions) {
         const self = this;
 
         this.Stub = class extends Generator {
-          constructor(args, options) {
-            super(args, options);
-            self.args = [args, options];
+          constructor(arguments_, options) {
+            super(arguments_, options);
+            self.args = [arguments_, options];
           }
 
           exec() {}
         };
 
         this.WritingStub = class extends Generator {
-          constructor(args, options) {
-            super(args, options);
-            self.args = [args, options];
+          constructor(arguments_, options) {
+            super(arguments_, options);
+            self.args = [arguments_, options];
           }
 
           writing() {
@@ -421,9 +420,9 @@ for (const generatorVersion of allVersions) {
       });
 
       it('pass args and options to the runned generator', async function () {
-        const args = ['stub:run', 'module'];
+        const arguments_ = ['stub:run', 'module'];
         const options = { skipInstall: true };
-        return this.env.run(args, options).then(() => {
+        return this.env.run(arguments_, options).then(() => {
           assert.ok(this.runMethod.calledOnce);
           assert.equal(this.args[0], 'module');
           assert.equal(this.args[1].skipInstall, true);
@@ -431,8 +430,8 @@ for (const generatorVersion of allVersions) {
       });
 
       it('can take string as args', async function () {
-        const args = 'stub:run module';
-        return this.env.run(args).then(() => {
+        const arguments_ = 'stub:run module';
+        return this.env.run(arguments_).then(() => {
           assert.ok(this.runMethod.calledOnce);
           assert.equal(this.args[0], 'module');
         });
@@ -945,7 +944,7 @@ for (const generatorVersion of allVersions) {
       });
 
       it('apply multiple regex', async function () {
-        this.env.alias(/^([a-zA-Z\d:*]+)$/, 'generator-$1');
+        this.env.alias(/^([\d*:A-Za-z]+)$/, 'generator-$1');
         this.env.alias(/^([^:]+)$/, '$1:app');
         assert.equal(this.env.alias('foo'), 'generator-foo:app');
       });
@@ -987,8 +986,8 @@ for (const generatorVersion of allVersions) {
 
     describe('.createEnv()', () => {
       it('create an environment', () => {
-        const env = createEnv();
-        assert(env);
+        const environment = createEnvironment();
+        assert(environment);
       });
     });
   });

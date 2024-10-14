@@ -2,7 +2,7 @@ import { pathToFileURL } from 'node:url';
 import { extname, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { toNamespace } from '@yeoman/namespace';
-import type { BaseEnvironment, GetGeneratorConstructor, GeneratorMeta, BaseGeneratorMeta } from '@yeoman/types';
+import type { BaseEnvironment, BaseGeneratorMeta, GeneratorMeta, GetGeneratorConstructor } from '@yeoman/types';
 import createDebug from 'debug';
 
 const debug = createDebug('yeoman:environment:store');
@@ -20,10 +20,9 @@ export default class Store {
   // Store packages paths by ns
   private readonly _packagesPaths: Record<string, string[]> = {};
   // Store packages ns
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   private readonly _packagesNS: string[] = [];
 
-  constructor(private readonly env: BaseEnvironment) {}
+  constructor(private readonly environment: BaseEnvironment) {}
 
   /**
    * Store a module under the namespace key
@@ -71,15 +70,15 @@ export default class Store {
 
       const factory = this.getFactory(Generator);
       if (typeof factory === 'function') {
-        importPromise = factory(this.env);
+        importPromise = factory(this.environment);
         Generator = await importPromise;
       }
 
       return this._getGenerator(Generator, meta);
     };
 
-    const instantiate = async (args: string[] = [], options: any = {}) =>
-      this.env.instantiate(await importGenerator(), { generatorArgs: args, generatorOptions: options });
+    const instantiate = async (arguments_: string[] = [], options: any = {}) =>
+      this.environment.instantiate(await importGenerator(), { generatorArgs: arguments_, generatorOptions: options });
     const instantiateHelp = async () => instantiate([], { help: true });
     const { packageNamespace } = toNamespace(meta.namespace) ?? {};
 
@@ -188,7 +187,7 @@ export default class Store {
    * Get the stored packages namespaces.
    * @return {Array} Stored packages namespaces.
    */
-  // eslint-disable-next-line @typescript-eslint/naming-convention
+
   getPackagesNS(): string[] {
     return this._packagesNS;
   }
@@ -199,7 +198,6 @@ export default class Store {
   }
 
   private _getGenerator(module: any, meta: BaseGeneratorMeta) {
-    // eslint-disable-next-line  @typescript-eslint/naming-convention
     const Generator = module.default?.default ?? module.default ?? module;
     if (typeof Generator !== 'function') {
       throw new TypeError("The generator doesn't provides a constructor.");
