@@ -169,7 +169,8 @@
     "mem-fs": "^4.0.0"
   },
   "acceptDependencies": {
-    "@yeoman/adapter": "^2.0.0"
+    "@yeoman/adapter": "^2.0.0",
+    "@yeoman/transform": "^2.1.0"
   },
   "engines": {
     "node": "^18.17.0 || >=20.5.0"
