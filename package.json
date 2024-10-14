@@ -105,7 +105,7 @@
     "yeoman-generator-5": "npm:yeoman-generator@^5.10.0",
     "yeoman-generator-6": "npm:yeoman-generator@^6.0.1",
     "yeoman-generator-7": "npm:yeoman-generator@^7.0.0",
-    "yeoman-test": "^8.1.0"
+    "yeoman-test": "^10.0.1"
   },
   "overrides": {
     "yeoman-generator-2": {
