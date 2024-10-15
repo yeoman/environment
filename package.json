@@ -60,7 +60,7 @@
     "@yeoman/adapter": "^1.4.0",
     "@yeoman/conflicter": "^2.0.0-alpha.2",
     "@yeoman/namespace": "^1.0.0",
-    "@yeoman/transform": "^1.2.0",
+    "@yeoman/transform": "^2.1.0",
     "@yeoman/types": "^1.1.1",
     "arrify": "^3.0.0",
     "chalk": "^5.3.0",
