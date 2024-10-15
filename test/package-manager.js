@@ -1,18 +1,10 @@
-import { Module } from 'node:module';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sinon from 'sinon';
 import { after, afterEach, beforeEach, describe, esmocha, expect, it } from 'esmocha';
-import quibble from 'quibble';
 
-if (!Module.register) {
-  throw new Error('Node greater than v18.19.0 or v20.6.0 is required to test this module.');
-}
-
-const execa = esmocha.fn();
-await quibble.esm('execa', { execa });
-const whichPackageManager = esmocha.fn();
-await quibble.esm('which-package-manager', { whichPackageManager });
+const { execa } = await esmocha.mock('execa', import('execa'));
+const { whichPackageManager } = await esmocha.mock('which-package-manager', import('which-package-manager'));
 
 const { packageManagerInstallTask } = await import('../src/package-manager.js');
 
@@ -43,7 +35,7 @@ describe('environment (package-manager)', () => {
     esmocha.resetAllMocks();
   });
   after(() => {
-    quibble.reset();
+    esmocha.reset();
   });
 
   describe('#packageManagerInstallTask()', () => {
