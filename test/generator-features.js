@@ -1,22 +1,12 @@
 import assert from 'node:assert';
-import { Module } from 'node:module';
 import sinon from 'sinon';
 import { after, afterEach, before, beforeEach, describe, esmocha, expect, it } from 'esmocha';
-import quibble from 'quibble';
 import helpers, { getCreateEnv as getCreateEnvironment } from './helpers.js';
 import { greaterThan5 } from './generator-versions.js';
-import * as execaModule from 'execa';
 
-if (!Module.register) {
-  throw new Error('Node greater than v18.19.0 or v20.6.0 is required to test this module.');
-}
-
-const commitSharedFsTask = esmocha.fn();
-const packageManagerInstallTask = esmocha.fn();
-const execa = esmocha.fn();
-await quibble.esm('../src/commit.ts', { commitSharedFsTask });
-await quibble.esm('../src/package-manager.ts', { packageManagerInstallTask });
-await quibble.esm('execa', { ...execaModule, execa });
+const { commitSharedFsTask } = await esmocha.mock('../src/commit.js', import('../src/commit.js'));
+const { packageManagerInstallTask } = await esmocha.mock('../src/package-manager.js', import('../src/package-manager.js'));
+const { execa } = await esmocha.mock('execa', import('execa'));
 const { default: BasicEnvironment } = await import('../src/environment-base.js');
 
 for (const generatorVersion of greaterThan5) {
@@ -28,7 +18,7 @@ for (const generatorVersion of greaterThan5) {
       esmocha.resetAllMocks();
     });
     after(() => {
-      quibble.reset();
+      esmocha.reset(true);
     });
 
     describe('customCommitTask feature', () => {
