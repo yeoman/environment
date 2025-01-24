@@ -200,7 +200,7 @@ export default class Store {
   private _getGenerator(module: any, meta: BaseGeneratorMeta) {
     const Generator = module.default?.default ?? module.default ?? module;
     if (typeof Generator !== 'function') {
-      throw new TypeError("The generator doesn't provides a constructor.");
+      throw new TypeError("The generator doesn't provide a constructor.");
     }
 
     Object.assign(Generator, meta);
