@@ -463,7 +463,7 @@ for (const generatorVersion of allVersions) {
         return this.env.run('no-constructor:app').then(
           () => assert.fail(),
           error => {
-            expect(error.message).toMatch('provides a constructor');
+            expect(error.message).toMatch('provide a constructor');
           },
         );
       });
