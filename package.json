@@ -66,7 +66,7 @@
     "chalk": "^5.3.0",
     "commander": "^11.1.0",
     "debug": "^4.3.4",
-    "execa": "^8.0.1",
+    "execa": "^9.5.2",
     "fly-import": "^0.4.1",
     "globby": "^14.0.0",
     "grouped-queue": "^2.0.0",
