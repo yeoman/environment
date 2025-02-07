@@ -21,7 +21,7 @@ export const commitSharedFsTask = async ({
   sharedFs: Store<MemFsEditorFile>;
 }) => {
   debug('Running commitSharedFsTask');
-  const editor = createMemFsEditor(sharedFs);
+  createMemFsEditor(sharedFs);
   await sharedFs.pipeline(
     { filter: (file: MemFsEditorFile) => isFilePending(file) || file.path.endsWith('.yo-resolve') },
     createYoResolveTransform(),

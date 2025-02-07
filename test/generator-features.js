@@ -1,5 +1,5 @@
 import assert from 'node:assert';
-import sinon from 'sinon';
+import { stub } from 'sinon';
 import { after, afterEach, before, beforeEach, describe, esmocha, expect, it } from 'esmocha';
 import helpers, { getCreateEnv as getCreateEnvironment } from './helpers.js';
 import { greaterThan5 } from './generator-versions.js';
@@ -65,7 +65,7 @@ for (const generatorVersion of greaterThan5) {
         let runContext;
         let customCommitTask;
         before(async () => {
-          customCommitTask = sinon.stub();
+          customCommitTask = stub();
           runContext = helpers
             .create('custom-commit')
             .withOptions({ skipInstall: true })
@@ -82,7 +82,7 @@ for (const generatorVersion of greaterThan5) {
               ],
             ])
             .withEnvironment(environment => {
-              environment.commitSharedFs = sinon.stub().returns(Promise.resolve());
+              environment.commitSharedFs = stub().returns(Promise.resolve());
             });
           await runContext.run();
         });
@@ -183,7 +183,7 @@ for (const generatorVersion of greaterThan5) {
       describe('with function customInstallTask', () => {
         let customInstallTask;
         before(async () => {
-          customInstallTask = sinon.stub();
+          customInstallTask = stub();
           await helpers
             .run('custom-install')
             .withOptions({ skipInstall: false })
@@ -221,7 +221,7 @@ for (const generatorVersion of greaterThan5) {
         let customInstallTask;
         let installTask;
         beforeEach(async () => {
-          customInstallTask = sinon.stub();
+          customInstallTask = stub();
           installTask = (pm, defaultTask) => defaultTask(pm);
           runContext = helpers
             .create('custom-install', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })

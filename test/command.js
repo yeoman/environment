@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
-import sinon from 'sinon';
+import { stub } from 'sinon';
 import { beforeEach, describe, it } from 'esmocha';
 import { prepareCommand } from '../src/commands.js';
 import Environment from '../src/index.js';
@@ -17,7 +17,7 @@ describe('environment (command)', () => {
 
     beforeEach(async () => {
       environment = new Environment([], { skipInstall: true, dryRun: true });
-      environment.adapter.log = sinon.stub();
+      environment.adapter.log = stub();
       await environment.register(path.join(__dirname, 'fixtures/generator-commands/generators/options'));
     });
 
@@ -88,7 +88,7 @@ describe('environment (command)', () => {
 
     beforeEach(() => {
       environment = new Environment([], { skipInstall: true, dryRun: true });
-      environment.adapter.log = sinon.stub();
+      environment.adapter.log = stub();
       environment.register(path.join(__dirname, 'fixtures/generator-commands/generators/arguments'));
     });
 
