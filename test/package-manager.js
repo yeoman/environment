@@ -1,6 +1,6 @@
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import sinon from 'sinon';
+import { stub } from 'sinon';
 import { after, afterEach, beforeEach, describe, esmocha, expect, it } from 'esmocha';
 
 const { execa } = await esmocha.mock('execa', import('execa'));
@@ -74,7 +74,7 @@ No change to package.json was detected. No package manager install will be execu
 
       describe('when package.json was committed', () => {
         beforeEach(async () => {
-          memFs.get = sinon.stub().returns({ committed: true });
+          memFs.get = stub().returns({ committed: true });
         });
 
         describe('with skipInstall', () => {

@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { after, afterEach, before, beforeEach, describe, expect, it } from 'esmocha';
 import { QueuedAdapter } from '@yeoman/adapter';
-import sinon from 'sinon';
+import { spy, stub } from 'sinon';
 import assert from 'yeoman-assert';
 import Environment, { createEnv as createEnvironment } from '../src/index.js';
 import { resolveModulePath } from '../src/util/resolve.js';
@@ -36,7 +36,7 @@ for (const generatorVersion of allVersions) {
       });
 
       MockedGenerator = class MockedGenerator extends Generator {};
-      mockedDefault = sinon.stub();
+      mockedDefault = stub();
       MockedGenerator.prototype.mockedDefault = mockedDefault;
     });
 
@@ -246,7 +246,7 @@ for (const generatorVersion of allVersions) {
       });
 
       it('should schedule generator queue', async function () {
-        this.env.queueTask = sinon.spy();
+        this.env.queueTask = spy();
         await this.env.composeWith('stub');
         assert(this.env.queueTask.calledOnce);
         assert(this.env.queueTask.getCall(0).firstArg === 'environment:run');
@@ -254,7 +254,7 @@ for (const generatorVersion of allVersions) {
 
       describe('passing false schedule parameter', () => {
         it('should not schedule generator', async function () {
-          this.env.queueTask = sinon.spy();
+          this.env.queueTask = spy();
           await this.env.composeWith('stub', { generatorArgs: [], schedule: false });
           if (isGreaterThan6(generatorVersion)) {
             assert(this.env.queueTask.calledOnce);
@@ -266,7 +266,7 @@ for (const generatorVersion of allVersions) {
       });
       describe('passing function schedule parameter', () => {
         it('returning false should not schedule generator', async function () {
-          this.env.queueTask = sinon.spy();
+          this.env.queueTask = spy();
           await this.env.composeWith('stub', { generatorArgs: [], schedule: () => false });
           if (isGreaterThan6(generatorVersion)) {
             assert(this.env.queueTask.calledOnce);
@@ -372,7 +372,7 @@ for (const generatorVersion of allVersions) {
         };
 
         const runName = isLegacyVersion(generatorVersion) ? 'run' : 'queueTasks';
-        this.runMethod = sinon.spy(Generator.prototype, runName);
+        this.runMethod = spy(Generator.prototype, runName);
         this.env.registerStub(this.Stub, 'stub:run');
         this.env.registerStub(this.WritingStub, 'writingstub:run');
         this.env.registerStub(this.PromiseFailingStub, 'promisefailingstub:run');
@@ -557,7 +557,7 @@ for (const generatorVersion of allVersions) {
     describe('#run() a ts generator', () => {
       beforeEach(async function () {
         await this.env.register(path.join(__dirname, './fixtures/generator-ts/generators/app/index.ts'), 'ts:app');
-        this.runMethod = sinon.spy((await this.env.get('ts:app')).prototype, 'exec');
+        this.runMethod = spy((await this.env.get('ts:app')).prototype, 'exec');
       });
 
       afterEach(function () {
@@ -575,8 +575,8 @@ for (const generatorVersion of allVersions) {
       beforeEach(async function () {
         await this.env.register(path.join(__dirname, './fixtures/generator-common-js/generators/cjs/index.cjs'), 'common-js:cjs');
         const Generator = await this.env.get('common-js:cjs');
-        this.runMethod = sinon.spy(Generator.prototype, 'default');
-        this.postConstruct = sinon.spy(Generator.prototype, '_postConstruct');
+        this.runMethod = spy(Generator.prototype, 'default');
+        this.postConstruct = spy(Generator.prototype, '_postConstruct');
       });
 
       afterEach(function () {
@@ -605,8 +605,8 @@ for (const generatorVersion of allVersions) {
         beforeEach(async function () {
           await this.env.register(path.join(__dirname, './fixtures/generator-esm/generators/app/index.js'), 'esm:app');
           const esmClass = await this.env.get('esm:app');
-          this.runMethod = sinon.spy(esmClass.prototype, 'default');
-          this.postConstruct = sinon.spy(esmClass.prototype, '_postConstruct');
+          this.runMethod = spy(esmClass.prototype, 'default');
+          this.postConstruct = spy(esmClass.prototype, '_postConstruct');
         });
 
         afterEach(function () {
@@ -634,7 +634,7 @@ for (const generatorVersion of allVersions) {
         beforeEach(async function () {
           await this.env.register(path.join(__dirname, './fixtures/generator-esm/generators/mjs/index.mjs'), 'esm:mjs');
           const esmClass = await this.env.get('esm:mjs');
-          this.runMethod = sinon.spy(esmClass.prototype, 'default');
+          this.runMethod = spy(esmClass.prototype, 'default');
         });
 
         afterEach(function () {
@@ -737,7 +737,7 @@ for (const generatorVersion of allVersions) {
     describe('#getPackagePath and #getPackagePaths()', () => {
       beforeEach(async function () {
         this.env.alias(/^prefix-(.*)$/, '$1');
-        this.simpleDummy = sinon.spy();
+        this.simpleDummy = spy();
         this.simplePath = path.join(__dirname, 'fixtures/generator-simple');
         assert.equal(this.env.namespaces().length, 0, 'env should be empty');
         await this.env.register(this.simplePath, 'fixtures:generator-simple', this.simplePath);
@@ -763,8 +763,8 @@ for (const generatorVersion of allVersions) {
 
     describe('#registerStub()', () => {
       beforeEach(async function () {
-        this.simpleDummy = sinon.spy();
-        this.resolvedDummy = sinon.spy();
+        this.simpleDummy = spy();
+        this.resolvedDummy = spy();
         this.completeDummy = function () {};
         util.inherits(this.completeDummy, Generator);
         this.env.registerStub(this.simpleDummy, 'dummy:simple');
