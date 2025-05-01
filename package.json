@@ -57,7 +57,7 @@
     "doc_path": "./yeoman-environment-doc"
   },
   "dependencies": {
-    "@yeoman/adapter": "^1.4.0",
+    "@yeoman/adapter": "^2.1.1",
     "@yeoman/conflicter": "^2.0.0-alpha.2",
     "@yeoman/namespace": "^1.0.0",
     "@yeoman/transform": "^1.2.0",
