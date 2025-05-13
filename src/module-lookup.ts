@@ -264,16 +264,14 @@ function getGlobalNpmPaths(filterPaths = true): string[] {
   paths.push(join(PROJECT_ROOT, '..'));
 
   // Get yarn global directory and infer the module paths from there
-  const yarnBase = execaOutput('yarn', ['global', 'dir'], { encoding: 'utf8' });
+  const yarnBase = execaOutput('yarn', ['global', 'dir']);
   if (yarnBase) {
     paths.push(resolve(yarnBase, 'node_modules'));
     paths.push(resolve(yarnBase, '../link/'));
   }
 
   // Get npm global prefix and infer the module paths from there
-  const globalInstall = execaOutput('npm', ['root', '-g'], {
-    encoding: 'utf8',
-  });
+  const globalInstall = execaOutput('npm', ['root', '-g']);
   if (globalInstall) {
     paths.push(resolve(globalInstall));
   }
