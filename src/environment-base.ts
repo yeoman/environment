@@ -479,7 +479,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * @return {Generator} The generator or singleton instance.
    */
   async queueGenerator<G extends BaseGenerator = BaseGenerator>(generator: G, queueOptions?: { schedule?: boolean }): Promise<G> {
-    const schedule = typeof queueOptions === 'boolean' ? queueOptions : queueOptions?.schedule ?? false;
+    const schedule = typeof queueOptions === 'boolean' ? queueOptions : (queueOptions?.schedule ?? false);
     const { added, identifier, generator: composedGenerator } = this.composedStore.addGenerator(generator);
     if (!added) {
       debug(`Using existing generator for namespace ${identifier}`);

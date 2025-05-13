@@ -77,7 +77,7 @@ export async function lookupGenerators(options: LookupOptions = {}, register?: (
  * @return {String} generator
  */
 export function lookupGenerator(namespace: string, options?: ModuleLookupOptions & { packagePath?: boolean; generatorPath?: boolean }) {
-  options = typeof options === 'boolean' ? { localOnly: options } : options ?? {};
+  options = typeof options === 'boolean' ? { localOnly: options } : (options ?? {});
   options.singleResult = options.singleResult ?? true;
 
   options.filePatterns = options.filePatterns ?? defaultLookups.map(prefix => join(prefix, '*/index.{js,ts}'));
