@@ -28,12 +28,15 @@ for (const generatorVersion of allVersions) {
   describe(`Environment with ${generatorVersion}`, () => {
     let mockedDefault;
     let MockedGenerator;
+    /** @type {Environment} */
+    let env;
 
     beforeEach(async function () {
-      this.env = new Environment({
+      env = new Environment({
         skipInstall: true,
         sharedOptions: { sharedConstructorData: {} },
       });
+      this.env = env;
 
       MockedGenerator = class MockedGenerator extends Generator {};
       mockedDefault = stub();
@@ -988,6 +991,24 @@ for (const generatorVersion of allVersions) {
       it('create an environment', () => {
         const environment = createEnvironment();
         assert(environment);
+      });
+    });
+
+    describe('getContextMap', () => {
+      it('creates an context', () => {
+        assert(env.getContextMap('foo') instanceof Map);
+      });
+
+      it('returns an existing context', () => {
+        assert.equal(env.getContextMap('foo'), env.getContextMap('foo'));
+      });
+
+      it('supports factory', () => {
+        const map = new Map();
+        assert.equal(
+          env.getContextMap('foo', () => map),
+          map,
+        );
       });
     });
   });
