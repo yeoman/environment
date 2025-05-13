@@ -157,6 +157,8 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   protected _rootGenerator?: BaseGenerator;
   protected compatibilityMode?: false | 'v4';
 
+  private contextStore: Map<string, Map<string, any>> = new Map();
+
   constructor(options: EnvironmentOptions = {}) {
     super();
 
@@ -982,5 +984,19 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
 
     debug('Registered %s (%s) on package (%s)', namespace, resolved, packagePath);
     return meta;
+  }
+
+  /**
+   * @experimental
+   * Get a map to store shared data, usually a generator root path to share a map by path.
+   */
+  getContextMap(key: string, factory = () => new Map<string, any>()): Map<string, any> {
+    if (this.contextStore.has(key)) {
+      return this.contextStore.get(key)!;
+    }
+
+    const context = factory();
+    this.contextStore.set(key, context);
+    return context;
   }
 }
