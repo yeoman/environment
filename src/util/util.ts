@@ -1,10 +1,10 @@
-import { type SyncOptions, execaSync } from 'execa';
+import { execaSync } from 'execa';
 
-export const execaOutput = (cmg: string, arguments_: string[], options: SyncOptions) => {
+export const execaOutput = (cmg: string, arguments_: string[]): string | undefined => {
   try {
-    const result = execaSync(cmg, arguments_, options);
-    if (!result.failed) {
-      return result.stdout;
+    const { failed, stdout } = execaSync(cmg, arguments_, { encoding: 'utf8' });
+    if (!failed) {
+      return stdout;
     }
   } catch {
     // ignore error
