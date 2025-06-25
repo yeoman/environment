@@ -1,7 +1,7 @@
 import { dirname, extname, join, normalize, resolve, sep } from 'node:path';
-import { realpath, stat } from 'node:fs/promises';
+import { realpathSync, statSync } from 'node:fs';
 import untildify from 'untildify';
-import { locatePath } from 'locate-path';
+import { locatePathSync } from 'locate-path';
 import { defaultExtensions } from '../generator-lookup.ts';
 
 /**
@@ -9,7 +9,7 @@ import { defaultExtensions } from '../generator-lookup.ts';
  * @param  specifier - Filepath or module name
  * @return           - The resolved path leading to the module
  */
-export async function resolveModulePath(specifier: string, resolvedOrigin?: string) {
+export function resolveModulePath(specifier: string, resolvedOrigin?: string) {
   let maybeResolved = specifier;
   if (maybeResolved.startsWith('.')) {
     if (resolvedOrigin) {
@@ -27,9 +27,9 @@ export async function resolveModulePath(specifier: string, resolvedOrigin?: stri
   }
 
   try {
-    let specStat = await stat(maybeResolved);
+    let specStat = statSync(maybeResolved);
     if (specStat.isSymbolicLink()) {
-      specStat = await stat(await realpath(maybeResolved));
+      specStat = statSync(realpathSync(maybeResolved));
     }
 
     if (specStat.isFile()) {
@@ -37,7 +37,7 @@ export async function resolveModulePath(specifier: string, resolvedOrigin?: stri
     }
 
     if (specStat.isDirectory()) {
-      return await locatePath(defaultExtensions.map(extension => `index${extension}`).map(file => join(maybeResolved, file)));
+      return locatePathSync(defaultExtensions.map(extension => `index${extension}`).map(file => join(maybeResolved, file)));
     }
   } catch {
     // ignore error

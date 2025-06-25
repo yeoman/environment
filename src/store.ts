@@ -58,27 +58,55 @@ export default class Store {
         throw new Error(`Generator Stub or resolved path is required for ${meta.namespace}`);
       }
 
-      importModule = async () => import(pathToFileURL(meta.resolved!).href);
+      importModule = () => {
+        try {
+          return require(meta.resolved!);
+        } catch {
+          return import(pathToFileURL(meta.resolved!).href);
+        }
+      };
     }
 
-    let importPromise: any;
-    const importGenerator = async () => {
+    let importPromise: Promise<unknown> | undefined;
+    const importGenerator = () => {
+      const handleImport = () => {
+        if (importModule && !Generator) {
+          const maybeModule = importModule();
+          if ((maybeModule as any).then) {
+            importPromise = maybeModule;
+            return maybeModule.then((mod: any) => {
+              Generator = mod;
+              importPromise = undefined;
+            });
+          } else {
+            Generator = maybeModule;
+          }
+        }
+      };
+
+      const handleModule = () => {
+        const factory = this.getFactory(Generator);
+        if (typeof factory === 'function') {
+          importPromise = factory(this.environment);
+          return Promise.resolve(importPromise).then((mod: any) => {
+            Generator = this._getGenerator(mod, meta);
+            importPromise = undefined;
+            return Generator;
+          });
+        }
+
+        return this._getGenerator(Generator, meta);
+      };
+
       if (importPromise) {
-        Generator = await importPromise;
+        return importPromise.then(() => Promise.resolve(handleImport()).then(() => handleModule()));
       }
 
-      if (importModule && !Generator) {
-        importPromise = importModule();
-        Generator = await importPromise;
+      const maybeImportPromise = handleImport();
+      if (maybeImportPromise?.then) {
+        return maybeImportPromise.then(() => handleModule());
       }
-
-      const factory = this.getFactory(Generator);
-      if (typeof factory === 'function') {
-        importPromise = factory(this.environment);
-        Generator = await importPromise;
-      }
-
-      return this._getGenerator(Generator, meta);
+      return handleModule();
     };
 
     const instantiate = async (arguments_: string[] = [], options: any = {}) =>

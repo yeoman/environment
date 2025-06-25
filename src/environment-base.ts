@@ -253,7 +253,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * @param   namespaceOrPath
    * @return the generator meta registered under the namespace
    */
-  async findMeta(namespaceOrPath: string | YeomanNamespace): Promise<GeneratorMeta | undefined> {
+  findMeta(namespaceOrPath: string | YeomanNamespace): GeneratorMeta | undefined {
     // Stop the recursive search if nothing is left
     if (!namespaceOrPath) {
       return;
@@ -271,7 +271,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     }
 
     try {
-      const resolved = await resolveModulePath(namespaceOrPath);
+      const resolved = resolveModulePath(namespaceOrPath);
       if (resolved) {
         return this.store.add({ resolved, namespace: this.namespace(resolved) });
       }
@@ -314,10 +314,10 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     namespaceOrPath: string | GetGeneratorConstructor<G>,
     instantiateOptions?: InstantiateOptions<G>,
   ): Promise<G>;
-  async create<G extends BaseGenerator = BaseGenerator>(
+  create<G extends BaseGenerator = BaseGenerator>(
     namespaceOrPath: string | GetGeneratorConstructor<G>,
     ...arguments_: any[]
-  ): Promise<G> {
+  ): Promise<G> | G {
     let constructor;
     const namespace = typeof namespaceOrPath === 'string' ? toNamespace(namespaceOrPath) : undefined;
 
@@ -354,14 +354,20 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     }
 
     if (typeof namespaceOrPath === 'string') {
-      const meta = await this.findMeta(namespaceOrPath);
-      constructor = await meta?.importGenerator();
+      const meta = this.findMeta(namespaceOrPath);
+      constructor = meta?.importGenerator();
       if (namespace && !constructor) {
         // Await this.lookupLocalNamespaces(namespace);
         // constructor = await this.get(namespace);
       }
 
       if (constructor) {
+        if ((constructor as any).then) {
+          return constructor.then(g => {
+            (g as any)._meta = meta;
+            return this.instantiate(checkGenerator(g), ...arguments_);
+          });
+        }
         (constructor as any)._meta = meta;
       }
     } else {
@@ -378,11 +384,11 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * @param instantiateOptions
    * @return The instantiated generator
    */
-  async instantiate<G extends BaseGenerator = BaseGenerator>(
+  instantiate<G extends BaseGenerator = BaseGenerator>(
     generator: GetGeneratorConstructor<G>,
     instantiateOptions?: InstantiateOptions<G>,
   ): Promise<G>;
-  async instantiate<G extends BaseGenerator = BaseGenerator>(constructor: GetGeneratorConstructor<G>, ...arguments_: any[]): Promise<G> {
+  instantiate<G extends BaseGenerator = BaseGenerator>(constructor: GetGeneratorConstructor<G>, ...arguments_: any[]): Promise<G> | G {
     const composeOptions = arguments_.length > 0 ? (getInstantiateOptions(...arguments_) as InstantiateOptions<G>) : {};
     const { namespace = UNKNOWN_NAMESPACE, resolved = UNKNOWN_RESOLVED, _meta } = constructor as any;
     const environmentOptions = { env: this, resolved, namespace };
@@ -400,7 +406,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     };
 
     if (!composeOptions.generatorOptions?.help && generator._postConstruct) {
-      await generator._postConstruct();
+      return Promise.resolve(generator._postConstruct()).then(() => generator as unknown as G);
     }
 
     return generator as unknown as G;
