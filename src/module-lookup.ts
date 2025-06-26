@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import process from 'node:process';
 import arrify from 'arrify';
 import { compact, uniq } from 'lodash-es';
-import { type Options as GlobbyOptions, globbySync } from 'globby';
+import { type GlobOptions as GlobbyOptions, globSync } from 'tinyglobby';
 import slash from 'slash';
 import createdLogger from 'debug';
 import { execaOutput } from './util/util.js';
@@ -76,7 +76,7 @@ export function moduleLookupSync(
       continue;
     }
 
-    const files = globbySync(options.filePatterns, {
+    const files = globSync(options.filePatterns, {
       cwd: packagePath,
       absolute: true,
       ...options.globbyOptions,
@@ -122,7 +122,7 @@ export function findPackagesIn(searchPaths: string[], packagePatterns: string[],
     // restricted folders.
     try {
       modules = modules.concat(
-        globbySync(packagePatterns, {
+        globSync(packagePatterns, {
           cwd: root,
           onlyDirectories: true,
           expandDirectories: false,
@@ -135,7 +135,7 @@ export function findPackagesIn(searchPaths: string[], packagePatterns: string[],
       // To limit recursive lookups into non-namespace folders within globby,
       // fetch all namespaces in root, then search each namespace separately
       // for generator modules
-      const scopes = globbySync(['@*'], {
+      const scopes = globSync(['@*'], {
         cwd: root,
         onlyDirectories: true,
         expandDirectories: false,
@@ -146,7 +146,7 @@ export function findPackagesIn(searchPaths: string[], packagePatterns: string[],
 
       for (const scope of scopes) {
         modules = modules.concat(
-          globbySync(packagePatterns, {
+          globSync(packagePatterns, {
             cwd: scope,
             onlyDirectories: true,
             expandDirectories: false,
