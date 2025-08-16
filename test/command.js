@@ -4,8 +4,8 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { stub } from 'sinon';
 import { beforeEach, describe, it } from 'esmocha';
-import { prepareCommand } from '../src/commands.js';
-import Environment from '../src/index.js';
+import { prepareCommand } from '../src/commands.ts';
+import Environment from '../src/index.ts';
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
@@ -27,7 +27,7 @@ describe('environment (command)', () => {
         beforeEach(async () => {
           await environment.execute('commands:options');
           const generators = Object.values(environment.composedStore.getGenerators());
-          assert(generators.length === 1);
+          assert.ok(generators.length === 1);
           generator = generators[0];
         });
 
@@ -53,7 +53,7 @@ describe('environment (command)', () => {
           ]);
 
           const generators = Object.values(environment.composedStore.getGenerators());
-          assert(generators.length === 1);
+          assert.ok(generators.length === 1);
           generator = generators[0];
         });
 
@@ -71,7 +71,7 @@ describe('environment (command)', () => {
         beforeEach(async () => {
           await environment.execute('commands:options', ['-b', '-s', 'customValue']);
           const generators = Object.values(environment.composedStore.getGenerators());
-          assert(generators.length === 1);
+          assert.ok(generators.length === 1);
           generator = generators[0];
         });
 
@@ -98,7 +98,7 @@ describe('environment (command)', () => {
         beforeEach(async () => {
           await environment.execute('commands:arguments');
           const generators = Object.values(environment.composedStore.getGenerators());
-          assert(generators.length === 1);
+          assert.ok(generators.length === 1);
           generator = generators[0];
         });
 
@@ -112,7 +112,7 @@ describe('environment (command)', () => {
         beforeEach(async () => {
           await environment.execute('commands:arguments', ['foo']);
           const generators = Object.values(environment.composedStore.getGenerators());
-          assert(generators.length === 1);
+          assert.ok(generators.length === 1);
           generator = generators[0];
         });
 
@@ -141,7 +141,7 @@ describe('environment (command)', () => {
 
           environment = command.env;
           const generators = Object.values(environment.composedStore.getGenerators());
-          assert(generators.length === 1);
+          assert.ok(generators.length === 1);
           generator = generators[0];
         });
 
@@ -170,7 +170,7 @@ describe('environment (command)', () => {
 
           environment = command.env;
           const generators = Object.values(environment.composedStore.getGenerators());
-          assert(generators.length === 1);
+          assert.ok(generators.length === 1);
           generator = generators[0];
         });
 

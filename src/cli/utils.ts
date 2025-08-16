@@ -2,8 +2,8 @@ import { requireNamespace } from '@yeoman/namespace';
 import type { BaseGeneratorMeta } from '@yeoman/types';
 import { groupBy } from 'lodash-es';
 import createLogger from 'debug';
-import { createEnv as createEnvironment } from '../index.js';
-import type YeomanCommand from '../util/command.js';
+import { createEnv as createEnvironment } from '../index.ts';
+import type YeomanCommand from '../util/command.ts';
 
 const debug = createLogger('yeoman:yoe');
 

@@ -4,10 +4,10 @@ import { after, afterEach, before, beforeEach, describe, esmocha, expect, it } f
 import helpers, { getCreateEnv as getCreateEnvironment } from './helpers.js';
 import { greaterThan5 } from './generator-versions.js';
 
-const { commitSharedFsTask } = await esmocha.mock('../src/commit.js', import('../src/commit.js'));
-const { packageManagerInstallTask } = await esmocha.mock('../src/package-manager.js', import('../src/package-manager.js'));
+const { commitSharedFsTask } = await esmocha.mock('../src/commit.ts', import('../src/commit.ts'));
+const { packageManagerInstallTask } = await esmocha.mock('../src/package-manager.ts', import('../src/package-manager.ts'));
 const { execa } = await esmocha.mock('execa', import('execa'));
-const { default: BasicEnvironment } = await import('../src/environment-base.js');
+const { default: BasicEnvironment } = await import('../src/environment-base.ts');
 
 for (const generatorVersion of greaterThan5) {
   const { default: Generator } = await import(generatorVersion);

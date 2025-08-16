@@ -7,7 +7,7 @@ import { compact, uniq } from 'lodash-es';
 import { type Options as GlobbyOptions, globbySync } from 'globby';
 import slash from 'slash';
 import createdLogger from 'debug';
-import { execaOutput } from './util/util.js';
+import { execaOutput } from './util/util.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

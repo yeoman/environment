@@ -2,7 +2,7 @@ import { dirname, extname, join, normalize, resolve, sep } from 'node:path';
 import { realpath, stat } from 'node:fs/promises';
 import untildify from 'untildify';
 import { locatePath } from 'locate-path';
-import { defaultExtensions } from '../generator-lookup.js';
+import { defaultExtensions } from '../generator-lookup.ts';
 
 /**
  * Resolve a module path

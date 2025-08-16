@@ -1,6 +1,6 @@
-import { type BaseGeneratorConstructor, type GeneratorMeta } from '@yeoman/types';
-import YeomanCommand, { addEnvironmentOptions } from './util/command.js';
-import { createEnv as createEnvironment } from './index.js';
+import type { BaseGeneratorConstructor, GeneratorMeta } from '@yeoman/types';
+import YeomanCommand, { addEnvironmentOptions } from './util/command.ts';
+import { createEnv as createEnvironment } from './index.ts';
 
 export type CommandPreparation = {
   resolved?: string;

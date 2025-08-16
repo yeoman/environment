@@ -8,10 +8,10 @@ import fs from 'fs-extra';
 import { after, afterEach, before, beforeEach, describe, expect, it } from 'esmocha';
 import { execaSync } from 'execa';
 import slash from 'slash';
-import Environment from '../src/index.js';
-import { execaOutput } from '../src/util/util.js';
-import { findPackagesIn, getNpmPaths } from '../src/module-lookup.js';
-import { lookupGenerator } from '../src/generator-lookup.js';
+import Environment from '../src/index.ts';
+import { execaOutput } from '../src/util/util.ts';
+import { findPackagesIn, getNpmPaths } from '../src/module-lookup.ts';
+import { lookupGenerator } from '../src/generator-lookup.ts';
 
 const require = createRequire(import.meta.url);
 
@@ -155,6 +155,7 @@ describe('Environment Resolver', async function () {
       assert.ok(await this.env.get('esm:mjs'));
 
       // Js generators takes precedence
+      // eslint-disable-next-line import-x/extensions
       assert.equal(await this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
 
       // Register generators in scoped packages
@@ -235,6 +236,7 @@ describe('Environment Resolver', async function () {
         assert.ok(await this.env.get('ts:app'));
 
         // Js generators takes precedence
+        // eslint-disable-next-line import-x/extensions
         assert.equal(await this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
 
         // Register generators in scoped packages
@@ -289,6 +291,7 @@ describe('Environment Resolver', async function () {
         assert.ok(await this.env.get('ts:app'));
 
         // Js generators takes precedence', async function () {
+        // eslint-disable-next-line import-x/extensions
         assert.equal(await this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
 
         // Register generators in scoped packages', async function () {
@@ -608,7 +611,7 @@ describe('Environment Resolver', async function () {
       });
 
       it('append NODE_PATH', async function () {
-        assert(getNpmPaths({ localOnly: false, filterPaths: false }).includes(process.env.NODE_PATH));
+        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(process.env.NODE_PATH));
       });
     });
 
@@ -621,15 +624,15 @@ describe('Environment Resolver', async function () {
       });
 
       it('append best bet if NODE_PATH is unset', async function () {
-        assert(getNpmPaths({ localOnly: false, filterPaths: false }).includes(this.bestBet));
-        assert(getNpmPaths({ localOnly: false, filterPaths: false }).includes(this.bestBet2));
+        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(this.bestBet));
+        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(this.bestBet2));
       });
 
       it('append default NPM dir depending on your OS', async function () {
         if (process.platform === 'win32') {
-          assert(getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(process.env.APPDATA, 'npm/node_modules')));
+          assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(process.env.APPDATA, 'npm/node_modules')));
         } else {
-          assert(getNpmPaths({ localOnly: false, filterPaths: false }).includes('/usr/lib/node_modules'));
+          assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes('/usr/lib/node_modules'));
         }
       });
     });
@@ -646,7 +649,7 @@ describe('Environment Resolver', async function () {
       });
 
       it('append NVM_PATH', async function () {
-        assert(
+        assert.ok(
           getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(path.dirname(process.env.NVM_PATH), 'node_modules')),
         );
       });
@@ -660,8 +663,8 @@ describe('Environment Resolver', async function () {
       });
 
       it('append best bet if NVM_PATH is unset', async function () {
-        assert(getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(this.bestBet, 'node_modules')));
-        assert(getNpmPaths({ localOnly: false, filterPaths: false }).includes(this.bestBet2));
+        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(this.bestBet, 'node_modules')));
+        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(this.bestBet2));
       });
     });
 
@@ -674,25 +677,25 @@ describe('Environment Resolver', async function () {
 
       it('does not append NODE_PATH', async function () {
         process.env.NODE_PATH = '/some/dummy/path';
-        assert(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(process.env.NODE_PATH));
+        assert.ok(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(process.env.NODE_PATH));
       });
 
       it('does not append NVM_PATH', async function () {
         process.env.NVM_PATH = '/some/dummy/path';
-        assert(
+        assert.ok(
           !getNpmPaths({ localOnly: true, filterPaths: false }).includes(path.join(path.dirname(process.env.NVM_PATH), 'node_modules')),
         );
       });
 
       it('does not append best bet', async function () {
-        assert(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(this.bestBet));
+        assert.ok(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(this.bestBet));
       });
 
       it('does not append default NPM dir depending on your OS', async function () {
         if (process.platform === 'win32') {
-          assert(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(path.join(process.env.APPDATA, 'npm/node_modules')));
+          assert.ok(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(path.join(process.env.APPDATA, 'npm/node_modules')));
         } else {
-          assert(!getNpmPaths({ localOnly: true, filterPaths: false }).includes('/usr/lib/node_modules'));
+          assert.ok(!getNpmPaths({ localOnly: true, filterPaths: false }).includes('/usr/lib/node_modules'));
         }
       });
     });
@@ -701,9 +704,9 @@ describe('Environment Resolver', async function () {
       it('append npm modules path depending on your OS', async function () {
         const npmPrefix = execaOutput('npm', ['prefix', '-g']);
         if (process.platform === 'win32') {
-          assert(getNpmPaths({ localOnly: false, filterPaths: false }).indexOf(path.resolve(npmPrefix, 'node_modules')) > 0);
+          assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).indexOf(path.resolve(npmPrefix, 'node_modules')) > 0);
         } else {
-          assert(getNpmPaths({ localOnly: false, filterPaths: false }).indexOf(path.resolve(npmPrefix, 'lib/node_modules')) > 0);
+          assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).indexOf(path.resolve(npmPrefix, 'lib/node_modules')) > 0);
         }
       });
     });

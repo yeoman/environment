@@ -10,8 +10,8 @@ import { after, afterEach, before, beforeEach, describe, expect, it } from 'esmo
 import { QueuedAdapter } from '@yeoman/adapter';
 import { spy, stub } from 'sinon';
 import assert from 'yeoman-assert';
-import Environment, { createEnv as createEnvironment } from '../src/index.js';
-import { resolveModulePath } from '../src/util/resolve.js';
+import Environment, { createEnv as createEnvironment } from '../src/index.ts';
+import { resolveModulePath } from '../src/util/resolve.ts';
 import { allVersions, importGenerator, isGreaterThan6, isLegacyVersion } from './generator-versions.js';
 
 const require = createRequire(import.meta.url);

@@ -7,20 +7,23 @@
     "types": ["node"],
 
     /* Modules */
-    "module": "node16" /* Specify what module code is generated. */,
+    "module": "node18" /* Specify what module code is generated. */,
     "rootDir": "./src" /* Specify the root folder within your source files. */,
 
     /* Emit */
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,
     "declaration": true,
-    "sourceMap": false,
 
     /* Interop Constraints */
+    "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
+    "isolatedModules": true /* Ensure that each file can be safely transpiled independently. */,
 
     /* Type Checking */
     "strict": true /* Enable all strict type-checking options. */,
-    "noImplicitAny": true,
+    "rewriteRelativeImportExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
 
     /* Completeness */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
