@@ -43,11 +43,11 @@ describe('environment (package-manager)', () => {
       beforeEach(() => packageManagerInstallTask({ adapter, memFs, packageJsonLocation }));
 
       it('should not log', () => {
-        expect(adapter.log).not.toBeCalled();
+        expect(adapter.log).not.toHaveBeenCalled();
       });
 
       it('should not call spawnCommand', () => {
-        expect(execa).not.toBeCalled();
+        expect(execa).not.toHaveBeenCalled();
       });
     });
 
@@ -59,7 +59,7 @@ describe('environment (package-manager)', () => {
         });
 
         it('should log', () => {
-          expect(adapter.log).toBeCalledTimes(1);
+          expect(adapter.log).toHaveBeenCalledTimes(1);
           expect(adapter.log).toHaveBeenNthCalledWith(
             1,
             `
@@ -68,7 +68,7 @@ No change to package.json was detected. No package manager install will be execu
         });
 
         it('should not call spawnCommand', () => {
-          expect(execa).not.toBeCalled();
+          expect(execa).not.toHaveBeenCalled();
         });
       });
 
@@ -83,13 +83,13 @@ No change to package.json was detected. No package manager install will be execu
           });
 
           it('should log', async () => {
-            expect(adapter.log).toBeCalledTimes(2);
+            expect(adapter.log).toHaveBeenCalledTimes(2);
             expect(adapter.log).toHaveBeenNthCalledWith(1, changesToPackageJson);
             expect(adapter.log).toHaveBeenNthCalledWith(2, skippingInstall);
           });
 
           it('should not call spawnCommand', () => {
-            expect(execa).not.toBeCalled();
+            expect(execa).not.toHaveBeenCalled();
           });
         });
 
@@ -99,14 +99,14 @@ No change to package.json was detected. No package manager install will be execu
           });
 
           it('should log', async () => {
-            expect(adapter.log).toBeCalledTimes(2);
+            expect(adapter.log).toHaveBeenCalledTimes(2);
             expect(adapter.log).toHaveBeenNthCalledWith(1, changesToPackageJson);
             expect(adapter.log).toHaveBeenNthCalledWith(2, runningPackageManager('npm'));
           });
 
           it('should execute npm', () => {
-            expect(execa).toBeCalled();
-            expect(execa).toBeCalledWith('npm', ['install'], expect.any(Object));
+            expect(execa).toHaveBeenCalled();
+            expect(execa).toHaveBeenCalledWith('npm', ['install'], expect.any(Object));
           });
         });
 
@@ -117,14 +117,14 @@ No change to package.json was detected. No package manager install will be execu
           });
 
           it('should log', async () => {
-            expect(adapter.log).toBeCalledTimes(2);
+            expect(adapter.log).toHaveBeenCalledTimes(2);
             expect(adapter.log).toHaveBeenNthCalledWith(1, changesToPackageJson);
             expect(adapter.log).toHaveBeenNthCalledWith(2, runningPackageManager('yarn'));
           });
 
           it('should execute yarn', () => {
-            expect(execa).toBeCalled();
-            expect(execa).toBeCalledWith('yarn', ['install'], expect.any(Object));
+            expect(execa).toHaveBeenCalled();
+            expect(execa).toHaveBeenCalledWith('yarn', ['install'], expect.any(Object));
           });
         });
 
@@ -135,14 +135,14 @@ No change to package.json was detected. No package manager install will be execu
           });
 
           it('should log', async () => {
-            expect(adapter.log).toBeCalledTimes(2);
+            expect(adapter.log).toHaveBeenCalledTimes(2);
             expect(adapter.log).toHaveBeenNthCalledWith(1, changesToPackageJson);
             expect(adapter.log).toHaveBeenNthCalledWith(2, runningPackageManager('pnpm'));
           });
 
           it('should execute pnpm', () => {
-            expect(execa).toBeCalled();
-            expect(execa).toBeCalledWith('pnpm', ['install'], expect.any(Object));
+            expect(execa).toHaveBeenCalled();
+            expect(execa).toHaveBeenCalledWith('pnpm', ['install'], expect.any(Object));
           });
         });
 
@@ -153,14 +153,14 @@ No change to package.json was detected. No package manager install will be execu
           });
 
           it('should log', async () => {
-            expect(adapter.log).toBeCalledTimes(2);
+            expect(adapter.log).toHaveBeenCalledTimes(2);
             expect(adapter.log).toHaveBeenNthCalledWith(1, changesToPackageJson);
             expect(adapter.log).toHaveBeenNthCalledWith(2, runningPackageManager('bun'));
           });
 
           it('should execute bun', () => {
-            expect(execa).toBeCalled();
-            expect(execa).toBeCalledWith('bun', ['install'], expect.any(Object));
+            expect(execa).toHaveBeenCalled();
+            expect(execa).toHaveBeenCalledWith('bun', ['install'], expect.any(Object));
           });
         });
 
@@ -170,13 +170,13 @@ No change to package.json was detected. No package manager install will be execu
           });
 
           it('should log', async () => {
-            expect(adapter.log).toBeCalledTimes(2);
+            expect(adapter.log).toHaveBeenCalledTimes(2);
             expect(adapter.log).toHaveBeenNthCalledWith(1, changesToPackageJson);
             expect(adapter.log).toHaveBeenNthCalledWith(2, 'foo is not a supported package manager. Run it by yourself.');
           });
 
           it('should not call spawnCommand', () => {
-            expect(execa).not.toBeCalled();
+            expect(execa).not.toHaveBeenCalled();
           });
         });
 
@@ -187,14 +187,14 @@ No change to package.json was detected. No package manager install will be execu
           });
 
           it('should log', async () => {
-            expect(adapter.log).toBeCalledTimes(3);
+            expect(adapter.log).toHaveBeenCalledTimes(3);
             expect(adapter.log).toHaveBeenNthCalledWith(1, changesToPackageJson);
             expect(adapter.log).toHaveBeenNthCalledWith(2, 'Error detecting the package manager. Falling back to npm.');
             expect(adapter.log).toHaveBeenNthCalledWith(3, runningPackageManager('npm'));
           });
 
           it('should not call spawnCommand', () => {
-            expect(execa).toBeCalledWith('npm', ['install'], expect.any(Object));
+            expect(execa).toHaveBeenCalledWith('npm', ['install'], expect.any(Object));
           });
         });
       });
