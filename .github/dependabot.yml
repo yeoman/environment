@@ -7,7 +7,7 @@ updates:
     open-pull-requests-limit: 10
     ignore:
       - dependency-name: '@types/node'
-        versions: ['>=17']
+        versions: ['>=21']
       - dependency-name: 'typescript'
         update-types: ['version-update:semver-patch']
       - dependency-name: '*'
