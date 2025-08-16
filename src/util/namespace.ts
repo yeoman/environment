@@ -50,7 +50,7 @@ export const asNamespace = (filepath: string, { lookups = defaultLookups }: AsNa
   const nsLookups = [...lookups, '..']
     .map(found => slash(found))
     .sort((a, b) => a.split('/').length - b.split('/').length)
-    .reverse();
+    .toReversed();
 
   // If `ns` contains a lookup dir in its path, remove it.
   for (const lookup of nsLookups) {

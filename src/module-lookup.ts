@@ -56,12 +56,12 @@ export function moduleLookupSync(
   if (options.packagePaths) {
     options.packagePaths = arrify(options.packagePaths);
     if (options.reverse) {
-      options.packagePaths = options.packagePaths.reverse();
+      options.packagePaths = options.packagePaths.toReversed();
     }
   } else {
     options.npmPaths = options.npmPaths ?? getNpmPaths(options);
     if (options.reverse && Array.isArray(options.npmPaths)) {
-      options.npmPaths = options.npmPaths.reverse();
+      options.npmPaths = options.npmPaths.toReversed();
     }
 
     options.packagePatterns = arrify(options.packagePatterns ?? PACKAGE_NAME_PATTERN).map(packagePattern => slash(packagePattern));
@@ -215,7 +215,7 @@ function getLocalNpmPaths(): string[] {
       paths.push(lookup);
     });
 
-  return uniq(paths.reverse());
+  return uniq(paths.toReversed());
 }
 
 /**
@@ -266,8 +266,7 @@ function getGlobalNpmPaths(filterPaths = true): string[] {
   // Get yarn global directory and infer the module paths from there
   const yarnBase = execaOutput('yarn', ['global', 'dir']);
   if (yarnBase) {
-    paths.push(resolve(yarnBase, 'node_modules'));
-    paths.push(resolve(yarnBase, '../link/'));
+    paths.push(resolve(yarnBase, 'node_modules'), resolve(yarnBase, '../link/'));
   }
 
   // Get npm global prefix and infer the module paths from there
@@ -281,5 +280,5 @@ function getGlobalNpmPaths(filterPaths = true): string[] {
     paths.push(...filterValidNpmPath(join(dirname(process.argv[1]), '../..'), !filterPaths));
   }
 
-  return uniq(paths.filter(Boolean).reverse());
+  return uniq(paths.filter(Boolean).toReversed());
 }
