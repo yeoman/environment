@@ -39,7 +39,7 @@ import { type LookupOptions, lookupGenerators } from './generator-lookup.ts';
 import { UNKNOWN_NAMESPACE, UNKNOWN_RESOLVED, defaultQueues } from './constants.ts';
 import { resolveModulePath } from './util/resolve.ts';
 import { commitSharedFsTask } from './commit.ts';
-import { packageManagerInstallTask } from './package-manager.ts';
+import { type InstallTask, packageManagerInstallTask } from './package-manager.ts';
 import { splitArgsFromString as splitArgumentsFromString } from './util/util.ts';
 
 const require = createRequire(import.meta.url);
@@ -500,11 +500,13 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
         return;
       }
 
-      if (!(generator.options as any).forwardErrorToEnvironment) {
-        generator.on('error', (error: any) => this.emit('error', error));
+      // Backward compatibility
+      const oldGenerator: any = generator;
+      if (!oldGenerator.options.forwardErrorToEnvironment) {
+        oldGenerator.on('error', (error: any) => this.emit('error', error));
       }
 
-      (generator as any).promise = (generator as any).run();
+      oldGenerator.promise = oldGenerator.run();
     };
 
     if (schedule) {
@@ -776,7 +778,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   }: {
     cwd?: string;
     queueTask?: boolean;
-    installTask?: (nodePackageManager: string | undefined, defaultTask: () => Promise<boolean>) => void | Promise<void>;
+    installTask?: InstallTask;
   } = {}) {
     if (cwd && !installTask) {
       throw new Error(`installTask is required when using a custom cwd`);

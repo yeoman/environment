@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import { toNamespace } from '@yeoman/namespace';
 import type { BaseGenerator, Logger } from '@yeoman/types';
 import createdLogger from 'debug';
+import type { InstallTask } from './package-manager.ts';
 
 const debug = createdLogger('yeoman:environment:composed-store');
 
@@ -17,11 +18,11 @@ export class ComposedStore {
     this.log = log;
   }
 
-  get customCommitTask() {
+  get customCommitTask(): (() => Promise<void> | void) | undefined {
     return this.findUniqueFeature('customCommitTask');
   }
 
-  get customInstallTask() {
+  get customInstallTask(): InstallTask | undefined {
     return this.findUniqueFeature('customInstallTask');
   }
 
@@ -69,18 +70,18 @@ export class ComposedStore {
     return this.uniqueByPathMap.get(root)!;
   }
 
-  findFeature(featureName: string): Array<{ generatorId: string; feature: any }> {
+  findFeature<T = unknown>(featureName: string): Array<{ generatorId: string; feature: T }> {
     return Object.entries(this.generators)
       .map(([generatorId, generator]) => {
         const { features = (generator as any).getFeatures?.() } = generator;
         const feature = features?.[featureName];
-        return feature ? { generatorId, feature } : undefined;
+        return feature ? { generatorId, feature: feature as T } : undefined;
       })
-      .filter(Boolean) as any;
+      .filter(Boolean) as Array<{ generatorId: string; feature: T }>;
   }
 
-  private findUniqueFeature(featureName: UniqueFeatureType) {
-    const providedFeatures = this.findFeature(featureName);
+  private findUniqueFeature<T = unknown>(featureName: UniqueFeatureType): T | undefined {
+    const providedFeatures = this.findFeature<T>(featureName);
     if (providedFeatures.length > 0) {
       if (providedFeatures.length > 1) {
         this.log?.info?.(
