@@ -82,7 +82,7 @@
   "devDependencies": {
     "@types/debug": "^4.1.12",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^18.19.100",
+    "@types/node": "^20.19.11",
     "@types/semver": "^7.7.0",
     "@yeoman/eslint": "0.2.0",
     "c8": "^10.1.3",
