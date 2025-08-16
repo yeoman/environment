@@ -478,10 +478,9 @@ for (const generatorVersion of allVersions) {
           assert.equal(error.message, 'some error');
           done();
         });
-        this.env.create('eventfailingstub:run').then(generator => {
-          assert.equal(generator.listenerCount('error'), 0);
-          this.env.runGenerator(generator).catch(() => {});
-        });
+        const generator = this.env.create('eventfailingstub:run');
+        assert.equal(generator.listenerCount('error'), 0);
+        this.env.runGenerator(generator).catch(() => {});
       });
 
       it('generator failing task emits error', function (done) {
@@ -491,10 +490,9 @@ for (const generatorVersion of allVersions) {
           assert.equal(error.message, 'some error');
           done();
         });
-        this.env.create('promisefailingstub:run').then(generator => {
-          assert.equal(generator.listenerCount('error'), 0);
-          this.env.runGenerator(generator).catch(() => {});
-        });
+        const generator = this.env.create('promisefailingstub:run');
+        assert.equal(generator.listenerCount('error'), 0);
+        this.env.runGenerator(generator).catch(() => {});
       });
 
       it('returns the generator', async function () {
@@ -540,7 +538,7 @@ for (const generatorVersion of allVersions) {
         const meta = this.env.getGeneratorMeta('fixtures:generator-module');
         const Generator = await meta.importGenerator();
         const module = await meta.importModule();
-        assert.strictEqual(Generator, module.default.default);
+        assert.strictEqual(Generator, module.default);
       });
       it('intantiate should return an instance', async function () {
         this.env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
