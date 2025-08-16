@@ -5,10 +5,10 @@ import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/nam
 import { flyImport } from 'fly-import';
 import { defaults, pick, uniq } from 'lodash-es';
 import { valid } from 'semver';
-import { type LookupOptions } from './generator-lookup.js';
-import YeomanCommand from './util/command.js';
-import EnvironmentBase, { type EnvironmentOptions } from './environment-base.js';
-import { splitArgsFromString as splitArgumentsFromString } from './util/util.js';
+import { type LookupOptions } from './generator-lookup.ts';
+import YeomanCommand from './util/command.ts';
+import EnvironmentBase, { type EnvironmentOptions } from './environment-base.ts';
+import { splitArgsFromString as splitArgumentsFromString } from './util/util.ts';
 
 class FullEnvironment extends EnvironmentBase {
   constructor(options?: EnvironmentOptions);

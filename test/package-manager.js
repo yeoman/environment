@@ -6,7 +6,7 @@ import { after, afterEach, beforeEach, describe, esmocha, expect, it } from 'esm
 const { execa } = await esmocha.mock('execa', import('execa'));
 const { whichPackageManager } = await esmocha.mock('which-package-manager', import('which-package-manager'));
 
-const { packageManagerInstallTask } = await import('../src/package-manager.js');
+const { packageManagerInstallTask } = await import('../src/package-manager.ts');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

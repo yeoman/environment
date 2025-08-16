@@ -31,16 +31,16 @@ import { type YeomanNamespace, toNamespace } from '@yeoman/namespace';
 import chalk from 'chalk';
 import { type ConflicterOptions } from '@yeoman/conflicter';
 import { defaults, pick } from 'lodash-es';
-import { ComposedStore } from './composed-store.js';
-import Store from './store.js';
-import type YeomanCommand from './util/command.js';
-import { asNamespace, defaultLookups } from './util/namespace.js';
-import { type LookupOptions, lookupGenerators } from './generator-lookup.js';
-import { UNKNOWN_NAMESPACE, UNKNOWN_RESOLVED, defaultQueues } from './constants.js';
-import { resolveModulePath } from './util/resolve.js';
-import { commitSharedFsTask } from './commit.js';
-import { packageManagerInstallTask } from './package-manager.js';
-import { splitArgsFromString as splitArgumentsFromString } from './util/util.js';
+import { ComposedStore } from './composed-store.ts';
+import Store from './store.ts';
+import type YeomanCommand from './util/command.ts';
+import { asNamespace, defaultLookups } from './util/namespace.ts';
+import { type LookupOptions, lookupGenerators } from './generator-lookup.ts';
+import { UNKNOWN_NAMESPACE, UNKNOWN_RESOLVED, defaultQueues } from './constants.ts';
+import { resolveModulePath } from './util/resolve.ts';
+import { commitSharedFsTask } from './commit.ts';
+import { packageManagerInstallTask } from './package-manager.ts';
+import { splitArgsFromString as splitArgumentsFromString } from './util/util.ts';
 
 const require = createRequire(import.meta.url);
 

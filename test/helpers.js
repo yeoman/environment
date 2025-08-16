@@ -1,5 +1,5 @@
 import { createHelpers } from 'yeoman-test';
-import Environment from '../src/index.js';
+import Environment from '../src/index.ts';
 
 export const getCreateEnv =
   Environment =>

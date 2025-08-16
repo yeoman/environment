@@ -22,7 +22,11 @@ export default class Store {
   // Store packages ns
   private readonly _packagesNS: string[] = [];
 
-  constructor(private readonly environment: BaseEnvironment) {}
+  private readonly environment: BaseEnvironment;
+
+  constructor(environment: BaseEnvironment) {
+    this.environment = environment;
+  }
 
   /**
    * Store a module under the namespace key
@@ -154,7 +158,7 @@ export default class Store {
         );
         // Remove old packagePath
         const index = packagePaths.indexOf(packagePath);
-        if (index > -1) {
+        if (index !== -1) {
           packagePaths.splice(index, 1);
         }
 

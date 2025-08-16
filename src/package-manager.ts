@@ -3,8 +3,8 @@ import createdLogger from 'debug';
 import { whichPackageManager } from 'which-package-manager';
 import { execa } from 'execa';
 import type { MemFsEditorFile } from 'mem-fs-editor';
-import { type InputOutputAdapter } from '@yeoman/types';
-import { type Store } from 'mem-fs';
+import type { InputOutputAdapter } from '@yeoman/types';
+import type { Store } from 'mem-fs';
 
 const debug = createdLogger('yeoman:environment:package-manager');
 

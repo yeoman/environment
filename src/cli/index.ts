@@ -2,9 +2,9 @@ import { readFileSync } from 'node:fs';
 import process from 'node:process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import YeomanCommand, { addEnvironmentOptions } from '../util/command.js';
-import { createEnv as createEnvironment } from '../index.js';
-import { environmentAction, printGroupedGenerator } from './utils.js';
+import YeomanCommand, { addEnvironmentOptions } from '../util/command.ts';
+import { createEnv as createEnvironment } from '../index.ts';
+import { environmentAction, printGroupedGenerator } from './utils.ts';
 
 const program = new YeomanCommand();
 

@@ -1,9 +1,9 @@
 import { extname, isAbsolute, join, posix } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { type LookupOptions as LookupOptionsApi } from '@yeoman/types';
+import type { LookupOptions as LookupOptionsApi } from '@yeoman/types';
 import { requireNamespace, toNamespace } from '@yeoman/namespace';
-import { type ModuleLookupOptions, findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.js';
-import { asNamespace, defaultLookups } from './util/namespace.js';
+import { type ModuleLookupOptions, findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.ts';
+import { asNamespace, defaultLookups } from './util/namespace.ts';
 
 export type LookupOptions = LookupOptionsApi &
   ModuleLookupOptions & {
