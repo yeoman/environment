@@ -261,6 +261,7 @@ function getGlobalNpmPaths(filterPaths = true): string[] {
   // Ex: /usr/another_global/node_modules/yeoman-denerator/node_modules/yeoman-environment/lib (1 level dependency)
   paths.push(...filterValidNpmPath(join(PROJECT_ROOT, '../../..'), !filterPaths));
   // Ex: /usr/another_global/node_modules/yeoman-environment/lib (installed directly)
+  // eslint-disable-next-line unicorn/prefer-single-call
   paths.push(join(PROJECT_ROOT, '..'));
 
   // Get yarn global directory and infer the module paths from there
