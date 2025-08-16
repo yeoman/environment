@@ -755,7 +755,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       throw new TypeError('string is required');
     }
 
-    const aliases = [...this.aliases].reverse();
+    const aliases = [...this.aliases].toReversed();
 
     return aliases.reduce<string>((resolved, alias) => {
       if (!alias.match.test(resolved)) {

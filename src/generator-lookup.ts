@@ -84,7 +84,7 @@ export function lookupGenerator(namespace: string, options?: ModuleLookupOptions
   const ns = requireNamespace(namespace);
   options.packagePatterns = options.packagePatterns ?? [ns.generatorHint];
 
-  options.npmPaths = options.npmPaths ?? getNpmPaths({ localOnly: options.localOnly }).reverse();
+  options.npmPaths = options.npmPaths ?? getNpmPaths({ localOnly: options.localOnly }).toReversed();
   options.packagePatterns = options.packagePatterns ?? ['generator-*'];
   options.packagePaths = options.packagePaths ?? findPackagesIn(options.npmPaths, options.packagePatterns);
 
