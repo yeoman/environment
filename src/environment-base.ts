@@ -65,28 +65,30 @@ export type EnvironmentOptions = BaseEnvironmentOptions &
     nodePackageManager?: string;
   };
 
-const getInstantiateOptions = (arguments_?: any, options?: any): InstantiateOptions => {
-  if (Array.isArray(arguments_) || typeof arguments_ === 'string') {
-    return { generatorArgs: splitArgumentsFromString(arguments_), generatorOptions: options };
+const getInstantiateOptions = (firstArg?: any, generatorOptions?: any): InstantiateOptions => {
+  // First argument can be an array of string, a string, a ComposeOptions, a GeneratorOptions, old variant of ComposeOptions.
+  if (Array.isArray(firstArg) || typeof firstArg === 'string') {
+    return { generatorArgs: splitArgumentsFromString(firstArg), generatorOptions };
   }
 
-  if (arguments_ !== undefined) {
-    if ('generatorOptions' in arguments_ || 'generatorArgs' in arguments_) {
-      return arguments_;
+  if (firstArg !== undefined) {
+    if ('generatorOptions' in firstArg || 'generatorArgs' in firstArg) {
+      return firstArg;
     }
 
-    if ('options' in arguments_ || 'arguments' in arguments_ || 'args' in arguments_) {
+    if ('options' in firstArg || 'arguments' in firstArg || 'args' in firstArg) {
+      // Backward compatibility
       const {
         args: insideArguments,
         arguments: generatorArguments = insideArguments,
         options: generatorOptions,
         ...remainingOptions
-      } = arguments_;
+      } = firstArg;
       return { generatorArgs: splitArgumentsFromString(generatorArguments), generatorOptions: generatorOptions ?? remainingOptions };
     }
   }
 
-  return { generatorOptions: options };
+  return { generatorOptions };
 };
 
 const getComposeOptions = (...varargs: any[]): ComposeOptions => {
