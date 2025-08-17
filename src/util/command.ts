@@ -78,14 +78,18 @@ export default class YeomanCommand extends Command {
     return this;
   }
 
+  #findOption(arg: string) {
+    return this.options.find(option => option.short === arg || option.long === arg);
+  }
+
   _addGeneratorOption(optionName: string, optionDefinition: any, additionalDescription = '') {
     if (optionName === 'help') {
       return;
     }
 
     const longOption = `--${optionName}`;
-    const existingOption = (this as any)._findOption(longOption);
-    if ((this as any)._findOption(longOption)) {
+    const existingOption = this.#findOption(longOption);
+    if (this.#findOption(longOption)) {
       return existingOption;
     }
 

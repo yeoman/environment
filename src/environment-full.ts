@@ -186,7 +186,7 @@ class FullEnvironment extends EnvironmentBase {
     const generator = await this.create(namespace.namespace, { generatorArgs: [], generatorOptions: { help: true } });
     namespaceCommand.registerGenerator(generator);
 
-    (namespaceCommand as any)._parseCommand([], arguments_);
+    namespaceCommand.parse(arguments_, { from: 'user' });
     return this.run([namespace.namespace, ...namespaceCommand.args], {
       ...namespaceCommand.opts(),
     });
