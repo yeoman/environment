@@ -8,12 +8,14 @@ import type { Store } from 'mem-fs';
 
 const debug = createdLogger('yeoman:environment:package-manager');
 
+export type InstallTask = (nodePackageManager: string | undefined, defaultTask: () => Promise<boolean>) => void | Promise<void>;
+
 export type PackageManagerInstallTaskOptions = {
   memFs: Store<MemFsEditorFile>;
   packageJsonLocation: string;
   adapter: InputOutputAdapter;
   nodePackageManager?: string;
-  customInstallTask?: boolean | ((nodePackageManager: string | undefined, defaultTask: () => Promise<boolean>) => void | Promise<void>);
+  customInstallTask?: boolean | InstallTask;
   skipInstall?: boolean;
 };
 
