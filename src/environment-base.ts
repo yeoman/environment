@@ -23,7 +23,6 @@ import { type Store as MemFs, create as createMemFs } from 'mem-fs';
 import { type MemFsEditorFile } from 'mem-fs-editor';
 import { FlyRepository } from 'fly-import';
 import createdLogger from 'debug';
-// @ts-expect-error grouped-queue don't have types
 import GroupedQueue from 'grouped-queue';
 import { isFilePending } from 'mem-fs-editor/state';
 import { type FilePipelineTransform, filePipeline, transform } from '@yeoman/transform';
@@ -586,12 +585,12 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   ): void {
     this.runLoop.add(
       priority,
-      async (done: () => Record<string, unknown>, stop: (argument: any) => Record<string, unknown>) => {
+      async (done, stop) => {
         try {
           await task();
           done();
         } catch (error) {
-          stop(error);
+          stop(error as Error);
         }
       },
       {

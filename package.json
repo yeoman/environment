@@ -69,7 +69,7 @@
     "execa": "^9.6.0",
     "fly-import": "^0.4.1",
     "globby": "^14.1.0",
-    "grouped-queue": "^2.0.0",
+    "grouped-queue": "^2.1.0",
     "locate-path": "^7.2.0",
     "lodash-es": "^4.17.21",
     "mem-fs": "^4.1.2",
