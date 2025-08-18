@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { join, resolve } from 'node:path';
-import type { BaseGeneratorConstructor, InputOutputAdapter } from '@yeoman/types';
+import type { BaseGeneratorConstructor, BaseGeneratorOptions, GeneratorEnvironmentOptions, InputOutputAdapter } from '@yeoman/types';
 import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
 import { flyImport } from 'fly-import';
 import { defaults, pick, uniq } from 'lodash-es';
@@ -337,13 +337,12 @@ class FullEnvironment extends EnvironmentBase {
    * on the provided arguments, options and the list of registered generators.
    *
    * When the environment was unable to resolve a generator, an error is raised.
-   *
-   * @param {String|Array} args
-   * @param {Object}       [options]
    */
-  async run(arguments_?: string[], options?: any) {
+  async run(
+    arguments_?: string | string[],
+    options: EnvironmentOptions & BaseGeneratorOptions & Partial<GeneratorEnvironmentOptions> = {},
+  ) {
     arguments_ = Array.isArray(arguments_) ? arguments_ : splitArgumentsFromString(arguments_ as unknown as string);
-    options = { ...options };
 
     let name = arguments_.shift();
     if (!name) {
@@ -366,10 +365,7 @@ class FullEnvironment extends EnvironmentBase {
 
     const generator = await this.create(name, {
       generatorArgs: arguments_,
-      generatorOptions: {
-        ...options,
-        initialGenerator: true,
-      },
+      generatorOptions: options,
     });
 
     if (options.help) {
