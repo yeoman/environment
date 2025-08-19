@@ -67,7 +67,7 @@
     "commander": "^14.0.0",
     "debug": "^4.4.1",
     "execa": "^9.6.0",
-    "fly-import": "^0.4.1",
+    "fly-import": "^1.0.0",
     "globby": "^14.1.0",
     "grouped-queue": "^2.1.0",
     "locate-path": "^7.2.0",
