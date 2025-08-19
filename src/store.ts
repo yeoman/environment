@@ -2,7 +2,14 @@ import { pathToFileURL } from 'node:url';
 import { extname, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { toNamespace } from '@yeoman/namespace';
-import type { BaseEnvironment, BaseGeneratorMeta, GeneratorMeta, GetGeneratorConstructor } from '@yeoman/types';
+import type {
+  BaseEnvironment,
+  BaseGenerator,
+  BaseGeneratorConstructorMeta,
+  BaseGeneratorMeta,
+  GeneratorMeta,
+  GetGeneratorConstructor,
+} from '@yeoman/types';
 import createDebug from 'debug';
 
 const debug = createDebug('yeoman:environment:store');
@@ -68,7 +75,12 @@ export default class Store {
     }
 
     let importPromise: Promise<unknown> | undefined;
-    const importGenerator = () => {
+    // eslint-disable-next-line prefer-const
+    let generatorMeta: (GeneratorMeta & M) | undefined;
+
+    const importGenerator: GeneratorMeta['importGenerator'] = <G extends BaseGenerator>():
+      | Promise<GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta>
+      | (GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta) => {
       const handleImport = () => {
         if (importModule && !Generator) {
           const maybeModule = importModule();
@@ -84,18 +96,21 @@ export default class Store {
         }
       };
 
-      const handleModule = () => {
+      const handleModule = <G extends BaseGenerator>():
+        | Promise<GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta>
+        | (GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta) => {
         const factory = this.getFactory(Generator);
         if (typeof factory === 'function') {
           importPromise = factory(this.environment);
           return Promise.resolve(importPromise).then((mod: any) => {
-            Generator = this._getGenerator(mod, meta);
+            const generator = this._getGenerator<G>(mod, meta, generatorMeta);
+            Generator = generator;
             importPromise = undefined;
-            return Generator;
+            return generator;
           });
         }
 
-        return this._getGenerator(Generator, meta);
+        return this._getGenerator<G>(Generator, meta, generatorMeta);
       };
 
       if (importPromise) {
@@ -109,12 +124,12 @@ export default class Store {
       return handleModule();
     };
 
-    const instantiate = async (arguments_: string[] = [], options: any = {}) =>
-      this.environment.instantiate(await importGenerator(), { generatorArgs: arguments_, generatorOptions: options });
-    const instantiateHelp = async () => instantiate([], { help: true });
+    const instantiate: GeneratorMeta['instantiate'] = async <G extends BaseGenerator>(arguments_: string[] = [], options: any = {}) =>
+      this.environment.instantiate<G>(await importGenerator<G>(), { generatorArgs: arguments_, generatorOptions: options });
+    const instantiateHelp: GeneratorMeta['instantiateHelp'] = async () => instantiate([], { help: true });
     const { packageNamespace } = toNamespace(meta.namespace) ?? {};
 
-    const generatorMeta = {
+    generatorMeta = {
       ...meta,
       importGenerator,
       importModule,
@@ -229,13 +244,18 @@ export default class Store {
     return module.createGenerator ?? module.default?.createGenerator ?? module.default?.default?.createGenerator;
   }
 
-  private _getGenerator(module: any, meta: BaseGeneratorMeta) {
+  private _getGenerator<G extends BaseGenerator>(
+    module: any,
+    meta: BaseGeneratorMeta,
+    generatorMeta: BaseGeneratorMeta | undefined,
+  ): GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta {
     const Generator = module.default?.default ?? module.default ?? module;
     if (typeof Generator !== 'function') {
       throw new TypeError("The generator doesn't provide a constructor.");
     }
 
     Object.assign(Generator, meta);
+    Generator._meta = generatorMeta;
     return Generator;
   }
 }

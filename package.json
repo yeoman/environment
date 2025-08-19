@@ -61,7 +61,7 @@
     "@yeoman/conflicter": "^3.0.0",
     "@yeoman/namespace": "^1.0.1",
     "@yeoman/transform": "^2.1.0",
-    "@yeoman/types": "^1.6.0",
+    "@yeoman/types": "^1.7.1",
     "arrify": "^3.0.0",
     "chalk": "^5.5.0",
     "commander": "^14.0.0",
@@ -109,8 +109,8 @@
     "yeoman-test": "^10.1.1"
   },
   "peerDependencies": {
-    "@yeoman/types": "^1.1.1",
-    "mem-fs": "^4.0.0"
+    "@yeoman/types": "^1.7.1",
+    "mem-fs": "^4.1.2"
   },
   "engines": {
     "node": "^20.17.0 || >=22.9.0"
