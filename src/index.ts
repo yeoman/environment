@@ -6,6 +6,9 @@ export { default as EnvironmentBase } from './environment-base.ts';
 
 export const createEnv = (options?: EnvironmentOptions) => new Environment(options);
 
+// Backward compatibility
+export const enforceUpdate = () => {};
+
 export * from './commands.ts';
 export * from './util/command.ts';
 export * from './package-manager.ts';
