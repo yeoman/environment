@@ -504,7 +504,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       // Backward compatibility
       const oldGenerator: any = generator;
       if (!oldGenerator.options.forwardErrorToEnvironment) {
-        oldGenerator.on('error', (error: any) => this.emit('error', error));
+        oldGenerator.on('error', (error: any) => this.adapter.abort(error));
       }
 
       oldGenerator.promise = oldGenerator.run();
@@ -828,6 +828,10 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    */
   protected async start(options: any) {
     return new Promise<void>((resolve, reject) => {
+      if (this.adapter.signal?.aborted) {
+        return reject(this.adapter.signal.reason);
+      }
+
       Object.assign(this.options, removePropertiesWithNullishValues(pick(options, ['skipInstall', 'nodePackageManager'])));
       this.logCwd = options.logCwd ?? this.logCwd;
       const conflicterOptionsProperties = ['force', 'bail', 'ignoreWhitespace', 'dryRun', 'skipYoResolve'];
@@ -846,25 +850,21 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
        * would be killed if an error is thrown to environment.
        * Make sure to not rely on that behavior.
        */
-      this.on('error', async error => {
-        this.runLoop.pause();
-        await this.adapter.onIdle?.();
-        reject(error);
-        this.adapter.close();
+      let errorEmitted = false;
+      this.on('error', error => {
+        errorEmitted = true;
+        this.adapter.abort(error);
       });
 
       this.once('end', async () => {
         await this.adapter.onIdle?.();
         resolve();
-        this.adapter.close();
       });
 
       /*
        * For backward compatibility
        */
-      this.on('generator:reject', error => {
-        this.emit('error', error);
-      });
+      this.on('generator:reject', error => this.adapter.abort(error));
 
       /*
        * For backward compatibility
@@ -873,9 +873,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
         this.emit('end');
       });
 
-      this.runLoop.on('error', (error: any) => {
-        this.emit('error', error);
-      });
+      this.runLoop.on('error', (error: any) => this.adapter.abort(error));
 
       this.runLoop.on('paused', () => {
         this.emit('paused');
@@ -884,6 +882,16 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       /* If runLoop has ended, the environment has ended too. */
       this.runLoop.once('end', () => {
         this.emit('end');
+      });
+
+      this.adapter.signal?.addEventListener('abort', async () => {
+        const reason = this.adapter.signal.reason;
+        if (!errorEmitted) {
+          this.emit('error', reason);
+        }
+        this.runLoop.pause();
+        await this.adapter.onIdle?.();
+        reject(reason);
       });
 
       this.emit('run');
