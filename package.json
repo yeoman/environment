@@ -109,8 +109,12 @@
     "yeoman-test": "^11.0.0-0"
   },
   "peerDependencies": {
+    "@yeoman/adapter": "^3.0.0",
     "@yeoman/types": "^1.8.0",
     "mem-fs": "^4.1.2"
+  },
+  "acceptDependencies": {
+    "@yeoman/adapter": ">=3.0.0"
   },
   "engines": {
     "node": "^20.17.0 || >=22.9.0"
