@@ -76,7 +76,7 @@
     "mem-fs-editor": "^11.1.4",
     "semver": "^7.7.2",
     "slash": "^5.1.0",
-    "untildify": "^5.0.0",
+    "untildify": "^6.0.0",
     "which-package-manager": "^1.0.1"
   },
   "devDependencies": {
