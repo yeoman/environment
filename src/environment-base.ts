@@ -63,6 +63,7 @@ export type EnvironmentOptions = ConflicterOptions &
     yeomanRepository?: string;
     arboristRegistry?: string;
     nodePackageManager?: string;
+    generatorLookupOptions?: Pick<EnvironmentLookupOptions, 'customizeNamespace' | 'lookups'>;
   };
 
 const getInstantiateOptions = (firstArg?: any, generatorOptions?: any): InstantiateOptions => {
@@ -200,7 +201,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     this.runLoop.setMaxListeners(0);
     this.sharedFs.setMaxListeners(0);
 
-    this.lookups = defaultLookups;
+    this.lookups = this.options.generatorLookupOptions?.lookups ?? defaultLookups;
 
     this.sharedOptions = sharedOptions;
 
@@ -629,7 +630,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   async lookup(options?: EnvironmentLookupOptions): Promise<LookupGeneratorMeta[]> {
     const {
       registerToScope,
-      customizeNamespace = (ns: string) => ns,
+      customizeNamespace = this.options.generatorLookupOptions?.customizeNamespace ?? ((ns: string) => ns),
       lookups = this.lookups,
       ...remainingOptions
     } = options ?? { localOnly: false };
