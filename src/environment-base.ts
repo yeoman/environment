@@ -54,7 +54,8 @@ export type EnvironmentLookupOptions = LookupOptions & {
   customizeNamespace?: (ns?: string) => string | undefined;
 };
 
-export type EnvironmentOptions = BaseEnvironmentOptions &
+export type EnvironmentOptions = ConflicterOptions &
+  BaseEnvironmentOptions &
   Omit<TerminalAdapterOptions, 'promptModule'> & {
     adapter?: InputOutputAdapter;
     logCwd?: string;
@@ -145,14 +146,15 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   sharedFs: MemFs<MemFsEditorFile>;
   conflicterOptions?: ConflicterOptions;
 
-  protected readonly options: EnvironmentOptions;
+  readonly sharedOptions: Record<string, any>;
+  readonly options: EnvironmentOptions;
+
   protected readonly aliases: Array<{ match: RegExp; value: string }> = [];
   protected store: Store;
   protected command?: YeomanCommand;
   protected runLoop: GroupedQueue;
   protected composedStore: ComposedStore;
   protected lookups: string[];
-  protected sharedOptions: Record<string, any>;
   protected repository: FlyRepository;
   protected experimental: boolean;
   protected _rootGenerator?: BaseGenerator;

@@ -2,7 +2,7 @@ import { type EnvironmentOptions } from './environment-base.ts';
 import Environment from './environment-full.ts';
 
 export { default } from './environment-full.ts';
-export { default as EnvironmentBase } from './environment-base.ts';
+export { default as EnvironmentBase, type EnvironmentOptions } from './environment-base.ts';
 
 export const createEnv = (options?: EnvironmentOptions) => new Environment(options);
 
