@@ -270,6 +270,10 @@ function getGlobalNpmPaths(filterPaths = true): string[] {
     paths.push(resolve(yarnBase, 'node_modules'), resolve(yarnBase, '../link/'));
   }
 
+  if (process.env.PNPM_HOME) {
+    paths.push(resolve(process.env.PNPM_HOME, 'global/*/node_modules'));
+  }
+
   // Get npm global prefix and infer the module paths from there
   const globalInstall = execaOutput('npm', ['root', '-g']);
   if (globalInstall) {
