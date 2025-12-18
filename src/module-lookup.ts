@@ -278,7 +278,7 @@ function getGlobalNpmPaths(filterPaths = true): string[] {
         onlyDirectories: true,
         suppressErrors: true,
         absolute: true,
-      }).map(modulesPath => resolve(pnpmHome, modulesPath)),
+      }).map(modulesPath => resolve(modulesPath)),
     );
   }
 
