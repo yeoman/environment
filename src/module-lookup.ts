@@ -271,7 +271,15 @@ function getGlobalNpmPaths(filterPaths = true): string[] {
   }
 
   if (process.env.PNPM_HOME) {
-    paths.push(resolve(process.env.PNPM_HOME, 'global/*/node_modules'));
+    const pnpmHome = process.env.PNPM_HOME;
+    paths.push(
+      ...globbySync('global/*/node_modules', {
+        cwd: pnpmHome,
+        onlyDirectories: true,
+        suppressErrors: true,
+        absolute: true,
+      }).map(modulesPath => resolve(modulesPath)),
+    );
   }
 
   // Get npm global prefix and infer the module paths from there
