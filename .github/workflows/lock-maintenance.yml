@@ -20,7 +20,7 @@ jobs:
           cache: 'npm'
       - name: Create commit
         run: |
-          npm install npm@latest -g
+          npm install npm@10 -g
           rm package-lock.json
           npm install
           npm install # make sure package-lock.json is correct
