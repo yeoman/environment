@@ -68,8 +68,11 @@ export default class Store {
       importModule = () => {
         try {
           return require(meta.resolved!);
-        } catch {
-          return import(pathToFileURL(meta.resolved!).href);
+        } catch (error: any) {
+          if (error.code === 'ERR_REQUIRE_ESM' || error.code === 'ERR_REQUIRE_ASYNC_MODULE') {
+            return import(pathToFileURL(meta.resolved!).href);
+          }
+          throw error;
         }
       };
     }
@@ -86,10 +89,13 @@ export default class Store {
           const maybeModule = importModule();
           if ((maybeModule as any).then) {
             importPromise = maybeModule;
-            return maybeModule.then((mod: any) => {
-              Generator = mod;
-              importPromise = undefined;
-            });
+            return maybeModule
+              .then((mod: any) => {
+                Generator = mod;
+              })
+              .finally(() => {
+                importPromise = undefined;
+              });
           } else {
             Generator = maybeModule;
           }
