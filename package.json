@@ -38,8 +38,7 @@
   ],
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "tsc && npm run copy-types",
-    "copy-types": "cpy \"src/**/*.d.(|c|m)ts\" dist/",
+    "build": "tsc",
     "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
     "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path/global.html || true",
     "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path",
@@ -87,7 +86,6 @@
     "@types/semver": "^7.7.1",
     "@yeoman/eslint": "1.0.0",
     "c8": "^11.0.0",
-    "cpy-cli": "^6.0.0",
     "eslint": "9.39.3",
     "esmocha": "^5.0.0",
     "fs-extra": "^11.3.3",
