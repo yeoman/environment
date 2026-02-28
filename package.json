@@ -72,7 +72,7 @@
     "locate-path": "^8.0.0",
     "lodash-es": "^4.17.23",
     "mem-fs": "^4.1.4",
-    "mem-fs-editor": "^11.1.4",
+    "mem-fs-editor": "^12.0.0",
     "semver": "^7.7.4",
     "slash": "^5.1.0",
     "untildify": "^6.0.0",
