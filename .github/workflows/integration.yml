@@ -70,7 +70,7 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/yeoman-environment
-          npm ci
+          npm install
           npm install yeoman/yeoman-test#main
           npm install yeoman/generator#main
           npm test
