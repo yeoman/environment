@@ -3,7 +3,8 @@ import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { stub } from 'sinon';
-import { beforeEach, describe, it } from 'esmocha';
+import { beforeEach, describe, esmocha, expect, it } from 'esmocha';
+import { TestAdapter } from 'yeoman-test';
 import { prepareCommand } from '../src/commands.ts';
 import Environment from '../src/index.ts';
 
@@ -12,11 +13,45 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 describe('environment (command)', () => {
+  describe('#execute()', () => {
+    let environment;
+    let adapter;
+
+    beforeEach(async () => {
+      adapter = new TestAdapter();
+      environment = new Environment({ skipInstall: true, dryRun: true, adapter });
+    });
+
+    describe('with non existing generator', () => {
+      it('declining installation', async () => {
+        adapter.addAnswers({
+          aproveInstall: false,
+        });
+        environment.repository.install = esmocha.fn().mockReturnValue(Promise.resolve([]));
+        await expect(environment.execute('commands:options')).rejects.toThrow(
+          /Installation of generator-commands is declined by the user. Install manually and try again/,
+        );
+        expect(environment.repository.install).not.toHaveBeenCalled();
+      });
+
+      it('approving installation', async () => {
+        adapter.addAnswers({
+          aproveInstall: true,
+        });
+        environment.repository.install = esmocha.fn().mockReturnValue(Promise.resolve([]));
+        await expect(environment.execute('commands:options')).rejects.toThrow(
+          /You don't seem to have a generator with the name “generator-commands” installed./,
+        );
+        expect(environment.repository.install).toHaveBeenCalledWith(['generator-commands']);
+      });
+    });
+  });
+
   describe('#execute() with options', () => {
     let environment;
 
     beforeEach(async () => {
-      environment = new Environment([], { skipInstall: true, dryRun: true });
+      environment = new Environment({ skipInstall: true, dryRun: true });
       environment.adapter.log = stub();
       await environment.register(path.join(__dirname, 'fixtures/generator-commands/generators/options'));
     });
@@ -87,7 +122,7 @@ describe('environment (command)', () => {
     let environment;
 
     beforeEach(() => {
-      environment = new Environment([], { skipInstall: true, dryRun: true });
+      environment = new Environment({ skipInstall: true, dryRun: true });
       environment.adapter.log = stub();
       environment.register(path.join(__dirname, 'fixtures/generator-commands/generators/arguments'));
     });

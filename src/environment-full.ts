@@ -226,9 +226,23 @@ class FullEnvironment extends EnvironmentBase {
    * @param  {Object} packages - packages to install key(packageName): value(versionRange).
    * @return  {Boolean} - true if the install succeeded.
    */
-  async installLocalGenerators(packages: Record<string, string | undefined>) {
+  async installLocalGenerators(packages: Record<string, string | undefined>, forceInstall = false) {
     const entries = Object.entries(packages);
     const specs = entries.map(([packageName, version]) => `${packageName}${version ? `@${version}` : ''}`);
+    if (forceInstall) {
+      this.adapter.log.info(`Force install is enabled. Proceeding with installation.`);
+    } else {
+      const { aproveInstall } = await this.adapter.prompt({
+        message: `The following packages need to be installed in the local repository: ${specs.join(', ')}. Do you want to proceed?`,
+        type: 'confirm',
+        name: 'aproveInstall',
+        default: false,
+      });
+      if (!aproveInstall) {
+        throw new Error(`Installation of ${specs.join(', ')} is declined by the user. Install manually and try again.`);
+      }
+    }
+    this.adapter.log.info(`The following packages will be installed in the local repository: ${specs.join(', ')}.`);
     const installResult = await this.repository.install(specs);
     const failToInstall = installResult.find(result => !result.path);
     if (failToInstall) {
