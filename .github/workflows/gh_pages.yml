@@ -38,7 +38,7 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-gh-pages
             ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-
-      - run: npm ci
+      - run: npm install
         working-directory: source
       - run: npm config set yeoman-environment:doc_path ../yeoman-environment-doc/${{ github.event.inputs.path }}
         working-directory: source
