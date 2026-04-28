@@ -1,12 +1,18 @@
 import crypto from 'node:crypto';
 import { toNamespace } from '@yeoman/namespace';
-import type { BaseGenerator, Logger } from '@yeoman/types';
+import type { BaseGenerator, GeneratorFeatures, Logger } from '@yeoman/types';
 import createdLogger from 'debug';
 import type { InstallTask } from './package-manager.ts';
 
 const debug = createdLogger('yeoman:environment:composed-store');
 
 type UniqueFeatureType = 'customCommitTask' | 'customInstallTask';
+
+type EnvironmentGeneratorFeatures = GeneratorFeatures & Record<UniqueFeatureType, unknown>;
+
+const getFeaturesFromGenerator = (generator: BaseGenerator): EnvironmentGeneratorFeatures => {
+  return generator.features ?? (generator as any).getFeatures?.() ?? {};
+};
 
 export class ComposedStore {
   private readonly log?;
@@ -31,7 +37,7 @@ export class ComposedStore {
   }
 
   addGenerator(generator: BaseGenerator) {
-    const { features = (generator as any).getFeatures?.() ?? {} } = generator;
+    const features = getFeaturesFromGenerator(generator);
     let { uniqueBy } = features;
     const { uniqueGlobally } = features;
 
@@ -73,8 +79,8 @@ export class ComposedStore {
   findFeature<T = unknown>(featureName: string): Array<{ generatorId: string; feature: T }> {
     return Object.entries(this.generators)
       .map(([generatorId, generator]) => {
-        const { features = (generator as any).getFeatures?.() } = generator;
-        const feature = features?.[featureName];
+        const features = getFeaturesFromGenerator(generator) as Record<string, unknown>;
+        const feature = features[featureName];
         return feature ? { generatorId, feature: feature as T } : undefined;
       })
       .filter(Boolean) as Array<{ generatorId: string; feature: T }>;
