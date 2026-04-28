@@ -87,7 +87,7 @@ class FullEnvironment extends EnvironmentBase {
       groups[base].push(namespace);
     }
 
-    for (const key of Object.keys(groups).sort()) {
+    for (const key of Object.keys(groups).toSorted()) {
       const group = groups[key];
 
       if (group.length > 0) {
