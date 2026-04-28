@@ -50,7 +50,7 @@ export async function lookupGenerators(options: LookupOptions = {}, register?: (
   };
 
   return moduleLookupSync(options, ({ packagePath, files }) => {
-    files = [...files].sort((a, b) => {
+    files = [...files].toSorted((a, b) => {
       return defaultExtensions.indexOf(extname(a)) - defaultExtensions.indexOf(extname(b));
     });
     for (const filePath of files) {

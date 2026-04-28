@@ -49,7 +49,7 @@ export const asNamespace = (filepath: string, { lookups = defaultLookups }: AsNa
   // Sort lookups by length so biggest are removed first
   const nsLookups = [...lookups, '..']
     .map(found => slash(found))
-    .sort((a, b) => a.split('/').length - b.split('/').length)
+    .toSorted((a, b) => a.split('/').length - b.split('/').length)
     .toReversed();
 
   // If `ns` contains a lookup dir in its path, remove it.
