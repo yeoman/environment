@@ -26,7 +26,7 @@ describe('environment (package-manager)', () => {
   beforeEach(() => {
     adapter = { log: esmocha.fn() };
     execa.mockReturnValue();
-    memFs = { get: esmocha.fn() };
+    memFs = { get: esmocha.fn(), existsInMemory: esmocha.fn().mockReturnValue(true) };
     packageJsonLocation = path.join(__dirname, 'fixtures', 'package-manager', 'npm');
     whichPackageManager.mockResolvedValue('npm');
   });

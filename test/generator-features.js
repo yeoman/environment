@@ -1,12 +1,16 @@
 import assert from 'node:assert';
 import { stub } from 'sinon';
 import { after, afterEach, before, beforeEach, describe, esmocha, expect, it } from 'esmocha';
-import helpers, { getCreateEnv as getCreateEnvironment } from './helpers.js';
+import helpers, { getCreateEnv as getCreateEnvironment, result } from './helpers.js';
 import { greaterThan5 } from './generator-versions.js';
 
-const { commitSharedFsTask } = await esmocha.mock('../src/commit.ts', import('../src/commit.ts'));
-const { packageManagerInstallTask } = await esmocha.mock('../src/package-manager.ts', import('../src/package-manager.ts'));
+const commitModule = await import('../src/commit.ts');
+const { commitSharedFsTask: originalCommitSharedFsTask } = commitModule;
+const { commitSharedFsTask } = await esmocha.mock('../src/commit.ts', Promise.resolve(commitModule));
 const { execa } = await esmocha.mock('execa', import('execa'));
+const packageManagerModule = await import('../src/package-manager.ts');
+const { packageManagerInstallTask: originalPackageManagerInstallTask } = packageManagerModule;
+const { packageManagerInstallTask } = await esmocha.mock('../src/package-manager.ts', Promise.resolve(packageManagerModule));
 const { default: BasicEnvironment } = await import('../src/environment-base.ts');
 
 for (const generatorVersion of greaterThan5) {
@@ -213,6 +217,92 @@ for (const generatorVersion of greaterThan5) {
 
         it('should forward default execution callback', () => {
           assert.equal(typeof customInstallTask.getCall(0).args[1], 'function');
+        });
+      });
+
+      describe('with ask customInstallTask', () => {
+        describe('accepting to run install', () => {
+          beforeEach(async () => {
+            commitSharedFsTask.mockImplementation(originalCommitSharedFsTask);
+            packageManagerInstallTask.mockImplementation(originalPackageManagerInstallTask);
+            await helpers
+              .run('custom-install', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
+              .withOptions({ skipInstall: false })
+              .withAnswers({ runInstall: true })
+              .withGenerators([
+                [
+                  class extends FeaturesGenerator {
+                    constructor(arguments_, options, features) {
+                      super(arguments_, options, { ...features, customInstallTask: 'ask' });
+                    }
+
+                    packageJsonTask() {
+                      this.packageJson.set({ name: 'foo' });
+                    }
+                  },
+                  { namespace: 'custom-install:app' },
+                ],
+              ]);
+          });
+
+          it('should write package.json', () => {
+            result.assertFile('package.json');
+          });
+
+          it('should call packageManagerInstallTask', () => {
+            expect(packageManagerInstallTask).toHaveBeenCalledTimes(1);
+            expect(packageManagerInstallTask).toHaveBeenCalledWith(
+              expect.objectContaining({
+                customInstallTask: 'ask',
+              }),
+            );
+          });
+
+          it('should call execa', () => {
+            expect(execa).toHaveBeenCalled();
+          });
+        });
+
+        describe('declining to run install', () => {
+          beforeEach(async () => {
+            commitSharedFsTask.mockImplementation(originalCommitSharedFsTask);
+            packageManagerInstallTask.mockImplementation(originalPackageManagerInstallTask);
+            await helpers
+              .run('custom-install', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
+              .withOptions({ skipInstall: false })
+              .withAnswers({ runInstall: false })
+              .withGenerators([
+                [
+                  class extends FeaturesGenerator {
+                    constructor(arguments_, options, features) {
+                      super(arguments_, options, { ...features, customInstallTask: 'ask' });
+                    }
+
+                    packageJsonTask() {
+                      this.packageJson.set({ name: 'foo' });
+                    }
+                  },
+                  { namespace: 'custom-install:app' },
+                ],
+              ]);
+          });
+
+          it('should write package.json', () => {
+            result.assertFile('package.json');
+          });
+
+          it('should call packageManagerInstallTask', () => {
+            expect(packageManagerInstallTask).toHaveBeenCalledTimes(1);
+            expect(packageManagerInstallTask).toHaveBeenCalledWith(
+              expect.objectContaining({
+                customInstallTask: 'ask',
+              }),
+            );
+          });
+
+          it('should not call execa', () => {
+            expect(execa).not.toHaveBeenCalled();
+          });
         });
       });
 
