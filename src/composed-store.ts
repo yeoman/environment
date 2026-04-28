@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import { toNamespace } from '@yeoman/namespace';
 import type { BaseGenerator, Logger } from '@yeoman/types';
 import createdLogger from 'debug';
-import type { InstallTask } from './package-manager.ts';
+import type { PackageManagerInstallTaskOptions } from './package-manager.ts';
 
 const debug = createdLogger('yeoman:environment:composed-store');
 
@@ -22,7 +22,7 @@ export class ComposedStore {
     return this.findUniqueFeature('customCommitTask');
   }
 
-  get customInstallTask(): InstallTask | undefined {
+  get customInstallTask(): PackageManagerInstallTaskOptions['customInstallTask'] | undefined {
     return this.findUniqueFeature('customInstallTask');
   }
 

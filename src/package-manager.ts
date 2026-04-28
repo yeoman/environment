@@ -15,7 +15,7 @@ export type PackageManagerInstallTaskOptions = {
   packageJsonLocation: string;
   adapter: InputOutputAdapter;
   nodePackageManager?: string;
-  customInstallTask?: boolean | InstallTask;
+  customInstallTask?: boolean | InstallTask | 'ask';
   skipInstall?: boolean;
 };
 
@@ -46,7 +46,11 @@ export async function packageManagerInstallTask({
    * @return {Vinyl | undefined} a Vinyl file.
    */
   function getDestinationPackageJson() {
-    return memFs.get(join(packageJsonLocation, 'package.json'));
+    const packageJsonFile = join(packageJsonLocation, 'package.json');
+
+    if (memFs.existsInMemory(packageJsonFile)) {
+      return memFs.get(packageJsonFile);
+    }
   }
 
   /**
@@ -56,14 +60,14 @@ export async function packageManagerInstallTask({
    */
   function isDestinationPackageJsonCommitted() {
     const file = getDestinationPackageJson();
-    return file.committed;
+    return file?.committed;
   }
 
   if (!getDestinationPackageJson()) {
     return false;
   }
 
-  if (customInstallTask && typeof customInstallTask !== 'function') {
+  if (customInstallTask && typeof customInstallTask !== 'function' && customInstallTask !== 'ask') {
     debug('Install disabled by customInstallTask');
     return false;
   }
@@ -102,8 +106,18 @@ Running ${packageManagerName} install for you to install the required dependenci
     return true;
   };
 
-  if (customInstallTask) {
+  if (typeof customInstallTask === 'function') {
     return customInstallTask(packageManagerName, execPackageManager);
+  }
+  if (customInstallTask === 'ask') {
+    const { runInstall } = await adapter.prompt({
+      type: 'confirm',
+      name: 'runInstall',
+      message: `Do you want to run ${packageManagerName} install now?`,
+    });
+    if (!runInstall) {
+      return false;
+    }
   }
 
   return execPackageManager();

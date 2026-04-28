@@ -9,3 +9,5 @@ export const getCreateEnv =
 export default createHelpers({
   createEnv: getCreateEnv(Environment),
 });
+
+export { result } from 'yeoman-test';
