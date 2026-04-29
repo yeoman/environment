@@ -1,10 +1,10 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["./test/*.ts"],
+  "include": ["./src", "./test/*.ts"],
   "compilerOptions": {
-    "noCheck": true,
     "noEmit": true,
     "rootDir": ".",
-    "strict": false
+    "skipLibCheck": true,
+    "strict": true
   }
 }

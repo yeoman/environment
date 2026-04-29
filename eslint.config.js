@@ -38,4 +38,11 @@ export default config(
       'import-x/no-named-as-default-member': 'off',
     },
   },
+  {
+    files: ['bin/bin.cjs'],
+    rules: {
+      'import-x/extensions': 'off',
+      'import-x/no-unresolved': 'off',
+    },
+  },
 );

@@ -76,7 +76,18 @@ export async function lookupGenerators(options: LookupOptions = {}, register?: (
  * @param {Boolean} [options.singleResult=true] - Set false to return multiple values.
  * @return {String} generator
  */
-export function lookupGenerator(namespace: string, options?: ModuleLookupOptions & { packagePath?: boolean; generatorPath?: boolean }) {
+export function lookupGenerator(
+  namespace: string,
+  options?: ModuleLookupOptions & { packagePath?: boolean; generatorPath?: boolean } & { singleResult?: true },
+): string;
+export function lookupGenerator(
+  namespace: string,
+  options?: ModuleLookupOptions & { packagePath?: boolean; generatorPath?: boolean } & { singleResult: false },
+): string[];
+export function lookupGenerator(
+  namespace: string,
+  options?: ModuleLookupOptions & { packagePath?: boolean; generatorPath?: boolean },
+): string | string[] {
   options = typeof options === 'boolean' ? { localOnly: options } : (options ?? {});
   options.singleResult = options.singleResult ?? true;
 

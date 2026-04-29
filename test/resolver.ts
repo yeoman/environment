@@ -1,4 +1,5 @@
-/* eslint-disable unicorn/no-await-expression-member */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import path, { dirname, join, relative } from 'node:path';
 import assert from 'node:assert';
 import { fileURLToPath } from 'node:url';
@@ -12,6 +13,7 @@ import Environment from '../src/index.ts';
 import { execaOutput } from '../src/util/util.ts';
 import { findPackagesIn, getNpmPaths } from '../src/module-lookup.ts';
 import { lookupGenerator } from '../src/generator-lookup.ts';
+import type { GeneratorMeta } from '@yeoman/types';
 
 const require = createRequire(import.meta.url);
 
@@ -20,7 +22,7 @@ const __dirname = dirname(__filename);
 
 const globalLookupTest = () => (process.env.NODE_PATH ? it : xit);
 
-const toRelativeMeta = meta =>
+const toRelativeMeta = (meta: Record<string, GeneratorMeta>): Record<string, Record<string, string>> =>
   Object.fromEntries(
     Object.entries(meta).map(([namespace, meta]) => {
       return [
@@ -30,7 +32,7 @@ const toRelativeMeta = meta =>
     }),
   );
 
-const linkGenerator = (generator, scope) => {
+const linkGenerator = (generator: string, scope?: string) => {
   const nodeModulesPath = path.resolve('node_modules');
   if (!fs.existsSync(nodeModulesPath)) {
     fs.mkdirSync(nodeModulesPath);
@@ -50,7 +52,7 @@ const linkGenerator = (generator, scope) => {
   }
 };
 
-const unlinkGenerator = (generator, scope) => {
+const unlinkGenerator = (generator: string, scope?: string) => {
   let destination = path.resolve(path.join('node_modules', generator));
   let scopeDir;
   if (scope) {
@@ -74,9 +76,17 @@ const subDirRoot = path.join(projectRoot, 'subdir');
 describe('Environment Resolver', async function () {
   this.timeout(100_000);
 
+  let cwd: string;
+  let nodePathEnv: string | undefined;
+  let nvmPathEnv: string | undefined;
+  let env: InstanceType<typeof Environment>;
+  let bestBet: string;
+  let bestBet2: string;
+  let chdirRoot: string;
+
   before(function () {
     this.timeout(500_000);
-    this.cwd = process.cwd();
+    cwd = process.cwd();
 
     if (!fs.existsSync(projectRoot)) {
       fs.mkdirSync(projectRoot);
@@ -90,23 +100,23 @@ describe('Environment Resolver', async function () {
   });
 
   beforeEach(() => {
-    this.NODE_PATH = process.env.NODE_PATH;
+    nodePathEnv = process.env.NODE_PATH;
     delete process.env.NODE_PATH;
-    this.NVM_PATH = process.env.NVM_PATH;
+    nvmPathEnv = process.env.NVM_PATH;
     delete process.env.NVM_PATH;
   });
 
   afterEach(function () {
-    process.env.NODE_PATH = this.NODE_PATH;
-    process.env.NVM_PATH = this.NVM_PATH;
+    process.env.NODE_PATH = nodePathEnv;
+    process.env.NVM_PATH = nvmPathEnv;
   });
 
   after(function () {
-    process.chdir(this.cwd);
+    process.chdir(cwd);
   });
 
   describe('#lookup()', async () => {
-    let lookupOptions;
+    let lookupOptions: Record<string, string[]> | undefined;
 
     before(() => {
       linkGenerator('generator-extend');
@@ -127,50 +137,50 @@ describe('Environment Resolver', async function () {
     });
 
     beforeEach(async function () {
-      this.env = new Environment();
-      assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-      await this.env.lookup({ ...lookupOptions, localOnly: true });
+      env = new Environment();
+      assert.equal(env.namespaces().length, 0, 'ensure env is empty');
+      await env.lookup({ ...lookupOptions, localOnly: true });
     });
 
     it('should register expected generators', async function () {
-      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+      expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
       // Register local generators
-      assert.ok(await this.env.get('dummy:app'));
-      assert.ok(await this.env.get('dummy:yo'));
+      assert.ok(await env.get('dummy:app'));
+      assert.ok(await env.get('dummy:yo'));
 
-      assert.ok((await this.env.get('dummy:app')).packagePath.endsWith(join('node_modules/generator-dummy')));
-      assert.ok((await this.env.get('dummy:app')).packagePath.endsWith(join('node_modules/generator-dummy')));
+      assert.ok((await env.get('dummy:app'))!.packagePath!.endsWith(join('node_modules/generator-dummy')));
+      assert.ok((await env.get('dummy:app'))!.packagePath!.endsWith(join('node_modules/generator-dummy')));
 
       // Registers local ts generators
-      assert.ok(await this.env.get('ts:app'));
+      assert.ok(await env.get('ts:app'));
 
       // Registers local common js generators with cjs extension
-      assert.ok(await this.env.get('common-js:cjs'));
+      assert.ok(await env.get('common-js:cjs'));
 
       // Registers local esm generators with js extension
-      assert.ok(await this.env.get('ts:app'));
+      assert.ok(await env.get('ts:app'));
 
       // Registers local esm generators with mjs extension
-      assert.ok(await this.env.get('esm:mjs'));
+      assert.ok(await env.get('esm:mjs'));
 
       // Js generators takes precedence
       // eslint-disable-next-line import-x/extensions
-      assert.equal(await this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
+      assert.equal(await env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
 
       // Register generators in scoped packages
-      assert.ok(await this.env.get('@dummyscope/scoped:app'));
+      assert.ok(await env.get('@dummyscope/scoped:app'));
 
       // Register non-dependency local generator
-      assert.ok(await this.env.get('jquery:app'));
+      assert.ok(await env.get('jquery:app'));
 
       // Register symlinked generators
-      assert.ok(await this.env.get('extend:support'));
+      assert.ok(await env.get('extend:support'));
     });
 
     globalLookupTest()('register global generators', async function () {
-      assert.ok(await this.env.get('dummytest:app'));
-      assert.ok(await this.env.get('dummytest:controller'));
+      assert.ok(await env.get('dummytest:app'));
+      assert.ok(await env.get('dummytest:controller'));
     });
 
     describe("when there's ancestor node_modules/ folder", async () => {
@@ -187,21 +197,21 @@ describe('Environment Resolver', async function () {
       });
 
       beforeEach(async function () {
-        this.env = new Environment();
-        assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-        await this.env.lookup({ localOnly: true });
+        env = new Environment();
+        assert.equal(env.namespaces().length, 0, 'ensure env is empty');
+        await env.lookup({ localOnly: true });
       });
 
       it('should register expected generators', async function () {
-        expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+        expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
       });
 
       it('register generators in ancestor node_modules directory', async function () {
-        assert.ok(await this.env.get('jquery:app'));
+        assert.ok(await env.get('jquery:app'));
       });
 
       it('local generators are prioritized over ancestor', async function () {
-        const { resolved } = await this.env.get('dummy:app');
+        const { resolved } = (await env.get('dummy:app')) as any;
         assert.ok(resolved.includes('subdir'), `Couldn't find 'subdir' in ${resolved}`);
       });
     });
@@ -223,45 +233,45 @@ describe('Environment Resolver', async function () {
       });
 
       it('should register expected generators', async function () {
-        expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+        expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
         // Register local generators
-        assert.ok(await this.env.get('dummy:app'));
-        assert.ok(await this.env.get('dummy:yo'));
+        assert.ok(await env.get('dummy:app'));
+        assert.ok(await env.get('dummy:yo'));
 
-        assert.ok((await this.env.get('dummy:app')).packagePath.endsWith(join('node_modules/generator-dummy')));
-        assert.ok((await this.env.get('dummy:app')).packagePath.endsWith(join('node_modules/generator-dummy')));
+        assert.ok((await env.get('dummy:app'))!.packagePath!.endsWith(join('node_modules/generator-dummy')));
+        assert.ok((await env.get('dummy:app'))!.packagePath!.endsWith(join('node_modules/generator-dummy')));
 
         // Registers local ts generators
-        assert.ok(await this.env.get('ts:app'));
+        assert.ok(await env.get('ts:app'));
 
         // Js generators takes precedence
         // eslint-disable-next-line import-x/extensions
-        assert.equal(await this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
+        assert.equal(await env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
 
         // Register generators in scoped packages
-        assert.ok(await this.env.get('@dummyscope/scoped:app'));
+        assert.ok(await env.get('@dummyscope/scoped:app'));
 
         // Register non-dependency local generator
-        assert.ok(await this.env.get('jquery:app'));
+        assert.ok(await env.get('jquery:app'));
 
         // Local generators prioritized over global
-        const { resolved } = await this.env.get('dummy:app');
+        const { resolved } = (await env.get('dummy:app')) as any;
         assert.ok(resolved.includes('lookup-project'), `Couldn't find 'lookup-project' in ${resolved}`);
 
         // Register symlinked generators
-        assert.ok(await this.env.get('extend:support'));
+        assert.ok(await env.get('extend:support'));
       });
 
       globalLookupTest()('register global generators', async function () {
-        assert.ok(await this.env.get('dummytest:app'));
-        assert.ok(await this.env.get('dummytest:controller'));
+        assert.ok(await env.get('dummytest:app'));
+        assert.ok(await env.get('dummytest:controller'));
       });
     });
 
     describe('when modules repository is not called node_modules', async () => {
-      let lookupOptionsBackup;
-      let customRepositoryPath;
+      let lookupOptionsBackup: Record<string, string[]> | undefined;
+      let customRepositoryPath: string;
       before(() => {
         customRepositoryPath = path.resolve('orig');
         lookupOptionsBackup = lookupOptions;
@@ -278,94 +288,94 @@ describe('Environment Resolver', async function () {
       });
 
       it('should register expected generators', async function () {
-        expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+        expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
         // Register local generators
-        assert.ok(await this.env.get('dummy:app'));
-        assert.ok(await this.env.get('dummy:yo'));
+        assert.ok(await env.get('dummy:app'));
+        assert.ok(await env.get('dummy:yo'));
 
-        assert.ok((await this.env.get('dummy:app')).packagePath.endsWith(join('/generator-dummy')));
-        assert.ok((await this.env.get('dummy:app')).packagePath.endsWith(join('/generator-dummy')));
+        assert.ok((await env.get('dummy:app'))!.packagePath!.endsWith(join('/generator-dummy')));
+        assert.ok((await env.get('dummy:app'))!.packagePath!.endsWith(join('/generator-dummy')));
 
         // Registers local ts generators', async function () {
-        assert.ok(await this.env.get('ts:app'));
+        assert.ok(await env.get('ts:app'));
 
         // Js generators takes precedence', async function () {
         // eslint-disable-next-line import-x/extensions
-        assert.equal(await this.env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
+        assert.equal(await env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
 
         // Register generators in scoped packages', async function () {
-        assert.ok(await this.env.get('@dummyscope/scoped:app'));
+        assert.ok(await env.get('@dummyscope/scoped:app'));
 
         // Local generators prioritized over global
-        const { resolved } = await this.env.get('dummy:app');
+        const { resolved } = (await env.get('dummy:app')) as any;
         assert.ok(resolved.includes('orig'), `Couldn't find 'lookup-project' in ${resolved}`);
 
         // Register symlinked generators
-        assert.ok(await this.env.get('extend:support'));
+        assert.ok(await env.get('extend:support'));
       });
     });
 
     describe('when localOnly argument is true', async () => {
       beforeEach(async function () {
-        this.env = new Environment();
-        assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-        await this.env.lookup({ localOnly: true });
-        this.env.alias('dummy-alias', 'dummy');
+        env = new Environment();
+        assert.equal(env.namespaces().length, 0, 'ensure env is empty');
+        await env.lookup({ localOnly: true });
+        env.alias('dummy-alias', 'dummy');
       });
 
       it('should register expected generators', async function () {
-        expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+        expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
         // Register local generators
-        assert.ok(await this.env.get('dummy:app'));
-        assert.ok(await this.env.get('dummy:yo'));
-        assert.ok(this.env.isPackageRegistered('dummy'));
-        assert.ok(this.env.isPackageRegistered('dummy-alias'));
+        assert.ok(await env.get('dummy:app'));
+        assert.ok(await env.get('dummy:yo'));
+        assert.ok(env.isPackageRegistered('dummy'));
+        assert.ok(env.isPackageRegistered('dummy-alias'));
 
         // Register generators in scoped packages
-        assert.ok(await this.env.get('@dummyscope/scoped:app'));
+        assert.ok(await env.get('@dummyscope/scoped:app'));
 
         // Register non-dependency local generator
-        assert.ok(await this.env.get('jquery:app'));
+        assert.ok(await env.get('jquery:app'));
 
         // Register symlinked generators
-        assert.ok(await this.env.get('extend:support'));
+        assert.ok(await env.get('extend:support'));
       });
 
       globalLookupTest()('does not register global generators', async function () {
-        assert.ok(!this.env.get('dummytest:app'));
-        assert.ok(!this.env.get('dummytest:controller'));
+        assert.ok(!env.get('dummytest:app'));
+        assert.ok(!env.get('dummytest:controller'));
       });
     });
 
     describe('when options.localOnly argument is true', async () => {
       beforeEach(async function () {
-        this.env = new Environment();
-        assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-        await this.env.lookup({ localOnly: true });
+        env = new Environment();
+        assert.equal(env.namespaces().length, 0, 'ensure env is empty');
+        await env.lookup({ localOnly: true });
       });
 
       it('should register expected generators', async function () {
-        expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+        expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
         // Register local generators
-        assert.ok(await this.env.get('dummy:app'));
-        assert.ok(await this.env.get('dummy:yo'));
+        assert.ok(await env.get('dummy:app'));
+        assert.ok(await env.get('dummy:yo'));
 
         // Register generators in scoped packages
-        assert.ok(await this.env.get('@dummyscope/scoped:app'));
+        assert.ok(await env.get('@dummyscope/scoped:app'));
 
         // Register non-dependency local generator
-        assert.ok(await this.env.get('jquery:app'));
+        assert.ok(await env.get('jquery:app'));
 
         // Register symlinked generators
-        assert.ok(await this.env.get('extend:support'));
+        assert.ok(await env.get('extend:support'));
       });
 
       globalLookupTest()('does not register global generators', async function () {
-        assert.ok(!this.env.get('dummytest:app'));
-        assert.ok(!this.env.get('dummytest:controller'));
+        assert.ok(!env.get('dummytest:app'));
+        assert.ok(!env.get('dummytest:controller'));
       });
     });
   });
@@ -381,7 +391,7 @@ describe('Environment Resolver', async function () {
     });
 
     beforeEach(function () {
-      this.env = new Environment();
+      env = new Environment();
     });
 
     after(() => {
@@ -394,70 +404,70 @@ describe('Environment Resolver', async function () {
     });
 
     it('with packagePaths', async function () {
-      await this.env.lookup({ localOnly: true, packagePaths: ['node_modules/generator-module'] });
+      await env.lookup({ localOnly: true, packagePaths: ['node_modules/generator-module'] });
 
-      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+      expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await this.env.get('module:app'));
-      assert.ok(this.env.getRegisteredPackages().length === 1);
+      assert.ok(await env.get('module:app'));
+      assert.ok(env.getRegisteredPackages().length === 1);
     });
 
     it('with customizeNamespace', async function () {
-      await this.env.lookup({
+      await env.lookup({
         localOnly: true,
         packagePaths: ['node_modules/generator-module'],
-        customizeNamespace: ns => ns.replace('module', 'custom'),
+        customizeNamespace: ns => ns?.replace('module', 'custom'),
       });
 
-      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+      expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await this.env.get('custom:app'));
-      assert.ok(this.env.getRegisteredPackages().length === 1);
+      assert.ok(await env.get('custom:app'));
+      assert.ok(env.getRegisteredPackages().length === 1);
     });
 
     it('with scope and packagePaths', async function () {
-      await this.env.lookup({
+      await env.lookup({
         localOnly: true,
         packagePaths: ['node_modules/generator-module', 'node_modules/@scoped/generator-scoped'],
         registerToScope: 'test',
       });
 
-      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+      expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await this.env.get('@test/module:app'));
-      assert.ok(await this.env.get('@scoped/scoped:app'));
-      assert.ok(this.env.getRegisteredPackages().length === 2);
+      assert.ok(await env.get('@test/module:app'));
+      assert.ok(await env.get('@scoped/scoped:app'));
+      assert.ok(env.getRegisteredPackages().length === 2);
     });
 
     it('with 2 packagePaths', async function () {
-      await this.env.lookup({
+      await env.lookup({
         localOnly: true,
         packagePaths: ['node_modules/generator-module', 'node_modules/generator-module-root'],
       });
 
-      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+      expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await this.env.get('module:app'));
-      assert.ok(await this.env.get('module-root:app'));
-      assert.ok(this.env.getRegisteredPackages().length === 2);
+      assert.ok(await env.get('module:app'));
+      assert.ok(await env.get('module-root:app'));
+      assert.ok(env.getRegisteredPackages().length === 2);
     });
 
     it('with 3 packagePaths', async function () {
-      await this.env.lookup({
+      await env.lookup({
         localOnly: true,
         packagePaths: ['node_modules/generator-module', 'node_modules/generator-module-root', 'node_modules/generator-module-lib-gen'],
       });
 
-      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+      expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await this.env.get('module:app'));
-      assert.ok(await this.env.get('module-root:app'));
-      assert.ok(await this.env.get('module-lib-gen:app'));
-      assert.ok(this.env.getRegisteredPackages().length === 3);
+      assert.ok(await env.get('module:app'));
+      assert.ok(await env.get('module-root:app'));
+      assert.ok(await env.get('module-lib-gen:app'));
+      assert.ok(env.getRegisteredPackages().length === 3);
     });
 
     it('with scoped packagePaths', async function () {
-      await this.env.lookup({
+      await env.lookup({
         localOnly: true,
         packagePaths: [
           'node_modules/generator-module',
@@ -467,76 +477,76 @@ describe('Environment Resolver', async function () {
         ],
       });
 
-      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+      expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await this.env.get('module:app'));
-      assert.ok(await this.env.get('module-root:app'));
-      assert.ok(await this.env.get('module-lib-gen:app'));
-      assert.ok(await this.env.get('@scoped/scoped:app'));
-      assert.ok(this.env.getRegisteredPackages().length === 4);
+      assert.ok(await env.get('module:app'));
+      assert.ok(await env.get('module-root:app'));
+      assert.ok(await env.get('module-lib-gen:app'));
+      assert.ok(await env.get('@scoped/scoped:app'));
+      assert.ok(env.getRegisteredPackages().length === 4);
     });
 
     it('with npmPaths', async function () {
-      await this.env.lookup({ npmPaths: ['node_modules'] });
+      await env.lookup({ npmPaths: ['node_modules'] });
 
-      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+      expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await this.env.get('module:app'));
-      assert.ok(await this.env.get('module-root:app'));
-      assert.ok(await this.env.get('module-lib-gen:app'));
-      assert.ok(await this.env.get('@scoped/scoped:app'));
-      assert.ok(this.env.getRegisteredPackages().length === 4);
+      assert.ok(await env.get('module:app'));
+      assert.ok(await env.get('module-root:app'));
+      assert.ok(await env.get('module-lib-gen:app'));
+      assert.ok(await env.get('@scoped/scoped:app'));
+      assert.ok(env.getRegisteredPackages().length === 4);
     });
 
     it('with sub-sub-generators filePatterns', async function () {
-      await this.env.lookup({
+      await env.lookup({
         localOnly: true,
         npmPaths: ['node_modules'],
         filePatterns: ['*/*/index.js'],
       });
 
-      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+      expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await this.env.get('@scoped/scoped:app:scaffold'));
+      assert.ok(await env.get('@scoped/scoped:app:scaffold'));
     });
 
     it('with packagePatterns', async function () {
-      await this.env.lookup({
+      await env.lookup({
         localOnly: true,
         npmPaths: ['node_modules'],
         packagePatterns: ['generator-module', 'generator-module-root'],
       });
 
-      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+      expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await this.env.get('module:app'));
-      assert.ok(await this.env.get('module-root:app'));
-      assert.ok(this.env.getRegisteredPackages().length === 2);
+      assert.ok(await env.get('module:app'));
+      assert.ok(await env.get('module-root:app'));
+      assert.ok(env.getRegisteredPackages().length === 2);
     });
 
     it('with sub-sub-generators and packagePaths', async function () {
-      await this.env.lookup({
+      await env.lookup({
         localOnly: true,
         packagePaths: ['node_modules/@scoped/generator-scoped'],
         filePatterns: ['*/*/index.js'],
       });
 
-      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+      expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await this.env.get('@scoped/scoped:app:scaffold'));
+      assert.ok(await env.get('@scoped/scoped:app:scaffold'));
     });
 
     it('with sub-sub-generators and packagePatterns', async function () {
-      await this.env.lookup({
+      await env.lookup({
         localOnly: true,
         npmPaths: ['node_modules'],
         packagePatterns: ['generator-scoped'],
         filePatterns: ['*/*/index.js'],
       });
 
-      expect(toRelativeMeta(this.env.getGeneratorsMeta())).toMatchSnapshot();
+      expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await this.env.get('@scoped/scoped:app:scaffold'));
+      assert.ok(await env.get('@scoped/scoped:app:scaffold'));
     });
   });
 
@@ -551,7 +561,7 @@ describe('Environment Resolver', async function () {
     });
 
     beforeEach(function () {
-      this.env = new Environment({ experimental: true });
+      env = new Environment({ experimental: true });
     });
 
     after(() => {
@@ -567,36 +577,36 @@ describe('Environment Resolver', async function () {
     });
 
     it('with 1 namespace', async function () {
-      await this.env.lookupNamespaces('module:app', { localOnly: true, npmPaths: ['node_modules'] });
-      assert.ok(await this.env.get('module:app'));
-      assert.ok(this.env.getRegisteredPackages().length === 1);
+      await env.lookupNamespaces('module:app', { localOnly: true, npmPaths: ['node_modules'] });
+      assert.ok(await env.get('module:app'));
+      assert.ok(env.getRegisteredPackages().length === 1);
     });
 
     it('with 2 namespaces', async function () {
-      await this.env.lookupNamespaces(['module:app', 'module-root:app'], {
+      await env.lookupNamespaces(['module:app', 'module-root:app'], {
         localOnly: true,
         npmPaths: ['node_modules'],
       });
-      assert.ok(await this.env.get('module:app'));
-      assert.ok(await this.env.get('module-root:app'));
-      assert.ok(this.env.getRegisteredPackages().length === 2);
+      assert.ok(await env.get('module:app'));
+      assert.ok(await env.get('module-root:app'));
+      assert.ok(env.getRegisteredPackages().length === 2);
     });
 
     it('with sub-sub-generators', async function () {
-      await this.env.lookupNamespaces('@scoped/scoped:app:scaffold', {
+      await env.lookupNamespaces('@scoped/scoped:app:scaffold', {
         localOnly: true,
         npmPaths: ['node_modules'],
       });
-      assert.ok(await this.env.get('@scoped/scoped:app:scaffold'));
-      assert.ok(this.env.getRegisteredPackages().length === 1);
+      assert.ok(await env.get('@scoped/scoped:app:scaffold'));
+      assert.ok(env.getRegisteredPackages().length === 1);
     });
   });
 
   describe('#getNpmPaths()', async () => {
     beforeEach(function () {
-      this.bestBet = path.join(__dirname, '../../../..');
-      this.bestBet2 = path.join(path.dirname(process.argv[1]), '../..');
-      this.env = new Environment();
+      bestBet = path.join(__dirname, '../../../..');
+      bestBet2 = path.join(path.dirname(process.argv[1]), '../..');
+      env = new Environment();
     });
 
     describe('with NODE_PATH', async () => {
@@ -611,7 +621,7 @@ describe('Environment Resolver', async function () {
       });
 
       it('append NODE_PATH', async function () {
-        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(process.env.NODE_PATH));
+        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(process.env.NODE_PATH!));
       });
     });
 
@@ -624,13 +634,13 @@ describe('Environment Resolver', async function () {
       });
 
       it('append best bet if NODE_PATH is unset', async function () {
-        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(this.bestBet));
-        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(this.bestBet2));
+        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(bestBet));
+        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(bestBet2));
       });
 
       it('append default NPM dir depending on your OS', async function () {
         if (process.platform === 'win32') {
-          assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(process.env.APPDATA, 'npm/node_modules')));
+          assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(process.env.APPDATA!, 'npm/node_modules')));
         } else {
           assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes('/usr/lib/node_modules'));
         }
@@ -650,7 +660,7 @@ describe('Environment Resolver', async function () {
 
       it('append NVM_PATH', async function () {
         assert.ok(
-          getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(path.dirname(process.env.NVM_PATH), 'node_modules')),
+          getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(path.dirname(process.env.NVM_PATH!), 'node_modules')),
         );
       });
     });
@@ -663,8 +673,8 @@ describe('Environment Resolver', async function () {
       });
 
       it('append best bet if NVM_PATH is unset', async function () {
-        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(this.bestBet, 'node_modules')));
-        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(this.bestBet2));
+        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(bestBet, 'node_modules')));
+        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(bestBet2));
       });
     });
 
@@ -683,17 +693,17 @@ describe('Environment Resolver', async function () {
       it('does not append NVM_PATH', async function () {
         process.env.NVM_PATH = '/some/dummy/path';
         assert.ok(
-          !getNpmPaths({ localOnly: true, filterPaths: false }).includes(path.join(path.dirname(process.env.NVM_PATH), 'node_modules')),
+          !getNpmPaths({ localOnly: true, filterPaths: false }).includes(path.join(path.dirname(process.env.NVM_PATH!), 'node_modules')),
         );
       });
 
       it('does not append best bet', async function () {
-        assert.ok(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(this.bestBet));
+        assert.ok(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(bestBet));
       });
 
       it('does not append default NPM dir depending on your OS', async function () {
         if (process.platform === 'win32') {
-          assert.ok(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(path.join(process.env.APPDATA, 'npm/node_modules')));
+          assert.ok(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(path.join(process.env.APPDATA!, 'npm/node_modules')));
         } else {
           assert.ok(!getNpmPaths({ localOnly: true, filterPaths: false }).includes('/usr/lib/node_modules'));
         }
@@ -702,7 +712,7 @@ describe('Environment Resolver', async function () {
 
     describe('with npm global prefix', async () => {
       it('append npm modules path depending on your OS', async function () {
-        const npmPrefix = execaOutput('npm', ['prefix', '-g']);
+        const npmPrefix = execaOutput('npm', ['prefix', '-g'])!;
         if (process.platform === 'win32') {
           assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).indexOf(path.resolve(npmPrefix, 'node_modules')) > 0);
         } else {
@@ -722,7 +732,7 @@ describe('Environment Resolver', async function () {
     });
 
     beforeEach(function () {
-      this.env = new Environment();
+      env = new Environment();
     });
 
     describe('when passing package patterns without scope', async () => {
@@ -805,13 +815,11 @@ describe('Environment Resolver', async function () {
     before(() => {
       process.chdir(customProjectRoot);
 
-      this.chdirRoot = path.join(customProjectRoot, 'node_modules/foo');
-      this.chdirRootNodeModule = path.join(this.chdirRoot, 'node_modules');
-      this.multipleModuleGenerator = path.join(this.chdirRootNodeModule, 'generator-module');
+      chdirRoot = path.join(customProjectRoot, 'node_modules/foo');
 
-      fs.mkdirSync(this.chdirRoot, { recursive: true });
+      fs.mkdirSync(chdirRoot, { recursive: true });
       linkGenerator('generator-module');
-      process.chdir(this.chdirRoot);
+      process.chdir(chdirRoot);
       linkGenerator('generator-module');
     });
 
@@ -859,11 +867,11 @@ describe('Environment Resolver', async function () {
 
     describe('Find generator', async () => {
       it('Generator extended by environment lookup', async () => {
-        this.env = new Environment();
-        assert.equal(this.env.namespaces().length, 0, 'ensure env is empty');
-        await this.env.lookup();
-        assert.ok(await this.env.get('environment-extend:app'));
-        assert.ok(await this.env.create('environment-extend:app'));
+        env = new Environment();
+        assert.equal(env.namespaces().length, 0, 'ensure env is empty');
+        await env.lookup();
+        assert.ok(await env.get('environment-extend:app'));
+        assert.ok(await env.create('environment-extend:app'));
       });
     });
   });

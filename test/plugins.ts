@@ -8,57 +8,63 @@ import Environment from '../src/index.ts';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-environment/light');
 
+type PluginEnvironment = InstanceType<typeof Environment>;
+
+type EnvironmentFactory = {
+  requireGenerator: (extended?: string) => Promise<abstract new (...arguments_: unknown[]) => object>;
+};
+
 describe('Generators plugin', () => {
-  beforeEach(function () {
+  let cwd: string;
+
+  beforeEach(() => {
     mkdirSync(tmpdir, { recursive: true });
-    this.cwd = process.cwd();
+    cwd = process.cwd();
     process.chdir(tmpdir);
   });
 
-  afterEach(function () {
-    this.timeout(40_000);
-    process.chdir(this.cwd);
+  afterEach(() => {
+    process.chdir(cwd);
     rmSync(tmpdir, { recursive: true });
-  });
+  }).timeout(40_000);
 
   for (const extended of [undefined, 'super:app']) {
     describe(`#run ${extended}`, () => {
-      beforeEach(async function () {
-        this.timeout(300_000);
-        delete this.execValue;
+      let execValue: string | undefined;
+      let env: PluginEnvironment;
 
-        this.env = new Environment({ skipInstall: true, experimental: true });
+      beforeEach(async () => {
+        execValue = undefined;
 
-        const self = this;
+        env = new Environment({ skipInstall: true, experimental: true });
+
         const superGenerator = {
-          async createGenerator(environment) {
+          async createGenerator(environment: EnvironmentFactory) {
             const Generator = await environment.requireGenerator();
             return class extends Generator {
               exec() {}
             };
           },
         };
-        this.env.registerStub(superGenerator, 'super:app');
+        env.register(superGenerator, { namespace: 'super:app' });
 
         const dummy = {
-          async createGenerator(environment) {
+          async createGenerator(environment: EnvironmentFactory) {
             return class extends (await environment.requireGenerator(extended)) {
               exec() {
-                self.execValue = 'done';
+                execValue = 'done';
               }
             };
           },
         };
-        this.env.registerStub(dummy, 'dummy:app');
-      });
+        env.register(dummy, { namespace: 'dummy:app' });
+      }).timeout(300_000);
 
-      it(`runs generators plugin with requireGenerator value ${extended}`, function () {
-        this.timeout(100_000);
-        const self = this;
-        return this.env.run('dummy:app').then(() => {
-          assert.equal(self.execValue, 'done');
+      it(`runs generators plugin with requireGenerator value ${extended}`, () => {
+        return env.run('dummy:app').then(() => {
+          assert.equal(execValue, 'done');
         });
-      });
+      }).timeout(100_000);
     });
   }
 });

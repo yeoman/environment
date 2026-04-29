@@ -1,7 +1,10 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { stub } from 'sinon';
 import { after, afterEach, beforeEach, describe, esmocha, expect, it } from 'esmocha';
+import type { Mock } from 'node:test';
 
 const { execa } = await esmocha.mock('execa', import('execa'));
 const { whichPackageManager } = await esmocha.mock('which-package-manager', import('which-package-manager'));
@@ -15,13 +18,22 @@ const changesToPackageJson = `
 Changes to package.json were detected.`;
 const skippingInstall = `Skipping package manager install.
 `;
-const runningPackageManager = pm => `
+const runningPackageManager = (pm: string): string => `
 Running ${pm} install for you to install the required dependencies.`;
 
+type TestAdapter = {
+  log: Mock<(message: string) => void>;
+};
+
+type MemFsLike = {
+  get: Mock<() => { committed?: boolean } | undefined>;
+  existsInMemory: Mock<() => boolean>;
+};
+
 describe('environment (package-manager)', () => {
-  let adapter;
-  let memFs;
-  let packageJsonLocation;
+  let adapter: TestAdapter;
+  let memFs: MemFsLike;
+  let packageJsonLocation: string;
 
   beforeEach(() => {
     adapter = { log: esmocha.fn() };
