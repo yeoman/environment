@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import { after, afterEach, before, beforeEach, describe, esmocha, expect, it } from 'esmocha';
-import helpers, { getCreateEnv as getCreateEnvironment, result } from './helpers.ts';
+import type { BaseGeneratorConstructor, GeneratorFeatures, GeneratorOptions } from '@yeoman/types';
+import helpers, { getCreateEnv, result } from './helpers.ts';
 import { greaterThan5 } from './generator-versions.ts';
+import { createHelpers } from 'yeoman-test';
 
 const commitModule = await import('../src/commit.ts');
 const { commitSharedFsTask: originalCommitSharedFsTask } = commitModule;
@@ -13,9 +13,20 @@ const { packageManagerInstallTask: originalPackageManagerInstallTask } = package
 const { packageManagerInstallTask } = await esmocha.mock('../src/package-manager.ts', Promise.resolve(packageManagerModule));
 const { default: BasicEnvironment } = await import('../src/environment-base.ts');
 
+const helperWithMockedFeatures = createHelpers({
+  createEnv: getCreateEnv(BasicEnvironment),
+});
+
 for (const generatorVersion of greaterThan5) {
   const { default: Generator } = await import(generatorVersion);
-  class FeaturesGenerator extends Generator {}
+  const FeaturesGenerator = Generator as BaseGeneratorConstructor;
+
+  const createGeneratorClassWithFeatures = (customFeatures: GeneratorFeatures): typeof Generator =>
+    class extends FeaturesGenerator {
+      constructor(arguments_?: string[], options?: GeneratorOptions, features?: GeneratorFeatures) {
+        super(arguments_, options, { ...features, ...customFeatures });
+      }
+    };
 
   describe(`environment (generator-features) using ${generatorVersion}`, () => {
     afterEach(() => {
@@ -28,8 +39,8 @@ for (const generatorVersion of greaterThan5) {
     describe('customCommitTask feature', () => {
       describe('without customInstallTask', () => {
         beforeEach(async () => {
-          await helpers
-            .run('custom-commit', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
+          await helperWithMockedFeatures
+            .run('custom-commit')
             .withOptions({ skipInstall: true })
             .withGenerators([[helpers.createMockedGenerator(Generator), { namespace: 'custom-commit:app' }]]);
         });
@@ -40,24 +51,16 @@ for (const generatorVersion of greaterThan5) {
       });
 
       describe('with true customCommitTask', () => {
-        let runContext;
         before(async () => {
-          runContext = helpers
-            .create('custom-commit', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
+          await helperWithMockedFeatures
+            .run('custom-commit')
             .withOptions({ skipInstall: true })
             .withGenerators([
               [
-                helpers.createMockedGenerator(
-                  class extends FeaturesGenerator {
-                    constructor(arguments_, options) {
-                      super(arguments_, options, { customCommitTask: true });
-                    }
-                  },
-                ),
+                helpers.createMockedGenerator(createGeneratorClassWithFeatures({ customCommitTask: true })),
                 { namespace: 'custom-commit:app' },
               ],
             ]);
-          await runContext.run();
         });
 
         it('should not call commitSharedFs', () => {
@@ -66,33 +69,33 @@ for (const generatorVersion of greaterThan5) {
       });
 
       describe('with function customCommitTask', () => {
-        let runContext;
-        let customCommitTask;
+        let commitSharedFsMock: ReturnType<typeof esmocha.fn>;
+        let customCommitTask: ReturnType<typeof esmocha.fn>;
         beforeEach(async () => {
           customCommitTask = esmocha.fn();
-          runContext = helpers
-            .create('custom-commit')
+          await helpers
+            .run('custom-commit')
             .withOptions({ skipInstall: true })
             .withGenerators([
               [
                 helpers.createMockedGenerator(
                   class extends FeaturesGenerator {
-                    constructor(arguments_, options) {
-                      super(arguments_, options, { customCommitTask });
+                    constructor(arguments_?: string[], options?: GeneratorOptions, features?: GeneratorFeatures) {
+                      super(arguments_, options, { ...features, customCommitTask });
                     }
                   },
                 ),
                 { namespace: 'custom-commit:app' },
               ],
             ])
-            .withEnvironment(environment => {
-              environment.commitSharedFs = esmocha.fn().mockReturnValue(Promise.resolve());
+            .withEnvironment((environment: any) => {
+              commitSharedFsMock = esmocha.fn().mockReturnValue(Promise.resolve());
+              environment.commitSharedFs = commitSharedFsMock;
             });
-          await runContext.run();
         });
 
         it('should not call commitSharedFs', () => {
-          expect(runContext.env.commitSharedFs).not.toHaveBeenCalled();
+          expect(commitSharedFsMock).not.toHaveBeenCalled();
         });
 
         it('should call customCommitTask', () => {
@@ -103,14 +106,13 @@ for (const generatorVersion of greaterThan5) {
 
     describe('customInstallTask feature', () => {
       describe('without customInstallTask', () => {
-        let runContext;
         beforeEach(async () => {
-          runContext = helpers
-            .create('custom-install', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
+          await helperWithMockedFeatures
+            .run('custom-install')
             .withOptions({ skipInstall: false })
             .withGenerators([
               [
-                class extends FeaturesGenerator {
+                class extends Generator {
                   packageJsonTask() {
                     this.packageJson.set({ name: 'foo' });
                   }
@@ -118,7 +120,6 @@ for (const generatorVersion of greaterThan5) {
                 { namespace: 'custom-install:app' },
               ],
             ]);
-          await runContext.run();
         });
 
         it('should call packageManagerInstallTask', () => {
@@ -132,14 +133,13 @@ for (const generatorVersion of greaterThan5) {
       });
 
       describe('v4 compatibility', () => {
-        let runContext;
         beforeEach(async () => {
-          runContext = helpers
-            .create('custom-install', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
+          await helperWithMockedFeatures
+            .run('custom-install')
             .withOptions({ skipInstall: false })
             .withGenerators([
               [
-                class extends FeaturesGenerator {
+                class extends Generator {
                   packageJsonTask() {
                     this.env.compatibilityMode = 'v4';
                     this.packageJson.set({ name: 'foo' });
@@ -148,7 +148,6 @@ for (const generatorVersion of greaterThan5) {
                 { namespace: 'custom-install:app' },
               ],
             ]);
-          await runContext.run();
         });
 
         it('should not call packageManagerInstallTask', () => {
@@ -157,16 +156,15 @@ for (const generatorVersion of greaterThan5) {
       });
 
       describe('with true customInstallTask', () => {
-        let runContext;
         before(async () => {
-          runContext = helpers
-            .create('custom-install', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
+          await helperWithMockedFeatures
+            .run('custom-install')
             .withOptions({ skipInstall: false })
             .withGenerators([
               [
-                class extends FeaturesGenerator {
-                  constructor(arguments_, options) {
-                    super(arguments_, options, { customInstallTask: true });
+                class extends Generator {
+                  constructor(arguments_?: string[], options?: GeneratorOptions, features?: GeneratorFeatures) {
+                    super(arguments_, options, { ...features, customInstallTask: true });
                   }
 
                   packageJsonTask() {
@@ -176,7 +174,6 @@ for (const generatorVersion of greaterThan5) {
                 { namespace: 'custom-install:app' },
               ],
             ]);
-          await runContext.run();
         });
 
         it('should not call execa', () => {
@@ -185,7 +182,7 @@ for (const generatorVersion of greaterThan5) {
       });
 
       describe('with function customInstallTask', () => {
-        let customInstallTask;
+        let customInstallTask: ReturnType<typeof esmocha.fn>;
         beforeEach(async () => {
           customInstallTask = esmocha.fn();
           await helpers
@@ -193,9 +190,9 @@ for (const generatorVersion of greaterThan5) {
             .withOptions({ skipInstall: false })
             .withGenerators([
               [
-                class extends FeaturesGenerator {
-                  constructor(arguments_, options) {
-                    super(arguments_, options, { customInstallTask });
+                class extends Generator {
+                  constructor(arguments_?: string[], options?: GeneratorOptions, features?: GeneratorFeatures) {
+                    super(arguments_, options, { ...features, customInstallTask });
                   }
 
                   packageJsonTask() {
@@ -225,14 +222,14 @@ for (const generatorVersion of greaterThan5) {
           beforeEach(async () => {
             commitSharedFsTask.mockImplementation(originalCommitSharedFsTask);
             packageManagerInstallTask.mockImplementation(originalPackageManagerInstallTask);
-            await helpers
-              .run('custom-install', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
+            await helperWithMockedFeatures
+              .run('custom-install')
               .withOptions({ skipInstall: false })
               .withAnswers({ runInstall: true })
               .withGenerators([
                 [
-                  class extends FeaturesGenerator {
-                    constructor(arguments_, options, features) {
+                  class extends Generator {
+                    constructor(arguments_?: string[], options?: GeneratorOptions, features?: GeneratorFeatures) {
                       super(arguments_, options, { ...features, customInstallTask: 'ask' });
                     }
 
@@ -267,14 +264,14 @@ for (const generatorVersion of greaterThan5) {
           beforeEach(async () => {
             commitSharedFsTask.mockImplementation(originalCommitSharedFsTask);
             packageManagerInstallTask.mockImplementation(originalPackageManagerInstallTask);
-            await helpers
-              .run('custom-install', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
+            await helperWithMockedFeatures
+              .run('custom-install')
               .withOptions({ skipInstall: false })
               .withAnswers({ runInstall: false })
               .withGenerators([
                 [
-                  class extends FeaturesGenerator {
-                    constructor(arguments_, options, features) {
+                  class extends Generator {
+                    constructor(arguments_?: string[], options?: GeneratorOptions, features?: GeneratorFeatures) {
                       super(arguments_, options, { ...features, customInstallTask: 'ask' });
                     }
 
@@ -307,20 +304,19 @@ for (const generatorVersion of greaterThan5) {
       });
 
       describe('with function customInstallTask and custom path', () => {
-        let runContext;
-        let customInstallTask;
-        let installTask;
+        let customInstallTask: ReturnType<typeof esmocha.fn>;
+        let installTask: (pm: any, defaultTask: (pm: any) => unknown) => unknown;
         beforeEach(async () => {
           customInstallTask = esmocha.fn();
           installTask = (pm, defaultTask) => defaultTask(pm);
-          runContext = helpers
-            .create('custom-install', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
+          await helperWithMockedFeatures
+            .run('custom-install')
             .withOptions({ skipInstall: false })
             .withGenerators([
               [
-                class extends FeaturesGenerator {
-                  constructor(arguments_, options) {
-                    super(arguments_, options, { customInstallTask });
+                class extends Generator {
+                  constructor(arguments_?: string[], options?: GeneratorOptions, features?: GeneratorFeatures) {
+                    super(arguments_, options, { ...features, customInstallTask });
                     this.destinationRoot(this.destinationPath('foo'));
                     this.env.watchForPackageManagerInstall({
                       cwd: this.destinationPath(),
@@ -335,7 +331,6 @@ for (const generatorVersion of greaterThan5) {
                 { namespace: 'custom-install:app' },
               ],
             ]);
-          await runContext.run();
         });
 
         it('should not call customInstallTask', () => {

@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { after, afterEach, beforeEach, describe, esmocha, expect, it } from 'esmocha';
-import type { Mock } from 'node:test';
+import type { InputOutputAdapter } from '@yeoman/types';
+import type { Store } from 'mem-fs';
+import type { MemFsEditorFile } from 'mem-fs-editor';
 
 const { execa } = await esmocha.mock('execa', import('execa'));
 const { whichPackageManager } = await esmocha.mock('which-package-manager', import('which-package-manager'));
@@ -20,24 +20,17 @@ const skippingInstall = `Skipping package manager install.
 const runningPackageManager = (pm: string): string => `
 Running ${pm} install for you to install the required dependencies.`;
 
-type TestAdapter = {
-  log: Mock<(message: string) => void>;
-};
-
-type MemFsLike = {
-  get: Mock<() => { committed?: boolean } | undefined>;
-  existsInMemory: Mock<() => boolean>;
-};
-
 describe('environment (package-manager)', () => {
-  let adapter: TestAdapter;
-  let memFs: MemFsLike;
+  let adapter: InputOutputAdapter;
+  let memFs: Store<MemFsEditorFile>;
+  let memFsGetSpy: ReturnType<typeof esmocha.fn>;
   let packageJsonLocation: string;
 
   beforeEach(() => {
-    adapter = { log: esmocha.fn() };
-    execa.mockReturnValue();
-    memFs = { get: esmocha.fn(), existsInMemory: esmocha.fn().mockReturnValue(true) };
+    adapter = { log: esmocha.fn() } as unknown as InputOutputAdapter;
+    execa.mockReturnValue(undefined as any);
+    memFsGetSpy = esmocha.fn();
+    memFs = { get: memFsGetSpy, existsInMemory: esmocha.fn().mockReturnValue(true) } as unknown as Store<MemFsEditorFile>;
     packageJsonLocation = path.join(__dirname, 'fixtures', 'package-manager', 'npm');
     whichPackageManager.mockResolvedValue('npm');
   });
@@ -65,7 +58,7 @@ describe('environment (package-manager)', () => {
     describe('with a package.json', async () => {
       describe('when package.json was not committed', () => {
         beforeEach(async () => {
-          memFs.get.mockReturnValue({ committed: false });
+          memFsGetSpy.mockReturnValue({ committed: false });
           await packageManagerInstallTask({ adapter, memFs, packageJsonLocation });
         });
 
@@ -85,7 +78,7 @@ No change to package.json was detected. No package manager install will be execu
 
       describe('when package.json was committed', () => {
         beforeEach(async () => {
-          memFs.get = esmocha.fn().mockReturnValue({ committed: true });
+          memFsGetSpy.mockReturnValue({ committed: true });
         });
 
         describe('with skipInstall', () => {
@@ -193,7 +186,7 @@ No change to package.json was detected. No package manager install will be execu
 
         describe('error detecting package manager', () => {
           beforeEach(async () => {
-            whichPackageManager.mockResolvedValue();
+            whichPackageManager.mockResolvedValue(undefined as any);
             await packageManagerInstallTask({ adapter, memFs, packageJsonLocation });
           });
 
