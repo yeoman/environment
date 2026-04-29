@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import assert from 'node:assert';
-import { stub } from 'sinon';
 import { after, afterEach, before, beforeEach, describe, esmocha, expect, it } from 'esmocha';
 import helpers, { getCreateEnv as getCreateEnvironment, result } from './helpers.ts';
 import { greaterThan5 } from './generator-versions.ts';
@@ -70,8 +68,8 @@ for (const generatorVersion of greaterThan5) {
       describe('with function customCommitTask', () => {
         let runContext;
         let customCommitTask;
-        before(async () => {
-          customCommitTask = stub();
+        beforeEach(async () => {
+          customCommitTask = esmocha.fn();
           runContext = helpers
             .create('custom-commit')
             .withOptions({ skipInstall: true })
@@ -88,17 +86,17 @@ for (const generatorVersion of greaterThan5) {
               ],
             ])
             .withEnvironment(environment => {
-              environment.commitSharedFs = stub().returns(Promise.resolve());
+              environment.commitSharedFs = esmocha.fn().mockReturnValue(Promise.resolve());
             });
           await runContext.run();
         });
 
         it('should not call commitSharedFs', () => {
-          assert.equal(runContext.env.commitSharedFs.callCount, 0, 'should not have been called');
+          expect(runContext.env.commitSharedFs).not.toHaveBeenCalled();
         });
 
         it('should call customCommitTask', () => {
-          assert.equal(customCommitTask.callCount, 1, 'should have been called');
+          expect(customCommitTask).toHaveBeenCalledTimes(1);
         });
       });
     });
@@ -188,8 +186,8 @@ for (const generatorVersion of greaterThan5) {
 
       describe('with function customInstallTask', () => {
         let customInstallTask;
-        before(async () => {
-          customInstallTask = stub();
+        beforeEach(async () => {
+          customInstallTask = esmocha.fn();
           await helpers
             .run('custom-install')
             .withOptions({ skipInstall: false })
@@ -210,15 +208,15 @@ for (const generatorVersion of greaterThan5) {
         });
 
         it('should call customInstallTask', () => {
-          assert.equal(customInstallTask.callCount, 1, 'should have been called');
+          expect(customInstallTask).toHaveBeenCalledTimes(1);
         });
 
         it('should forward preferred pm', () => {
-          assert.equal(customInstallTask.getCall(0).args[0], null);
+          expect(customInstallTask).toHaveBeenNthCalledWith(1, undefined, expect.any(Function));
         });
 
         it('should forward default execution callback', () => {
-          assert.equal(typeof customInstallTask.getCall(0).args[1], 'function');
+          expect(customInstallTask).toHaveBeenNthCalledWith(1, undefined, expect.any(Function));
         });
       });
 
@@ -313,7 +311,7 @@ for (const generatorVersion of greaterThan5) {
         let customInstallTask;
         let installTask;
         beforeEach(async () => {
-          customInstallTask = stub();
+          customInstallTask = esmocha.fn();
           installTask = (pm, defaultTask) => defaultTask(pm);
           runContext = helpers
             .create('custom-install', undefined, { createEnv: getCreateEnvironment(BasicEnvironment) })
@@ -341,7 +339,7 @@ for (const generatorVersion of greaterThan5) {
         });
 
         it('should not call customInstallTask', () => {
-          assert.equal(customInstallTask.callCount, 0, 'should not have been called');
+          expect(customInstallTask).not.toHaveBeenCalled();
         });
 
         it('should call packageManagerInstallTask twice', () => {

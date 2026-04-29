@@ -3,7 +3,6 @@
 import assert from 'node:assert';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { stub } from 'sinon';
 import { beforeEach, describe, esmocha, expect, it } from 'esmocha';
 import { TestAdapter } from 'yeoman-test';
 import { prepareCommand } from '../src/commands.ts';
@@ -57,7 +56,7 @@ describe('environment (command)', () => {
 
     beforeEach(async () => {
       environment = new Environment({ skipInstall: true, dryRun: true });
-      environment.adapter.log = stub();
+      environment.adapter.log = esmocha.fn();
       await environment.register(path.join(__dirname, 'fixtures/generator-commands/generators/options'));
     });
 
@@ -128,7 +127,7 @@ describe('environment (command)', () => {
 
     beforeEach(() => {
       environment = new Environment({ skipInstall: true, dryRun: true });
-      environment.adapter.log = stub();
+      environment.adapter.log = esmocha.fn();
       environment.register(path.join(__dirname, 'fixtures/generator-commands/generators/arguments'));
     });
 
