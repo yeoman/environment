@@ -1,8 +1,7 @@
-import assert from 'node:assert';
 import { createRequire } from 'node:module';
 import path, { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { beforeEach, describe, it } from 'esmocha';
+import { beforeEach, describe, expect, it } from 'esmocha';
 import Store from '../src/store.ts';
 
 const require = createRequire(import.meta.url);
@@ -40,12 +39,12 @@ describe('Store', async () => {
       });
 
       it('store and return the module', async () => {
-        assert.equal(outcome, module);
+        expect(outcome).toBe(module);
       });
 
       it('assign meta data to the module', async () => {
-        assert.equal(outcome.namespace, 'foo:module');
-        assert.equal(outcome.resolved, join('/foo/path/index.js'));
+        expect(outcome.namespace).toEqual('foo:module');
+        expect(outcome.resolved).toEqual(join('/foo/path/index.js'));
       });
     });
 
@@ -58,13 +57,13 @@ describe('Store', async () => {
       });
 
       it('store and returns the required module', async () => {
-        assert.notEqual(outcome, modulePath);
-        assert.equal(outcome.usage, 'Usage can be used to customize the help output');
+        expect(outcome).not.toBe(modulePath);
+        expect(outcome.usage).toEqual('Usage can be used to customize the help output');
       });
 
       it('assign meta data to the module', async () => {
-        assert.equal(outcome.resolved, join(modulePath, 'index.js'));
-        assert.equal(outcome.namespace, 'foo:path');
+        expect(outcome.resolved).toEqual(join(modulePath, 'index.js'));
+        expect(outcome.namespace).toEqual('foo:path');
       });
     });
   });
@@ -76,7 +75,7 @@ describe('Store', async () => {
     });
 
     it('return stored module namespaces', async () => {
-      assert.deepEqual(store.namespaces(), ['foo', 'lab']);
+      expect(store.namespaces()).toEqual(['foo', 'lab']);
     });
   });
 });

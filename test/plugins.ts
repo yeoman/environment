@@ -1,9 +1,8 @@
-import assert from 'node:assert';
 import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
 import { mkdirSync, rmSync } from 'node:fs';
-import { afterEach, beforeEach, describe, it } from 'esmocha';
+import { afterEach, beforeEach, describe, expect, it } from 'esmocha';
 import Environment from '../src/index.ts';
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-environment/light');
@@ -62,7 +61,7 @@ describe('Generators plugin', () => {
 
       it(`runs generators plugin with requireGenerator value ${extended}`, () => {
         return env.run('dummy:app').then(() => {
-          assert.equal(execValue, 'done');
+          expect(execValue).toEqual('done');
         });
       }).timeout(100_000);
     });

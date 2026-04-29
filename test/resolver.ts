@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import path, { dirname, join, relative } from 'node:path';
-import assert from 'node:assert';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
@@ -138,7 +137,7 @@ describe('Environment Resolver', async function () {
 
     beforeEach(async function () {
       env = new Environment();
-      assert.equal(env.namespaces().length, 0, 'ensure env is empty');
+      expect(env.namespaces().length).toEqual(0);
       await env.lookup({ ...lookupOptions, localOnly: true });
     });
 
@@ -146,41 +145,41 @@ describe('Environment Resolver', async function () {
       expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
       // Register local generators
-      assert.ok(await env.get('dummy:app'));
-      assert.ok(await env.get('dummy:yo'));
+      expect(await env.get('dummy:app')).toBeTruthy();
+      expect(await env.get('dummy:yo')).toBeTruthy();
 
-      assert.ok((await env.get('dummy:app'))!.packagePath!.endsWith(join('node_modules/generator-dummy')));
-      assert.ok((await env.get('dummy:app'))!.packagePath!.endsWith(join('node_modules/generator-dummy')));
+      expect((await env.get('dummy:app'))!.packagePath!.endsWith(join('node_modules/generator-dummy'))).toBeTruthy();
+      expect((await env.get('dummy:app'))!.packagePath!.endsWith(join('node_modules/generator-dummy'))).toBeTruthy();
 
       // Registers local ts generators
-      assert.ok(await env.get('ts:app'));
+      expect(await env.get('ts:app')).toBeTruthy();
 
       // Registers local common js generators with cjs extension
-      assert.ok(await env.get('common-js:cjs'));
+      expect(await env.get('common-js:cjs')).toBeTruthy();
 
       // Registers local esm generators with js extension
-      assert.ok(await env.get('ts:app'));
+      expect(await env.get('ts:app')).toBeTruthy();
 
       // Registers local esm generators with mjs extension
-      assert.ok(await env.get('esm:mjs'));
+      expect(await env.get('esm:mjs')).toBeTruthy();
 
       // Js generators takes precedence
       // eslint-disable-next-line import-x/extensions
-      assert.equal(await env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
+      expect(await env.get('ts-js:app')).toEqual(require('./fixtures/generator-ts-js/generators/app/index.js'));
 
       // Register generators in scoped packages
-      assert.ok(await env.get('@dummyscope/scoped:app'));
+      expect(await env.get('@dummyscope/scoped:app')).toBeTruthy();
 
       // Register non-dependency local generator
-      assert.ok(await env.get('jquery:app'));
+      expect(await env.get('jquery:app')).toBeTruthy();
 
       // Register symlinked generators
-      assert.ok(await env.get('extend:support'));
+      expect(await env.get('extend:support')).toBeTruthy();
     });
 
     globalLookupTest()('register global generators', async function () {
-      assert.ok(await env.get('dummytest:app'));
-      assert.ok(await env.get('dummytest:controller'));
+      expect(await env.get('dummytest:app')).toBeTruthy();
+      expect(await env.get('dummytest:controller')).toBeTruthy();
     });
 
     describe("when there's ancestor node_modules/ folder", async () => {
@@ -198,7 +197,7 @@ describe('Environment Resolver', async function () {
 
       beforeEach(async function () {
         env = new Environment();
-        assert.equal(env.namespaces().length, 0, 'ensure env is empty');
+        expect(env.namespaces().length).toEqual(0);
         await env.lookup({ localOnly: true });
       });
 
@@ -207,12 +206,12 @@ describe('Environment Resolver', async function () {
       });
 
       it('register generators in ancestor node_modules directory', async function () {
-        assert.ok(await env.get('jquery:app'));
+        expect(await env.get('jquery:app')).toBeTruthy();
       });
 
       it('local generators are prioritized over ancestor', async function () {
         const { resolved } = (await env.get('dummy:app')) as any;
-        assert.ok(resolved.includes('subdir'), `Couldn't find 'subdir' in ${resolved}`);
+        expect(resolved.includes('subdir')).toBeTruthy();
       });
     });
 
@@ -236,36 +235,36 @@ describe('Environment Resolver', async function () {
         expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
         // Register local generators
-        assert.ok(await env.get('dummy:app'));
-        assert.ok(await env.get('dummy:yo'));
+        expect(await env.get('dummy:app')).toBeTruthy();
+        expect(await env.get('dummy:yo')).toBeTruthy();
 
-        assert.ok((await env.get('dummy:app'))!.packagePath!.endsWith(join('node_modules/generator-dummy')));
-        assert.ok((await env.get('dummy:app'))!.packagePath!.endsWith(join('node_modules/generator-dummy')));
+        expect((await env.get('dummy:app'))!.packagePath!.endsWith(join('node_modules/generator-dummy'))).toBeTruthy();
+        expect((await env.get('dummy:app'))!.packagePath!.endsWith(join('node_modules/generator-dummy'))).toBeTruthy();
 
         // Registers local ts generators
-        assert.ok(await env.get('ts:app'));
+        expect(await env.get('ts:app')).toBeTruthy();
 
         // Js generators takes precedence
         // eslint-disable-next-line import-x/extensions
-        assert.equal(await env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
+        expect(await env.get('ts-js:app')).toEqual(require('./fixtures/generator-ts-js/generators/app/index.js'));
 
         // Register generators in scoped packages
-        assert.ok(await env.get('@dummyscope/scoped:app'));
+        expect(await env.get('@dummyscope/scoped:app')).toBeTruthy();
 
         // Register non-dependency local generator
-        assert.ok(await env.get('jquery:app'));
+        expect(await env.get('jquery:app')).toBeTruthy();
 
         // Local generators prioritized over global
         const { resolved } = (await env.get('dummy:app')) as any;
-        assert.ok(resolved.includes('lookup-project'), `Couldn't find 'lookup-project' in ${resolved}`);
+        expect(resolved.includes('lookup-project')).toBeTruthy();
 
         // Register symlinked generators
-        assert.ok(await env.get('extend:support'));
+        expect(await env.get('extend:support')).toBeTruthy();
       });
 
       globalLookupTest()('register global generators', async function () {
-        assert.ok(await env.get('dummytest:app'));
-        assert.ok(await env.get('dummytest:controller'));
+        expect(await env.get('dummytest:app')).toBeTruthy();
+        expect(await env.get('dummytest:controller')).toBeTruthy();
       });
     });
 
@@ -291,35 +290,35 @@ describe('Environment Resolver', async function () {
         expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
         // Register local generators
-        assert.ok(await env.get('dummy:app'));
-        assert.ok(await env.get('dummy:yo'));
+        expect(await env.get('dummy:app')).toBeTruthy();
+        expect(await env.get('dummy:yo')).toBeTruthy();
 
-        assert.ok((await env.get('dummy:app'))!.packagePath!.endsWith(join('/generator-dummy')));
-        assert.ok((await env.get('dummy:app'))!.packagePath!.endsWith(join('/generator-dummy')));
+        expect((await env.get('dummy:app'))!.packagePath!.endsWith(join('/generator-dummy'))).toBeTruthy();
+        expect((await env.get('dummy:app'))!.packagePath!.endsWith(join('/generator-dummy'))).toBeTruthy();
 
         // Registers local ts generators', async function () {
-        assert.ok(await env.get('ts:app'));
+        expect(await env.get('ts:app')).toBeTruthy();
 
         // Js generators takes precedence', async function () {
         // eslint-disable-next-line import-x/extensions
-        assert.equal(await env.get('ts-js:app'), require('./fixtures/generator-ts-js/generators/app/index.js'));
+        expect(await env.get('ts-js:app')).toEqual(require('./fixtures/generator-ts-js/generators/app/index.js'));
 
         // Register generators in scoped packages', async function () {
-        assert.ok(await env.get('@dummyscope/scoped:app'));
+        expect(await env.get('@dummyscope/scoped:app')).toBeTruthy();
 
         // Local generators prioritized over global
         const { resolved } = (await env.get('dummy:app')) as any;
-        assert.ok(resolved.includes('orig'), `Couldn't find 'lookup-project' in ${resolved}`);
+        expect(resolved.includes('orig')).toBeTruthy();
 
         // Register symlinked generators
-        assert.ok(await env.get('extend:support'));
+        expect(await env.get('extend:support')).toBeTruthy();
       });
     });
 
     describe('when localOnly argument is true', async () => {
       beforeEach(async function () {
         env = new Environment();
-        assert.equal(env.namespaces().length, 0, 'ensure env is empty');
+        expect(env.namespaces().length).toEqual(0);
         await env.lookup({ localOnly: true });
         env.alias('dummy-alias', 'dummy');
       });
@@ -328,31 +327,31 @@ describe('Environment Resolver', async function () {
         expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
         // Register local generators
-        assert.ok(await env.get('dummy:app'));
-        assert.ok(await env.get('dummy:yo'));
-        assert.ok(env.isPackageRegistered('dummy'));
-        assert.ok(env.isPackageRegistered('dummy-alias'));
+        expect(await env.get('dummy:app')).toBeTruthy();
+        expect(await env.get('dummy:yo')).toBeTruthy();
+        expect(env.isPackageRegistered('dummy')).toBeTruthy();
+        expect(env.isPackageRegistered('dummy-alias')).toBeTruthy();
 
         // Register generators in scoped packages
-        assert.ok(await env.get('@dummyscope/scoped:app'));
+        expect(await env.get('@dummyscope/scoped:app')).toBeTruthy();
 
         // Register non-dependency local generator
-        assert.ok(await env.get('jquery:app'));
+        expect(await env.get('jquery:app')).toBeTruthy();
 
         // Register symlinked generators
-        assert.ok(await env.get('extend:support'));
+        expect(await env.get('extend:support')).toBeTruthy();
       });
 
       globalLookupTest()('does not register global generators', async function () {
-        assert.ok(!env.get('dummytest:app'));
-        assert.ok(!env.get('dummytest:controller'));
+        expect(env.get('dummytest:app')).toBeFalsy();
+        expect(env.get('dummytest:controller')).toBeFalsy();
       });
     });
 
     describe('when options.localOnly argument is true', async () => {
       beforeEach(async function () {
         env = new Environment();
-        assert.equal(env.namespaces().length, 0, 'ensure env is empty');
+        expect(env.namespaces().length).toEqual(0);
         await env.lookup({ localOnly: true });
       });
 
@@ -360,22 +359,22 @@ describe('Environment Resolver', async function () {
         expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
         // Register local generators
-        assert.ok(await env.get('dummy:app'));
-        assert.ok(await env.get('dummy:yo'));
+        expect(await env.get('dummy:app')).toBeTruthy();
+        expect(await env.get('dummy:yo')).toBeTruthy();
 
         // Register generators in scoped packages
-        assert.ok(await env.get('@dummyscope/scoped:app'));
+        expect(await env.get('@dummyscope/scoped:app')).toBeTruthy();
 
         // Register non-dependency local generator
-        assert.ok(await env.get('jquery:app'));
+        expect(await env.get('jquery:app')).toBeTruthy();
 
         // Register symlinked generators
-        assert.ok(await env.get('extend:support'));
+        expect(await env.get('extend:support')).toBeTruthy();
       });
 
       globalLookupTest()('does not register global generators', async function () {
-        assert.ok(!env.get('dummytest:app'));
-        assert.ok(!env.get('dummytest:controller'));
+        expect(env.get('dummytest:app')).toBeFalsy();
+        expect(env.get('dummytest:controller')).toBeFalsy();
       });
     });
   });
@@ -408,8 +407,8 @@ describe('Environment Resolver', async function () {
 
       expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await env.get('module:app'));
-      assert.ok(env.getRegisteredPackages().length === 1);
+      expect(await env.get('module:app')).toBeTruthy();
+      expect(env.getRegisteredPackages().length === 1).toBeTruthy();
     });
 
     it('with customizeNamespace', async function () {
@@ -421,8 +420,8 @@ describe('Environment Resolver', async function () {
 
       expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await env.get('custom:app'));
-      assert.ok(env.getRegisteredPackages().length === 1);
+      expect(await env.get('custom:app')).toBeTruthy();
+      expect(env.getRegisteredPackages().length === 1).toBeTruthy();
     });
 
     it('with scope and packagePaths', async function () {
@@ -434,9 +433,9 @@ describe('Environment Resolver', async function () {
 
       expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await env.get('@test/module:app'));
-      assert.ok(await env.get('@scoped/scoped:app'));
-      assert.ok(env.getRegisteredPackages().length === 2);
+      expect(await env.get('@test/module:app')).toBeTruthy();
+      expect(await env.get('@scoped/scoped:app')).toBeTruthy();
+      expect(env.getRegisteredPackages().length === 2).toBeTruthy();
     });
 
     it('with 2 packagePaths', async function () {
@@ -447,9 +446,9 @@ describe('Environment Resolver', async function () {
 
       expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await env.get('module:app'));
-      assert.ok(await env.get('module-root:app'));
-      assert.ok(env.getRegisteredPackages().length === 2);
+      expect(await env.get('module:app')).toBeTruthy();
+      expect(await env.get('module-root:app')).toBeTruthy();
+      expect(env.getRegisteredPackages().length === 2).toBeTruthy();
     });
 
     it('with 3 packagePaths', async function () {
@@ -460,10 +459,10 @@ describe('Environment Resolver', async function () {
 
       expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await env.get('module:app'));
-      assert.ok(await env.get('module-root:app'));
-      assert.ok(await env.get('module-lib-gen:app'));
-      assert.ok(env.getRegisteredPackages().length === 3);
+      expect(await env.get('module:app')).toBeTruthy();
+      expect(await env.get('module-root:app')).toBeTruthy();
+      expect(await env.get('module-lib-gen:app')).toBeTruthy();
+      expect(env.getRegisteredPackages().length === 3).toBeTruthy();
     });
 
     it('with scoped packagePaths', async function () {
@@ -479,11 +478,11 @@ describe('Environment Resolver', async function () {
 
       expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await env.get('module:app'));
-      assert.ok(await env.get('module-root:app'));
-      assert.ok(await env.get('module-lib-gen:app'));
-      assert.ok(await env.get('@scoped/scoped:app'));
-      assert.ok(env.getRegisteredPackages().length === 4);
+      expect(await env.get('module:app')).toBeTruthy();
+      expect(await env.get('module-root:app')).toBeTruthy();
+      expect(await env.get('module-lib-gen:app')).toBeTruthy();
+      expect(await env.get('@scoped/scoped:app')).toBeTruthy();
+      expect(env.getRegisteredPackages().length === 4).toBeTruthy();
     });
 
     it('with npmPaths', async function () {
@@ -491,11 +490,11 @@ describe('Environment Resolver', async function () {
 
       expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await env.get('module:app'));
-      assert.ok(await env.get('module-root:app'));
-      assert.ok(await env.get('module-lib-gen:app'));
-      assert.ok(await env.get('@scoped/scoped:app'));
-      assert.ok(env.getRegisteredPackages().length === 4);
+      expect(await env.get('module:app')).toBeTruthy();
+      expect(await env.get('module-root:app')).toBeTruthy();
+      expect(await env.get('module-lib-gen:app')).toBeTruthy();
+      expect(await env.get('@scoped/scoped:app')).toBeTruthy();
+      expect(env.getRegisteredPackages().length === 4).toBeTruthy();
     });
 
     it('with sub-sub-generators filePatterns', async function () {
@@ -507,7 +506,7 @@ describe('Environment Resolver', async function () {
 
       expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await env.get('@scoped/scoped:app:scaffold'));
+      expect(await env.get('@scoped/scoped:app:scaffold')).toBeTruthy();
     });
 
     it('with packagePatterns', async function () {
@@ -519,9 +518,9 @@ describe('Environment Resolver', async function () {
 
       expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await env.get('module:app'));
-      assert.ok(await env.get('module-root:app'));
-      assert.ok(env.getRegisteredPackages().length === 2);
+      expect(await env.get('module:app')).toBeTruthy();
+      expect(await env.get('module-root:app')).toBeTruthy();
+      expect(env.getRegisteredPackages().length === 2).toBeTruthy();
     });
 
     it('with sub-sub-generators and packagePaths', async function () {
@@ -533,7 +532,7 @@ describe('Environment Resolver', async function () {
 
       expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await env.get('@scoped/scoped:app:scaffold'));
+      expect(await env.get('@scoped/scoped:app:scaffold')).toBeTruthy();
     });
 
     it('with sub-sub-generators and packagePatterns', async function () {
@@ -546,7 +545,7 @@ describe('Environment Resolver', async function () {
 
       expect(toRelativeMeta(env.getGeneratorsMeta())).toMatchSnapshot();
 
-      assert.ok(await env.get('@scoped/scoped:app:scaffold'));
+      expect(await env.get('@scoped/scoped:app:scaffold')).toBeTruthy();
     });
   });
 
@@ -578,8 +577,8 @@ describe('Environment Resolver', async function () {
 
     it('with 1 namespace', async function () {
       await env.lookupNamespaces('module:app', { localOnly: true, npmPaths: ['node_modules'] });
-      assert.ok(await env.get('module:app'));
-      assert.ok(env.getRegisteredPackages().length === 1);
+      expect(await env.get('module:app')).toBeTruthy();
+      expect(env.getRegisteredPackages().length === 1).toBeTruthy();
     });
 
     it('with 2 namespaces', async function () {
@@ -587,9 +586,9 @@ describe('Environment Resolver', async function () {
         localOnly: true,
         npmPaths: ['node_modules'],
       });
-      assert.ok(await env.get('module:app'));
-      assert.ok(await env.get('module-root:app'));
-      assert.ok(env.getRegisteredPackages().length === 2);
+      expect(await env.get('module:app')).toBeTruthy();
+      expect(await env.get('module-root:app')).toBeTruthy();
+      expect(env.getRegisteredPackages().length === 2).toBeTruthy();
     });
 
     it('with sub-sub-generators', async function () {
@@ -597,8 +596,8 @@ describe('Environment Resolver', async function () {
         localOnly: true,
         npmPaths: ['node_modules'],
       });
-      assert.ok(await env.get('@scoped/scoped:app:scaffold'));
-      assert.ok(env.getRegisteredPackages().length === 1);
+      expect(await env.get('@scoped/scoped:app:scaffold')).toBeTruthy();
+      expect(env.getRegisteredPackages().length === 1).toBeTruthy();
     });
   });
 
@@ -616,33 +615,35 @@ describe('Environment Resolver', async function () {
 
       it('walk up the CWD lookups dir', async function () {
         const paths = getNpmPaths({ localOnly: false, filterPaths: false });
-        assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
-        assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
+        expect(paths[0]).toEqual(path.join(process.cwd(), 'node_modules'));
+        expect(paths[1]).toEqual(path.join(process.cwd(), '../node_modules'));
       });
 
       it('append NODE_PATH', async function () {
-        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(process.env.NODE_PATH!));
+        expect(getNpmPaths({ localOnly: false, filterPaths: false }).includes(process.env.NODE_PATH!)).toBeTruthy();
       });
     });
 
     describe('without NODE_PATH', async () => {
       it('walk up the CWD lookups dir', async function () {
         const paths = getNpmPaths({ localOnly: false, filterPaths: false });
-        assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
+        expect(paths[0]).toEqual(path.join(process.cwd(), 'node_modules'));
         const prevdir = process.cwd().split(path.sep).slice(0, -1).join(path.sep);
-        assert.equal(paths[1], path.join(prevdir, 'node_modules'));
+        expect(paths[1]).toEqual(path.join(prevdir, 'node_modules'));
       });
 
       it('append best bet if NODE_PATH is unset', async function () {
-        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(bestBet));
-        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(bestBet2));
+        expect(getNpmPaths({ localOnly: false, filterPaths: false }).includes(bestBet)).toBeTruthy();
+        expect(getNpmPaths({ localOnly: false, filterPaths: false }).includes(bestBet2)).toBeTruthy();
       });
 
       it('append default NPM dir depending on your OS', async function () {
         if (process.platform === 'win32') {
-          assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(process.env.APPDATA!, 'npm/node_modules')));
+          expect(
+            getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(process.env.APPDATA!, 'npm/node_modules')),
+          ).toBeTruthy();
         } else {
-          assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes('/usr/lib/node_modules'));
+          expect(getNpmPaths({ localOnly: false, filterPaths: false }).includes('/usr/lib/node_modules')).toBeTruthy();
         }
       });
     });
@@ -654,58 +655,60 @@ describe('Environment Resolver', async function () {
 
       it('walk up the CWD lookups dir', async function () {
         const paths = getNpmPaths({ localOnly: false, filterPaths: false });
-        assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
-        assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
+        expect(paths[0]).toEqual(path.join(process.cwd(), 'node_modules'));
+        expect(paths[1]).toEqual(path.join(process.cwd(), '../node_modules'));
       });
 
       it('append NVM_PATH', async function () {
-        assert.ok(
+        expect(
           getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(path.dirname(process.env.NVM_PATH!), 'node_modules')),
-        );
+        ).toBeTruthy();
       });
     });
 
     describe('without NVM_PATH', async () => {
       it('walk up the CWD lookups dir', async function () {
         const paths = getNpmPaths({ localOnly: false, filterPaths: false });
-        assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
-        assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
+        expect(paths[0]).toEqual(path.join(process.cwd(), 'node_modules'));
+        expect(paths[1]).toEqual(path.join(process.cwd(), '../node_modules'));
       });
 
       it('append best bet if NVM_PATH is unset', async function () {
-        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(bestBet, 'node_modules')));
-        assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).includes(bestBet2));
+        expect(getNpmPaths({ localOnly: false, filterPaths: false }).includes(path.join(bestBet, 'node_modules'))).toBeTruthy();
+        expect(getNpmPaths({ localOnly: false, filterPaths: false }).includes(bestBet2)).toBeTruthy();
       });
     });
 
     describe('when localOnly argument is true', async () => {
       it('walk up the CWD lookups dir', async function () {
         const paths = getNpmPaths({ localOnly: false, filterPaths: false });
-        assert.equal(paths[0], path.join(process.cwd(), 'node_modules'));
-        assert.equal(paths[1], path.join(process.cwd(), '../node_modules'));
+        expect(paths[0]).toEqual(path.join(process.cwd(), 'node_modules'));
+        expect(paths[1]).toEqual(path.join(process.cwd(), '../node_modules'));
       });
 
       it('does not append NODE_PATH', async function () {
         process.env.NODE_PATH = '/some/dummy/path';
-        assert.ok(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(process.env.NODE_PATH));
+        expect(getNpmPaths({ localOnly: true, filterPaths: false }).includes(process.env.NODE_PATH)).toBeFalsy();
       });
 
       it('does not append NVM_PATH', async function () {
         process.env.NVM_PATH = '/some/dummy/path';
-        assert.ok(
-          !getNpmPaths({ localOnly: true, filterPaths: false }).includes(path.join(path.dirname(process.env.NVM_PATH!), 'node_modules')),
-        );
+        expect(
+          getNpmPaths({ localOnly: true, filterPaths: false }).includes(path.join(path.dirname(process.env.NVM_PATH!), 'node_modules')),
+        ).toBeFalsy();
       });
 
       it('does not append best bet', async function () {
-        assert.ok(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(bestBet));
+        expect(getNpmPaths({ localOnly: true, filterPaths: false }).includes(bestBet)).toBeFalsy();
       });
 
       it('does not append default NPM dir depending on your OS', async function () {
         if (process.platform === 'win32') {
-          assert.ok(!getNpmPaths({ localOnly: true, filterPaths: false }).includes(path.join(process.env.APPDATA!, 'npm/node_modules')));
+          expect(
+            getNpmPaths({ localOnly: true, filterPaths: false }).includes(path.join(process.env.APPDATA!, 'npm/node_modules')),
+          ).toBeFalsy();
         } else {
-          assert.ok(!getNpmPaths({ localOnly: true, filterPaths: false }).includes('/usr/lib/node_modules'));
+          expect(getNpmPaths({ localOnly: true, filterPaths: false }).includes('/usr/lib/node_modules')).toBeFalsy();
         }
       });
     });
@@ -714,9 +717,11 @@ describe('Environment Resolver', async function () {
       it('append npm modules path depending on your OS', async function () {
         const npmPrefix = execaOutput('npm', ['prefix', '-g'])!;
         if (process.platform === 'win32') {
-          assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).indexOf(path.resolve(npmPrefix, 'node_modules')) > 0);
+          expect(getNpmPaths({ localOnly: false, filterPaths: false }).indexOf(path.resolve(npmPrefix, 'node_modules')) > 0).toBeTruthy();
         } else {
-          assert.ok(getNpmPaths({ localOnly: false, filterPaths: false }).indexOf(path.resolve(npmPrefix, 'lib/node_modules')) > 0);
+          expect(
+            getNpmPaths({ localOnly: false, filterPaths: false }).indexOf(path.resolve(npmPrefix, 'lib/node_modules')) > 0,
+          ).toBeTruthy();
         }
       });
     });
@@ -739,8 +744,8 @@ describe('Environment Resolver', async function () {
       it('finds it', async function () {
         const packageToFind = 'generator-dummy';
         const actual = findPackagesIn(['node_modules'], [packageToFind]);
-        assert.equal(actual.length, 1);
-        assert.ok(actual[0].endsWith(packageToFind));
+        expect(actual.length).toEqual(1);
+        expect(actual[0].endsWith(packageToFind)).toBeTruthy();
       });
     });
 
@@ -748,8 +753,8 @@ describe('Environment Resolver', async function () {
       it('finds it', async function () {
         const packageToFind = '@dummyscope/generator-scoped';
         const actual = findPackagesIn(['node_modules'], [packageToFind]);
-        assert.equal(actual.length, 1);
-        assert.ok(actual[0].endsWith(packageToFind));
+        expect(actual.length).toEqual(1);
+        expect(actual[0].endsWith(packageToFind)).toBeTruthy();
       });
     });
   });
@@ -777,13 +782,13 @@ describe('Environment Resolver', async function () {
     describe('Find generator', async () => {
       it('Scoped lookup', async () => {
         const modulePath = lookupGenerator('@dummyscope/scoped:app');
-        assert.ok(modulePath.endsWith('node_modules/@dummyscope/generator-scoped/app/index.js'));
+        expect(modulePath.endsWith('node_modules/@dummyscope/generator-scoped/app/index.js')).toBeTruthy();
         const packagePath = lookupGenerator('@dummyscope/scoped:app', { packagePath: true });
-        assert.ok(packagePath.endsWith('node_modules/@dummyscope/generator-scoped'));
+        expect(packagePath.endsWith('node_modules/@dummyscope/generator-scoped')).toBeTruthy();
       });
       it('Lookup', async () => {
         const modulePath = lookupGenerator('extend:support');
-        assert.ok(modulePath.endsWith('node_modules/generator-extend/support/index.js'));
+        expect(modulePath.endsWith('node_modules/generator-extend/support/index.js')).toBeTruthy();
 
         const packagePath = lookupGenerator('extend:support', {
           packagePath: true,
@@ -791,22 +796,22 @@ describe('Environment Resolver', async function () {
         const packagePath3 = lookupGenerator('extend', {
           packagePath: true,
         });
-        assert.ok(packagePath.endsWith('node_modules/generator-extend'));
-        assert.ok(packagePath3.endsWith('node_modules/generator-extend'));
+        expect(packagePath.endsWith('node_modules/generator-extend')).toBeTruthy();
+        expect(packagePath3.endsWith('node_modules/generator-extend')).toBeTruthy();
       });
       it('Module Lookup', async () => {
         const modulePath = lookupGenerator('module:app');
-        assert.ok(modulePath.endsWith('node_modules/generator-module/generators/app/index.js'), modulePath);
+        expect(modulePath.endsWith('node_modules/generator-module/generators/app/index.js')).toBeTruthy();
 
         const packagePath = lookupGenerator('module:app', {
           packagePath: true,
         });
-        assert.ok(packagePath.endsWith('node_modules/generator-module'), packagePath);
+        expect(packagePath.endsWith('node_modules/generator-module')).toBeTruthy();
 
         const generatorPath = lookupGenerator('module:app', {
           generatorPath: true,
         });
-        assert.ok(generatorPath.endsWith('node_modules/generator-module/generators/'), generatorPath);
+        expect(generatorPath.endsWith('node_modules/generator-module/generators/')).toBeTruthy();
       });
     });
   });
@@ -837,21 +842,25 @@ describe('Environment Resolver', async function () {
     describe('Find generator', async () => {
       it('Module Lookup', async () => {
         const modulePath = lookupGenerator('module:app');
-        assert.ok(modulePath.endsWith('node_modules/generator-module/generators/app/index.js'));
+        expect(modulePath.endsWith('node_modules/generator-module/generators/app/index.js')).toBeTruthy();
 
         const multiplePath = lookupGenerator('module:app', {
           singleResult: false,
         });
-        assert.equal(multiplePath.length, 2);
-        assert.ok(multiplePath[0].endsWith('lookup-custom/node_modules/generator-module/generators/app/index.js'));
-        assert.ok(multiplePath[1].endsWith('lookup-custom/node_modules/foo/node_modules/generator-module/generators/app/index.js'));
+        expect(multiplePath.length).toEqual(2);
+        expect(multiplePath[0].endsWith('lookup-custom/node_modules/generator-module/generators/app/index.js')).toBeTruthy();
+        expect(
+          multiplePath[1].endsWith('lookup-custom/node_modules/foo/node_modules/generator-module/generators/app/index.js'),
+        ).toBeTruthy();
 
         const multiplePath2 = lookupGenerator('module:app', {
           singleResult: false,
         });
-        assert.equal(multiplePath2.length, 2);
-        assert.ok(multiplePath2[0].endsWith('lookup-custom/node_modules/generator-module/generators/app/index.js'));
-        assert.ok(multiplePath2[1].endsWith('lookup-custom/node_modules/foo/node_modules/generator-module/generators/app/index.js'));
+        expect(multiplePath2.length).toEqual(2);
+        expect(multiplePath2[0].endsWith('lookup-custom/node_modules/generator-module/generators/app/index.js')).toBeTruthy();
+        expect(
+          multiplePath2[1].endsWith('lookup-custom/node_modules/foo/node_modules/generator-module/generators/app/index.js'),
+        ).toBeTruthy();
       });
     });
   });
@@ -868,10 +877,10 @@ describe('Environment Resolver', async function () {
     describe('Find generator', async () => {
       it('Generator extended by environment lookup', async () => {
         env = new Environment();
-        assert.equal(env.namespaces().length, 0, 'ensure env is empty');
+        expect(env.namespaces().length).toEqual(0);
         await env.lookup();
-        assert.ok(await env.get('environment-extend:app'));
-        assert.ok(await env.create('environment-extend:app'));
+        expect(await env.get('environment-extend:app')).toBeTruthy();
+        expect(await env.create('environment-extend:app')).toBeTruthy();
       });
     });
   });

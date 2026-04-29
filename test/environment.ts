@@ -9,7 +9,6 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { after, afterEach, before, beforeEach, describe, esmocha, expect, it } from 'esmocha';
 import { QueuedAdapter } from '@yeoman/adapter';
-import assert from 'yeoman-assert';
 import Environment, { createEnv as createEnvironment } from '../src/index.ts';
 import { resolveModulePath } from '../src/util/resolve.ts';
 import { allVersions, importGenerator, isGreaterThan6, isLegacyVersion } from './generator-versions.ts';
@@ -65,7 +64,7 @@ for (const generatorVersion of allVersions) {
     });
 
     it('is an instance of EventEmitter', () => {
-      assert.ok(new Environment() instanceof events.EventEmitter);
+      expect(new Environment() instanceof events.EventEmitter).toBeTruthy();
     });
 
     describe('constructor', () => {
@@ -75,31 +74,31 @@ for (const generatorVersion of allVersions) {
       });
 
       it('instantiates a QueuedAdapter if none provided', async function () {
-        assert.ok(env.adapter instanceof QueuedAdapter);
+        expect(env.adapter instanceof QueuedAdapter).toBeTruthy();
       });
 
       it('uses the provided object as adapter if any', () => {
         const dummyAdapter = {};
         const environment = new Environment({ adapter: dummyAdapter });
-        assert.equal(environment.adapter, dummyAdapter, 'Not the adapter provided');
+        expect(environment.adapter).toEqual(dummyAdapter);
       });
 
       it('instantiates a mem-fs instance', async function () {
-        assert.ok(env.sharedFs);
+        expect(env.sharedFs).toBeTruthy();
       });
     });
 
     describe('#getVersion()', () => {
       it('output the version number', async function () {
         const version = env.getVersion();
-        assert.ok(version);
-        assert.textEqual(version, ENVIRONMENT_VERSION);
+        expect(version).toBeTruthy();
+        expect(version).toEqual(ENVIRONMENT_VERSION);
       });
 
       it('output the grouped-queue version number', async function () {
         const version = env.getVersion('grouped-queue');
-        assert.ok(version);
-        assert.textEqual(version, GROUPED_QUEUE_VERSION);
+        expect(version).toBeTruthy();
+        expect(version).toEqual(GROUPED_QUEUE_VERSION);
       });
     });
 
@@ -115,12 +114,12 @@ for (const generatorVersion of allVersions) {
       });
 
       it('output the general help', async function () {
-        assert.textEqual(env.help().trim(), expected);
+        expect(env.help().trim()).toEqual(expected);
       });
 
       it('output the help with a custom bin name', async function () {
         expected = expected.replace('Usage: init', 'Usage: gg');
-        assert.textEqual(env.help('gg').trim(), expected);
+        expect(env.help('gg').trim()).toEqual(expected);
       });
     });
 
@@ -135,108 +134,107 @@ for (const generatorVersion of allVersions) {
 
       it('instantiate a generator', async function () {
         this.timeout(10_000);
-        assert.ok((await env.create('stub')) instanceof registeredGenerator);
+        expect((await env.create('stub')) instanceof registeredGenerator).toBeTruthy();
       });
 
       it('instantiate a scoped generator', async function () {
-        assert.ok((await env.create('@scope/stub')) instanceof registeredGenerator);
+        expect((await env.create('@scope/stub')) instanceof registeredGenerator).toBeTruthy();
       });
 
       it('pass args parameter', async function () {
         const arguments_ = ['foo', 'bar'];
         const generator = await env.create('stub', arguments_);
-        assert.deepEqual(generator.arguments, arguments_);
+        expect(generator.arguments).toEqual(arguments_);
       });
 
       it('pass options parameter', async function () {
         const arguments_ = [];
         const options = { foo: 'bar' };
         const generator = await env.create('stub', arguments_, options);
-        assert.equal(generator.options.foo, 'bar');
+        expect(generator.options.foo).toEqual('bar');
       });
 
       it('pass options.arguments', async function () {
         const arguments_ = ['foo', 'bar'];
         const generator = await env.create('stub', { arguments: arguments_ });
-        assert.deepEqual(generator.arguments, arguments_);
+        expect(generator.arguments).toEqual(arguments_);
       });
 
       it('pass options.arguments as string', async function () {
         const arguments_ = 'foo bar';
         const generator = await env.create('stub', { arguments: arguments_ });
-        assert.deepEqual(generator.arguments, arguments_.split(' '));
+        expect(generator.arguments).toEqual(arguments_.split(' '));
       });
 
       it('pass options.args (as `arguments` alias)', async function () {
         const arguments_ = ['foo', 'bar'];
         const generator = await env.create('stub', { args: arguments_ });
-        assert.deepEqual(generator.arguments, arguments_);
+        expect(generator.arguments).toEqual(arguments_);
       });
 
       it('prefer options.arguments over options.args', async function () {
         const arguments1 = ['yo', 'unicorn'];
         const arguments_ = ['foo', 'bar'];
         const generator = await env.create('stub', { arguments: arguments1, args: arguments_ });
-        assert.deepEqual(generator.arguments, arguments1);
+        expect(generator.arguments).toEqual(arguments1);
       });
 
       it('default arguments to `env.arguments`', async function () {
         const arguments_ = ['foo', 'bar'];
         env.arguments = arguments_;
         const generator = await env.create('stub');
-        assert.notEqual(generator.arguments, arguments_, 'expect arguments to not be passed by reference');
+        expect(generator.arguments).not.toEqual(arguments_);
       });
 
       it('pass options.options', async function () {
         const options = { foo: 'bar' };
         const generator = await env.create('stub', { options });
-        assert.equal(generator.options.foo, 'bar');
+        expect(generator.options.foo).toEqual('bar');
       });
 
       it('spread sharedOptions', async function () {
         const options = { foo: 'bar' };
         const generator = await env.create('stub', { options });
         const generator2 = await env.create('stub');
-        assert.equal(generator.options.foo, 'bar');
-        assert.equal(generator.options.sharedData, generator2.options.sharedData);
+        expect(generator.options.foo).toEqual('bar');
+        expect(generator.options.sharedData).toEqual(generator2.options.sharedData);
 
         generator.options.sharedData.foo = 'bar';
-        assert.equal(generator2.options.sharedData.foo, 'bar');
+        expect(generator2.options.sharedData.foo).toEqual('bar');
 
-        assert.equal(generator.options.sharedConstructorData, generator2.options.sharedConstructorData);
+        expect(generator.options.sharedConstructorData).toEqual(generator2.options.sharedConstructorData);
         generator.options.sharedConstructorData.bar = 'foo';
-        assert.equal(generator2.options.sharedConstructorData.bar, 'foo');
+        expect(generator2.options.sharedConstructorData.bar).toEqual('foo');
       });
 
       it('throws if Generator is not registered', async function () {
-        assert.rejects(env.create.bind(env, 'i:do:not:exist'));
+        expect(() => env.create('i:do:not:exist')).toThrow();
       });
 
       it('add the env as property on the generator', async function () {
-        assert.equal((await env.create('stub')).env, env);
+        expect((await env.create('stub')).env).toEqual(env);
       });
 
       it('add the Generator resolved path on the options', async function () {
-        assert.equal((await env.create('stub')).options.resolved, (await env.get('stub')).resolved);
+        expect((await env.create('stub')).options.resolved).toEqual((await env.get('stub')).resolved);
       });
 
       it('adds the namespace on the options', async function () {
-        assert.equal((await env.create('stub')).options.namespace, 'stub');
+        expect((await env.create('stub')).options.namespace).toEqual('stub');
       });
 
       it('adds the namespace as called on the options', async function () {
-        assert.equal((await env.create('stub:foo:bar')).options.namespace, 'stub:foo:bar');
+        expect((await env.create('stub:foo:bar')).options.namespace).toEqual('stub:foo:bar');
       });
 
       it('adds the namespace from a module generator on the options', async function () {
         await env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), { namespace: 'fixtures:generator-module' });
-        assert.equal((await env.create('fixtures:generator-module')).options.namespace, 'fixtures:generator-module');
+        expect((await env.create('fixtures:generator-module')).options.namespace).toEqual('fixtures:generator-module');
       });
 
       it('adds the Generator resolved path from a module generator on the options', async function () {
         await env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), { namespace: 'fixtures:generator-module' });
-        assert.equal(
-          (await env.create('fixtures:generator-module')).options.resolved,
+        expect((await env.create('fixtures:generator-module')).options.resolved).toEqual(
           (await env.get('fixtures:generator-module')).resolved,
         );
       });
@@ -258,11 +256,11 @@ for (const generatorVersion of allVersions) {
       });
 
       it('should instantiate a generator', async function () {
-        assert.ok((await env.composeWith('stub')) instanceof registeredGenerator);
+        expect((await env.composeWith('stub')) instanceof registeredGenerator).toBeTruthy();
       });
 
       it('should instantiate a genarator and set _meta', async function () {
-        assert.ok((await env.composeWith('stub'))._meta);
+        expect((await env.composeWith('stub'))._meta).toBeTruthy();
       });
 
       it('should schedule generator queue', async function () {
@@ -299,8 +297,8 @@ for (const generatorVersion of allVersions) {
 
       it('should emit a compose event', function (done) {
         env.once('compose', (namespace, generator) => {
-          assert.ok(namespace === 'stub');
-          assert.ok(generator instanceof registeredGenerator);
+          expect(namespace === 'stub').toBeTruthy();
+          expect(generator instanceof registeredGenerator).toBeTruthy();
           done();
         });
         env.composeWith('stub');
@@ -308,7 +306,7 @@ for (const generatorVersion of allVersions) {
 
       it('should emit a compose namespace event with scoped generators', function (done) {
         env.once('compose:@scope/stub', generator => {
-          assert.ok(generator instanceof registeredGenerator);
+          expect(generator instanceof registeredGenerator).toBeTruthy();
           done();
         });
         env.composeWith('@scope/stub');
@@ -316,7 +314,7 @@ for (const generatorVersion of allVersions) {
 
       it('should emit a compose namespace event', function (done) {
         env.once('compose:stub', generator => {
-          assert.ok(generator instanceof registeredGenerator);
+          expect(generator instanceof registeredGenerator).toBeTruthy();
           done();
         });
         env.composeWith('stub');
@@ -331,8 +329,8 @@ for (const generatorVersion of allVersions) {
           }
 
           env.once('compose', (namespace, generator) => {
-            assert.ok(namespace === 'stub');
-            assert.ok(generator instanceof registeredGenerator);
+            expect(namespace === 'stub').toBeTruthy();
+            expect(generator instanceof registeredGenerator).toBeTruthy();
             composed = generator;
             done();
           });
@@ -350,7 +348,7 @@ for (const generatorVersion of allVersions) {
         });
 
         it('should return already composed instance', async function () {
-          assert.strictEqual(composed, await env.composeWith('stub'));
+          expect(composed).toBe(await env.composeWith('stub'));
         });
       });
     });
@@ -435,7 +433,7 @@ for (const generatorVersion of allVersions) {
             throw new Error('should not happen');
           })
           .catch(error => {
-            assert.equal(error.message, 'Process aborted by conflict: foo.js');
+            expect(error.message).toEqual('Process aborted by conflict: foo.js');
           });
       });
 
@@ -444,8 +442,8 @@ for (const generatorVersion of allVersions) {
         const options = { skipInstall: true };
         return env.run(arguments_, options).then(() => {
           expect(runMethod).toHaveBeenCalledTimes(1);
-          assert.equal(capturedArgs[0], 'module');
-          assert.equal(capturedArgs[1].skipInstall, true);
+          expect(capturedArgs[0]).toEqual(['module']);
+          expect(capturedArgs[1].skipInstall).toEqual(true);
         });
       });
 
@@ -453,7 +451,7 @@ for (const generatorVersion of allVersions) {
         const arguments_ = 'stub:run module';
         return env.run(arguments_).then(() => {
           expect(runMethod).toHaveBeenCalledTimes(1);
-          assert.equal(capturedArgs[0], 'module');
+          expect(capturedArgs[0]).toEqual(['module']);
         });
       });
 
@@ -465,14 +463,14 @@ for (const generatorVersion of allVersions) {
           },
           error => {
             expect(runMethod).not.toHaveBeenCalled();
-            assert.ok(error.message.includes('Must provide at least one argument, the generator namespace to invoke.'));
+            expect(error.message.includes('Must provide at least one argument, the generator namespace to invoke.')).toBeTruthy();
           },
         );
       });
 
       it('launch error if generator is not found', async function () {
         return env.run('some:unknown:generator').then(
-          () => assert.fail(),
+          () => expect.fail('Assertion failed'),
           error => {
             expect(error.message).toMatch('“generator-some”');
           },
@@ -481,7 +479,9 @@ for (const generatorVersion of allVersions) {
 
       it("launch error if generator doesn't have a constructor", async function () {
         return env.run('no-constructor:app').then(
-          () => assert.fail(),
+          () => {
+            throw new Error('Should throw');
+          },
           error => {
             expect(error.message).toMatch('provide a constructor');
           },
@@ -491,30 +491,30 @@ for (const generatorVersion of allVersions) {
       it('generator error event emits error event when no callback passed', function (done) {
         env.on('error', error => {
           expect(runMethod).toHaveBeenCalledTimes(1);
-          assert.ok(error instanceof Error);
-          assert.equal(error.message, 'some error');
+          expect(error instanceof Error).toBeTruthy();
+          expect(error.message).toEqual('some error');
           done();
         });
         const generator = env.create('eventfailingstub:run');
-        assert.equal(generator.listenerCount('error'), 0);
+        expect(generator.listenerCount('error')).toEqual(0);
         env.runGenerator(generator).catch(() => {});
       });
 
       it('generator failing task emits error', function (done) {
         env.on('error', error => {
           expect(runMethod).toHaveBeenCalledTimes(1);
-          assert.ok(error instanceof Error);
-          assert.equal(error.message, 'some error');
+          expect(error instanceof Error).toBeTruthy();
+          expect(error.message).toEqual('some error');
           done();
         });
         const generator = env.create('promisefailingstub:run');
-        assert.equal(generator.listenerCount('error'), 0);
+        expect(generator.listenerCount('error')).toEqual(0);
         env.runGenerator(generator).catch(() => {});
       });
 
       it('returns the generator', async function () {
         const runReturnValue = env.run('stub:run');
-        assert.ok(runReturnValue instanceof Promise);
+        expect(runReturnValue instanceof Promise).toBeTruthy();
       });
 
       it('correctly rejects promise on generator not found error', function (done) {
@@ -531,9 +531,11 @@ for (const generatorVersion of allVersions) {
 
       it('correctly append scope in generator hint', async function () {
         return env.run('@dummyscope/package').then(
-          () => assert.fail(),
+          () => {
+            throw new Error('Should throw');
+          },
           error => {
-            assert.ok(error.message.includes('@dummyscope/generator-package'));
+            expect(error.message.includes('@dummyscope/generator-package')).toBeTruthy();
           },
         );
       });
@@ -548,27 +550,27 @@ for (const generatorVersion of allVersions) {
       it('importGenerator should return a class', async function () {
         env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
         const meta = env.getGeneratorMeta('fixtures:generator-module');
-        assert.equal(typeof (await meta.importGenerator()), 'function');
+        expect(typeof (await meta.importGenerator())).toEqual('function');
       });
       it('importModule should return the generator module', async function () {
         env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
         const meta = env.getGeneratorMeta('fixtures:generator-module');
         const Generator = await meta.importGenerator();
         const module = await meta.importModule();
-        assert.strictEqual(Generator, module.default);
+        expect(Generator).toBe(module.default);
       });
       it('intantiate should return an instance', async function () {
         env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
         const meta = env.getGeneratorMeta('fixtures:generator-module');
         const Generator = await meta.importGenerator();
         const generator = await meta.instantiate();
-        assert.ok(generator instanceof Generator);
+        expect(generator instanceof Generator).toBeTruthy();
       });
       it('intantiateHelp should return an instance with help option', async function () {
         env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
         const meta = env.getGeneratorMeta('fixtures:generator-module');
         const generator = await meta.instantiateHelp();
-        assert.strictEqual(generator.options.help, true);
+        expect(generator.options.help).toBe(true);
       });
     });
 
@@ -699,14 +701,14 @@ for (const generatorVersion of allVersions) {
         const specifiedJSON = path.join(__dirname, 'fixtures/generator-scoped/package.json');
         const specifiedNode = path.join(__dirname, 'fixtures/generator-scoped/package/nodefile.node');
 
-        assert.equal(specifiedJS, await resolveModulePath(modulePath));
-        assert.equal(specifiedJS, await resolveModulePath(specifiedJS));
-        assert.equal(specifiedJSON, await resolveModulePath(specifiedJSON));
-        assert.equal(specifiedNode, await resolveModulePath(specifiedNode));
+        expect(specifiedJS).toEqual(await resolveModulePath(modulePath));
+        expect(specifiedJS).toEqual(await resolveModulePath(specifiedJS));
+        expect(specifiedJSON).toEqual(await resolveModulePath(specifiedJSON));
+        expect(specifiedNode).toEqual(await resolveModulePath(specifiedNode));
 
         const aModulePath = path.join(__dirname, 'fixtures/generator-scoped/app');
         const aSpecifiedJS = path.join(__dirname, 'fixtures/generator-scoped/app/index.js');
-        assert.equal(aSpecifiedJS, await resolveModulePath(aModulePath));
+        expect(aSpecifiedJS).toEqual(await resolveModulePath(aModulePath));
       });
     });
 
@@ -714,38 +716,32 @@ for (const generatorVersion of allVersions) {
       beforeEach(async function () {
         simplePath = path.join(__dirname, 'fixtures/generator-simple');
         extendPath = path.join(__dirname, './fixtures/generator-extend/support');
-        assert.equal(env.namespaces().length, 0, 'env should be empty');
+        expect(env.namespaces().length).toEqual(0);
         env.register(simplePath, 'fixtures:generator-simple', simplePath);
         env.register(extendPath, 'scaffold');
       });
 
       it('store registered generators', async function () {
-        assert.equal(env.namespaces().length, 2);
+        expect(env.namespaces().length).toEqual(2);
       });
 
       it('determine registered Generator namespace and resolved path', async function () {
         const simple = await env.get('fixtures:generator-simple');
-        assert.equal(typeof simple, 'function');
-        assert.ok(simple.namespace, 'fixtures:generator-simple');
-        assert.ok(simple.resolved, path.resolve(simplePath));
-        assert.ok(simple.packagePath, simplePath);
+        expect(typeof simple).toEqual('function');
+        expect(simple.namespace).toBeTruthy();
+        expect(simple.resolved).toBeTruthy();
+        expect(simple.packagePath).toBeTruthy();
 
         const extend = await env.get('scaffold');
-        assert.equal(typeof extend, 'function');
-        assert.ok(extend.namespace, 'scaffold');
-        assert.ok(extend.resolved, path.resolve(extendPath));
+        expect(typeof extend).toEqual('function');
+        expect(extend.namespace).toBeTruthy();
+        expect(extend.resolved).toBeTruthy();
       });
 
       it('throw when String is not passed as first parameter', () => {
-        assert.rejects(function () {
-          env.register(() => {}, 'blop');
-        });
-        assert.rejects(function () {
-          env.register([], 'blop');
-        });
-        assert.rejects(function () {
-          env.register(false, 'blop');
-        });
+        expect(() => env.register(() => {}, 'blop')).not.toThrow();
+        expect(() => env.register([], 'blop')).toThrow();
+        expect(() => env.register(false, 'blop')).toThrow();
       });
     });
 
@@ -754,7 +750,7 @@ for (const generatorVersion of allVersions) {
         env.alias(/^prefix-(.*)$/, '$1');
         simpleDummy = esmocha.fn();
         simplePath = path.join(__dirname, 'fixtures/generator-simple');
-        assert.equal(env.namespaces().length, 0, 'env should be empty');
+        expect(env.namespaces().length).toEqual(0);
         await env.register(simplePath, { namespace: 'fixtures:generator-simple', packagePath: simplePath });
         await env.register(simplePath, { namespace: 'fixtures2', packagePath: simplePath });
         env.register(simpleDummy, { namespace: 'fixtures:dummy-simple', resolved: 'dummy/path', packagePath: 'dummy/packagePath' });
@@ -762,14 +758,14 @@ for (const generatorVersion of allVersions) {
       });
 
       it('determine registered Generator namespace and resolved path', async function () {
-        assert.equal(await env.getPackagePath('fixtures:generator-simple'), simplePath);
-        assert.equal(await env.getPackagePath('fixtures'), 'new-path');
-        assert.deepEqual(await env.getPackagePaths('fixtures'), ['new-path', join('dummy/packagePath'), simplePath]);
+        expect(await env.getPackagePath('fixtures:generator-simple')).toEqual(simplePath);
+        expect(await env.getPackagePath('fixtures')).toEqual('new-path');
+        expect(await env.getPackagePaths('fixtures')).toEqual(['new-path', join('dummy/packagePath'), simplePath]);
 
         // With alias
-        assert.equal(await env.getPackagePath('prefix-fixtures:generator-simple'), await env.getPackagePath('fixtures:generator-simple'));
-        assert.equal(await env.getPackagePath('prefix-fixtures'), await env.getPackagePath('fixtures'));
-        assert.deepEqual(await env.getPackagePaths('prefix-fixtures'), await env.getPackagePaths('fixtures'));
+        expect(await env.getPackagePath('prefix-fixtures:generator-simple')).toEqual(await env.getPackagePath('fixtures:generator-simple'));
+        expect(await env.getPackagePath('prefix-fixtures')).toEqual(await env.getPackagePath('fixtures'));
+        expect(await env.getPackagePaths('prefix-fixtures')).toEqual(await env.getPackagePaths('fixtures'));
       });
     });
 
@@ -785,20 +781,20 @@ for (const generatorVersion of allVersions) {
       });
 
       it('register a function under a namespace', async function () {
-        assert.equal(completeDummy, await env.get('dummy:complete'));
+        expect(completeDummy).toEqual(await env.get('dummy:complete'));
       });
 
       it('registers the resolved path and package path', async function () {
-        assert.equal(join('dummy/path/index.js'), (await env.get('dummy:resolved')).resolved);
-        assert.equal(join('dummy/packagePath'), (await env.get('dummy:resolved')).packagePath);
+        expect(join('dummy/path/index.js')).toEqual((await env.get('dummy:resolved')).resolved);
+        expect(join('dummy/packagePath')).toEqual((await env.get('dummy:resolved')).packagePath);
       });
 
       it('throws if invalid generator', async function () {
-        assert.throws(env.register.bind(env, [], { namespace: 'dummy' }), /stub\sfunction/);
+        expect(env.register.bind(env, [], { namespace: 'dummy' })).toThrow(/stub\sfunction/);
       });
 
       it('throws if invalid namespace', async function () {
-        assert.throws(env.register.bind(env, simpleDummy, {}), /namespace/);
+        expect(env.register.bind(env, simpleDummy, {})).toThrow(/namespace/);
       });
     });
 
@@ -810,7 +806,7 @@ for (const generatorVersion of allVersions) {
       });
 
       it('get the list of namespaces', async function () {
-        assert.deepEqual(env.namespaces(), ['simple', 'extend:support', 'support:scaffold']);
+        expect(env.namespaces()).toEqual(['simple', 'extend:support', 'support:scaffold']);
       });
     });
 
@@ -822,8 +818,8 @@ for (const generatorVersion of allVersions) {
 
       it('get the registered Generators metadatas', async function () {
         const meta = env.getGeneratorsMeta().simple;
-        assert.deepEqual(meta.resolved, require.resolve(generatorPath));
-        assert.deepEqual(meta.namespace, 'simple');
+        expect(meta.resolved).toEqual(require.resolve(generatorPath));
+        expect(meta.namespace).toEqual('simple');
       });
     });
 
@@ -834,84 +830,83 @@ for (const generatorVersion of allVersions) {
       });
 
       it('get the registered generators names', async function () {
-        assert.deepEqual(env.getGeneratorNames(), ['simple']);
+        expect(env.getGeneratorNames()).toEqual(['simple']);
       });
     });
 
     describe('#namespace()', () => {
       it('create namespace from path', async function () {
-        assert.equal(env.namespace('backbone/all/index.js'), 'backbone:all');
-        assert.equal(env.namespace('backbone/all/main.js'), 'backbone:all');
-        assert.equal(env.namespace('backbone/all'), 'backbone:all');
-        assert.equal(env.namespace('backbone/all.js'), 'backbone:all');
-        assert.equal(env.namespace('backbone/app/index.js'), 'backbone:app');
-        assert.equal(env.namespace('backbone.js'), 'backbone');
+        expect(env.namespace('backbone/all/index.js')).toEqual('backbone:all');
+        expect(env.namespace('backbone/all/main.js')).toEqual('backbone:all');
+        expect(env.namespace('backbone/all')).toEqual('backbone:all');
+        expect(env.namespace('backbone/all.js')).toEqual('backbone:all');
+        expect(env.namespace('backbone/app/index.js')).toEqual('backbone:app');
+        expect(env.namespace('backbone.js')).toEqual('backbone');
 
-        assert.equal(env.namespace('generator-backbone/all.js'), 'backbone:all');
-        assert.equal(env.namespace('generator-mocha/backbone/model/index.js'), 'mocha:backbone:model');
-        assert.equal(env.namespace('generator-mocha/backbone/model.js'), 'mocha:backbone:model');
-        assert.equal(env.namespace('node_modules/generator-mocha/backbone/model.js'), 'mocha:backbone:model');
-        assert.equal(env.namespace('../node_modules/generator-mocha/backbone/model.js'), 'mocha:backbone:model');
-        assert.equal(env.namespace('../generator-mocha/backbone/model.js'), 'mocha:backbone:model');
+        expect(env.namespace('generator-backbone/all.js')).toEqual('backbone:all');
+        expect(env.namespace('generator-mocha/backbone/model/index.js')).toEqual('mocha:backbone:model');
+        expect(env.namespace('generator-mocha/backbone/model.js')).toEqual('mocha:backbone:model');
+        expect(env.namespace('node_modules/generator-mocha/backbone/model.js')).toEqual('mocha:backbone:model');
+        expect(env.namespace('../node_modules/generator-mocha/backbone/model.js')).toEqual('mocha:backbone:model');
+        expect(env.namespace('../generator-mocha/backbone/model.js')).toEqual('mocha:backbone:model');
       });
 
       it('create namespace from scoped path', async function () {
-        assert.equal(env.namespace('@dummyscope/generator-backbone/all.js'), '@dummyscope/backbone:all');
-        assert.equal(env.namespace('@dummyscope/generator-mocha/backbone/model/index.js'), '@dummyscope/mocha:backbone:model');
-        assert.equal(env.namespace('@dummyscope/generator-mocha/backbone/model.js'), '@dummyscope/mocha:backbone:model');
-        assert.equal(env.namespace('/node_modules/@dummyscope/generator-mocha/backbone/model.js'), '@dummyscope/mocha:backbone:model');
+        expect(env.namespace('@dummyscope/generator-backbone/all.js')).toEqual('@dummyscope/backbone:all');
+        expect(env.namespace('@dummyscope/generator-mocha/backbone/model/index.js')).toEqual('@dummyscope/mocha:backbone:model');
+        expect(env.namespace('@dummyscope/generator-mocha/backbone/model.js')).toEqual('@dummyscope/mocha:backbone:model');
+        expect(env.namespace('/node_modules/@dummyscope/generator-mocha/backbone/model.js')).toEqual('@dummyscope/mocha:backbone:model');
       });
 
       it('handle relative paths', async function () {
-        assert.equal(env.namespace('../local/stuff'), 'local:stuff');
-        assert.equal(env.namespace('./local/stuff'), 'local:stuff');
-        assert.equal(env.namespace('././local/stuff'), 'local:stuff');
-        assert.equal(env.namespace('../../local/stuff'), 'local:stuff');
+        expect(env.namespace('../local/stuff')).toEqual('local:stuff');
+        expect(env.namespace('./local/stuff')).toEqual('local:stuff');
+        expect(env.namespace('././local/stuff')).toEqual('local:stuff');
+        expect(env.namespace('../../local/stuff')).toEqual('local:stuff');
       });
 
       it('handles weird paths', async function () {
-        assert.equal(env.namespace('////gen/all'), 'gen:all');
-        assert.equal(env.namespace('generator-backbone///all.js'), 'backbone:all');
-        assert.equal(env.namespace('generator-backbone/././all.js'), 'backbone:all');
-        assert.equal(env.namespace('generator-backbone/generator-backbone/all.js'), 'backbone:all');
+        expect(env.namespace('////gen/all')).toEqual('gen:all');
+        expect(env.namespace('generator-backbone///all.js')).toEqual('backbone:all');
+        expect(env.namespace('generator-backbone/././all.js')).toEqual('backbone:all');
+        expect(env.namespace('generator-backbone/generator-backbone/all.js')).toEqual('backbone:all');
       });
 
       it("works with Windows' paths", async function () {
-        assert.equal(env.namespace('backbone\\all\\main.js'), 'backbone:all');
-        assert.equal(env.namespace('backbone\\all'), 'backbone:all');
-        assert.equal(env.namespace('backbone\\all.js'), 'backbone:all');
+        expect(env.namespace('backbone\\all\\main.js')).toEqual('backbone:all');
+        expect(env.namespace('backbone\\all')).toEqual('backbone:all');
+        expect(env.namespace('backbone\\all.js')).toEqual('backbone:all');
       });
 
       it('remove lookups from namespace', async function () {
-        assert.equal(env.namespace('backbone/generators/all/index.js'), 'backbone:all');
-        assert.equal(env.namespace('backbone/lib/generators/all/index.js'), 'backbone:all');
-        assert.equal(env.namespace('some-lib/generators/all/index.js'), 'some-lib:all');
-        assert.equal(env.namespace('my.thing/generators/app/index.js'), 'my.thing:app');
-        assert.equal(env.namespace('meta/generators/generators-thing/index.js'), 'meta:generators-thing');
+        expect(env.namespace('backbone/generators/all/index.js')).toEqual('backbone:all');
+        expect(env.namespace('backbone/lib/generators/all/index.js')).toEqual('backbone:all');
+        expect(env.namespace('some-lib/generators/all/index.js')).toEqual('some-lib:all');
+        expect(env.namespace('my.thing/generators/app/index.js')).toEqual('my.thing:app');
+        expect(env.namespace('meta/generators/generators-thing/index.js')).toEqual('meta:generators-thing');
       });
 
       it('remove path before the generator name', async function () {
-        assert.equal(env.namespace('/Users/yeoman/.nvm/v0.10.22/lib/node_modules/generator-backbone/all/index.js'), 'backbone:all');
-        assert.equal(
-          env.namespace('/Users/yeoman with space and ./.nvm/v0.10.22/lib/node_modules/generator-backbone/all/index.js'),
+        expect(env.namespace('/Users/yeoman/.nvm/v0.10.22/lib/node_modules/generator-backbone/all/index.js')).toEqual('backbone:all');
+        expect(env.namespace('/Users/yeoman with space and ./.nvm/v0.10.22/lib/node_modules/generator-backbone/all/index.js')).toEqual(
           'backbone:all',
         );
-        assert.equal(env.namespace('/usr/lib/node_modules/generator-backbone/all/index.js'), 'backbone:all');
-        assert.equal(env.namespace('c:\\projects\\m. projects\\generators\\generator-example\\generators\\app\\index.js'), 'example:app');
+        expect(env.namespace('/usr/lib/node_modules/generator-backbone/all/index.js')).toEqual('backbone:all');
+        expect(env.namespace('c:\\projects\\m. projects\\generators\\generator-example\\generators\\app\\index.js')).toEqual('example:app');
       });
 
       it('Handles non generator-* packages inside node_modules', async function () {
-        assert.equal(env.namespace('/Users/yeoman with space and ./.nvm/v0.10.22/lib/node_modules/example/all/index.js'), 'example:all');
-        assert.equal(env.namespace('c:\\projects\\node_modules\\example\\generators\\app\\index.js'), 'example:app');
+        expect(env.namespace('/Users/yeoman with space and ./.nvm/v0.10.22/lib/node_modules/example/all/index.js')).toEqual('example:all');
+        expect(env.namespace('c:\\projects\\node_modules\\example\\generators\\app\\index.js')).toEqual('example:app');
       });
 
       it('handle paths when multiples lookups are in it', async function () {
-        assert.equal(env.namespace('c:\\projects\\yeoman\\generators\\generator-example\\generators\\app\\index.js'), 'example:app');
+        expect(env.namespace('c:\\projects\\yeoman\\generators\\generator-example\\generators\\app\\index.js')).toEqual('example:app');
       });
 
       it('handles namespaces', async function () {
-        assert.equal(env.namespace('backbone:app'), 'backbone:app');
-        assert.equal(env.namespace('foo'), 'foo');
+        expect(env.namespace('backbone:app')).toEqual('backbone:app');
+        expect(env.namespace('foo')).toEqual('foo');
       });
     });
 
@@ -923,54 +918,54 @@ for (const generatorVersion of allVersions) {
       });
 
       it('get a specific generator', async function () {
-        assert.equal(await env.get('mocha:generator'), generator);
-        assert.equal(await env.get('fixtures:generator-mocha'), generator);
+        expect(await env.get('mocha:generator')).toEqual(generator);
+        expect(await env.get('fixtures:generator-mocha')).toEqual(generator);
       });
 
       it('fallback to requiring generator from a file path', async function () {
-        assert.equal(await env.get(path.join(__dirname, './fixtures/generator-mocha')), generator);
+        expect(await env.get(path.join(__dirname, './fixtures/generator-mocha'))).toEqual(generator);
       });
 
       it('returns undefined if namespace is not found', async function () {
-        assert.equal(await env.get('not:there'), undefined);
-        assert.equal(await env.get(), undefined);
+        expect(await env.get('not:there')).toEqual(undefined);
+        expect(await env.get()).toEqual(undefined);
       });
 
       it('works with modules', async function () {
         const generator = require('./fixtures/generator-module/generators/app/index.js');
         await env.register(path.join(__dirname, './fixtures/generator-module/generators/app'), 'fixtures:generator-module');
-        assert.equal(await env.get('fixtures:generator-module'), generator.default);
+        expect(await env.get('fixtures:generator-module')).toEqual(generator.default);
       });
     });
 
     describe('#alias()', () => {
       it('apply regex and replace with alternative value', async function () {
         env.alias(/^([^:]+)$/, '$1:app');
-        assert.equal(env.alias('foo'), 'foo:app');
+        expect(env.alias('foo')).toEqual('foo:app');
       });
 
       it('apply multiple regex', async function () {
         env.alias(/^([\d*:A-Za-z]+)$/, 'generator-$1');
         env.alias(/^([^:]+)$/, '$1:app');
-        assert.equal(env.alias('foo'), 'generator-foo:app');
+        expect(env.alias('foo')).toEqual('generator-foo:app');
       });
 
       it('apply latest aliases first', async function () {
         env.alias(/^([^:]+)$/, '$1:all');
         env.alias(/^([^:]+)$/, '$1:app');
-        assert.equal(env.alias('foo'), 'foo:app');
+        expect(env.alias('foo')).toEqual('foo:app');
       });
 
       it('alias empty namespace to `:app` by default', async function () {
-        assert.equal(env.alias('foo'), 'foo:app');
+        expect(env.alias('foo')).toEqual('foo:app');
       });
 
       it('alias removing prefix- from namespaces', async function () {
         env.alias(/^(@.*\/)?prefix-(.*)$/, '$1$2');
-        assert.equal(env.alias('prefix-foo'), 'foo:app');
-        assert.equal(env.alias('prefix-mocha:generator'), 'mocha:generator');
-        assert.equal(env.alias('prefix-fixtures:generator-mocha'), 'fixtures:generator-mocha');
-        assert.equal(env.alias('@scoped/prefix-fixtures:generator-mocha'), '@scoped/fixtures:generator-mocha');
+        expect(env.alias('prefix-foo')).toEqual('foo:app');
+        expect(env.alias('prefix-mocha:generator')).toEqual('mocha:generator');
+        expect(env.alias('prefix-fixtures:generator-mocha')).toEqual('fixtures:generator-mocha');
+        expect(env.alias('@scoped/prefix-fixtures:generator-mocha')).toEqual('@scoped/fixtures:generator-mocha');
       });
     });
 
@@ -983,35 +978,32 @@ for (const generatorVersion of allVersions) {
       });
 
       it('get a specific generator', async function () {
-        assert.equal(await env.get('prefix-mocha:generator'), generator);
-        assert.equal(await env.get('mocha:generator'), generator);
-        assert.equal(await env.get('prefix-fixtures:generator-mocha'), generator);
-        assert.equal(await env.get('fixtures:generator-mocha'), generator);
+        expect(await env.get('prefix-mocha:generator')).toEqual(generator);
+        expect(await env.get('mocha:generator')).toEqual(generator);
+        expect(await env.get('prefix-fixtures:generator-mocha')).toEqual(generator);
+        expect(await env.get('fixtures:generator-mocha')).toEqual(generator);
       });
     });
 
     describe('.createEnv()', () => {
       it('create an environment', () => {
         const environment = createEnvironment();
-        assert(environment);
+        expect(environment).toBeTruthy();
       });
     });
 
     describe('getContextMap', () => {
       it('creates an context', () => {
-        assert(env.getContextMap('foo') instanceof Map);
+        expect(env.getContextMap('foo') instanceof Map).toBeTruthy();
       });
 
       it('returns an existing context', () => {
-        assert.equal(env.getContextMap('foo'), env.getContextMap('foo'));
+        expect(env.getContextMap('foo')).toEqual(env.getContextMap('foo'));
       });
 
       it('supports factory', () => {
         const map = new Map();
-        assert.equal(
-          env.getContextMap('foo', () => map),
-          map,
-        );
+        expect(env.getContextMap('foo', () => map)).toEqual(map);
       });
     });
   });
