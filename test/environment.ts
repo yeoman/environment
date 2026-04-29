@@ -114,12 +114,12 @@ for (const generatorVersion of allVersions) {
       });
 
       it('output the general help', async function () {
-        expect(env.help().trim()).toEqual(expected);
+        expect(env.help().trim().replaceAll('\r\n', '\n')).toEqual(expected.replaceAll('\r\n', '\n'));
       });
 
       it('output the help with a custom bin name', async function () {
         expected = expected.replace('Usage: init', 'Usage: gg');
-        expect(env.help('gg').trim()).toEqual(expected);
+        expect(env.help('gg').trim().replaceAll('\r\n', '\n')).toEqual(expected.replaceAll('\r\n', '\n'));
       });
     });
 
