@@ -2,7 +2,6 @@
 // @ts-nocheck
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { stub } from 'sinon';
 import { after, afterEach, beforeEach, describe, esmocha, expect, it } from 'esmocha';
 import type { Mock } from 'node:test';
 
@@ -86,7 +85,7 @@ No change to package.json was detected. No package manager install will be execu
 
       describe('when package.json was committed', () => {
         beforeEach(async () => {
-          memFs.get = stub().returns({ committed: true });
+          memFs.get = esmocha.fn().mockReturnValue({ committed: true });
         });
 
         describe('with skipInstall', () => {

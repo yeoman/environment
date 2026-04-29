@@ -7,10 +7,8 @@ import process from 'node:process';
 import util from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
-import { after, afterEach, before, beforeEach, describe, expect, it } from 'esmocha';
+import { after, afterEach, before, beforeEach, describe, esmocha, expect, it } from 'esmocha';
 import { QueuedAdapter } from '@yeoman/adapter';
-import { spy, stub } from 'sinon';
-import type { SinonSpy, SinonStub } from 'sinon';
 import assert from 'yeoman-assert';
 import Environment, { createEnv as createEnvironment } from '../src/index.ts';
 import { resolveModulePath } from '../src/util/resolve.ts';
@@ -27,8 +25,8 @@ const GROUPED_QUEUE_VERSION = require('grouped-queue/package.json').version;
 for (const generatorVersion of allVersions) {
   const Generator = await importGenerator(generatorVersion);
   type GeneratorCtor = typeof Generator;
-  type GeneratorRunSpy = SinonSpy;
-  type GeneratorMockStub = SinonStub;
+  type GeneratorRunSpy = ReturnType<typeof esmocha.fn>;
+  type GeneratorMockStub = ReturnType<typeof esmocha.fn>;
 
   describe(`Environment with ${generatorVersion}`, () => {
     let mockedDefault: GeneratorMockStub;
@@ -58,7 +56,7 @@ for (const generatorVersion of allVersions) {
       });
 
       MockedGenerator = class MockedGenerator extends Generator {};
-      mockedDefault = stub();
+      mockedDefault = esmocha.fn();
       MockedGenerator.prototype.mockedDefault = mockedDefault;
     });
 
@@ -268,33 +266,33 @@ for (const generatorVersion of allVersions) {
       });
 
       it('should schedule generator queue', async function () {
-        env.queueTask = spy();
+        env.queueTask = esmocha.fn();
         await env.composeWith('stub');
-        assert(env.queueTask.calledOnce);
-        assert(env.queueTask.getCall(0).firstArg === 'environment:run');
+        expect(env.queueTask).toHaveBeenCalledTimes(1);
+        expect((env.queueTask as any).mock.calls[0][0]).toBe('environment:run');
       });
 
       describe('passing false schedule parameter', () => {
         it('should not schedule generator', async function () {
-          env.queueTask = spy();
+          env.queueTask = esmocha.fn();
           await env.composeWith('stub', { generatorArgs: [], schedule: false });
           if (isGreaterThan6(generatorVersion)) {
-            assert(env.queueTask.calledOnce);
-            assert(env.queueTask.getCall(0).firstArg !== 'environment:run');
+            expect(env.queueTask).toHaveBeenCalledTimes(1);
+            expect((env.queueTask as any).mock.calls[0][0]).not.toBe('environment:run');
           } else {
-            assert(env.queueTask.notCalled);
+            expect(env.queueTask).not.toHaveBeenCalled();
           }
         });
       });
       describe('passing function schedule parameter', () => {
         it('returning false should not schedule generator', async function () {
-          env.queueTask = spy();
+          env.queueTask = esmocha.fn();
           await env.composeWith('stub', { generatorArgs: [], schedule: () => false });
           if (isGreaterThan6(generatorVersion)) {
-            assert(env.queueTask.calledOnce);
-            assert(env.queueTask.getCall(0).firstArg !== 'environment:run');
+            expect(env.queueTask).toHaveBeenCalledTimes(1);
+            expect((env.queueTask as any).mock.calls[0][0]).not.toBe('environment:run');
           } else {
-            assert(env.queueTask.notCalled);
+            expect(env.queueTask).not.toHaveBeenCalled();
           }
         });
       });
@@ -394,7 +392,7 @@ for (const generatorVersion of allVersions) {
         };
 
         const runName = isLegacyVersion(generatorVersion) ? 'run' : 'queueTasks';
-        runMethod = spy(Generator.prototype, runName);
+        runMethod = esmocha.spyOn(Generator.prototype as any, runName as any);
         env.register(stubGenerator, { namespace: 'stub:run' });
         env.register(writingStubGenerator, { namespace: 'writingstub:run' });
         env.register(promiseFailingStubGenerator, { namespace: 'promisefailingstub:run' });
@@ -403,12 +401,12 @@ for (const generatorVersion of allVersions) {
       });
 
       afterEach(function () {
-        runMethod.restore();
+        runMethod.mockRestore();
       });
 
       it('runs a registered generator', async function () {
         return env.run(['stub:run']).then(() => {
-          assert.ok(runMethod.calledOnce);
+          expect(runMethod).toHaveBeenCalledTimes(1);
         });
       });
 
@@ -445,7 +443,7 @@ for (const generatorVersion of allVersions) {
         const arguments_ = ['stub:run', 'module'];
         const options = { skipInstall: true };
         return env.run(arguments_, options).then(() => {
-          assert.ok(runMethod.calledOnce);
+          expect(runMethod).toHaveBeenCalledTimes(1);
           assert.equal(capturedArgs[0], 'module');
           assert.equal(capturedArgs[1].skipInstall, true);
         });
@@ -454,7 +452,7 @@ for (const generatorVersion of allVersions) {
       it('can take string as args', async function () {
         const arguments_ = 'stub:run module';
         return env.run(arguments_).then(() => {
-          assert.ok(runMethod.calledOnce);
+          expect(runMethod).toHaveBeenCalledTimes(1);
           assert.equal(capturedArgs[0], 'module');
         });
       });
@@ -466,7 +464,7 @@ for (const generatorVersion of allVersions) {
             throw new Error('not supposed to happen');
           },
           error => {
-            assert.ok(runMethod.notCalled);
+            expect(runMethod).not.toHaveBeenCalled();
             assert.ok(error.message.includes('Must provide at least one argument, the generator namespace to invoke.'));
           },
         );
@@ -492,7 +490,7 @@ for (const generatorVersion of allVersions) {
 
       it('generator error event emits error event when no callback passed', function (done) {
         env.on('error', error => {
-          assert.ok(runMethod.calledOnce);
+          expect(runMethod).toHaveBeenCalledTimes(1);
           assert.ok(error instanceof Error);
           assert.equal(error.message, 'some error');
           done();
@@ -504,7 +502,7 @@ for (const generatorVersion of allVersions) {
 
       it('generator failing task emits error', function (done) {
         env.on('error', error => {
-          assert.ok(runMethod.calledOnce);
+          expect(runMethod).toHaveBeenCalledTimes(1);
           assert.ok(error instanceof Error);
           assert.equal(error.message, 'some error');
           done();
@@ -577,16 +575,16 @@ for (const generatorVersion of allVersions) {
     describe('#run() a ts generator', () => {
       beforeEach(async function () {
         await env.register(path.join(__dirname, './fixtures/generator-ts/generators/app/index.ts'), { namespace: 'ts:app' });
-        runMethod = spy((await env.get('ts:app')).prototype, 'exec');
+        runMethod = esmocha.spyOn((await env.get('ts:app')).prototype as any, 'exec' as any);
       });
 
       afterEach(function () {
-        runMethod.restore();
+        runMethod.mockRestore();
       });
 
       it('runs a registered generator', async function () {
         return env.run(['ts:app']).then(() => {
-          assert.ok(runMethod.calledOnce);
+          expect(runMethod).toHaveBeenCalledTimes(1);
         });
       });
     });
@@ -595,27 +593,27 @@ for (const generatorVersion of allVersions) {
       beforeEach(async function () {
         await env.register(path.join(__dirname, './fixtures/generator-common-js/generators/cjs/index.cjs'), { namespace: 'common-js:cjs' });
         const Generator = await env.get('common-js:cjs');
-        runMethod = spy(Generator.prototype, 'default');
-        postConstruct = spy(Generator.prototype, '_postConstruct');
+        runMethod = esmocha.spyOn(Generator.prototype as any, 'default' as any);
+        postConstruct = esmocha.spyOn(Generator.prototype as any, '_postConstruct' as any);
       });
 
       afterEach(function () {
-        runMethod.restore();
-        postConstruct.restore();
+        runMethod.mockRestore();
+        postConstruct.mockRestore();
       });
 
       it('runs a registered generator', async function () {
         await env.run(['common-js:cjs']);
-        assert.ok(runMethod.calledOnce);
+        expect(runMethod).toHaveBeenCalledTimes(1);
       });
       it('calls generator _postConstruct method', async function () {
         return env.run(['common-js:cjs']).then(() => {
-          assert.ok(postConstruct.calledOnce);
+          expect(postConstruct).toHaveBeenCalledTimes(1);
         });
       });
       it('should not call generator _postConstruct method with help option', async function () {
         return env.run(['common-js:cjs'], { help: true }).then(() => {
-          assert.ok(postConstruct.notCalled);
+          expect(postConstruct).not.toHaveBeenCalled();
         });
       });
     });
@@ -625,28 +623,28 @@ for (const generatorVersion of allVersions) {
         beforeEach(async function () {
           await env.register(path.join(__dirname, './fixtures/generator-esm/generators/app/index.js'), { namespace: 'esm:app' });
           const esmClass = await env.get('esm:app');
-          runMethod = spy(esmClass.prototype, 'default');
-          postConstruct = spy(esmClass.prototype, '_postConstruct');
+          runMethod = esmocha.spyOn(esmClass.prototype as any, 'default' as any);
+          postConstruct = esmocha.spyOn(esmClass.prototype as any, '_postConstruct' as any);
         });
 
         afterEach(function () {
-          runMethod.restore();
-          postConstruct.restore();
+          runMethod.mockRestore();
+          postConstruct.mockRestore();
         });
 
         it('runs a registered generator', async function () {
           return env.run(['esm:app']).then(() => {
-            assert.ok(runMethod.calledOnce);
+            expect(runMethod).toHaveBeenCalledTimes(1);
           });
         });
         it('calls generator _postConstruct method', async function () {
           return env.run(['esm:app']).then(() => {
-            assert.ok(postConstruct.calledOnce);
+            expect(postConstruct).toHaveBeenCalledTimes(1);
           });
         });
         it('should not call generator _postConstruct method with help option', async function () {
           return env.run(['esm:app'], { help: true }).then(() => {
-            assert.ok(postConstruct.notCalled);
+            expect(postConstruct).not.toHaveBeenCalled();
           });
         });
       });
@@ -654,16 +652,16 @@ for (const generatorVersion of allVersions) {
         beforeEach(async function () {
           await env.register(path.join(__dirname, './fixtures/generator-esm/generators/mjs/index.mjs'), { namespace: 'esm:mjs' });
           const esmClass = await env.get('esm:mjs');
-          runMethod = spy(esmClass.prototype, 'default');
+          runMethod = esmocha.spyOn(esmClass.prototype as any, 'default' as any);
         });
 
         afterEach(function () {
-          runMethod.restore();
+          runMethod.mockRestore();
         });
 
         it('runs a registered generator', async function () {
           return env.run(['esm:mjs']).then(() => {
-            assert.ok(runMethod.calledOnce);
+            expect(runMethod).toHaveBeenCalledTimes(1);
           });
         });
       });
@@ -675,7 +673,7 @@ for (const generatorVersion of allVersions) {
 
         it('runs a registered generator', async function () {
           return env.run(['esm:create']).then(() => {
-            assert.ok(mockedDefault.calledOnce);
+            expect(mockedDefault).toHaveBeenCalledTimes(1);
           });
         });
       });
@@ -688,7 +686,7 @@ for (const generatorVersion of allVersions) {
 
         it('runs a registered generator', async function () {
           return env.run(['esm:create-inherited']).then(() => {
-            assert.ok(mockedDefault.calledOnce);
+            expect(mockedDefault).toHaveBeenCalledTimes(1);
           });
         });
       });
@@ -754,7 +752,7 @@ for (const generatorVersion of allVersions) {
     describe('#getPackagePath and #getPackagePaths()', () => {
       beforeEach(async function () {
         env.alias(/^prefix-(.*)$/, '$1');
-        simpleDummy = spy();
+        simpleDummy = esmocha.fn();
         simplePath = path.join(__dirname, 'fixtures/generator-simple');
         assert.equal(env.namespaces().length, 0, 'env should be empty');
         await env.register(simplePath, { namespace: 'fixtures:generator-simple', packagePath: simplePath });
@@ -777,8 +775,8 @@ for (const generatorVersion of allVersions) {
 
     describe('#register()', () => {
       beforeEach(async function () {
-        simpleDummy = spy();
-        resolvedDummy = spy();
+        simpleDummy = esmocha.fn();
+        resolvedDummy = esmocha.fn();
         completeDummy = function () {};
         util.inherits(completeDummy, Generator);
         env.register(simpleDummy, { namespace: 'dummy:simple' });
