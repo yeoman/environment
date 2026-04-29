@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import { createHelpers } from 'yeoman-test';
-import Environment from '../src/index.ts';
+import BaseEnvironment from '../src/environment-base.ts';
+import FullEnvironment from '../src/index.ts';
 
-type EnvironmentConstructor = typeof Environment;
+type EnvironmentConstructor = typeof BaseEnvironment;
 type CreateEnvArg = string[] | Record<string, unknown> | undefined;
 
 export const getCreateEnv =
@@ -14,7 +15,7 @@ export const getCreateEnv =
       : new EnvironmentCtor(arguments_, ...(others as ConstructorParameters<EnvironmentConstructor>));
 
 export default createHelpers({
-  createEnv: getCreateEnv(Environment),
+  createEnv: getCreateEnv(FullEnvironment),
 });
 
 export { result } from 'yeoman-test';

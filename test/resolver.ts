@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import path, { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
-import fs from 'fs-extra';
+import fs from 'node:fs';
 import { after, afterEach, before, beforeEach, describe, expect, it } from 'esmocha';
 import { execaSync } from 'execa';
 import slash from 'slash';
@@ -21,12 +19,12 @@ const __dirname = dirname(__filename);
 
 const globalLookupTest = () => (process.env.NODE_PATH ? it : xit);
 
-const toRelativeMeta = (meta: Record<string, GeneratorMeta>): Record<string, Record<string, string>> =>
+const toRelativeMeta = (meta: Record<string, GeneratorMeta>): Record<string, Record<string, any>> =>
   Object.fromEntries(
     Object.entries(meta).map(([namespace, meta]) => {
       return [
         namespace,
-        { ...meta, packagePath: slash(relative(__dirname, meta.packagePath)), resolved: slash(relative(__dirname, meta.resolved)) },
+        { ...meta, packagePath: slash(relative(__dirname, meta.packagePath!)), resolved: slash(relative(__dirname, meta.resolved!)) },
       ];
     }),
   );
@@ -218,16 +216,16 @@ describe('Environment Resolver', async function () {
     describe('when node_modules is a symlink', async () => {
       before(() => {
         if (!fs.existsSync(path.resolve('orig'))) {
-          fs.ensureDirSync(path.resolve('orig'));
-          fs.moveSync(path.resolve('node_modules'), path.resolve('orig/node_modules'));
-          fs.ensureSymlinkSync(path.resolve('orig/node_modules'), path.resolve('node_modules'));
+          fs.mkdirSync(path.resolve('orig'), { recursive: true });
+          fs.renameSync(path.resolve('node_modules'), path.resolve('orig/node_modules'));
+          fs.symlinkSync(path.resolve('orig/node_modules'), path.resolve('node_modules'));
         }
       });
       after(() => {
         if (fs.existsSync(path.resolve('orig'))) {
-          fs.removeSync(path.resolve('node_modules'));
-          fs.moveSync(path.resolve('orig/node_modules'), path.resolve('node_modules'));
-          fs.removeSync(path.resolve('orig'));
+          fs.rmSync(path.resolve('node_modules'), { recursive: true, force: true });
+          fs.renameSync(path.resolve('orig/node_modules'), path.resolve('node_modules'));
+          fs.rmSync(path.resolve('orig'), { recursive: true, force: true });
         }
       });
 
@@ -276,13 +274,13 @@ describe('Environment Resolver', async function () {
         lookupOptionsBackup = lookupOptions;
         lookupOptions = { npmPaths: [customRepositoryPath] };
         if (!fs.existsSync(customRepositoryPath)) {
-          fs.moveSync(path.resolve('node_modules'), customRepositoryPath);
+          fs.renameSync(path.resolve('node_modules'), customRepositoryPath);
         }
       });
       after(() => {
         lookupOptions = lookupOptionsBackup;
         if (fs.existsSync(path.resolve('orig'))) {
-          fs.moveSync(customRepositoryPath, path.resolve('node_modules'));
+          fs.renameSync(customRepositoryPath, path.resolve('node_modules'));
         }
       });
 
