@@ -1,14 +1,12 @@
 import assert from 'node:assert';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
 import { stub } from 'sinon';
 import { beforeEach, describe, esmocha, expect, it } from 'esmocha';
 import { TestAdapter } from 'yeoman-test';
 import { prepareCommand } from '../src/commands.ts';
 import Environment from '../src/index.ts';
 
-const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -170,7 +168,7 @@ describe('environment (command)', () => {
 
         beforeEach(async () => {
           const command = await prepareCommand({
-            resolved: require.resolve('./fixtures/generator-commands/generators/arguments/index.js'),
+            resolved: fileURLToPath(new URL('fixtures/generator-commands/generators/arguments/index.js', import.meta.url)),
           });
           await command.parseAsync(['node', 'yo', 'bar']);
 
@@ -191,7 +189,9 @@ describe('environment (command)', () => {
         let environment;
 
         beforeEach(async () => {
-          const command = await prepareCommand({ resolved: require.resolve('./fixtures/generator-commands/generators/options/index.js') });
+          const command = await prepareCommand({
+            resolved: fileURLToPath(new URL('fixtures/generator-commands/generators/options/index.js', import.meta.url)),
+          });
           await command.parseAsync([
             'node',
             'yo',
