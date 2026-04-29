@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
-import assert from 'node:assert';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { beforeEach, describe, esmocha, expect, it } from 'esmocha';
@@ -66,16 +65,16 @@ describe('environment (command)', () => {
         beforeEach(async () => {
           await environment.execute('commands:options');
           const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
-          assert.ok(generators.length === 1);
+          expect(generators.length).toEqual(1);
           generator = generators[0];
         });
 
         it('should parse options correctly', () => {
-          assert.strictEqual(generator.options.bool, undefined);
-          assert.strictEqual(generator.options.boolDefault, true);
+          expect(generator.options.bool).toBe(undefined);
+          expect(generator.options.boolDefault).toBe(true);
 
-          assert.strictEqual(generator.options.string, undefined);
-          assert.strictEqual(generator.options.stringDefault, 'defaultValue');
+          expect(generator.options.string).toBe(undefined);
+          expect(generator.options.stringDefault).toBe('defaultValue');
         });
       });
 
@@ -92,16 +91,16 @@ describe('environment (command)', () => {
           ]);
 
           const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
-          assert.ok(generators.length === 1);
+          expect(generators.length).toEqual(1);
           generator = generators[0];
         });
 
         it('should parse options correctly', () => {
-          assert.strictEqual(generator.options.bool, true);
-          assert.strictEqual(generator.options.boolDefault, false);
+          expect(generator.options.bool).toBe(true);
+          expect(generator.options.boolDefault).toBe(false);
 
-          assert.strictEqual(generator.options.string, 'customValue');
-          assert.strictEqual(generator.options.stringDefault, 'newValue');
+          expect(generator.options.string).toBe('customValue');
+          expect(generator.options.stringDefault).toBe('newValue');
         });
       });
 
@@ -110,13 +109,13 @@ describe('environment (command)', () => {
         beforeEach(async () => {
           await environment.execute('commands:options', ['-b', '-s', 'customValue']);
           const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
-          assert.ok(generators.length === 1);
+          expect(generators.length).toEqual(1);
           generator = generators[0];
         });
 
         it('should parse options correctly', () => {
-          assert.strictEqual(generator.options.bool, true);
-          assert.strictEqual(generator.options.string, 'customValue');
+          expect(generator.options.bool).toBe(true);
+          expect(generator.options.string).toBe('customValue');
         });
       });
     });
@@ -137,12 +136,12 @@ describe('environment (command)', () => {
         beforeEach(async () => {
           await environment.execute('commands:arguments');
           const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
-          assert.ok(generators.length === 1);
+          expect(generators.length).toEqual(1);
           generator = generators[0];
         });
 
         it('should parse arguments correctly', () => {
-          assert.deepStrictEqual(generator._args, []);
+          expect(generator._args).toEqual([]);
         });
       });
 
@@ -151,16 +150,16 @@ describe('environment (command)', () => {
         beforeEach(async () => {
           await environment.execute('commands:arguments', ['foo']);
           const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
-          assert.ok(generators.length === 1);
+          expect(generators.length).toEqual(1);
           generator = generators[0];
         });
 
         it('should parse arguments correctly', () => {
-          assert.deepStrictEqual(generator._args, ['foo']);
+          expect(generator._args).toEqual(['foo']);
         });
 
         it('should load arguments into options', () => {
-          assert.strictEqual(generator.options.name, 'foo');
+          expect(generator.options.name).toBe('foo');
         });
       });
     });
@@ -180,12 +179,12 @@ describe('environment (command)', () => {
 
           environment = command.env;
           const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
-          assert.ok(generators.length === 1);
+          expect(generators.length).toEqual(1);
           generator = generators[0];
         });
 
         it('should parse arguments correctly', () => {
-          assert.deepStrictEqual(generator._args, ['bar']);
+          expect(generator._args).toEqual(['bar']);
         });
       });
     });
@@ -211,16 +210,16 @@ describe('environment (command)', () => {
 
           environment = command.env;
           const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
-          assert.ok(generators.length === 1);
+          expect(generators.length).toEqual(1);
           generator = generators[0];
         });
 
         it('should parse options correctly', () => {
-          assert.strictEqual(generator.options.bool, true);
-          assert.strictEqual(generator.options.boolDefault, false);
+          expect(generator.options.bool).toBe(true);
+          expect(generator.options.boolDefault).toBe(false);
 
-          assert.strictEqual(generator.options.string, 'customValue');
-          assert.strictEqual(generator.options.stringDefault, 'newValue');
+          expect(generator.options.string).toBe('customValue');
+          expect(generator.options.stringDefault).toBe('newValue');
         });
       });
     });
