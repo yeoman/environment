@@ -183,7 +183,7 @@ for (const generatorVersion of allVersions) {
         const arguments_ = ['foo', 'bar'];
         env.arguments = arguments_;
         const generator = await env.create('stub');
-        expect(generator.arguments).not.toEqual(arguments_);
+        expect(generator.arguments).not.toBe(arguments_);
       });
 
       it('pass options.options', async function () {
