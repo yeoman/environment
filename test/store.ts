@@ -9,59 +9,74 @@ const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+type StoredModule = {
+  usage?: string;
+  namespace?: string;
+  resolved?: string;
+};
+
 describe('Store', async () => {
-  beforeEach(async function () {
-    this.store = new Store();
+  let store: Store;
+
+  beforeEach(async () => {
+    store = new Store({} as any);
   });
 
   describe('#add() / #get()', async () => {
-    beforeEach(async function () {
-      this.modulePath = path.join(__dirname, 'fixtures/generator-mocha');
-      this.module = require(this.modulePath);
+    let modulePath: string;
+    let module: StoredModule;
+
+    beforeEach(async () => {
+      modulePath = path.join(__dirname, 'fixtures/generator-mocha');
+      module = require(modulePath) as StoredModule;
     });
 
     describe('storing as module', async () => {
-      beforeEach(async function () {
-        this.store.add({ namespace: 'foo:module', resolved: '/foo/path' }, this.module);
-        this.outcome = await this.store.get('foo:module');
+      let outcome: StoredModule;
+
+      beforeEach(async () => {
+        store.add({ namespace: 'foo:module', resolved: '/foo/path' }, module);
+        outcome = (await store.get('foo:module')) as StoredModule;
       });
 
-      it('store and return the module', async function () {
-        assert.equal(this.outcome, this.module);
+      it('store and return the module', async () => {
+        assert.equal(outcome, module);
       });
 
-      it('assign meta data to the module', async function () {
-        assert.equal(this.outcome.namespace, 'foo:module');
-        assert.equal(this.outcome.resolved, join('/foo/path/index.js'));
+      it('assign meta data to the module', async () => {
+        assert.equal(outcome.namespace, 'foo:module');
+        assert.equal(outcome.resolved, join('/foo/path/index.js'));
       });
     });
 
     describe('storing as module path', async () => {
-      beforeEach(async function () {
-        this.store.add({ namespace: 'foo:path', resolved: this.modulePath });
-        this.outcome = await this.store.get('foo:path');
+      let outcome: StoredModule;
+
+      beforeEach(async () => {
+        store.add({ namespace: 'foo:path', resolved: modulePath });
+        outcome = (await store.get('foo:path')) as StoredModule;
       });
 
-      it('store and returns the required module', async function () {
-        assert.notEqual(this.outcome, this.modulePath);
-        assert.equal(this.outcome.usage, 'Usage can be used to customize the help output');
+      it('store and returns the required module', async () => {
+        assert.notEqual(outcome, modulePath);
+        assert.equal(outcome.usage, 'Usage can be used to customize the help output');
       });
 
-      it('assign meta data to the module', async function () {
-        assert.equal(this.outcome.resolved, join(this.modulePath, 'index.js'));
-        assert.equal(this.outcome.namespace, 'foo:path');
+      it('assign meta data to the module', async () => {
+        assert.equal(outcome.resolved, join(modulePath, 'index.js'));
+        assert.equal(outcome.namespace, 'foo:path');
       });
     });
   });
 
   describe('#namespaces()', async () => {
-    beforeEach(async function () {
-      this.store.add({ namespace: 'foo' }, {});
-      this.store.add({ namespace: 'lab' }, {});
+    beforeEach(async () => {
+      store.add({ namespace: 'foo' }, {});
+      store.add({ namespace: 'lab' }, {});
     });
 
-    it('return stored module namespaces', async function () {
-      assert.deepEqual(this.store.namespaces(), ['foo', 'lab']);
+    it('return stored module namespaces', async () => {
+      assert.deepEqual(store.namespaces(), ['foo', 'lab']);
     });
   });
 });

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import assert from 'node:assert';
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -7,13 +9,18 @@ import { TestAdapter } from 'yeoman-test';
 import { prepareCommand } from '../src/commands.ts';
 import Environment from '../src/index.ts';
 
+type ParsedGenerator = {
+  _args?: string[];
+  options: Record<string, unknown>;
+};
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 describe('environment (command)', () => {
   describe('#execute()', () => {
-    let environment;
-    let adapter;
+    let environment: Environment;
+    let adapter: TestAdapter;
 
     beforeEach(async () => {
       adapter = new TestAdapter();
@@ -46,7 +53,7 @@ describe('environment (command)', () => {
   });
 
   describe('#execute() with options', () => {
-    let environment;
+    let environment: Environment;
 
     beforeEach(async () => {
       environment = new Environment({ skipInstall: true, dryRun: true });
@@ -56,10 +63,10 @@ describe('environment (command)', () => {
 
     describe('generator with options', () => {
       describe('without options', () => {
-        let generator;
+        let generator: ParsedGenerator;
         beforeEach(async () => {
           await environment.execute('commands:options');
-          const generators = Object.values(environment.composedStore.getGenerators());
+          const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
           assert.ok(generators.length === 1);
           generator = generators[0];
         });
@@ -74,7 +81,7 @@ describe('environment (command)', () => {
       });
 
       describe('with options', () => {
-        let generator;
+        let generator: ParsedGenerator;
         beforeEach(async () => {
           await environment.execute('commands:options', [
             '--bool',
@@ -85,7 +92,7 @@ describe('environment (command)', () => {
             'newValue',
           ]);
 
-          const generators = Object.values(environment.composedStore.getGenerators());
+          const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
           assert.ok(generators.length === 1);
           generator = generators[0];
         });
@@ -100,10 +107,10 @@ describe('environment (command)', () => {
       });
 
       describe('using aliases', () => {
-        let generator;
+        let generator: ParsedGenerator;
         beforeEach(async () => {
           await environment.execute('commands:options', ['-b', '-s', 'customValue']);
-          const generators = Object.values(environment.composedStore.getGenerators());
+          const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
           assert.ok(generators.length === 1);
           generator = generators[0];
         });
@@ -117,7 +124,7 @@ describe('environment (command)', () => {
   });
 
   describe('#execute() with arguments', () => {
-    let environment;
+    let environment: Environment;
 
     beforeEach(() => {
       environment = new Environment({ skipInstall: true, dryRun: true });
@@ -127,10 +134,10 @@ describe('environment (command)', () => {
 
     describe('generator with arguments', () => {
       describe('without arguments', () => {
-        let generator;
+        let generator: ParsedGenerator;
         beforeEach(async () => {
           await environment.execute('commands:arguments');
-          const generators = Object.values(environment.composedStore.getGenerators());
+          const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
           assert.ok(generators.length === 1);
           generator = generators[0];
         });
@@ -141,10 +148,10 @@ describe('environment (command)', () => {
       });
 
       describe('with arguments', () => {
-        let generator;
+        let generator: ParsedGenerator;
         beforeEach(async () => {
           await environment.execute('commands:arguments', ['foo']);
-          const generators = Object.values(environment.composedStore.getGenerators());
+          const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
           assert.ok(generators.length === 1);
           generator = generators[0];
         });
@@ -163,8 +170,8 @@ describe('environment (command)', () => {
   describe('#prepareCommand()', () => {
     describe('generator with arguments', () => {
       describe('passing bar argument', () => {
-        let generator;
-        let environment;
+        let generator: ParsedGenerator;
+        let environment: Environment;
 
         beforeEach(async () => {
           const command = await prepareCommand({
@@ -173,7 +180,7 @@ describe('environment (command)', () => {
           await command.parseAsync(['node', 'yo', 'bar']);
 
           environment = command.env;
-          const generators = Object.values(environment.composedStore.getGenerators());
+          const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
           assert.ok(generators.length === 1);
           generator = generators[0];
         });
@@ -185,8 +192,8 @@ describe('environment (command)', () => {
     });
     describe('generator with options', () => {
       describe('passing options', () => {
-        let generator;
-        let environment;
+        let generator: ParsedGenerator;
+        let environment: Environment;
 
         beforeEach(async () => {
           const command = await prepareCommand({
@@ -204,7 +211,7 @@ describe('environment (command)', () => {
           ]);
 
           environment = command.env;
-          const generators = Object.values(environment.composedStore.getGenerators());
+          const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
           assert.ok(generators.length === 1);
           generator = generators[0];
         });

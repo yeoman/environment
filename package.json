@@ -48,8 +48,8 @@
     "doc:prettier": "prettier $npm_package_config_doc_path --write --ignore-path .prettierignore-doc",
     "fix": "eslint --fix && prettier . --write",
     "prepare": "npm run build",
-    "pretest": "eslint && prettier . --check",
-    "test": "c8 esmocha --forbid-only"
+    "pretest": "eslint && prettier . --check && tsc -p tsconfig.test.json",
+    "test": "c8 --include 'src/**' esmocha --forbid-only"
   },
   "config": {
     "doc_path": "./yeoman-environment-doc"
