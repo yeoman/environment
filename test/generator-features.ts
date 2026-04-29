@@ -1,8 +1,8 @@
 import assert from 'node:assert';
 import { stub } from 'sinon';
 import { after, afterEach, before, beforeEach, describe, esmocha, expect, it } from 'esmocha';
-import helpers, { getCreateEnv as getCreateEnvironment, result } from './helpers.js';
-import { greaterThan5 } from './generator-versions.js';
+import helpers, { getCreateEnv as getCreateEnvironment, result } from './helpers.ts';
+import { greaterThan5 } from './generator-versions.ts';
 
 const commitModule = await import('../src/commit.ts');
 const { commitSharedFsTask: originalCommitSharedFsTask } = commitModule;

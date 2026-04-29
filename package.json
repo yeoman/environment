@@ -49,11 +49,7 @@
     "fix": "eslint --fix && prettier . --write",
     "prepare": "npm run build",
     "pretest": "eslint && prettier . --check",
-    "test": "c8 esmocha --forbid-only",
-    "test-base": "c8 esmocha test/environment*.js test/store.js test/util.js test/adapter.js",
-    "test-environment": "c8 esmocha test/environment.js",
-    "test-generators": "c8 esmocha test/generators.js",
-    "test-resolver": "c8 esmocha test/resolver.js"
+    "test": "c8 esmocha --forbid-only"
   },
   "config": {
     "doc_path": "./yeoman-environment-doc"
@@ -115,11 +111,11 @@
     "@yeoman/types": "^1.10.3",
     "mem-fs": "^4.1.4"
   },
-  "acceptDependencies": {
-    "@yeoman/adapter": ">=4.0.2"
-  },
   "engines": {
     "node": "^20.17.0 || >=22.9.0"
+  },
+  "acceptDependencies": {
+    "@yeoman/adapter": ">=4.0.2"
   },
   "overrides": {
     "yeoman-generator-2": {
