@@ -1,23 +1,31 @@
+import type YeomanGenerator from 'yeoman-generator-8';
+
 export const generator2 = 'yeoman-generator-2';
 export const generator4 = 'yeoman-generator-4';
 export const generator5 = 'yeoman-generator-5';
 export const generator6 = 'yeoman-generator-6';
 export const generator7 = 'yeoman-generator-7';
+export const generator8 = 'yeoman-generator-8';
 
-export type GeneratorVersion = typeof generator2 | typeof generator4 | typeof generator5 | typeof generator6 | typeof generator7;
-type GeneratorConstructor = abstract new (...arguments_: unknown[]) => object;
+export type GeneratorVersion =
+  | typeof generator2
+  | typeof generator4
+  | typeof generator5
+  | typeof generator6
+  | typeof generator7
+  | typeof generator8;
 
-export const allVersions: GeneratorVersion[] = [generator6, generator5, generator4, generator2];
+export const allVersions: GeneratorVersion[] = [generator8, generator7, generator6, generator5, generator4, generator2];
 const legacyVersions = new Set<GeneratorVersion>([generator2, generator4]);
 export const isLegacyVersion = (version: GeneratorVersion): boolean => legacyVersions.has(version);
 
-const greaterThan6 = new Set<GeneratorVersion>([generator6, generator7]);
+const greaterThan6 = new Set<GeneratorVersion>([generator6, generator7, generator8]);
 export const isGreaterThan6 = (version: GeneratorVersion): boolean => greaterThan6.has(version);
 
 export const greaterThan5 = new Set<GeneratorVersion>([generator5, ...greaterThan6]);
 export const isGreaterThan5 = (version: GeneratorVersion): boolean => greaterThan5.has(version);
 
-export const importGenerator = async (generatorVersion: GeneratorVersion): Promise<GeneratorConstructor> => {
+export const importGenerator = async (generatorVersion: GeneratorVersion): Promise<typeof YeomanGenerator> => {
   /*
    TODO use dynamic install works for yeoman-generator@4, but not for v2
   if (isLegacyVersion(generatorVersion)) {
@@ -31,5 +39,5 @@ export const importGenerator = async (generatorVersion: GeneratorVersion): Promi
   */
 
   const { default: generator } = await import(generatorVersion);
-  return generator as GeneratorConstructor;
+  return generator as typeof YeomanGenerator;
 };

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import { createHelpers } from 'yeoman-test';
 import BaseEnvironment from '../src/environment-base.ts';
 import FullEnvironment from '../src/index.ts';
@@ -12,7 +10,7 @@ export const getCreateEnv =
   (arguments_: CreateEnvArg, ...others: unknown[]) =>
     Array.isArray(arguments_)
       ? new EnvironmentCtor(...(others as ConstructorParameters<EnvironmentConstructor>))
-      : new EnvironmentCtor(arguments_, ...(others as ConstructorParameters<EnvironmentConstructor>));
+      : new (EnvironmentCtor as any)(arguments_, ...others);
 
 export default createHelpers({
   createEnv: getCreateEnv(FullEnvironment),

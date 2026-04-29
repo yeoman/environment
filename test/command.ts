@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { beforeEach, describe, esmocha, expect, it } from 'esmocha';
@@ -14,6 +12,9 @@ type ParsedGenerator = {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+const getRepository = (env: Environment) => (env as any).repository;
+const getComposedStore = (env: Environment) => (env as any).composedStore;
 
 describe('environment (command)', () => {
   describe('#execute()', () => {
@@ -30,22 +31,22 @@ describe('environment (command)', () => {
         adapter.addAnswers({
           aproveInstall: false,
         });
-        environment.repository.install = esmocha.fn().mockReturnValue(Promise.resolve([]));
+        getRepository(environment).install = esmocha.fn().mockReturnValue(Promise.resolve([]));
         await expect(environment.execute('commands:options')).rejects.toThrow(
           /Installation of generator-commands is declined by the user. Install manually and try again/,
         );
-        expect(environment.repository.install).not.toHaveBeenCalled();
+        expect(getRepository(environment).install).not.toHaveBeenCalled();
       });
 
       it('approving installation', async () => {
         adapter.addAnswers({
           aproveInstall: true,
         });
-        environment.repository.install = esmocha.fn().mockReturnValue(Promise.resolve([]));
+        getRepository(environment).install = esmocha.fn().mockReturnValue(Promise.resolve([]));
         await expect(environment.execute('commands:options')).rejects.toThrow(
           /You don't seem to have a generator with the name “generator-commands” installed./,
         );
-        expect(environment.repository.install).toHaveBeenCalledWith(['generator-commands']);
+        expect(getRepository(environment).install).toHaveBeenCalledWith(['generator-commands']);
       });
     });
   });
@@ -55,7 +56,7 @@ describe('environment (command)', () => {
 
     beforeEach(async () => {
       environment = new Environment({ skipInstall: true, dryRun: true });
-      environment.adapter.log = esmocha.fn();
+      environment.adapter.log = esmocha.fn() as any;
       await environment.register(path.join(__dirname, 'fixtures/generator-commands/generators/options'));
     });
 
@@ -64,7 +65,7 @@ describe('environment (command)', () => {
         let generator: ParsedGenerator;
         beforeEach(async () => {
           await environment.execute('commands:options');
-          const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
+          const generators = Object.values(getComposedStore(environment).getGenerators()) as ParsedGenerator[];
           expect(generators.length).toEqual(1);
           generator = generators[0];
         });
@@ -90,7 +91,7 @@ describe('environment (command)', () => {
             'newValue',
           ]);
 
-          const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
+          const generators = Object.values(getComposedStore(environment).getGenerators()) as ParsedGenerator[];
           expect(generators.length).toEqual(1);
           generator = generators[0];
         });
@@ -108,7 +109,7 @@ describe('environment (command)', () => {
         let generator: ParsedGenerator;
         beforeEach(async () => {
           await environment.execute('commands:options', ['-b', '-s', 'customValue']);
-          const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
+          const generators = Object.values(getComposedStore(environment).getGenerators()) as ParsedGenerator[];
           expect(generators.length).toEqual(1);
           generator = generators[0];
         });
@@ -126,7 +127,7 @@ describe('environment (command)', () => {
 
     beforeEach(() => {
       environment = new Environment({ skipInstall: true, dryRun: true });
-      environment.adapter.log = esmocha.fn();
+      environment.adapter.log = esmocha.fn() as any;
       environment.register(path.join(__dirname, 'fixtures/generator-commands/generators/arguments'));
     });
 
@@ -135,7 +136,7 @@ describe('environment (command)', () => {
         let generator: ParsedGenerator;
         beforeEach(async () => {
           await environment.execute('commands:arguments');
-          const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
+          const generators = Object.values(getComposedStore(environment).getGenerators()) as ParsedGenerator[];
           expect(generators.length).toEqual(1);
           generator = generators[0];
         });
@@ -149,7 +150,7 @@ describe('environment (command)', () => {
         let generator: ParsedGenerator;
         beforeEach(async () => {
           await environment.execute('commands:arguments', ['foo']);
-          const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
+          const generators = Object.values(getComposedStore(environment).getGenerators()) as ParsedGenerator[];
           expect(generators.length).toEqual(1);
           generator = generators[0];
         });
@@ -177,8 +178,8 @@ describe('environment (command)', () => {
           });
           await command.parseAsync(['node', 'yo', 'bar']);
 
-          environment = command.env;
-          const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
+          environment = command.env as Environment;
+          const generators = Object.values(getComposedStore(environment).getGenerators()) as ParsedGenerator[];
           expect(generators.length).toEqual(1);
           generator = generators[0];
         });
@@ -208,8 +209,8 @@ describe('environment (command)', () => {
             'newValue',
           ]);
 
-          environment = command.env;
-          const generators = Object.values(environment.composedStore.getGenerators()) as ParsedGenerator[];
+          environment = command.env as Environment;
+          const generators = Object.values(getComposedStore(environment).getGenerators()) as ParsedGenerator[];
           expect(generators.length).toEqual(1);
           generator = generators[0];
         });

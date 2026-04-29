@@ -164,7 +164,7 @@ class FullEnvironment extends EnvironmentBase {
    * @param {string} generatorNamespace
    * @param {string[]} args
    */
-  async execute(generatorNamespace: string, arguments_ = []) {
+  async execute(generatorNamespace: string, arguments_: string[] = []) {
     const namespace = requireNamespace(generatorNamespace);
     if (!(await this.get(namespace.namespace))) {
       await this.lookup({
