@@ -16,7 +16,10 @@
     "app"
   ],
   "homepage": "http://yeoman.io",
-  "repository": "yeoman/environment",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yeoman/environment.git"
+  },
   "license": "BSD-2-Clause",
   "author": "Yeoman",
   "type": "module",
