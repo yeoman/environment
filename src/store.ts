@@ -1,6 +1,7 @@
 import { pathToFileURL } from 'node:url';
 import { extname, join } from 'node:path';
 import { createRequire } from 'node:module';
+import { readFile } from 'node:fs/promises';
 import { toNamespace } from '@yeoman/namespace';
 import type {
   BaseEnvironment,
@@ -24,6 +25,8 @@ const require = createRequire(import.meta.url);
  */
 export default class Store {
   private readonly _meta: Record<string, GeneratorMeta> = {};
+  // Cache parsed package.json by packagePath
+  private readonly _packagesJson = new Map<string, Promise<any>>();
   // Store packages paths by ns
   private readonly _packagesPaths: Record<string, string[]> = {};
   // Store packages ns
@@ -133,6 +136,10 @@ export default class Store {
     const instantiate: GeneratorMeta['instantiate'] = async <G extends BaseGenerator>(arguments_: string[] = [], options: any = {}) =>
       this.environment.instantiate<G>(await importGenerator<G>(), { generatorArgs: arguments_, generatorOptions: options });
     const instantiateHelp: GeneratorMeta['instantiateHelp'] = async () => instantiate([], { help: true });
+
+    const getPackageJson: GeneratorMeta['getPackageJson'] = <T = Record<string, any>>(): Promise<T | undefined> =>
+      this.getPackageJson(meta.packagePath);
+
     const { packageNamespace } = toNamespace(meta.namespace) ?? {};
 
     generatorMeta = {
@@ -141,6 +148,7 @@ export default class Store {
       importModule,
       instantiate,
       instantiateHelp,
+      getPackageJson,
       packageNamespace,
     };
     this._meta[meta.namespace] = generatorMeta;
@@ -243,6 +251,26 @@ export default class Store {
 
   getPackagesNS(): string[] {
     return this._packagesNS;
+  }
+
+  /**
+   * Read a package.json from packagePath. Parsed results are cached by packagePath.
+   */
+  private async getPackageJson<T = Record<string, any>>(packagePath?: string): Promise<T | undefined> {
+    if (!packagePath) {
+      return undefined;
+    }
+
+    let packageJsonPromise = this._packagesJson.get(packagePath);
+    if (!packageJsonPromise) {
+      packageJsonPromise = readFile(join(packagePath, 'package.json'), 'utf8').then(
+        content => JSON.parse(content),
+        () => {},
+      );
+      this._packagesJson.set(packagePath, packageJsonPromise);
+    }
+
+    return packageJsonPromise;
   }
 
   private getFactory(module: any) {

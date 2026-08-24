@@ -68,6 +68,42 @@ describe('Store', async () => {
     });
   });
 
+  describe('#getPackageJson()', async () => {
+    it('reads the package.json from packagePath', async () => {
+      const meta = store.add(
+        { namespace: 'foo:module', resolved: '/foo/path', packagePath: path.join(__dirname, 'fixtures/generator-mocha') },
+        {},
+      );
+      const packageJson = await meta?.getPackageJson?.();
+      expect(packageJson).toMatchObject({ name: 'generator-mocha', version: '0.0.0' });
+    });
+
+    it('caches the package.json', async () => {
+      const meta = store.add(
+        { namespace: 'foo:module', resolved: '/foo/path', packagePath: path.join(__dirname, 'fixtures/generator-mocha') },
+        {},
+      );
+      expect(await meta?.getPackageJson?.()).toBe(await meta?.getPackageJson?.());
+    });
+
+    it('shares the cache between metas with the same packagePath', async () => {
+      const packagePath = path.join(__dirname, 'fixtures/generator-mocha');
+      const meta1 = store.add({ namespace: 'foo:module', resolved: '/foo/path', packagePath }, {});
+      const meta2 = store.add({ namespace: 'foo:other', resolved: '/foo/other', packagePath }, {});
+      expect(await meta1?.getPackageJson?.()).toBe(await meta2?.getPackageJson?.());
+    });
+
+    it('returns undefined if packagePath is not set', async () => {
+      const meta = store.add({ namespace: 'foo:module', resolved: '/foo/path' }, {});
+      expect(await meta?.getPackageJson?.()).toBeUndefined();
+    });
+
+    it('returns undefined if package.json does not exist', async () => {
+      const meta = store.add({ namespace: 'foo:module', resolved: '/foo/path', packagePath: '/foo/path' }, {});
+      expect(await meta?.getPackageJson?.()).toBeUndefined();
+    });
+  });
+
   describe('#namespaces()', async () => {
     beforeEach(async () => {
       store.add({ namespace: 'foo' }, {});
