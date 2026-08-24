@@ -10,10 +10,10 @@ import { after, afterEach, before, beforeEach, describe, esmocha, expect, it } f
 import { QueuedAdapter } from '@yeoman/adapter';
 import { TestAdapter } from '@yeoman/adapter/testing';
 import type { BaseGeneratorConstructor, GeneratorFeatures, GeneratorOptions } from '@yeoman/types';
-import type YeomanGenerator from 'yeoman-generator-8';
+import type YeomanGenerator from '@yeoman-environment/generator-tests/generator-v8';
 import Environment, { createEnv as createEnvironment } from '../src/index.ts';
 import { resolveModulePath } from '../src/util/resolve.ts';
-import { allVersions, importGenerator, isGreaterThan6, isLegacyVersion } from './generator-versions.ts';
+import { allVersions, importGenerator, isGreaterThan6, isLegacyVersion } from './generators/generator-versions.ts';
 
 const require = createRequire(import.meta.url);
 
@@ -431,7 +431,7 @@ for (const generatorVersion of allVersions) {
         let oldCwd: string;
         before(() => {
           oldCwd = process.cwd();
-          process.chdir(dirname(fileURLToPath(import.meta.url)));
+          process.chdir(__dirname);
         });
         after(() => {
           process.chdir(oldCwd);

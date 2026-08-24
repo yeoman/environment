@@ -1,11 +1,11 @@
-import type YeomanGenerator from 'yeoman-generator-8';
+import type YeomanGenerator from './generator-v8.ts';
 
-export const generator2 = 'yeoman-generator-2';
-export const generator4 = 'yeoman-generator-4';
-export const generator5 = 'yeoman-generator-5';
-export const generator6 = 'yeoman-generator-6';
-export const generator7 = 'yeoman-generator-7';
-export const generator8 = 'yeoman-generator-8';
+export const generator2 = '@yeoman-environment/generator-tests/generator-v2';
+export const generator4 = '@yeoman-environment/generator-tests/generator-v4';
+export const generator5 = '@yeoman-environment/generator-tests/generator-v5';
+export const generator6 = '@yeoman-environment/generator-tests/generator-v6';
+export const generator7 = '@yeoman-environment/generator-tests/generator-v7';
+export const generator8 = '@yeoman-environment/generator-tests/generator-v8';
 
 export type GeneratorVersion =
   | typeof generator2

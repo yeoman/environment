@@ -1,7 +1,7 @@
 import { after, afterEach, before, beforeEach, describe, esmocha, expect, it } from 'esmocha';
 import type { BaseGeneratorConstructor, GeneratorFeatures, GeneratorOptions } from '@yeoman/types';
 import helpers, { getCreateEnv, result } from './helpers.ts';
-import { greaterThan5 } from './generator-versions.ts';
+import { greaterThan5 } from './generators/generator-versions.ts';
 import { createHelpers } from 'yeoman-test';
 
 const commitModule = await import('../src/commit.ts');
