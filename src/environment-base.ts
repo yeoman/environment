@@ -389,14 +389,14 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   ): Promise<G> | G {
     const composeOptions = arguments_.length > 0 ? (getInstantiateOptions(...arguments_) as InstantiateOptions<G>) : {};
     const { namespace = UNKNOWN_NAMESPACE, resolved = UNKNOWN_RESOLVED, _meta } = constructor;
-    const environmentOptions = { env: this, resolved, namespace };
+    const environmentOptions = { env: this, resolved, namespace, _meta };
     const generator = new constructor(composeOptions.generatorArgs ?? [], {
       ...this.sharedOptions,
       ...composeOptions.generatorOptions,
       ...environmentOptions,
     } as unknown as GetGeneratorOptions<G>);
 
-    (generator as any)._meta = _meta;
+    (generator as any)._meta ??= _meta;
     (generator as any)._environmentOptions = {
       ...this.options,
       ...this.sharedOptions,

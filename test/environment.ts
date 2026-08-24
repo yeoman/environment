@@ -282,6 +282,27 @@ for (const generatorVersion of allVersions) {
         expect((await env.composeWith('stub'))._meta).toBeTruthy();
       });
 
+      it('should pass _meta as option', async function () {
+        const generator = await env.composeWith('stub');
+        expect(generator.options._meta).toBe(generator._meta);
+        expect(generator.options._meta!.namespace).toBe('stub');
+      });
+
+      it('should not override _meta set by the generator from options', async function () {
+        class MetaGenerator extends Generator {
+          _meta: any;
+
+          constructor(arguments_?: string[], options?: GeneratorOptions, features?: GeneratorFeatures) {
+            super(arguments_, options, features);
+            this._meta = { ...options!._meta, fromConstructor: true };
+          }
+        }
+        env.register(MetaGenerator, { namespace: 'stub:meta' });
+        const generator = await env.composeWith<MetaGenerator>('stub:meta');
+        expect(generator._meta.fromConstructor).toBe(true);
+        expect(generator._meta.namespace).toBe('stub:meta');
+      });
+
       it('should schedule generator queue', async function () {
         env.queueTask = esmocha.fn();
         await env.composeWith('stub');
