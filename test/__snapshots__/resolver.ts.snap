@@ -3,6 +3,7 @@
 exports[`Environment Resolver #lookup() should register expected generators 1`] = `
 {
   "@dummyscope/scoped:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -13,6 +14,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@dummyscope/scoped:package": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -23,6 +25,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "common-js:cjs": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -33,6 +36,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
   },
   "commonjs:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -43,6 +47,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "resolved": "fixtures/lookup-project/node_modules/generator-commonjs/app/index.js",
   },
   "dummy:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -53,6 +58,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "resolved": "fixtures/lookup-project/node_modules/generator-dummy/app/index.js",
   },
   "dummy:yo": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -63,6 +69,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "resolved": "fixtures/lookup-project/node_modules/generator-dummy/yo/index.js",
   },
   "esm:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -73,6 +80,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "resolved": "fixtures/generator-esm/generators/app/index.js",
   },
   "esm:create": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -83,6 +91,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "resolved": "fixtures/generator-esm/generators/create/index.js",
   },
   "esm:create-inherited": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -93,6 +102,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
   },
   "esm:mjs": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -103,6 +113,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
   },
   "extend:support": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -113,6 +124,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "resolved": "fixtures/generator-extend/support/index.js",
   },
   "jquery:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -123,6 +135,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "resolved": "fixtures/lookup-project/node_modules/generator-jquery/app/index.js",
   },
   "ts-js:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -133,6 +146,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "resolved": "fixtures/generator-ts-js/generators/app/index.js",
   },
   "ts:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -148,6 +162,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
 exports[`Environment Resolver #lookup() when localOnly argument is true should register expected generators 1`] = `
 {
   "@dummyscope/scoped:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -158,6 +173,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@dummyscope/scoped:package": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -168,6 +184,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "common-js:cjs": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -178,6 +195,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
   },
   "commonjs:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -188,6 +206,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "resolved": "fixtures/lookup-project/node_modules/generator-commonjs/app/index.js",
   },
   "dummy:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -198,6 +217,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "resolved": "fixtures/lookup-project/node_modules/generator-dummy/app/index.js",
   },
   "dummy:yo": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -208,6 +228,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "resolved": "fixtures/lookup-project/node_modules/generator-dummy/yo/index.js",
   },
   "esm:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -218,6 +239,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "resolved": "fixtures/generator-esm/generators/app/index.js",
   },
   "esm:create": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -228,6 +250,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "resolved": "fixtures/generator-esm/generators/create/index.js",
   },
   "esm:create-inherited": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -238,6 +261,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
   },
   "esm:mjs": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -248,6 +272,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
   },
   "extend:support": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -258,6 +283,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "resolved": "fixtures/generator-extend/support/index.js",
   },
   "jquery:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -268,6 +294,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "resolved": "fixtures/lookup-project/node_modules/generator-jquery/app/index.js",
   },
   "ts-js:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -278,6 +305,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "resolved": "fixtures/generator-ts-js/generators/app/index.js",
   },
   "ts:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -293,6 +321,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
 exports[`Environment Resolver #lookup() when modules repository is not called node_modules should register expected generators 1`] = `
 {
   "@dummyscope/scoped:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -303,6 +332,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@dummyscope/scoped:package": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -313,6 +343,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "common-js:cjs": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -323,6 +354,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
   },
   "commonjs:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -333,6 +365,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "resolved": "fixtures/lookup-project/orig/generator-commonjs/app/index.js",
   },
   "dummy:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -343,6 +376,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "resolved": "fixtures/lookup-project/orig/generator-dummy/app/index.js",
   },
   "dummy:yo": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -353,6 +387,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "resolved": "fixtures/lookup-project/orig/generator-dummy/yo/index.js",
   },
   "esm:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -363,6 +398,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "resolved": "fixtures/generator-esm/generators/app/index.js",
   },
   "esm:create": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -373,6 +409,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "resolved": "fixtures/generator-esm/generators/create/index.js",
   },
   "esm:create-inherited": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -383,6 +420,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
   },
   "esm:mjs": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -393,6 +431,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
   },
   "extend:support": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -403,6 +442,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "resolved": "fixtures/generator-extend/support/index.js",
   },
   "jquery:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -413,6 +453,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "resolved": "fixtures/lookup-project/orig/generator-jquery/app/index.js",
   },
   "ts-js:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -423,6 +464,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "resolved": "fixtures/generator-ts-js/generators/app/index.js",
   },
   "ts:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -438,6 +480,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
 exports[`Environment Resolver #lookup() when node_modules is a symlink should register expected generators 1`] = `
 {
   "@dummyscope/scoped:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -448,6 +491,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@dummyscope/scoped:package": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -458,6 +502,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "common-js:cjs": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -468,6 +513,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
   },
   "commonjs:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -478,6 +524,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "resolved": "fixtures/lookup-project/orig/node_modules/generator-commonjs/app/index.js",
   },
   "dummy:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -488,6 +535,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "resolved": "fixtures/lookup-project/orig/node_modules/generator-dummy/app/index.js",
   },
   "dummy:yo": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -498,6 +546,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "resolved": "fixtures/lookup-project/orig/node_modules/generator-dummy/yo/index.js",
   },
   "esm:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -508,6 +557,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "resolved": "fixtures/generator-esm/generators/app/index.js",
   },
   "esm:create": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -518,6 +568,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "resolved": "fixtures/generator-esm/generators/create/index.js",
   },
   "esm:create-inherited": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -528,6 +579,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
   },
   "esm:mjs": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -538,6 +590,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
   },
   "extend:support": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -548,6 +601,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "resolved": "fixtures/generator-extend/support/index.js",
   },
   "jquery:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -558,6 +612,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "resolved": "fixtures/lookup-project/orig/node_modules/generator-jquery/app/index.js",
   },
   "ts-js:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -568,6 +623,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "resolved": "fixtures/generator-ts-js/generators/app/index.js",
   },
   "ts:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -583,6 +639,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
 exports[`Environment Resolver #lookup() when options.localOnly argument is true should register expected generators 1`] = `
 {
   "@dummyscope/scoped:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -593,6 +650,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@dummyscope/scoped:package": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -603,6 +661,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "common-js:cjs": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -613,6 +672,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
   },
   "commonjs:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -623,6 +683,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "resolved": "fixtures/lookup-project/node_modules/generator-commonjs/app/index.js",
   },
   "dummy:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -633,6 +694,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "resolved": "fixtures/lookup-project/node_modules/generator-dummy/app/index.js",
   },
   "dummy:yo": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -643,6 +705,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "resolved": "fixtures/lookup-project/node_modules/generator-dummy/yo/index.js",
   },
   "esm:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -653,6 +716,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "resolved": "fixtures/generator-esm/generators/app/index.js",
   },
   "esm:create": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -663,6 +727,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "resolved": "fixtures/generator-esm/generators/create/index.js",
   },
   "esm:create-inherited": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -673,6 +738,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
   },
   "esm:mjs": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -683,6 +749,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
   },
   "extend:support": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -693,6 +760,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "resolved": "fixtures/generator-extend/support/index.js",
   },
   "jquery:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -703,6 +771,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "resolved": "fixtures/lookup-project/node_modules/generator-jquery/app/index.js",
   },
   "ts-js:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -713,6 +782,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "resolved": "fixtures/generator-ts-js/generators/app/index.js",
   },
   "ts:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -728,6 +798,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
 exports[`Environment Resolver #lookup() when there's ancestor node_modules/ folder should register expected generators 1`] = `
 {
   "@dummyscope/scoped:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -738,6 +809,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@dummyscope/scoped:package": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -748,6 +820,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "common-js:cjs": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -758,6 +831,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
   },
   "commonjs:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -768,6 +842,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "resolved": "fixtures/lookup-project/node_modules/generator-commonjs/app/index.js",
   },
   "dummy:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -778,6 +853,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "resolved": "fixtures/lookup-project/subdir/node_modules/generator-dummy/app/index.js",
   },
   "dummy:yo": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -788,6 +864,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "resolved": "fixtures/lookup-project/subdir/node_modules/generator-dummy/yo/index.js",
   },
   "esm:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -798,6 +875,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "resolved": "fixtures/generator-esm/generators/app/index.js",
   },
   "esm:create": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -808,6 +886,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "resolved": "fixtures/generator-esm/generators/create/index.js",
   },
   "esm:create-inherited": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -818,6 +897,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
   },
   "esm:mjs": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -828,6 +908,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
   },
   "extend:support": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -838,6 +919,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "resolved": "fixtures/generator-extend/support/index.js",
   },
   "jquery:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -848,6 +930,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "resolved": "fixtures/lookup-project/node_modules/generator-jquery/app/index.js",
   },
   "ts-js:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -858,6 +941,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "resolved": "fixtures/generator-ts-js/generators/app/index.js",
   },
   "ts:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -873,6 +957,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
 exports[`Environment Resolver #lookup() with options with 2 packagePaths 1`] = `
 {
   "module-root:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -883,6 +968,7 @@ exports[`Environment Resolver #lookup() with options with 2 packagePaths 1`] = `
     "resolved": "fixtures/generator-module-root/app/index.js",
   },
   "module:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -898,6 +984,7 @@ exports[`Environment Resolver #lookup() with options with 2 packagePaths 1`] = `
 exports[`Environment Resolver #lookup() with options with 3 packagePaths 1`] = `
 {
   "module-lib-gen:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -908,6 +995,7 @@ exports[`Environment Resolver #lookup() with options with 3 packagePaths 1`] = `
     "resolved": "fixtures/generator-module-lib-gen/lib/generators/app/index.js",
   },
   "module-root:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -918,6 +1006,7 @@ exports[`Environment Resolver #lookup() with options with 3 packagePaths 1`] = `
     "resolved": "fixtures/generator-module-root/app/index.js",
   },
   "module:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -933,6 +1022,7 @@ exports[`Environment Resolver #lookup() with options with 3 packagePaths 1`] = `
 exports[`Environment Resolver #lookup() with options with customizeNamespace 1`] = `
 {
   "custom:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -948,6 +1038,7 @@ exports[`Environment Resolver #lookup() with options with customizeNamespace 1`]
 exports[`Environment Resolver #lookup() with options with npmPaths 1`] = `
 {
   "@scoped/scoped:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -958,6 +1049,7 @@ exports[`Environment Resolver #lookup() with options with npmPaths 1`] = `
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@scoped/scoped:package": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -968,6 +1060,7 @@ exports[`Environment Resolver #lookup() with options with npmPaths 1`] = `
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "module-lib-gen:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -978,6 +1071,7 @@ exports[`Environment Resolver #lookup() with options with npmPaths 1`] = `
     "resolved": "fixtures/generator-module-lib-gen/lib/generators/app/index.js",
   },
   "module-root:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -988,6 +1082,7 @@ exports[`Environment Resolver #lookup() with options with npmPaths 1`] = `
     "resolved": "fixtures/generator-module-root/app/index.js",
   },
   "module:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1003,6 +1098,7 @@ exports[`Environment Resolver #lookup() with options with npmPaths 1`] = `
 exports[`Environment Resolver #lookup() with options with packagePaths 1`] = `
 {
   "module:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1018,6 +1114,7 @@ exports[`Environment Resolver #lookup() with options with packagePaths 1`] = `
 exports[`Environment Resolver #lookup() with options with packagePatterns 1`] = `
 {
   "module-root:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1028,6 +1125,7 @@ exports[`Environment Resolver #lookup() with options with packagePatterns 1`] = 
     "resolved": "fixtures/generator-module-root/app/index.js",
   },
   "module:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1043,6 +1141,7 @@ exports[`Environment Resolver #lookup() with options with packagePatterns 1`] = 
 exports[`Environment Resolver #lookup() with options with scope and packagePaths 1`] = `
 {
   "@scoped/scoped:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1053,6 +1152,7 @@ exports[`Environment Resolver #lookup() with options with scope and packagePaths
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@scoped/scoped:package": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1063,6 +1163,7 @@ exports[`Environment Resolver #lookup() with options with scope and packagePaths
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "@test/module:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1078,6 +1179,7 @@ exports[`Environment Resolver #lookup() with options with scope and packagePaths
 exports[`Environment Resolver #lookup() with options with scoped packagePaths 1`] = `
 {
   "@scoped/scoped:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1088,6 +1190,7 @@ exports[`Environment Resolver #lookup() with options with scoped packagePaths 1`
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@scoped/scoped:package": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1098,6 +1201,7 @@ exports[`Environment Resolver #lookup() with options with scoped packagePaths 1`
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "module-lib-gen:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1108,6 +1212,7 @@ exports[`Environment Resolver #lookup() with options with scoped packagePaths 1`
     "resolved": "fixtures/generator-module-lib-gen/lib/generators/app/index.js",
   },
   "module-root:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1118,6 +1223,7 @@ exports[`Environment Resolver #lookup() with options with scoped packagePaths 1`
     "resolved": "fixtures/generator-module-root/app/index.js",
   },
   "module:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1133,6 +1239,7 @@ exports[`Environment Resolver #lookup() with options with scoped packagePaths 1`
 exports[`Environment Resolver #lookup() with options with sub-sub-generators and packagePaths 1`] = `
 {
   "@scoped/scoped:app:scaffold": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1148,6 +1255,7 @@ exports[`Environment Resolver #lookup() with options with sub-sub-generators and
 exports[`Environment Resolver #lookup() with options with sub-sub-generators and packagePatterns 1`] = `
 {
   "@scoped/scoped:app:scaffold": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1163,6 +1271,7 @@ exports[`Environment Resolver #lookup() with options with sub-sub-generators and
 exports[`Environment Resolver #lookup() with options with sub-sub-generators filePatterns 1`] = `
 {
   "@scoped/scoped:app:scaffold": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
@@ -1173,6 +1282,7 @@ exports[`Environment Resolver #lookup() with options with sub-sub-generators fil
     "resolved": "fixtures/generator-scoped/app/scaffold/index.js",
   },
   "module:app": {
+    "getPackageJson": [Function],
     "importGenerator": [Function],
     "importModule": [Function],
     "instantiate": [Function],
