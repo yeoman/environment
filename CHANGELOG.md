@@ -1,5 +1,18 @@
 # Changelog
 
+## [6.2.0](https://github.com/yeoman/environment/compare/v6.1.0...v6.2.0) (2026-08-24)
+
+
+### Features
+
+* add getPackageJson to meta ([#811](https://github.com/yeoman/environment/issues/811)) ([4d73086](https://github.com/yeoman/environment/commit/4d73086cda03588d4dff65edb1fef8cf9ecfd5d8))
+* pass _meta to generator options ([#810](https://github.com/yeoman/environment/issues/810)) ([838a699](https://github.com/yeoman/environment/commit/838a6997c518d619e03e3a2ad38b5c520745f4f4))
+
+
+### Bug Fixes
+
+* convert getPackageJson to sync ([#813](https://github.com/yeoman/environment/issues/813)) ([4a0951c](https://github.com/yeoman/environment/commit/4a0951c695779f34c3797cb2d48e04d976074c67))
+
 ## [6.1.0](https://github.com/yeoman/environment/compare/v6.0.1...v6.1.0) (2026-04-29)
 
 ### Features
