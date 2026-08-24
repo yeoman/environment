@@ -114,6 +114,9 @@
     "@yeoman/adapter": ">=4.0.2"
   },
   "overrides": {
+    "@yeoman/conflicter": {
+      "mem-fs-editor": "^12.0.4"
+    },
     "yeoman-generator-2": {
       "chalk": "^4.1.0",
       "dargs": "^7.0.0",
