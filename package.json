@@ -94,12 +94,6 @@
     "strip-ansi": "^7.2.0",
     "typescript": "6.0.3",
     "yeoman-environment": "file:./",
-    "yeoman-generator-2": "npm:yeoman-generator@^2.0.5",
-    "yeoman-generator-4": "npm:yeoman-generator@^4.13.0",
-    "yeoman-generator-5": "npm:yeoman-generator@^5.10.0",
-    "yeoman-generator-6": "npm:yeoman-generator@^6.0.1",
-    "yeoman-generator-7": "npm:yeoman-generator@^7.5.1",
-    "yeoman-generator-8": "npm:yeoman-generator@^8.0.0-beta.8",
     "yeoman-test": "^11.3.1"
   },
   "peerDependencies": {
@@ -114,68 +108,11 @@
     "@yeoman/adapter": ">=4.0.2"
   },
   "overrides": {
-    "yeoman-generator-2": {
-      "chalk": "^4.1.0",
-      "dargs": "^7.0.0",
-      "debug": "^4.1.1",
-      "execa": "^5.1.1",
-      "github-username": "^6.0.0",
-      "lodash": "^4.17.11",
-      "mem-fs-editor": "^9.0.0",
-      "minimist": "^1.2.5",
-      "pacote": "^15.2.0",
-      "read-pkg-up": "^7.0.1",
-      "run-async": "^2.0.0",
-      "semver": "^7.2.1",
-      "shelljs": "^0.8.5",
-      "sort-keys": "^4.2.0",
-      "text-table": "^0.2.0",
-      "yeoman-environment": "file:./"
-    },
-    "yeoman-generator-4": {
-      "chalk": "^4.1.0",
-      "dargs": "^7.0.0",
-      "debug": "^4.1.1",
-      "execa": "^5.1.1",
-      "github-username": "^6.0.0",
-      "lodash": "^4.17.11",
-      "mem-fs-editor": "^9.0.0",
-      "minimist": "^1.2.5",
-      "pacote": "^15.2.0",
-      "read-pkg-up": "^7.0.1",
-      "run-async": "^2.0.0",
-      "semver": "^7.2.1",
-      "shelljs": "^0.8.5",
-      "sort-keys": "^4.2.0",
-      "text-table": "^0.2.0",
-      "yeoman-environment": "file:./"
-    },
-    "yeoman-generator-5": {
-      "chalk": "^4.1.0",
-      "dargs": "^7.0.0",
-      "debug": "^4.1.1",
-      "execa": "^5.1.1",
-      "github-username": "^6.0.0",
-      "lodash": "^4.17.11",
-      "mem-fs-editor": "^9.0.0",
-      "minimist": "^1.2.5",
-      "pacote": "^15.2.0",
-      "read-pkg-up": "^7.0.1",
-      "run-async": "^2.0.0",
-      "semver": "^7.2.1",
-      "shelljs": "^0.8.5",
-      "sort-keys": "^4.2.0",
-      "text-table": "^0.2.0",
-      "yeoman-environment": "file:./"
-    },
-    "yeoman-generator-6": {
-      "yeoman-environment": "file:./"
-    },
-    "yeoman-generator-7": {
-      "yeoman-environment": "file:./"
-    },
-    "yeoman-generator-8": {
+    "@yeoman-environment/generator-tests": {
       "yeoman-environment": "file:./"
     }
-  }
+  },
+  "workspaces": [
+    "test/generators"
+  ]
 }
