@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.3.0](https://github.com/yeoman/environment/compare/v6.2.0...v6.3.0) (2026-09-02)
+
+
+### Features
+
+* accept @yeoman/adapter v5 and mem-fs v6 ([#819](https://github.com/yeoman/environment/issues/819)) ([f8dfc6c](https://github.com/yeoman/environment/commit/f8dfc6c3b955bd5b23936adb0ad06b457ef3e26f))
+
 ## [6.2.0](https://github.com/yeoman/environment/compare/v6.1.0...v6.2.0) (2026-08-24)
 
 ### Features
