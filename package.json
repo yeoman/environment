@@ -99,15 +99,16 @@
   "peerDependencies": {
     "@yeoman/adapter": "^4.0.2",
     "@yeoman/types": "^1.10.3",
-    "mem-fs": "^4.1.4"
+    "mem-fs": "^4.1.4 || ^6.0.0"
   },
   "engines": {
     "node": "^20.17.0 || >=22.9.0"
   },
   "acceptDependencies": {
-    "@yeoman/adapter": ">=4.0.2"
+    "@yeoman/adapter": ">=4.0.2 || ^5.0.0"
   },
   "overrides": {
+    "@inquirer/type": "4.0.7",
     "@yeoman-environment/generator-tests": {
       "yeoman-environment": "file:./"
     }
