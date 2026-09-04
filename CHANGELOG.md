@@ -1,5 +1,21 @@
 # Changelog
 
+## [7.0.0](https://github.com/yeoman/environment/compare/v6.3.0...v7.0.0) (2026-09-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop node 20 support ([#825](https://github.com/yeoman/environment/issues/825))
+
+### Features
+
+* **deps:** bump @yeoman/adapter from 4.0.2 to 5.0.0 ([#818](https://github.com/yeoman/environment/issues/818)) ([5ba2faf](https://github.com/yeoman/environment/commit/5ba2fafcc640e98795de4e6615174fb82bd67cb4))
+* **deps:** bump chalk from 5.6.2 to 6.0.0 ([#800](https://github.com/yeoman/environment/issues/800)) ([8022351](https://github.com/yeoman/environment/commit/80223510a329815fafaaf8f8c384b12ef6dd0e21))
+* **deps:** bump commander from 14.0.3 to 15.0.0 ([#787](https://github.com/yeoman/environment/issues/787)) ([c9a78be](https://github.com/yeoman/environment/commit/c9a78bea54f3bb932057bfb2be7130d7595c50a0))
+* **deps:** bump execa from 9.6.1 to 10.0.1 ([#803](https://github.com/yeoman/environment/issues/803)) ([8de893f](https://github.com/yeoman/environment/commit/8de893fde548fafd9ec24017b435a5c9690666a6))
+* drop node 20 support ([#825](https://github.com/yeoman/environment/issues/825)) ([b93b7b3](https://github.com/yeoman/environment/commit/b93b7b3ca29d2871de6c77312fea6c00ae57b4af))
+* update dependencies ([#828](https://github.com/yeoman/environment/issues/828)) ([4100c87](https://github.com/yeoman/environment/commit/4100c8721b20d63ce81ce9d01b722830c1ab4b74))
+
 ## [6.3.0](https://github.com/yeoman/environment/compare/v6.2.0...v6.3.0) (2026-09-02)
 
 ### Features
