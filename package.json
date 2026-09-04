@@ -108,10 +108,7 @@
     "@yeoman/adapter": ">=4.0.2 || ^5.0.0"
   },
   "overrides": {
-    "@inquirer/type": "4.0.7",
-    "@yeoman-environment/generator-tests": {
-      "yeoman-environment": "file:./"
-    }
+    "@inquirer/type": "4.0.7"
   },
   "workspaces": [
     "test/generators"

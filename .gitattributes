@@ -2,3 +2,4 @@
 *.js text eol=lf
 *.cjs text eol=lf
 *.ts text eol=lf
+test/generators/bundles/** linguist-generated=true
