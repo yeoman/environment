@@ -61,7 +61,7 @@
     "@yeoman/transform": "^2.1.1",
     "@yeoman/types": "^1.11.1",
     "arrify": "^3.0.0",
-    "chalk": "^5.6.2",
+    "chalk": "^6.0.0",
     "commander": "^14.0.3",
     "debug": "^4.4.3",
     "execa": "^9.6.1",
