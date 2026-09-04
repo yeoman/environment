@@ -55,7 +55,7 @@
     "doc_path": "./yeoman-environment-doc"
   },
   "dependencies": {
-    "@yeoman/adapter": "^4.0.2",
+    "@yeoman/adapter": "^5.0.0",
     "@yeoman/conflicter": "^4.1.0",
     "@yeoman/namespace": "^2.1.0",
     "@yeoman/transform": "^2.1.1",
@@ -97,7 +97,7 @@
     "yeoman-test": "^11.3.1"
   },
   "peerDependencies": {
-    "@yeoman/adapter": "^4.0.2",
+    "@yeoman/adapter": "^5.0.0",
     "@yeoman/types": "^1.10.3",
     "mem-fs": "^4.1.4 || ^6.0.0"
   },
