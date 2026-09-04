@@ -6,7 +6,7 @@ import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescrip
 
 export default config(
   ...configs,
-  { ignores: ['test/fixtures/'] },
+  { ignores: ['test/fixtures/', 'test/generators/bundles/'] },
   {
     rules: {
       '@typescript-eslint/no-this-alias': 'off',
