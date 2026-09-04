@@ -8,12 +8,7 @@ export const generator7 = '@yeoman-environment/generator-tests/generator-v7';
 export const generator8 = '@yeoman-environment/generator-tests/generator-v8';
 
 export type GeneratorVersion =
-  | typeof generator2
-  | typeof generator4
-  | typeof generator5
-  | typeof generator6
-  | typeof generator7
-  | typeof generator8;
+  typeof generator2 | typeof generator4 | typeof generator5 | typeof generator6 | typeof generator7 | typeof generator8;
 
 export const allVersions: GeneratorVersion[] = [generator8, generator7, generator6, generator5, generator4, generator2];
 const legacyVersions = new Set<GeneratorVersion>([generator2, generator4]);

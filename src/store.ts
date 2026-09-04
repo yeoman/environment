@@ -85,8 +85,7 @@ export default class Store {
     let generatorMeta: (GeneratorMeta & M) | undefined;
 
     const importGenerator: GeneratorMeta['importGenerator'] = <G extends BaseGenerator>():
-      | Promise<GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta>
-      | (GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta) => {
+      Promise<GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta> | (GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta) => {
       const handleImport = () => {
         if (importModule && !Generator) {
           const maybeModule = importModule();
