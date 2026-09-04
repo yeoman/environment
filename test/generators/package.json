@@ -25,7 +25,7 @@
     "yeoman-generator-8": "file:./bundles/yeoman-generator-8"
   },
   "devDependencies": {
-    "esbuild": "^0.24.2",
+    "esbuild": "^0.28.1",
     "execa": "^9.6.1"
   }
 }
