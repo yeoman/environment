@@ -188,8 +188,9 @@ describe('Environment Resolver', async function () {
 
       after(() => {
         process.chdir(projectRoot);
-        fs.rmdirSync(path.join(subDirRoot, 'node_modules'), {
+        fs.rmSync(path.join(subDirRoot, 'node_modules'), {
           recursive: true,
+          force: true,
         });
       });
 
@@ -568,8 +569,9 @@ describe('Environment Resolver', async function () {
       unlinkGenerator('generator-module-root');
 
       process.chdir(projectRoot);
-      fs.rmdirSync(path.join(customProjectRoot, 'node_modules'), {
+      fs.rmSync(path.join(customProjectRoot, 'node_modules'), {
         recursive: true,
+        force: true,
       });
     });
 
@@ -772,8 +774,9 @@ describe('Environment Resolver', async function () {
       unlinkGenerator('generator-module');
 
       process.chdir(projectRoot);
-      fs.rmdirSync(path.join(customProjectRoot, 'node_modules'), {
+      fs.rmSync(path.join(customProjectRoot, 'node_modules'), {
         recursive: true,
+        force: true,
       });
     });
 
@@ -832,8 +835,9 @@ describe('Environment Resolver', async function () {
       unlinkGenerator('generator-module');
       process.chdir(projectRoot);
 
-      fs.rmdirSync(path.join(customProjectRoot, 'node_modules'), {
+      fs.rmSync(path.join(customProjectRoot, 'node_modules'), {
         recursive: true,
+        force: true,
       });
     });
 
