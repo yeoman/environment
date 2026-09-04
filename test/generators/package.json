@@ -26,6 +26,6 @@
   },
   "devDependencies": {
     "esbuild": "^0.28.1",
-    "execa": "^9.6.1"
+    "execa": "^10.0.1"
   }
 }
