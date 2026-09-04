@@ -78,7 +78,6 @@
     "which-package-manager": "^1.0.1"
   },
   "devDependencies": {
-    "@node-loaders/esbuild": "^2.0.0",
     "@types/debug": "^4.1.13",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^20.19.35",
