@@ -3,9 +3,9 @@
  * `bundles/yeoman-generator-<major>`, one self-contained package per major.
  *
  * Each version is installed from npm into a temporary folder, bundled with its dependencies by
- * esbuild and written next to a minimal package.json and its type declarations. The bundles are
- * committed and consumed as `file:` dependencies, so the test tree does not depend on the
- * (often outdated) dependency trees of the old releases.
+ * esbuild and written next to a minimal package.json. The bundles are committed and consumed as
+ * `file:` dependencies, so the test tree does not depend on the (often outdated) dependency trees
+ * of the old releases. Only the latest major keeps its type declarations, see `bundleVersion`.
  *
  * Usage: `npm run bundle --workspace test/generators [-- 2 8]` (majors are optional).
  * Requires a Node.js version that runs TypeScript files natively.
@@ -37,6 +37,8 @@ const externals = [
   // Only resolved when pacote runs install scripts, never installed.
   'node-gyp/bin/node-gyp.js',
 ];
+
+const latestMajor = String(Math.max(...Object.keys(versionRanges).map(Number)));
 
 const bundlesDirectory = join(dirname(fileURLToPath(import.meta.url)), 'bundles');
 
@@ -160,7 +162,10 @@ const bundleVersion = async (major: string, range: string): Promise<void> => {
         : {}),
     });
 
-    const declarationFiles = listDeclarationFiles(packageDirectory);
+    // Declarations import the dependency versions of the original release (execa@8, mem-fs-editor@10, ...), which npm
+    // does not nest under a `file:` link, so they only type-check against the root tree for the latest major. The tests
+    // type every version as the latest major anyway (see generator-versions.ts), so older bundles ship no declarations.
+    const declarationFiles = major === latestMajor ? listDeclarationFiles(packageDirectory) : [];
     for (const file of declarationFiles) {
       mkdirSync(dirname(join(outputDirectory, file)), { recursive: true });
       writeFileSync(join(outputDirectory, file), readFileSync(join(packageDirectory, file)));
