@@ -1,32 +1,29 @@
 {
-  "include": ["./src"],
+  "include": ["./src", "./test/*.ts", "./test/generators/*.ts"],
   "compilerOptions": {
     /* Language and Environment */
     "target": "es2023" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
     "lib": ["ES2023"] /* Specify a set of bundled library declaration files that describe the target runtime environment. */,
     "types": ["node"],
-
     /* Modules */
     "module": "node18" /* Specify what module code is generated. */,
-    "rootDir": "./src" /* Specify the root folder within your source files. */,
-
+    "rootDir": "." /* Specify the root folder within your source files. */,
+    "paths": {
+      /* yeoman-test declarations import yeoman-generator, which is intentionally not installed; type it as the latest bundled major. */
+      "yeoman-generator": ["./test/generators/bundles/yeoman-generator-8/dist/index.d.ts"]
+    },
     /* Emit */
-    "outDir": "./dist" /* Specify an output folder for all emitted files. */,
-    "declaration": true,
-
+    "noEmit": true /* Only type check, emit is configured by tsconfig.build.json. */,
     /* Interop Constraints */
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
     "isolatedModules": true /* Ensure that each file can be safely transpiled independently. */,
-
     /* Type Checking */
     "strict": true /* Enable all strict type-checking options. */,
-
     /* NodeJS native typescript support */
     "rewriteRelativeImportExtensions": true,
     "erasableSyntaxOnly": true,
     "verbatimModuleSyntax": true,
-
     /* Completeness */
     "skipLibCheck": false /* Skip type checking all .d.ts files. */
   }

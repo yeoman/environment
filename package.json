@@ -41,14 +41,14 @@
   ],
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "doc": "npm run doc:generate && npm run doc:fix && npm run doc:prettier",
     "doc:fix": "sed -i -e 's:^[[:space:]]*<!--[[:space:]]*$::g' -e 's:^[[:space:]]*-->[[:space:]]*$::g' $npm_package_config_doc_path/global.html || true",
     "doc:generate": "jsdoc -c jsdoc.json -d $npm_package_config_doc_path",
     "doc:prettier": "prettier $npm_package_config_doc_path --write --ignore-path .prettierignore-doc",
     "fix": "eslint --fix && prettier . --write",
     "prepare": "npm run build",
-    "pretest": "eslint && prettier . --check && tsc -p tsconfig.test.json",
+    "pretest": "eslint && prettier . --check && tsc",
     "test": "c8 --include 'src/**' esmocha --forbid-only"
   },
   "config": {

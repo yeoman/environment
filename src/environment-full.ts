@@ -197,7 +197,6 @@ class FullEnvironment extends EnvironmentBase {
       try {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        // eslint-disable-next-line import-x/no-unresolved
         const { default: Generator } = await import('yeoman-generator');
         return Generator;
       } catch {

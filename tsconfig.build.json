@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["./src"],
+  "compilerOptions": {
+    "rootDir": "./src",
+    /* Published declarations must not depend on the test bundles. */
+    "paths": {},
+    /* Emit */
+    "noEmit": false,
+    "outDir": "./dist",
+    "declaration": true
+  }
+}
