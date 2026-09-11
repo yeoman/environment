@@ -1,24 +1,25 @@
 name: Integration Build
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || (github.ref == 'refs/heads/main' && github.sha) || github.ref }}
+  cancel-in-progress: true
 on:
-  # push:
-  #  branches-ignore:
-  #    - 'dependabot/**'
-  pull_request:
+  push:
     branches:
-      - 'ignore'
+      - 'main'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - '*'
 
 permissions:
   contents: read
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        node-version: ['lts/*']
+    runs-on: ubuntu-latest
+    env:
+      # Skip husky git hooks installation in the yeoman-test checkout.
+      HUSKY: 0
 
     steps:
       - name: Checkout yeoman-test
@@ -40,37 +41,47 @@ jobs:
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 'lts/*'
+          cache: npm
+          cache-dependency-path: '**/package-lock.json'
 
-      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-integration
-          restore-keys: |
-            ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-
-
-      - name: Run yeoman-test test
+      # Every package is installed from a tarball packed out of its checkout, so the environment under test is
+      # the checked out commit (works for pull requests from forks, unlike installing `owner/repo#ref`) and the
+      # siblings are their current main branches.
+      - name: Build and pack
+        id: build
         run: |
-          cd $GITHUB_WORKSPACE/yeoman-test
-          npm ci
-          npm install yeoman/generator#main
-          npm install ${{ github.repository }}#$GITHUB_REF
-          npm test
+          for package in yeoman-environment yeoman-generator yeoman-test; do
+            echo "::group::$package"
+            (cd "$package" && npm ci && npm pack)
+            echo "::endgroup::"
+          done
+          echo "environment=$(ls "$GITHUB_WORKSPACE"/yeoman-environment/yeoman-environment-*.tgz)" >> "$GITHUB_OUTPUT"
+          echo "generator=$(ls "$GITHUB_WORKSPACE"/yeoman-generator/yeoman-generator-*.tgz)" >> "$GITHUB_OUTPUT"
+          echo "test=$(ls "$GITHUB_WORKSPACE"/yeoman-test/yeoman-test-*.tgz)" >> "$GITHUB_OUTPUT"
 
-      - name: Run yeoman-generator test
-        if: always()
+      # The sibling suites run with `--ignore-scripts` to skip their `pretest` lint and type check, which
+      # belong to their own CI. Here only the runtime behavior against this environment matters.
+      - name: Run yeoman-test tests
+        if: ${{ !cancelled() && steps.build.conclusion == 'success' }}
+        working-directory: yeoman-test
         run: |
-          cd $GITHUB_WORKSPACE/yeoman-generator
-          npm ci
-          npm install yeoman/yeoman-test#main
-          npm install ${{ github.repository }}#$GITHUB_REF
-          npm test
+          npm install --no-save "${{ steps.build.outputs.generator }}" "${{ steps.build.outputs.environment }}"
+          npm test --ignore-scripts
 
-      - name: Run yeoman-environment test
-        if: always()
+      - name: Run yeoman-generator tests
+        if: ${{ !cancelled() && steps.build.conclusion == 'success' }}
+        working-directory: yeoman-generator
         run: |
-          cd $GITHUB_WORKSPACE/yeoman-environment
-          npm install
-          npm install yeoman/yeoman-test#main
-          npm install yeoman/generator#main
+          npm install --no-save "${{ steps.build.outputs.test }}" "${{ steps.build.outputs.environment }}"
+          npm test --ignore-scripts
+
+      # The environment matrix pins yeoman-generator bundles, only the `yeoman-generator-latest` entry is
+      # swapped for the yeoman-generator main branch.
+      - name: Run yeoman-environment tests
+        if: ${{ !cancelled() && steps.build.conclusion == 'success' }}
+        working-directory: yeoman-environment
+        run: |
+          npm pkg set --workspace test/generators "dependencies.yeoman-generator-latest=file:${{ steps.build.outputs.generator }}"
+          npm install "${{ steps.build.outputs.test }}"
           npm test
