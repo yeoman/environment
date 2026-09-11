@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Private workspace holding the yeoman-generator version matrix as pre-built bundles, re-exported as generator-v* subpaths",
+  "description": "Private workspace holding the yeoman-generator version matrix as pre-built bundles, re-exported as generator-v* subpaths, plus the latest npm release as generator-latest",
   "exports": {
     ".": "./generator-versions.ts",
     "./generator-v2": "./generator-v2.ts",
@@ -11,7 +11,8 @@
     "./generator-v5": "./generator-v5.ts",
     "./generator-v6": "./generator-v6.ts",
     "./generator-v7": "./generator-v7.ts",
-    "./generator-v8": "./generator-v8.ts"
+    "./generator-v8": "./generator-v8.ts",
+    "./generator-latest": "./generator-latest.ts"
   },
   "scripts": {
     "bundle": "node bundle.ts"
@@ -22,7 +23,8 @@
     "yeoman-generator-5": "file:./bundles/yeoman-generator-5",
     "yeoman-generator-6": "file:./bundles/yeoman-generator-6",
     "yeoman-generator-7": "file:./bundles/yeoman-generator-7",
-    "yeoman-generator-8": "file:./bundles/yeoman-generator-8"
+    "yeoman-generator-8": "file:./bundles/yeoman-generator-8",
+    "yeoman-generator-latest": "npm:yeoman-generator@latest"
   },
   "devDependencies": {
     "esbuild": "^0.28.1",

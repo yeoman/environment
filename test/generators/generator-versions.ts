@@ -6,15 +6,23 @@ export const generator5 = '@yeoman-environment/generator-tests/generator-v5';
 export const generator6 = '@yeoman-environment/generator-tests/generator-v6';
 export const generator7 = '@yeoman-environment/generator-tests/generator-v7';
 export const generator8 = '@yeoman-environment/generator-tests/generator-v8';
+/** Latest yeoman-generator release installed from npm, unlike the pinned bundles above. */
+export const generatorLatest = '@yeoman-environment/generator-tests/generator-latest';
 
 export type GeneratorVersion =
-  typeof generator2 | typeof generator4 | typeof generator5 | typeof generator6 | typeof generator7 | typeof generator8;
+  | typeof generator2
+  | typeof generator4
+  | typeof generator5
+  | typeof generator6
+  | typeof generator7
+  | typeof generator8
+  | typeof generatorLatest;
 
-export const allVersions: GeneratorVersion[] = [generator8, generator7, generator6, generator5, generator4, generator2];
+export const allVersions: GeneratorVersion[] = [generatorLatest, generator8, generator7, generator6, generator5, generator4, generator2];
 const legacyVersions = new Set<GeneratorVersion>([generator2, generator4]);
 export const isLegacyVersion = (version: GeneratorVersion): boolean => legacyVersions.has(version);
 
-const greaterThan6 = new Set<GeneratorVersion>([generator6, generator7, generator8]);
+const greaterThan6 = new Set<GeneratorVersion>([generator6, generator7, generator8, generatorLatest]);
 export const isGreaterThan6 = (version: GeneratorVersion): boolean => greaterThan6.has(version);
 
 export const greaterThan5 = new Set<GeneratorVersion>([generator5, ...greaterThan6]);
