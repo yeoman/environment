@@ -1,0 +1,10 @@
+{
+  "name": "generator-commonjs",
+  "version": "1.0.0",
+  "description": "Stub of generator-commonjs used by the lookup tests",
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "main": "app/index.js",
+  "license": "MIT"
+}

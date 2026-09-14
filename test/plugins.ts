@@ -2,8 +2,13 @@ import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
 import { mkdirSync, rmSync } from 'node:fs';
-import { afterEach, beforeEach, describe, expect, it } from 'esmocha';
-import Environment from '../src/index.ts';
+import { afterEach, beforeEach, describe, esmocha, expect, it } from 'esmocha';
+
+// Installing yeoman-generator through fly-import/arborist takes several seconds even when it is already cached,
+// so resolve it from the bundled latest release instead.
+const flyImport = esmocha.fn(async (_specifier: string) => import('@yeoman-environment/generator-tests/generator-latest'));
+await esmocha.mock('fly-import', { ...(await import('fly-import')), flyImport });
+const { default: Environment } = await import('../src/index.ts');
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-environment/light');
 
@@ -25,7 +30,8 @@ describe('Generators plugin', () => {
   afterEach(() => {
     process.chdir(cwd);
     rmSync(tmpdir, { recursive: true });
-  }).timeout(40_000);
+    flyImport.mockClear();
+  });
 
   for (const extended of [undefined, 'super:app']) {
     describe(`#run ${extended}`, () => {
@@ -57,13 +63,13 @@ describe('Generators plugin', () => {
           },
         };
         env.register(dummy, { namespace: 'dummy:app' });
-      }).timeout(300_000);
+      });
 
-      it(`runs generators plugin with requireGenerator value ${extended}`, () => {
-        return env.run('dummy:app').then(() => {
-          expect(execValue).toEqual('done');
-        });
-      }).timeout(100_000);
+      it(`runs generators plugin with requireGenerator value ${extended}`, async () => {
+        await env.run('dummy:app');
+        expect(execValue).toEqual('done');
+        expect(flyImport).toHaveBeenCalledWith('yeoman-generator');
+      });
     });
   }
 });
