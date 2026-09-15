@@ -1,11 +1,8 @@
 {
   "name": "lookup-dummy-env",
   "dependencies": {
-    "generator-commonjs": "*",
-    "generator-dummy": "~0.1.0",
-    "generator-jquery": "^1.2.3"
-  },
-  "overrides": {
-    "graceful-fs": "^4.2.10"
+    "generator-commonjs": "file:packages/generator-commonjs",
+    "generator-dummy": "file:packages/generator-dummy",
+    "generator-jquery": "file:packages/generator-jquery"
   }
 }

@@ -1,0 +1,7 @@
+{
+  "name": "generator-dummy",
+  "version": "0.1.0",
+  "description": "A dummy Yeoman generator used for unit test",
+  "main": "app/index.js",
+  "license": "MIT"
+}

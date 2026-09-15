@@ -1,0 +1,10 @@
+{
+  "name": "generator-jquery",
+  "version": "1.2.3",
+  "description": "Stub of generator-jquery used by the lookup tests",
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "main": "app/index.js",
+  "license": "MIT"
+}

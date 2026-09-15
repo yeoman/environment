@@ -69,6 +69,14 @@ const unlinkGenerator = (generator: string, scope?: string) => {
 const projectRoot = path.join(__dirname, 'fixtures/lookup-project');
 const customProjectRoot = path.join(__dirname, 'fixtures/lookup-custom');
 const subDirRoot = path.join(projectRoot, 'subdir');
+const fixturePackagesRoot = path.join(projectRoot, 'packages');
+
+// Copies stub packages into node_modules instead of running npm, which takes minutes on Windows CI.
+const installFixturePackages = (root: string, packages: string[]) => {
+  for (const name of packages) {
+    fs.cpSync(path.join(fixturePackagesRoot, name), path.join(root, 'node_modules', name), { recursive: true });
+  }
+};
 
 describe('Environment Resolver', async function () {
   this.timeout(100_000);
@@ -82,16 +90,14 @@ describe('Environment Resolver', async function () {
   let chdirRoot: string;
 
   before(function () {
-    this.timeout(500_000);
     cwd = process.cwd();
 
-    if (!fs.existsSync(projectRoot)) {
-      fs.mkdirSync(projectRoot);
-    }
-
     process.chdir(projectRoot);
-    if (!fs.existsSync(path.join(projectRoot, 'node_modules'))) {
-      execaSync('npm', ['ci']);
+    installFixturePackages(projectRoot, ['generator-commonjs', 'generator-dummy', 'generator-jquery']);
+
+    // Global generators are only asserted when NODE_PATH is set, see globalLookupTest.
+    if (process.env.NODE_PATH) {
+      this.timeout(500_000);
       execaSync('npm', ['install', '-g', 'generator-dummytest', 'generator-dummy', '--no-package-lock']);
     }
   });
@@ -183,7 +189,7 @@ describe('Environment Resolver', async function () {
     describe("when there's ancestor node_modules/ folder", async () => {
       before(() => {
         process.chdir(subDirRoot);
-        execaSync('npm', ['install', '--no-package-lock']);
+        installFixturePackages(subDirRoot, ['generator-dummy']);
       });
 
       after(() => {
