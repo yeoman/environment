@@ -66,6 +66,8 @@ export type EnvironmentOptions = ConflicterOptions &
     /**
      * Generators store to use instead of a new one, to share looked up and registered generators with other
      * environments. Generators registered through this environment are added to it.
+     *
+     * @experimental
      */
     store?: Store;
   };
@@ -159,8 +161,6 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   protected command?: YeomanCommand;
   protected runLoop: GroupedQueue;
   protected composedStore: ComposedStore;
-  // Metas of a shared store bound to this environment, by the meta of the store.
-  private readonly boundMetas = new WeakMap<StoreGeneratorMeta, GeneratorMeta>();
   protected lookups: string[];
   protected repository: FlyRepository;
   protected experimental: boolean;
@@ -261,36 +261,20 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   }
 
   /**
-   * What binds the meta of a shared store to this environment: the functions that need one.
-   */
-  private bindMetaFunctions(meta: StoreGeneratorMeta): Pick<GeneratorMeta, 'importGenerator' | 'instantiate' | 'instantiateHelp'> {
-    const environment = this as unknown as BaseEnvironment;
-    return {
-      importGenerator: (() => meta.importGenerator(environment)) as GeneratorMeta['importGenerator'],
-      instantiate: (arguments_?: string[], options?: any) => meta.instantiate(arguments_, options, environment),
-      instantiateHelp: () => meta.instantiateHelp(environment),
-    };
-  }
-
-  /**
-   * The meta of a generator of the store for this environment. The store of the environment itself already defaults
-   * to it; the meta of a store shared with other environments is bound to this one, once. A bound meta delegates to
-   * the meta of the store instead of copying it, so it keeps showing what the store has.
+   * The meta of a generator of the store for this environment.
    */
   protected bindMeta<M extends StoreGeneratorMeta>(meta: M): M & GeneratorMeta;
   protected bindMeta<M extends StoreGeneratorMeta>(meta: M | undefined): (M & GeneratorMeta) | undefined;
   protected bindMeta<M extends StoreGeneratorMeta>(meta: M | undefined): (M & GeneratorMeta) | undefined {
-    if (!meta || this.store.environment === this) {
-      return meta as (M & GeneratorMeta) | undefined;
-    }
+    return this.store.bindMeta(meta, { env: this.asEnvironment() }) as (M & GeneratorMeta) | undefined;
+  }
 
-    let boundMeta = this.boundMetas.get(meta);
-    if (!boundMeta) {
-      boundMeta = Object.assign(Object.create(meta) as GeneratorMeta, this.bindMetaFunctions(meta));
-      this.boundMetas.set(meta, boundMeta);
-    }
+  private getStoreMeta(namespace: string): GeneratorMeta | undefined {
+    return this.store.getMeta(namespace, { env: this.asEnvironment() }) as GeneratorMeta | undefined;
+  }
 
-    return boundMeta as M & GeneratorMeta;
+  protected asEnvironment(): BaseEnvironment {
+    return this as unknown as BaseEnvironment;
   }
 
   /**
@@ -306,10 +290,10 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     const parsed = toNamespace(namespaceOrPath);
     if (typeof namespaceOrPath !== 'string' || parsed) {
       const ns = parsed!.namespace;
-      return this.bindMeta(this.store.getMeta(ns) ?? this.store.getMeta(this.alias(ns)));
+      return this.getStoreMeta(ns) ?? this.getStoreMeta(this.alias(ns));
     }
 
-    const maybeMeta = this.bindMeta(this.store.getMeta(namespaceOrPath) ?? this.store.getMeta(this.alias(namespaceOrPath)));
+    const maybeMeta = this.getStoreMeta(namespaceOrPath) ?? this.getStoreMeta(this.alias(namespaceOrPath));
     if (maybeMeta) {
       return maybeMeta;
     }
@@ -317,7 +301,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     try {
       const resolved = resolveModulePath(namespaceOrPath);
       if (resolved) {
-        return this.bindMeta(this.store.add({ resolved, namespace: this.namespace(resolved) }));
+        return this.store.add({ resolved, namespace: this.namespace(resolved) }, undefined, { env: this.asEnvironment() }) as GeneratorMeta;
       }
     } catch {
       // ignore error
@@ -670,18 +654,12 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * registered as `dummy:yo` generator.
    */
   async lookup(options?: EnvironmentLookupOptions): Promise<LookupGeneratorMeta[]> {
-    const generators = await this.store.lookup({
+    return (await this.store.lookup({
       customizeNamespace: this.options.generatorLookupOptions?.customizeNamespace,
       lookups: this.lookups,
       ...(options ?? { localOnly: false }),
-    });
-    if (this.store.environment === this) {
-      return generators as LookupGeneratorMeta[];
-    }
-
-    return generators.map(generator =>
-      generator.registered ? { ...generator, ...this.bindMetaFunctions(generator) } : generator,
-    ) as LookupGeneratorMeta[];
+      env: this.asEnvironment(),
+    })) as LookupGeneratorMeta[];
   }
 
   /**
@@ -714,7 +692,14 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       return;
     }
 
-    return (this.store.environment === this ? { ...meta } : { ...meta, ...this.bindMetaFunctions(meta) }) as GeneratorMeta;
+    // A copy with the functions bound to this environment, the bound meta itself delegates to the meta of the store.
+    const boundMeta = this.bindMeta(meta);
+    return {
+      ...meta,
+      importGenerator: boundMeta.importGenerator,
+      instantiate: boundMeta.instantiate,
+      instantiateHelp: boundMeta.instantiateHelp,
+    } as GeneratorMeta;
   }
 
   /**
@@ -970,10 +955,10 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       return this.bindMeta(generatorMeta);
     }
 
-    const meta = this.store.add({ namespace, resolved: generatorPath, packagePath });
+    const meta = this.store.add({ namespace, resolved: generatorPath, packagePath }, undefined, { env: this.asEnvironment() });
 
     debug('Registered %s (%s) on package %s (%s)', namespace, generatorPath, meta.packageNamespace, packagePath);
-    return this.bindMeta(meta);
+    return meta as GeneratorMeta;
   }
 
   /**
@@ -995,10 +980,10 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       throw new TypeError('You must provide a namespace to register.');
     }
 
-    const meta = this.store.add({ namespace, resolved, packagePath }, Generator);
+    const meta = this.store.add({ namespace, resolved, packagePath }, Generator, { env: this.asEnvironment() });
 
     debug('Registered %s (%s) on package (%s)', namespace, resolved, packagePath);
-    return this.bindMeta(meta);
+    return meta as GeneratorMeta;
   }
 
   /**

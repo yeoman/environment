@@ -25,28 +25,41 @@ type FoundGenerator = {
   packagePath: string;
 };
 
-export type StoreLookupOptions = LookupOptions & {
-  registerToScope?: string;
-  customizeNamespace?: (ns?: string) => string | undefined;
-  /** Generators to keep, the others are neither registered nor returned. */
-  filter?: (generator: FoundGenerator) => boolean;
+/** The environment to import or instantiate a generator in. */
+export type StoreEnvironmentOptions = {
+  env?: BaseEnvironment;
 };
+
+export type StoreLookupOptions = LookupOptions &
+  StoreEnvironmentOptions & {
+    registerToScope?: string;
+    customizeNamespace?: (ns?: string) => string | undefined;
+    /** Generators to keep, the others are neither registered nor returned. */
+    filter?: (generator: FoundGenerator) => boolean;
+  };
 
 /** A generator found by a lookup, `registered` tells if it was added to the store. */
 export type StoreLookupGeneratorMeta = FoundGenerator &
   ((StoreGeneratorMeta & { registered: true }) | (Required<BaseGeneratorMeta> & { registered: false }));
 
 /**
- * Generator meta as the store keeps it: not bound to an environment. `importGenerator`, `instantiate` and
- * `instantiateHelp` take the environment to use, falling back to the one the store was created with, if any.
+ * Generator meta as the store keeps it. `importGenerator`, `instantiate` and `instantiateHelp` take the environment
+ * to use as `{ env }`, falling back to the one the meta is bound to: the environment the store was created with, if
+ * any, or the one passed to the store method that returned the meta.
  */
 export type StoreGeneratorMeta = Omit<GeneratorMeta, 'importGenerator' | 'instantiate' | 'instantiateHelp'> & {
   importGenerator: <G extends BaseGenerator = BaseGenerator>(
-    environment?: BaseEnvironment,
+    options?: StoreEnvironmentOptions,
   ) => Promise<GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta> | (GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta);
-  instantiate: <G extends BaseGenerator = BaseGenerator>(arguments_?: string[], options?: any, environment?: BaseEnvironment) => Promise<G>;
-  instantiateHelp: <G extends BaseGenerator = BaseGenerator>(environment?: BaseEnvironment) => Promise<G>;
+  instantiate: <G extends BaseGenerator = BaseGenerator>(
+    arguments_?: string[],
+    options?: any,
+    environmentOptions?: StoreEnvironmentOptions,
+  ) => Promise<G>;
+  instantiateHelp: <G extends BaseGenerator = BaseGenerator>(options?: StoreEnvironmentOptions) => Promise<G>;
 };
+
+type BoundFunctions = Pick<StoreGeneratorMeta, 'importGenerator' | 'instantiate' | 'instantiateHelp'>;
 
 /**
  * The Generator store
@@ -54,7 +67,10 @@ export type StoreGeneratorMeta = Omit<GeneratorMeta, 'importGenerator' | 'instan
  * requested.
  *
  * A store does not need an environment: generators are looked up and registered on their own, and the environment
- * that imports or instantiates one is passed at that time. The same store can then serve several environments.
+ * that imports or instantiates one is passed at that time. The same store can then serve several environments: the
+ * methods returning metas take `{ env }` and return metas bound to it.
+ *
+ * @experimental The Store API is not stable yet and may change in a minor release.
  */
 export default class Store {
   private readonly _meta: Record<string, StoreGeneratorMeta> = {};
@@ -64,6 +80,8 @@ export default class Store {
   private readonly _packagesPaths: Record<string, string[]> = {};
   // Store packages ns
   private readonly _packagesNS: string[] = [];
+  // Metas bound to an environment, by the meta of the store.
+  private readonly _boundMetas = new WeakMap<StoreGeneratorMeta, WeakMap<BaseEnvironment, StoreGeneratorMeta>>();
 
   /** The environment used when none is passed to `importGenerator` or `instantiate`. */
   readonly environment?: BaseEnvironment;
@@ -76,8 +94,9 @@ export default class Store {
    * Store a module under the namespace key
    * @param meta
    * @param generator - A generator module or a module path
+   * @param options.env - The environment to bind the returned meta to
    */
-  add<M extends BaseGeneratorMeta>(meta: M, Generator?: unknown): StoreGeneratorMeta & M {
+  add<M extends BaseGeneratorMeta>(meta: M, Generator?: unknown, { env }: StoreEnvironmentOptions = {}): StoreGeneratorMeta & M {
     if (typeof meta.resolved === 'string') {
       if (extname(meta.resolved)) {
         meta.resolved = join(meta.resolved);
@@ -177,7 +196,7 @@ export default class Store {
       return creating;
     };
 
-    const importGenerator = ((environment: BaseEnvironment | undefined = this.environment) => {
+    const importGenerator = (({ env: environment = this.environment }: StoreEnvironmentOptions = {}) => {
       const importing = importGeneratorModule();
       return importing ? importing.then(() => getGenerator(environment)) : getGenerator(environment);
     }) as StoreGeneratorMeta['importGenerator'];
@@ -185,17 +204,20 @@ export default class Store {
     const instantiate: StoreGeneratorMeta['instantiate'] = async <G extends BaseGenerator>(
       arguments_: string[] = [],
       options: any = {},
-      environment: BaseEnvironment | undefined = this.environment,
+      { env: environment = this.environment }: StoreEnvironmentOptions = {},
     ) => {
       if (!environment) {
         throw new Error(`An environment is required to instantiate the generator ${meta.namespace}`);
       }
 
-      return environment.instantiate<G>(await importGenerator<G>(environment), { generatorArgs: arguments_, generatorOptions: options });
+      return environment.instantiate<G>(await importGenerator<G>({ env: environment }), {
+        generatorArgs: arguments_,
+        generatorOptions: options,
+      });
     };
 
-    const instantiateHelp: StoreGeneratorMeta['instantiateHelp'] = async <G extends BaseGenerator>(environment?: BaseEnvironment) =>
-      instantiate<G>([], { help: true }, environment);
+    const instantiateHelp: StoreGeneratorMeta['instantiateHelp'] = async <G extends BaseGenerator>(options?: StoreEnvironmentOptions) =>
+      instantiate<G>([], { help: true }, options);
 
     const getPackageJson: GeneratorMeta['getPackageJson'] = <T = Record<string, any>>(): T | undefined =>
       this.getPackageJson<T>(meta.packagePath);
@@ -220,7 +242,34 @@ export default class Store {
       }
     }
 
-    return generatorMeta;
+    return this.bindMeta(generatorMeta, { env });
+  }
+
+  /**
+   * The meta bound to an environment: its functions default to it. The meta of the environment the store was created
+   * with is the meta itself, as it already defaults to it. A meta is bound once by environment, and delegates to the
+   * meta of the store instead of copying it, so it keeps showing what the store has.
+   */
+  bindMeta<M extends StoreGeneratorMeta>(meta: M, options?: StoreEnvironmentOptions): M;
+  bindMeta<M extends StoreGeneratorMeta>(meta: M | undefined, options?: StoreEnvironmentOptions): M | undefined;
+  bindMeta<M extends StoreGeneratorMeta>(meta: M | undefined, { env }: StoreEnvironmentOptions = {}): M | undefined {
+    if (!meta || !env || env === this.environment) {
+      return meta;
+    }
+
+    let boundMetas = this._boundMetas.get(meta);
+    if (!boundMetas) {
+      boundMetas = new WeakMap();
+      this._boundMetas.set(meta, boundMetas);
+    }
+
+    let boundMeta = boundMetas.get(env);
+    if (!boundMeta) {
+      boundMeta = Object.assign(Object.create(meta) as StoreGeneratorMeta, this.bindMetaFunctions(meta, env));
+      boundMetas.set(env, boundMeta);
+    }
+
+    return boundMeta as M;
   }
 
   /**
@@ -248,6 +297,7 @@ export default class Store {
       registerToScope,
       customizeNamespace = (ns?: string) => ns,
       filter,
+      env,
       lookups = defaultLookups,
       ...remainingOptions
     } = options ?? { localOnly: false };
@@ -279,7 +329,8 @@ export default class Store {
 
         const meta = this.add({ namespace, packagePath, resolved });
         if (meta) {
-          generators.push({ ...meta, filePath, packagePath, registered: true });
+          const boundFunctions = env && env !== this.environment ? this.bindMetaFunctions(meta, env) : {};
+          generators.push({ ...meta, ...boundFunctions, filePath, packagePath, registered: true });
           return Boolean(lookupOptions.singleResult);
         }
       } catch (error) {
@@ -296,19 +347,20 @@ export default class Store {
   /**
    * Get the module registered under the given namespace
    * @param  {String} namespace
+   * @param  options.env - The environment to import the generator in
    * @return {Module}
    */
-  async get(namespace: string, environment?: BaseEnvironment): Promise<GetGeneratorConstructor | undefined> {
-    return this.getMeta(namespace)?.importGenerator(environment);
+  async get(namespace: string, options?: StoreEnvironmentOptions): Promise<GetGeneratorConstructor | undefined> {
+    return this.getMeta(namespace)?.importGenerator(options);
   }
 
   /**
-   * Get the module registered under the given namespace
+   * Get the meta registered under the given namespace
    * @param  {String} namespace
-   * @return {Module}
+   * @param  options.env - The environment to bind the meta to
    */
-  getMeta(namespace: string): StoreGeneratorMeta | undefined {
-    return this._meta[namespace];
+  getMeta(namespace: string, options?: StoreEnvironmentOptions): StoreGeneratorMeta | undefined {
+    return this.bindMeta(this._meta[namespace], options);
   }
 
   /**
@@ -321,10 +373,23 @@ export default class Store {
 
   /**
    * Get the stored generators meta data
+   * @param  options.env - The environment to bind the metas to
    * @return {Object} Generators metadata
    */
-  getGeneratorsMeta() {
-    return this._meta;
+  getGeneratorsMeta(options?: StoreEnvironmentOptions): Record<string, StoreGeneratorMeta> {
+    const env = options?.env;
+    if (!env || env === this.environment) {
+      return this._meta;
+    }
+
+    // Bound as they are read. It is a view of the record of the store, as the record itself is what is returned
+    // otherwise: what is set goes to the store.
+    return new Proxy(this._meta, {
+      get: (target, property, receiver) => {
+        const meta = Reflect.get(target, property, receiver);
+        return typeof property === 'string' && meta ? this.bindMeta(meta, { env }) : meta;
+      },
+    });
   }
 
   /**
@@ -403,6 +468,18 @@ export default class Store {
     }
 
     return this._packagesJson.get(packagePath) as T | undefined;
+  }
+
+  /**
+   * The functions of a meta that need an environment, defaulting to the given one.
+   */
+  private bindMetaFunctions(meta: StoreGeneratorMeta, env: BaseEnvironment): BoundFunctions {
+    return {
+      importGenerator: (({ env: environment = env }: StoreEnvironmentOptions = {}) =>
+        meta.importGenerator({ env: environment })) as BoundFunctions['importGenerator'],
+      instantiate: (arguments_, options, { env: environment = env } = {}) => meta.instantiate(arguments_, options, { env: environment }),
+      instantiateHelp: ({ env: environment = env } = {}) => meta.instantiateHelp({ env: environment }),
+    };
   }
 
   private getFactory(module: any) {
