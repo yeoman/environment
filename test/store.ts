@@ -142,7 +142,8 @@ describe('Store', async () => {
       const generators = store.lookupSync({ packagePaths: [esmPackage], filter: ({ namespace }) => namespace === 'esm:app' });
       expect(generators.map(({ namespace }) => namespace)).toEqual(['esm:app']);
       expect(store.namespaces()).toEqual(['esm:app']);
-      expect(generators[0].filePath).toBe(path.join(esmPackage, 'generators/app/index.js'));
+      // The path as globby found it, with forward slashes on Windows.
+      expect(path.normalize(generators[0].filePath)).toBe(path.join(esmPackage, 'generators/app/index.js'));
       expect(generators[0].packagePath).toBe(esmPackage);
     });
 
