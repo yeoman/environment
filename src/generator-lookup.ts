@@ -3,7 +3,8 @@ import { pathToFileURL } from 'node:url';
 import type { LookupOptions as LookupOptionsApi } from '@yeoman/types';
 import { requireNamespace, toNamespace } from '@yeoman/namespace';
 import { type ModuleLookupOptions, findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.ts';
-import { asNamespace, defaultLookups } from './util/namespace.ts';
+import { defaultLookups } from './util/namespace.ts';
+import Store from './store.ts';
 
 export type LookupOptions = LookupOptionsApi &
   ModuleLookupOptions & {
@@ -39,6 +40,13 @@ export const defaultExtensions = ['.ts', '.cts', '.mts', '.js', '.cjs', '.mjs'];
  * @return {Promise<Object[]>} List of generators
  */
 export async function lookupGenerators(options: LookupOptions = {}, register?: (meta: LookupMeta) => boolean) {
+  return lookupGeneratorsSync(options, register);
+}
+
+/**
+ * Synchronous {@link lookupGenerators}.
+ */
+export function lookupGeneratorsSync(options: LookupOptions = {}, register?: (meta: LookupMeta) => boolean) {
   const { lookups = defaultLookups } = options;
   options = {
     // Js generators should be after, last will override registered one.
@@ -89,40 +97,32 @@ export function lookupGenerator(
   options?: ModuleLookupOptions & { packagePath?: boolean; generatorPath?: boolean },
 ): string | string[] {
   options = typeof options === 'boolean' ? { localOnly: options } : (options ?? {});
-  options.singleResult = options.singleResult ?? true;
+  const { packagePath: returnPackagePath, generatorPath: returnGeneratorPath, singleResult = true, ...lookupOptions } = options;
 
-  options.filePatterns = options.filePatterns ?? defaultLookups.map(prefix => join(prefix, '*/index.{js,ts}'));
   const ns = requireNamespace(namespace);
-  options.packagePatterns = options.packagePatterns ?? [ns.generatorHint];
-
-  options.npmPaths = options.npmPaths ?? getNpmPaths({ localOnly: options.localOnly }).toReversed();
-  options.packagePatterns = options.packagePatterns ?? ['generator-*'];
-  options.packagePaths = options.packagePaths ?? findPackagesIn(options.npmPaths, options.packagePatterns);
-
-  let paths: string[] | string | undefined = options.singleResult ? undefined : [];
-  moduleLookupSync(options, ({ files, packagePath }) => {
-    for (const filename of files) {
-      const fileNs = asNamespace(filename, { lookups: defaultLookups });
-      const ns = toNamespace(fileNs);
-      if (namespace === fileNs || (options!.packagePath && namespace === ns?.packageNamespace)) {
-        // Version 2.6.0 returned pattern instead of modulePath for options.packagePath
-        const returnPath = options!.packagePath ? packagePath : options!.generatorPath ? posix.join(filename, '../../') : filename;
-        if (options!.singleResult) {
-          paths = returnPath;
-          return filename;
-        }
-
-        (paths as string[]).push(returnPath);
-      }
-    }
-
-    return;
-  });
-
-  if (options.singleResult) {
-    const generatorPath = paths as unknown as string;
-    return generatorPath && isAbsolute(generatorPath) ? pathToFileURL(generatorPath).toString() : generatorPath;
+  lookupOptions.packagePatterns = lookupOptions.packagePatterns ?? [ns.generatorHint];
+  if (!lookupOptions.packagePaths) {
+    // Looking the npm paths up runs the package managers, skip it when the packages are given.
+    lookupOptions.npmPaths = lookupOptions.npmPaths ?? getNpmPaths({ localOnly: lookupOptions.localOnly }).toReversed();
+    lookupOptions.packagePaths = findPackagesIn(lookupOptions.npmPaths, lookupOptions.packagePatterns);
   }
 
-  return paths!.map(gen => (isAbsolute(gen) ? pathToFileURL(gen).toString() : gen));
+  // The generators are looked up by a store of their own, which keeps the ones asked for.
+  const generators = new Store().lookupSync({
+    filePatterns: defaultLookups.map(prefix => join(prefix, '*/index.{js,ts}')),
+    reverse: false,
+    ...lookupOptions,
+    lookups: defaultLookups,
+    singleResult,
+    filter: generator =>
+      generator.namespace === namespace || Boolean(returnPackagePath && toNamespace(generator.namespace)?.packageNamespace === namespace),
+  });
+
+  const paths = generators.map(({ filePath, packagePath }) => {
+    // Version 2.6.0 returned pattern instead of modulePath for options.packagePath
+    const returnPath = returnPackagePath ? packagePath : returnGeneratorPath ? posix.join(filePath, '../../') : filePath;
+    return isAbsolute(returnPath) ? pathToFileURL(returnPath).toString() : returnPath;
+  });
+
+  return singleResult ? paths[0] : paths;
 }

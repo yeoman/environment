@@ -138,6 +138,24 @@ describe('Store', async () => {
       expect(store.namespaces()).toEqual(expect.arrayContaining(['@scope/custom:app']));
     });
 
+    it('#lookupSync() keeps only the generators passing the filter, with the path they were found at', () => {
+      const generators = store.lookupSync({ packagePaths: [esmPackage], filter: ({ namespace }) => namespace === 'esm:app' });
+      expect(generators.map(({ namespace }) => namespace)).toEqual(['esm:app']);
+      expect(store.namespaces()).toEqual(['esm:app']);
+      expect(generators[0].filePath).toBe(path.join(esmPackage, 'generators/app/index.js'));
+      expect(generators[0].packagePath).toBe(esmPackage);
+    });
+
+    it('#lookupSync() stops at the first generator kept with singleResult', () => {
+      const generators = store.lookupSync({
+        packagePaths: [esmPackage],
+        singleResult: true,
+        filter: ({ namespace }) => namespace === 'esm:create',
+      });
+      expect(generators.map(({ namespace }) => namespace)).toEqual(['esm:create']);
+      expect(store.namespaces()).toEqual(['esm:create']);
+    });
+
     it('imports a generator exported as a class, the same for every environment', async () => {
       await store.lookup({ packagePaths: [esmPackage] });
       const meta = store.getMeta('esm:app')!;

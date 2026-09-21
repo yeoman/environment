@@ -12,19 +12,29 @@ import type {
   GetGeneratorConstructor,
 } from '@yeoman/types';
 import createDebug from 'debug';
-import { type LookupOptions, lookupGenerators } from './generator-lookup.ts';
+import { type LookupOptions, lookupGeneratorsSync } from './generator-lookup.ts';
 import { asNamespace, defaultLookups } from './util/namespace.ts';
 
 const debug = createDebug('yeoman:environment:store');
 const require = createRequire(import.meta.url);
 
+type FoundGenerator = {
+  namespace: string;
+  /** Path of the generator as it was found, `resolved` is its real path. */
+  filePath: string;
+  packagePath: string;
+};
+
 export type StoreLookupOptions = LookupOptions & {
   registerToScope?: string;
   customizeNamespace?: (ns?: string) => string | undefined;
+  /** Generators to keep, the others are neither registered nor returned. */
+  filter?: (generator: FoundGenerator) => boolean;
 };
 
 /** A generator found by a lookup, `registered` tells if it was added to the store. */
-export type StoreLookupGeneratorMeta = (StoreGeneratorMeta & { registered: true }) | (Required<BaseGeneratorMeta> & { registered: false });
+export type StoreLookupGeneratorMeta = FoundGenerator &
+  ((StoreGeneratorMeta & { registered: true }) | (Required<BaseGeneratorMeta> & { registered: false }));
 
 /**
  * Generator meta as the store keeps it: not bound to an environment. `importGenerator`, `instantiate` and
@@ -227,18 +237,24 @@ export default class Store {
    * registered as `dummy:yo` generator.
    */
   async lookup(options?: StoreLookupOptions): Promise<StoreLookupGeneratorMeta[]> {
+    return this.lookupSync(options);
+  }
+
+  /**
+   * Synchronous {@link Store.lookup}.
+   */
+  lookupSync(options?: StoreLookupOptions): StoreLookupGeneratorMeta[] {
     const {
       registerToScope,
       customizeNamespace = (ns?: string) => ns,
+      filter,
       lookups = defaultLookups,
       ...remainingOptions
-    } = options ?? {
-      localOnly: false,
-    };
+    } = options ?? { localOnly: false };
     const lookupOptions: LookupOptions = { ...remainingOptions, lookups };
 
     const generators: StoreLookupGeneratorMeta[] = [];
-    await lookupGenerators(lookupOptions, ({ packagePath, filePath, lookups }) => {
+    lookupGeneratorsSync(lookupOptions, ({ packagePath, filePath, lookups }) => {
       let repositoryPath = join(packagePath, '..');
       if (basename(repositoryPath).startsWith('@')) {
         // Scoped package
@@ -257,16 +273,20 @@ export default class Store {
           namespace = `@${registerToScope}/${namespace}`;
         }
 
+        if (filter && !filter({ namespace, filePath, packagePath })) {
+          return false;
+        }
+
         const meta = this.add({ namespace, packagePath, resolved });
         if (meta) {
-          generators.push({ ...meta, registered: true });
+          generators.push({ ...meta, filePath, packagePath, registered: true });
           return Boolean(lookupOptions.singleResult);
         }
       } catch (error) {
         console.error('Unable to register %s (Error: %s)', filePath, error);
       }
 
-      generators.push({ resolved: filePath, namespace: namespace!, packagePath, registered: false });
+      generators.push({ resolved: filePath, namespace: namespace!, filePath, packagePath, registered: false });
       return false;
     });
 
