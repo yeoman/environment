@@ -1,6 +1,12 @@
 import { createHash } from 'node:crypto';
 import { join, resolve } from 'node:path';
-import type { BaseGeneratorConstructor, BaseGeneratorOptions, GeneratorEnvironmentOptions, InputOutputAdapter } from '@yeoman/types';
+import type {
+  BaseGeneratorConstructor,
+  BaseGeneratorOptions,
+  GeneratorEnvironmentOptions,
+  GeneratorMeta,
+  InputOutputAdapter,
+} from '@yeoman/types';
 import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
 import { flyImport } from 'fly-import';
 import { defaults, pick, uniq } from 'lodash-es';
@@ -117,7 +123,7 @@ class FullEnvironment extends EnvironmentBase {
    * @return {Object}
    */
   getGeneratorsMeta() {
-    return this.store.getGeneratorsMeta();
+    return this.store.getGeneratorsMeta({ env: this.asEnvironment() }) as Record<string, GeneratorMeta>;
   }
 
   /**
