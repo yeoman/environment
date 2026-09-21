@@ -261,8 +261,21 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   }
 
   /**
+   * What binds the meta of a shared store to this environment: the functions that need one.
+   */
+  private bindMetaFunctions(meta: StoreGeneratorMeta): Pick<GeneratorMeta, 'importGenerator' | 'instantiate' | 'instantiateHelp'> {
+    const environment = this as unknown as BaseEnvironment;
+    return {
+      importGenerator: (() => meta.importGenerator(environment)) as GeneratorMeta['importGenerator'],
+      instantiate: (arguments_?: string[], options?: any) => meta.instantiate(arguments_, options, environment),
+      instantiateHelp: () => meta.instantiateHelp(environment),
+    };
+  }
+
+  /**
    * The meta of a generator of the store for this environment. The store of the environment itself already defaults
-   * to it; the meta of a store shared with other environments is bound to this one, once.
+   * to it; the meta of a store shared with other environments is bound to this one, once. A bound meta delegates to
+   * the meta of the store instead of copying it, so it keeps showing what the store has.
    */
   protected bindMeta<M extends StoreGeneratorMeta>(meta: M): M & GeneratorMeta;
   protected bindMeta<M extends StoreGeneratorMeta>(meta: M | undefined): (M & GeneratorMeta) | undefined;
@@ -273,13 +286,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
 
     let boundMeta = this.boundMetas.get(meta);
     if (!boundMeta) {
-      const environment = this as unknown as BaseEnvironment;
-      boundMeta = {
-        ...meta,
-        importGenerator: () => meta.importGenerator(environment),
-        instantiate: (arguments_?: string[], options?: any) => meta.instantiate(arguments_, options, environment),
-        instantiateHelp: () => meta.instantiateHelp(environment),
-      } as GeneratorMeta;
+      boundMeta = Object.assign(Object.create(meta) as GeneratorMeta, this.bindMetaFunctions(meta));
       this.boundMetas.set(meta, boundMeta);
     }
 
@@ -673,7 +680,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     }
 
     return generators.map(generator =>
-      generator.registered ? { ...this.bindMeta(generator), registered: true } : generator,
+      generator.registered ? { ...generator, ...this.bindMetaFunctions(generator) } : generator,
     ) as LookupGeneratorMeta[];
   }
 
@@ -702,12 +709,12 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * @param namespace
    */
   getGeneratorMeta(namespace: string): GeneratorMeta | undefined {
-    const meta = this.bindMeta(this.store.getMeta(namespace) ?? this.store.getMeta(this.alias(namespace)));
+    const meta = this.store.getMeta(namespace) ?? this.store.getMeta(this.alias(namespace));
     if (!meta) {
       return;
     }
 
-    return { ...meta } as GeneratorMeta;
+    return (this.store.environment === this ? { ...meta } : { ...meta, ...this.bindMetaFunctions(meta) }) as GeneratorMeta;
   }
 
   /**

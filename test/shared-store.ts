@@ -43,6 +43,17 @@ describe('Environment with a shared store', () => {
     expect(((await (created as any)._meta.instantiate()) as any).env).toBe(environmentB);
   });
 
+  it('keeps showing what the store has in a meta it already bound', () => {
+    const environment = new Environment({ store });
+    const bound = environment.findMeta('esm:app')!;
+    const importModule = async () => ({});
+    store.getMeta('esm:app')!.importModule = importModule;
+    expect(environment.findMeta('esm:app')).toBe(bound);
+    expect(bound.importModule).toBe(importModule);
+    expect(environment.getGeneratorMeta('esm:app')!.importModule).toBe(importModule);
+    expect(environment.getGeneratorsMeta()['esm:app'].importModule).toBe(importModule);
+  });
+
   it('binds the generators found by a lookup', async () => {
     const environment = new Environment({ store: new Store() });
     const generators = await environment.lookup({ packagePaths: [esmPackage] });
