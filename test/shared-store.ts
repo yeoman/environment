@@ -54,6 +54,22 @@ describe('Environment with a shared store', () => {
     expect(environment.getGeneratorsMeta()['esm:app'].importModule).toBe(importModule);
   });
 
+  it('#getGeneratorsMeta() is a view of the store, bound as it is read', async () => {
+    const environment = new Environment({ store });
+    const generatorsMeta = environment.getGeneratorsMeta();
+    expect(Object.keys(generatorsMeta)).toEqual(store.namespaces());
+    const generator = await Object.values(generatorsMeta)
+      .find(({ namespace }) => namespace === 'esm:app')!
+      .instantiate();
+    expect((generator as any).env).toBe(environment);
+
+    // What is set in it is registered in the store, like it is with the store of the environment itself.
+    const importGenerator = async () => class {} as any;
+    generatorsMeta['written:app'] = { namespace: 'written:app', importGenerator } as any;
+    expect(store.getMeta('written:app')).toBeDefined();
+    expect(environment.getGeneratorMeta('written:app')).toBeDefined();
+  });
+
   it('binds the generators found by a lookup', async () => {
     const environment = new Environment({ store: new Store() });
     const generators = await environment.lookup({ packagePaths: [esmPackage] });

@@ -128,7 +128,14 @@ class FullEnvironment extends EnvironmentBase {
       return generatorsMeta as Record<string, GeneratorMeta>;
     }
 
-    return Object.fromEntries(Object.entries(generatorsMeta).map(([namespace, meta]) => [namespace, this.bindMeta(meta)]));
+    // The metas of a shared store, bound to this environment as they are read. It is a view of the record of the
+    // store, as the record itself is what an environment with a store of its own returns: what is set goes to the store.
+    return new Proxy(generatorsMeta, {
+      get: (target, property, receiver) => {
+        const meta = Reflect.get(target, property, receiver);
+        return typeof property === 'string' && meta ? this.bindMeta(meta) : meta;
+      },
+    }) as Record<string, GeneratorMeta>;
   }
 
   /**
