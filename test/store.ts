@@ -114,4 +114,67 @@ describe('Store', async () => {
       expect(store.namespaces()).toEqual(['foo', 'lab']);
     });
   });
+
+  describe('without an environment', async () => {
+    const esmPackage = path.join(__dirname, 'fixtures/generator-esm');
+
+    beforeEach(async () => {
+      store = new Store();
+    });
+
+    it('#lookup() registers the generators found', async () => {
+      const generators = await store.lookup({ packagePaths: [esmPackage] });
+      expect(generators.every(generator => generator.registered)).toBe(true);
+      expect(store.namespaces()).toEqual(expect.arrayContaining(['esm:app', 'esm:create']));
+      expect(store.getMeta('esm:app')?.packagePath).toBe(esmPackage);
+    });
+
+    it('#lookup() customizes the namespace and registers to a scope', async () => {
+      await store.lookup({
+        packagePaths: [esmPackage],
+        customizeNamespace: ns => ns?.replace('esm:', 'custom:'),
+        registerToScope: 'scope',
+      });
+      expect(store.namespaces()).toEqual(expect.arrayContaining(['@scope/custom:app']));
+    });
+
+    it('imports a generator exported as a class, the same for every environment', async () => {
+      await store.lookup({ packagePaths: [esmPackage] });
+      const meta = store.getMeta('esm:app')!;
+      expect(await meta.importGenerator()).toBe(await meta.importGenerator({} as any));
+    });
+
+    it('requires the environment to create a generator from a factory, and keeps the result by environment', async () => {
+      const created: unknown[] = [];
+      store.add(
+        { namespace: 'factory:app', resolved: '/factory/path' },
+        {
+          createGenerator(environment: unknown) {
+            created.push(environment);
+            return class {};
+          },
+        },
+      );
+      const meta = store.getMeta('factory:app')!;
+      await expect(async () => meta.importGenerator()).rejects.toThrow(/An environment is required to create the generator factory:app/);
+
+      const environmentA = {} as any;
+      const environmentB = {} as any;
+      const generatorA = await meta.importGenerator(environmentA);
+      expect(await meta.importGenerator(environmentA)).toBe(generatorA);
+      expect(await meta.importGenerator(environmentB)).not.toBe(generatorA);
+      expect(created).toEqual([environmentA, environmentB]);
+    });
+
+    it('#instantiate() uses the environment it is given', async () => {
+      store.add({ namespace: 'foo:app', resolved: '/foo/path' }, class {});
+      const meta = store.getMeta('foo:app')!;
+      await expect(meta.instantiate()).rejects.toThrow(/An environment is required to instantiate the generator foo:app/);
+
+      const instantiated: unknown[] = [];
+      const environment = { instantiate: async (generator: unknown, options: unknown) => instantiated.push([generator, options]) } as any;
+      await meta.instantiate(['arg'], { option: true }, environment);
+      expect(instantiated).toEqual([[await meta.importGenerator(), { generatorArgs: ['arg'], generatorOptions: { option: true } }]]);
+    });
+  });
 });

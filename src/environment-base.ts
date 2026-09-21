@@ -1,8 +1,7 @@
 import EventEmitter from 'node:events';
 import { createRequire } from 'node:module';
-import { basename, isAbsolute, join, relative, resolve } from 'node:path';
+import { isAbsolute, join, relative, resolve } from 'node:path';
 import process from 'node:process';
-import { realpathSync } from 'node:fs';
 import { QueuedAdapter, type TerminalAdapterOptions } from '@yeoman/adapter';
 import type {
   ApplyTransformsOptions,
@@ -31,10 +30,10 @@ import chalk from 'chalk';
 import { type ConflicterOptions } from '@yeoman/conflicter';
 import { defaults, pick } from 'lodash-es';
 import { ComposedStore } from './composed-store.ts';
-import Store from './store.ts';
+import Store, { type StoreGeneratorMeta } from './store.ts';
 import type YeomanCommand from './util/command.ts';
 import { asNamespace, defaultLookups } from './util/namespace.ts';
-import { type LookupOptions, lookupGenerators } from './generator-lookup.ts';
+import { type LookupOptions } from './generator-lookup.ts';
 import { UNKNOWN_NAMESPACE, UNKNOWN_RESOLVED, defaultQueues } from './constants.ts';
 import { resolveModulePath } from './util/resolve.ts';
 import { commitSharedFsTask } from './commit.ts';
@@ -64,6 +63,11 @@ export type EnvironmentOptions = ConflicterOptions &
     arboristRegistry?: string;
     nodePackageManager?: string;
     generatorLookupOptions?: Pick<EnvironmentLookupOptions, 'customizeNamespace' | 'lookups'>;
+    /**
+     * Generators store to use instead of a new one, to share looked up and registered generators with other
+     * environments. Generators registered through this environment are added to it.
+     */
+    store?: Store;
   };
 
 const getInstantiateOptions = (firstArg?: any, generatorOptions?: any): InstantiateOptions => {
@@ -155,6 +159,8 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   protected command?: YeomanCommand;
   protected runLoop: GroupedQueue;
   protected composedStore: ComposedStore;
+  // Metas of a shared store bound to this environment, by the meta of the store.
+  private readonly boundMetas = new WeakMap<StoreGeneratorMeta, GeneratorMeta>();
   protected lookups: string[];
   protected repository: FlyRepository;
   protected experimental: boolean;
@@ -182,6 +188,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       stderr,
       stdout,
       adapter = new QueuedAdapter({ console: adapterConsole, stdin, stdout, stderr }),
+      store,
       ...remainingOptions
     } = options;
 
@@ -189,7 +196,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     this.adapter = adapter as QueuedAdapter;
     this.cwd = resolve(cwd);
     this.logCwd = logCwd;
-    this.store = new Store(this as BaseEnvironment);
+    this.store = store ?? new Store(this as BaseEnvironment);
     this.command = command;
 
     this.runLoop = new GroupedQueue(defaultQueues, false);
@@ -254,6 +261,32 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   }
 
   /**
+   * The meta of a generator of the store for this environment. The store of the environment itself already defaults
+   * to it; the meta of a store shared with other environments is bound to this one, once.
+   */
+  protected bindMeta<M extends StoreGeneratorMeta>(meta: M): M & GeneratorMeta;
+  protected bindMeta<M extends StoreGeneratorMeta>(meta: M | undefined): (M & GeneratorMeta) | undefined;
+  protected bindMeta<M extends StoreGeneratorMeta>(meta: M | undefined): (M & GeneratorMeta) | undefined {
+    if (!meta || this.store.environment === this) {
+      return meta as (M & GeneratorMeta) | undefined;
+    }
+
+    let boundMeta = this.boundMetas.get(meta);
+    if (!boundMeta) {
+      const environment = this as unknown as BaseEnvironment;
+      boundMeta = {
+        ...meta,
+        importGenerator: () => meta.importGenerator(environment),
+        instantiate: (arguments_?: string[], options?: any) => meta.instantiate(arguments_, options, environment),
+        instantiateHelp: () => meta.instantiateHelp(environment),
+      } as GeneratorMeta;
+      this.boundMetas.set(meta, boundMeta);
+    }
+
+    return boundMeta as M & GeneratorMeta;
+  }
+
+  /**
    * @param   namespaceOrPath
    * @return the generator meta registered under the namespace
    */
@@ -266,10 +299,10 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     const parsed = toNamespace(namespaceOrPath);
     if (typeof namespaceOrPath !== 'string' || parsed) {
       const ns = parsed!.namespace;
-      return this.store.getMeta(ns) ?? this.store.getMeta(this.alias(ns));
+      return this.bindMeta(this.store.getMeta(ns) ?? this.store.getMeta(this.alias(ns)));
     }
 
-    const maybeMeta = this.store.getMeta(namespaceOrPath) ?? this.store.getMeta(this.alias(namespaceOrPath));
+    const maybeMeta = this.bindMeta(this.store.getMeta(namespaceOrPath) ?? this.store.getMeta(this.alias(namespaceOrPath)));
     if (maybeMeta) {
       return maybeMeta;
     }
@@ -277,7 +310,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     try {
       const resolved = resolveModulePath(namespaceOrPath);
       if (resolved) {
-        return this.store.add({ resolved, namespace: this.namespace(resolved) });
+        return this.bindMeta(this.store.add({ resolved, namespace: this.namespace(resolved) }));
       }
     } catch {
       // ignore error
@@ -388,7 +421,9 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     ...arguments_: any[]
   ): Promise<G> | G {
     const composeOptions = arguments_.length > 0 ? (getInstantiateOptions(...arguments_) as InstantiateOptions<G>) : {};
-    const { namespace = UNKNOWN_NAMESPACE, resolved = UNKNOWN_RESOLVED, _meta } = constructor;
+    const { namespace = UNKNOWN_NAMESPACE, resolved = UNKNOWN_RESOLVED } = constructor;
+    // The generator class keeps the meta of the store, which may be shared: the generator gets the one of this environment.
+    const _meta = this.bindMeta(constructor._meta as StoreGeneratorMeta | undefined);
     const environmentOptions = { env: this, resolved, namespace, _meta };
     const generator = new constructor(composeOptions.generatorArgs ?? [], {
       ...this.sharedOptions,
@@ -628,60 +663,18 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * registered as `dummy:yo` generator.
    */
   async lookup(options?: EnvironmentLookupOptions): Promise<LookupGeneratorMeta[]> {
-    const {
-      registerToScope,
-      customizeNamespace = this.options.generatorLookupOptions?.customizeNamespace ?? ((ns: string) => ns),
-      lookups = this.lookups,
-      ...remainingOptions
-    } = options ?? { localOnly: false };
-    options = {
-      ...remainingOptions,
-      lookups,
-    };
-
-    const generators: LookupGeneratorMeta[] = [];
-    await lookupGenerators(options, ({ packagePath, filePath, lookups }) => {
-      let repositoryPath = join(packagePath, '..');
-      if (basename(repositoryPath).startsWith('@')) {
-        // Scoped package
-        repositoryPath = join(repositoryPath, '..');
-      }
-
-      let namespace = customizeNamespace(asNamespace(relative(repositoryPath, filePath), { lookups }));
-      try {
-        const resolved = realpathSync(filePath);
-        if (!namespace) {
-          namespace = customizeNamespace(asNamespace(resolved, { lookups }));
-        }
-
-        namespace = namespace!;
-        if (registerToScope && !namespace.startsWith('@')) {
-          namespace = `@${registerToScope}/${namespace}`;
-        }
-
-        const meta = this.store.add({ namespace, packagePath, resolved });
-        if (meta) {
-          generators.push({
-            ...meta,
-            registered: true,
-          });
-          return Boolean(options?.singleResult);
-        }
-      } catch (error) {
-        console.error('Unable to register %s (Error: %s)', filePath, error);
-      }
-
-      generators.push({
-        resolved: filePath,
-        namespace: namespace!,
-        packagePath,
-        registered: false,
-      });
-
-      return false;
+    const generators = await this.store.lookup({
+      customizeNamespace: this.options.generatorLookupOptions?.customizeNamespace,
+      lookups: this.lookups,
+      ...(options ?? { localOnly: false }),
     });
+    if (this.store.environment === this) {
+      return generators as LookupGeneratorMeta[];
+    }
 
-    return generators;
+    return generators.map(generator =>
+      generator.registered ? { ...this.bindMeta(generator), registered: true } : generator,
+    ) as LookupGeneratorMeta[];
   }
 
   /**
@@ -709,7 +702,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * @param namespace
    */
   getGeneratorMeta(namespace: string): GeneratorMeta | undefined {
-    const meta = this.store.getMeta(namespace) ?? this.store.getMeta(this.alias(namespace));
+    const meta = this.bindMeta(this.store.getMeta(namespace) ?? this.store.getMeta(this.alias(namespace)));
     if (!meta) {
       return;
     }
@@ -967,13 +960,13 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     // Generator is already registered and matches the current namespace.
     const generatorMeta = this.store.getMeta(namespace);
     if (generatorMeta && generatorMeta.resolved === generatorPath) {
-      return generatorMeta;
+      return this.bindMeta(generatorMeta);
     }
 
     const meta = this.store.add({ namespace, resolved: generatorPath, packagePath });
 
     debug('Registered %s (%s) on package %s (%s)', namespace, generatorPath, meta.packageNamespace, packagePath);
-    return meta;
+    return this.bindMeta(meta);
   }
 
   /**
@@ -998,7 +991,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     const meta = this.store.add({ namespace, resolved, packagePath }, Generator);
 
     debug('Registered %s (%s) on package (%s)', namespace, resolved, packagePath);
-    return meta;
+    return this.bindMeta(meta);
   }
 
   /**
