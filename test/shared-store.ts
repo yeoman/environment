@@ -12,7 +12,7 @@ describe('Environment with a shared store', () => {
 
   beforeEach(async () => {
     store = new Store();
-    await store.lookup({ packagePaths: [esmPackage] });
+    store.lookupSync({ packagePaths: [esmPackage] });
   });
 
   it('uses the generators already in the store, without a lookup of its own', () => {

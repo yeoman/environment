@@ -122,15 +122,15 @@ describe('Store', async () => {
       store = new Store();
     });
 
-    it('#lookup() registers the generators found', async () => {
-      const generators = await store.lookup({ packagePaths: [esmPackage] });
+    it('#lookupSync() registers the generators found', async () => {
+      const generators = store.lookupSync({ packagePaths: [esmPackage] });
       expect(generators.every(generator => generator.registered)).toBe(true);
       expect(store.namespaces()).toEqual(expect.arrayContaining(['esm:app', 'esm:create']));
       expect(store.getMeta('esm:app')?.packagePath).toBe(esmPackage);
     });
 
-    it('#lookup() customizes the namespace and registers to a scope', async () => {
-      await store.lookup({
+    it('#lookupSync() customizes the namespace and registers to a scope', async () => {
+      store.lookupSync({
         packagePaths: [esmPackage],
         customizeNamespace: ns => ns?.replace('esm:', 'custom:'),
         registerToScope: 'scope',
@@ -157,7 +157,7 @@ describe('Store', async () => {
     });
 
     it('imports a generator exported as a class, the same for every environment', async () => {
-      await store.lookup({ packagePaths: [esmPackage] });
+      store.lookupSync({ packagePaths: [esmPackage] });
       const meta = store.getMeta('esm:app')!;
       expect(await meta.importGenerator()).toBe(await meta.importGenerator({ env: {} as any }));
     });
@@ -233,9 +233,9 @@ describe('Store', async () => {
         expect(await store.get('factory:app', { env: createEnvironment() })).toBeDefined();
       });
 
-      it('#lookup() returns the generators bound to the environment', async () => {
+      it('#lookupSync() returns the generators bound to the environment', async () => {
         const environment = createEnvironment();
-        const generators = await store.lookup({ packagePaths: [esmPackage], env: environment });
+        const generators = store.lookupSync({ packagePaths: [esmPackage], env: environment });
         await (generators.find(({ namespace }) => namespace === 'esm:app') as any).instantiate();
         expect(environment.instantiated).toHaveLength(1);
       });

@@ -37,14 +37,7 @@ export const defaultExtensions = ['.ts', '.cts', '.mts', '.js', '.cjs', '.mjs'];
  * @param {string|Array} [options.packagePatterns='generator-*'] - Package pattern to look for.
  * @param {boolean}      [options.singleResult=false] - Set true to stop lookup on the first match.
  * @param {Number}       [options.globbyDeep] - Deep option to be passed to globby.
- * @return {Promise<Object[]>} List of generators
- */
-export async function lookupGenerators(options: LookupOptions = {}, register?: (meta: LookupMeta) => boolean) {
-  return lookupGeneratorsSync(options, register);
-}
-
-/**
- * Synchronous {@link lookupGenerators}.
+ * @return {Object[]} List of generators
  */
 export function lookupGeneratorsSync(options: LookupOptions = {}, register?: (meta: LookupMeta) => boolean) {
   const { lookups = defaultLookups } = options;

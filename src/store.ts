@@ -285,13 +285,6 @@ export default class Store {
    * So this index file `node_modules/generator-dummy/lib/generators/yo/index.js` would be
    * registered as `dummy:yo` generator.
    */
-  async lookup(options?: StoreLookupOptions): Promise<StoreLookupGeneratorMeta[]> {
-    return this.lookupSync(options);
-  }
-
-  /**
-   * Synchronous {@link Store.lookup}.
-   */
   lookupSync(options?: StoreLookupOptions): StoreLookupGeneratorMeta[] {
     const {
       registerToScope,

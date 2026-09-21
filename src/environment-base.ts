@@ -654,12 +654,12 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * registered as `dummy:yo` generator.
    */
   async lookup(options?: EnvironmentLookupOptions): Promise<LookupGeneratorMeta[]> {
-    return (await this.store.lookup({
+    return this.store.lookupSync({
       customizeNamespace: this.options.generatorLookupOptions?.customizeNamespace,
       lookups: this.lookups,
       ...(options ?? { localOnly: false }),
       env: this.asEnvironment(),
-    })) as LookupGeneratorMeta[];
+    }) as LookupGeneratorMeta[];
   }
 
   /**
