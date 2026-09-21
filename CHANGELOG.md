@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.1.0](https://github.com/yeoman/environment/compare/v7.0.0...v7.1.0) (2026-09-21)
+
+
+### Features
+
+* **deps:** bump the codeql-action group with 4 updates ([#835](https://github.com/yeoman/environment/issues/835)) ([ab54586](https://github.com/yeoman/environment/commit/ab54586831e6bc8c314c8efe560186c2189630d8))
+* **store:** make the generators store independent of an environment  ([#839](https://github.com/yeoman/environment/issues/839)) ([79ec1fb](https://github.com/yeoman/environment/commit/79ec1fb8aab7996c544bd9c574f8bc3ab5c424a9))
+
 ## [7.0.0](https://github.com/yeoman/environment/compare/v6.3.0...v7.0.0) (2026-09-06)
 
 ### ⚠ BREAKING CHANGES
