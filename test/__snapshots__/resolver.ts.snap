@@ -11,6 +11,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "namespace": "@dummyscope/scoped:app",
     "packageNamespace": "@dummyscope/scoped",
     "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@dummyscope/scoped:package": {
@@ -22,6 +23,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "namespace": "@dummyscope/scoped:package",
     "packageNamespace": "@dummyscope/scoped",
     "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "common-js:cjs": {
@@ -33,6 +35,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "namespace": "common-js:cjs",
     "packageNamespace": "common-js",
     "packagePath": "fixtures/lookup-project/node_modules/generator-common-js",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
   },
   "commonjs:app": {
@@ -44,6 +47,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "namespace": "commonjs:app",
     "packageNamespace": "commonjs",
     "packagePath": "fixtures/lookup-project/node_modules/generator-commonjs",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/node_modules/generator-commonjs/app/index.js",
   },
   "dummy:app": {
@@ -55,6 +59,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "namespace": "dummy:app",
     "packageNamespace": "dummy",
     "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/node_modules/generator-dummy/app/index.js",
   },
   "dummy:yo": {
@@ -66,6 +71,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "namespace": "dummy:yo",
     "packageNamespace": "dummy",
     "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/node_modules/generator-dummy/yo/index.js",
   },
   "esm:app": {
@@ -77,6 +83,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "namespace": "esm:app",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/app/index.js",
   },
   "esm:create": {
@@ -88,6 +95,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "namespace": "esm:create",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/create/index.js",
   },
   "esm:create-inherited": {
@@ -99,6 +107,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "namespace": "esm:create-inherited",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
   },
   "esm:mjs": {
@@ -110,6 +119,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "namespace": "esm:mjs",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
   },
   "extend:support": {
@@ -121,6 +131,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "namespace": "extend:support",
     "packageNamespace": "extend",
     "packagePath": "fixtures/lookup-project/node_modules/generator-extend",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-extend/support/index.js",
   },
   "jquery:app": {
@@ -132,6 +143,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "namespace": "jquery:app",
     "packageNamespace": "jquery",
     "packagePath": "fixtures/lookup-project/node_modules/generator-jquery",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/node_modules/generator-jquery/app/index.js",
   },
   "ts-js:app": {
@@ -143,6 +155,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "namespace": "ts-js:app",
     "packageNamespace": "ts-js",
     "packagePath": "fixtures/lookup-project/node_modules/generator-ts-js",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-ts-js/generators/app/index.js",
   },
   "ts:app": {
@@ -154,6 +167,7 @@ exports[`Environment Resolver #lookup() should register expected generators 1`] 
     "namespace": "ts:app",
     "packageNamespace": "ts",
     "packagePath": "fixtures/lookup-project/node_modules/generator-ts",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-ts/generators/app/index.ts",
   },
 }
@@ -170,6 +184,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "namespace": "@dummyscope/scoped:app",
     "packageNamespace": "@dummyscope/scoped",
     "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@dummyscope/scoped:package": {
@@ -181,6 +196,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "namespace": "@dummyscope/scoped:package",
     "packageNamespace": "@dummyscope/scoped",
     "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "common-js:cjs": {
@@ -192,6 +208,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "namespace": "common-js:cjs",
     "packageNamespace": "common-js",
     "packagePath": "fixtures/lookup-project/node_modules/generator-common-js",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
   },
   "commonjs:app": {
@@ -203,6 +220,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "namespace": "commonjs:app",
     "packageNamespace": "commonjs",
     "packagePath": "fixtures/lookup-project/node_modules/generator-commonjs",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/node_modules/generator-commonjs/app/index.js",
   },
   "dummy:app": {
@@ -214,6 +232,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "namespace": "dummy:app",
     "packageNamespace": "dummy",
     "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/node_modules/generator-dummy/app/index.js",
   },
   "dummy:yo": {
@@ -225,6 +244,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "namespace": "dummy:yo",
     "packageNamespace": "dummy",
     "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/node_modules/generator-dummy/yo/index.js",
   },
   "esm:app": {
@@ -236,6 +256,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "namespace": "esm:app",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/app/index.js",
   },
   "esm:create": {
@@ -247,6 +268,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "namespace": "esm:create",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/create/index.js",
   },
   "esm:create-inherited": {
@@ -258,6 +280,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "namespace": "esm:create-inherited",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
   },
   "esm:mjs": {
@@ -269,6 +292,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "namespace": "esm:mjs",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
   },
   "extend:support": {
@@ -280,6 +304,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "namespace": "extend:support",
     "packageNamespace": "extend",
     "packagePath": "fixtures/lookup-project/node_modules/generator-extend",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-extend/support/index.js",
   },
   "jquery:app": {
@@ -291,6 +316,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "namespace": "jquery:app",
     "packageNamespace": "jquery",
     "packagePath": "fixtures/lookup-project/node_modules/generator-jquery",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/node_modules/generator-jquery/app/index.js",
   },
   "ts-js:app": {
@@ -302,6 +328,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "namespace": "ts-js:app",
     "packageNamespace": "ts-js",
     "packagePath": "fixtures/lookup-project/node_modules/generator-ts-js",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-ts-js/generators/app/index.js",
   },
   "ts:app": {
@@ -313,6 +340,7 @@ exports[`Environment Resolver #lookup() when localOnly argument is true should r
     "namespace": "ts:app",
     "packageNamespace": "ts",
     "packagePath": "fixtures/lookup-project/node_modules/generator-ts",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-ts/generators/app/index.ts",
   },
 }
@@ -329,6 +357,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "namespace": "@dummyscope/scoped:app",
     "packageNamespace": "@dummyscope/scoped",
     "packagePath": "fixtures/lookup-project/orig/@dummyscope/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@dummyscope/scoped:package": {
@@ -340,6 +369,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "namespace": "@dummyscope/scoped:package",
     "packageNamespace": "@dummyscope/scoped",
     "packagePath": "fixtures/lookup-project/orig/@dummyscope/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "common-js:cjs": {
@@ -351,6 +381,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "namespace": "common-js:cjs",
     "packageNamespace": "common-js",
     "packagePath": "fixtures/lookup-project/orig/generator-common-js",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
   },
   "commonjs:app": {
@@ -362,6 +393,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "namespace": "commonjs:app",
     "packageNamespace": "commonjs",
     "packagePath": "fixtures/lookup-project/orig/generator-commonjs",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/orig/generator-commonjs/app/index.js",
   },
   "dummy:app": {
@@ -373,6 +405,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "namespace": "dummy:app",
     "packageNamespace": "dummy",
     "packagePath": "fixtures/lookup-project/orig/generator-dummy",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/orig/generator-dummy/app/index.js",
   },
   "dummy:yo": {
@@ -384,6 +417,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "namespace": "dummy:yo",
     "packageNamespace": "dummy",
     "packagePath": "fixtures/lookup-project/orig/generator-dummy",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/orig/generator-dummy/yo/index.js",
   },
   "esm:app": {
@@ -395,6 +429,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "namespace": "esm:app",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/orig/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/app/index.js",
   },
   "esm:create": {
@@ -406,6 +441,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "namespace": "esm:create",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/orig/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/create/index.js",
   },
   "esm:create-inherited": {
@@ -417,6 +453,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "namespace": "esm:create-inherited",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/orig/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
   },
   "esm:mjs": {
@@ -428,6 +465,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "namespace": "esm:mjs",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/orig/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
   },
   "extend:support": {
@@ -439,6 +477,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "namespace": "extend:support",
     "packageNamespace": "extend",
     "packagePath": "fixtures/lookup-project/orig/generator-extend",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-extend/support/index.js",
   },
   "jquery:app": {
@@ -450,6 +489,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "namespace": "jquery:app",
     "packageNamespace": "jquery",
     "packagePath": "fixtures/lookup-project/orig/generator-jquery",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/orig/generator-jquery/app/index.js",
   },
   "ts-js:app": {
@@ -461,6 +501,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "namespace": "ts-js:app",
     "packageNamespace": "ts-js",
     "packagePath": "fixtures/lookup-project/orig/generator-ts-js",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-ts-js/generators/app/index.js",
   },
   "ts:app": {
@@ -472,6 +513,7 @@ exports[`Environment Resolver #lookup() when modules repository is not called no
     "namespace": "ts:app",
     "packageNamespace": "ts",
     "packagePath": "fixtures/lookup-project/orig/generator-ts",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-ts/generators/app/index.ts",
   },
 }
@@ -488,6 +530,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "namespace": "@dummyscope/scoped:app",
     "packageNamespace": "@dummyscope/scoped",
     "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@dummyscope/scoped:package": {
@@ -499,6 +542,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "namespace": "@dummyscope/scoped:package",
     "packageNamespace": "@dummyscope/scoped",
     "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "common-js:cjs": {
@@ -510,6 +554,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "namespace": "common-js:cjs",
     "packageNamespace": "common-js",
     "packagePath": "fixtures/lookup-project/node_modules/generator-common-js",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
   },
   "commonjs:app": {
@@ -521,6 +566,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "namespace": "commonjs:app",
     "packageNamespace": "commonjs",
     "packagePath": "fixtures/lookup-project/node_modules/generator-commonjs",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/orig/node_modules/generator-commonjs/app/index.js",
   },
   "dummy:app": {
@@ -532,6 +578,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "namespace": "dummy:app",
     "packageNamespace": "dummy",
     "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/orig/node_modules/generator-dummy/app/index.js",
   },
   "dummy:yo": {
@@ -543,6 +590,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "namespace": "dummy:yo",
     "packageNamespace": "dummy",
     "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/orig/node_modules/generator-dummy/yo/index.js",
   },
   "esm:app": {
@@ -554,6 +602,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "namespace": "esm:app",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/app/index.js",
   },
   "esm:create": {
@@ -565,6 +614,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "namespace": "esm:create",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/create/index.js",
   },
   "esm:create-inherited": {
@@ -576,6 +626,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "namespace": "esm:create-inherited",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
   },
   "esm:mjs": {
@@ -587,6 +638,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "namespace": "esm:mjs",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
   },
   "extend:support": {
@@ -598,6 +650,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "namespace": "extend:support",
     "packageNamespace": "extend",
     "packagePath": "fixtures/lookup-project/node_modules/generator-extend",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-extend/support/index.js",
   },
   "jquery:app": {
@@ -609,6 +662,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "namespace": "jquery:app",
     "packageNamespace": "jquery",
     "packagePath": "fixtures/lookup-project/node_modules/generator-jquery",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/orig/node_modules/generator-jquery/app/index.js",
   },
   "ts-js:app": {
@@ -620,6 +674,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "namespace": "ts-js:app",
     "packageNamespace": "ts-js",
     "packagePath": "fixtures/lookup-project/node_modules/generator-ts-js",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-ts-js/generators/app/index.js",
   },
   "ts:app": {
@@ -631,6 +686,7 @@ exports[`Environment Resolver #lookup() when node_modules is a symlink should re
     "namespace": "ts:app",
     "packageNamespace": "ts",
     "packagePath": "fixtures/lookup-project/node_modules/generator-ts",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-ts/generators/app/index.ts",
   },
 }
@@ -647,6 +703,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "namespace": "@dummyscope/scoped:app",
     "packageNamespace": "@dummyscope/scoped",
     "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@dummyscope/scoped:package": {
@@ -658,6 +715,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "namespace": "@dummyscope/scoped:package",
     "packageNamespace": "@dummyscope/scoped",
     "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "common-js:cjs": {
@@ -669,6 +727,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "namespace": "common-js:cjs",
     "packageNamespace": "common-js",
     "packagePath": "fixtures/lookup-project/node_modules/generator-common-js",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
   },
   "commonjs:app": {
@@ -680,6 +739,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "namespace": "commonjs:app",
     "packageNamespace": "commonjs",
     "packagePath": "fixtures/lookup-project/node_modules/generator-commonjs",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/node_modules/generator-commonjs/app/index.js",
   },
   "dummy:app": {
@@ -691,6 +751,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "namespace": "dummy:app",
     "packageNamespace": "dummy",
     "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/node_modules/generator-dummy/app/index.js",
   },
   "dummy:yo": {
@@ -702,6 +763,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "namespace": "dummy:yo",
     "packageNamespace": "dummy",
     "packagePath": "fixtures/lookup-project/node_modules/generator-dummy",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/node_modules/generator-dummy/yo/index.js",
   },
   "esm:app": {
@@ -713,6 +775,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "namespace": "esm:app",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/app/index.js",
   },
   "esm:create": {
@@ -724,6 +787,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "namespace": "esm:create",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/create/index.js",
   },
   "esm:create-inherited": {
@@ -735,6 +799,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "namespace": "esm:create-inherited",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
   },
   "esm:mjs": {
@@ -746,6 +811,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "namespace": "esm:mjs",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
   },
   "extend:support": {
@@ -757,6 +823,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "namespace": "extend:support",
     "packageNamespace": "extend",
     "packagePath": "fixtures/lookup-project/node_modules/generator-extend",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-extend/support/index.js",
   },
   "jquery:app": {
@@ -768,6 +835,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "namespace": "jquery:app",
     "packageNamespace": "jquery",
     "packagePath": "fixtures/lookup-project/node_modules/generator-jquery",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/node_modules/generator-jquery/app/index.js",
   },
   "ts-js:app": {
@@ -779,6 +847,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "namespace": "ts-js:app",
     "packageNamespace": "ts-js",
     "packagePath": "fixtures/lookup-project/node_modules/generator-ts-js",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-ts-js/generators/app/index.js",
   },
   "ts:app": {
@@ -790,6 +859,7 @@ exports[`Environment Resolver #lookup() when options.localOnly argument is true 
     "namespace": "ts:app",
     "packageNamespace": "ts",
     "packagePath": "fixtures/lookup-project/node_modules/generator-ts",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-ts/generators/app/index.ts",
   },
 }
@@ -806,6 +876,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "namespace": "@dummyscope/scoped:app",
     "packageNamespace": "@dummyscope/scoped",
     "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@dummyscope/scoped:package": {
@@ -817,6 +888,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "namespace": "@dummyscope/scoped:package",
     "packageNamespace": "@dummyscope/scoped",
     "packagePath": "fixtures/lookup-project/node_modules/@dummyscope/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "common-js:cjs": {
@@ -828,6 +900,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "namespace": "common-js:cjs",
     "packageNamespace": "common-js",
     "packagePath": "fixtures/lookup-project/node_modules/generator-common-js",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-common-js/generators/cjs/index.cjs",
   },
   "commonjs:app": {
@@ -839,6 +912,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "namespace": "commonjs:app",
     "packageNamespace": "commonjs",
     "packagePath": "fixtures/lookup-project/node_modules/generator-commonjs",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/node_modules/generator-commonjs/app/index.js",
   },
   "dummy:app": {
@@ -850,6 +924,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "namespace": "dummy:app",
     "packageNamespace": "dummy",
     "packagePath": "fixtures/lookup-project/subdir/node_modules/generator-dummy",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/subdir/node_modules/generator-dummy/app/index.js",
   },
   "dummy:yo": {
@@ -861,6 +936,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "namespace": "dummy:yo",
     "packageNamespace": "dummy",
     "packagePath": "fixtures/lookup-project/subdir/node_modules/generator-dummy",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/subdir/node_modules/generator-dummy/yo/index.js",
   },
   "esm:app": {
@@ -872,6 +948,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "namespace": "esm:app",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/app/index.js",
   },
   "esm:create": {
@@ -883,6 +960,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "namespace": "esm:create",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/create/index.js",
   },
   "esm:create-inherited": {
@@ -894,6 +972,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "namespace": "esm:create-inherited",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/create-inherited/index.js",
   },
   "esm:mjs": {
@@ -905,6 +984,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "namespace": "esm:mjs",
     "packageNamespace": "esm",
     "packagePath": "fixtures/lookup-project/node_modules/generator-esm",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-esm/generators/mjs/index.mjs",
   },
   "extend:support": {
@@ -916,6 +996,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "namespace": "extend:support",
     "packageNamespace": "extend",
     "packagePath": "fixtures/lookup-project/node_modules/generator-extend",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-extend/support/index.js",
   },
   "jquery:app": {
@@ -927,6 +1008,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "namespace": "jquery:app",
     "packageNamespace": "jquery",
     "packagePath": "fixtures/lookup-project/node_modules/generator-jquery",
+    "requireModule": [Function],
     "resolved": "fixtures/lookup-project/node_modules/generator-jquery/app/index.js",
   },
   "ts-js:app": {
@@ -938,6 +1020,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "namespace": "ts-js:app",
     "packageNamespace": "ts-js",
     "packagePath": "fixtures/lookup-project/node_modules/generator-ts-js",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-ts-js/generators/app/index.js",
   },
   "ts:app": {
@@ -949,6 +1032,7 @@ exports[`Environment Resolver #lookup() when there's ancestor node_modules/ fold
     "namespace": "ts:app",
     "packageNamespace": "ts",
     "packagePath": "fixtures/lookup-project/node_modules/generator-ts",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-ts/generators/app/index.ts",
   },
 }
@@ -965,6 +1049,7 @@ exports[`Environment Resolver #lookup() with options with 2 packagePaths 1`] = `
     "namespace": "module-root:app",
     "packageNamespace": "module-root",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module-root",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module-root/app/index.js",
   },
   "module:app": {
@@ -976,6 +1061,7 @@ exports[`Environment Resolver #lookup() with options with 2 packagePaths 1`] = `
     "namespace": "module:app",
     "packageNamespace": "module",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module/generators/app/index.js",
   },
 }
@@ -992,6 +1078,7 @@ exports[`Environment Resolver #lookup() with options with 3 packagePaths 1`] = `
     "namespace": "module-lib-gen:app",
     "packageNamespace": "module-lib-gen",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module-lib-gen",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module-lib-gen/lib/generators/app/index.js",
   },
   "module-root:app": {
@@ -1003,6 +1090,7 @@ exports[`Environment Resolver #lookup() with options with 3 packagePaths 1`] = `
     "namespace": "module-root:app",
     "packageNamespace": "module-root",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module-root",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module-root/app/index.js",
   },
   "module:app": {
@@ -1014,6 +1102,7 @@ exports[`Environment Resolver #lookup() with options with 3 packagePaths 1`] = `
     "namespace": "module:app",
     "packageNamespace": "module",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module/generators/app/index.js",
   },
 }
@@ -1030,6 +1119,7 @@ exports[`Environment Resolver #lookup() with options with customizeNamespace 1`]
     "namespace": "custom:app",
     "packageNamespace": "custom",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module/generators/app/index.js",
   },
 }
@@ -1046,6 +1136,7 @@ exports[`Environment Resolver #lookup() with options with npmPaths 1`] = `
     "namespace": "@scoped/scoped:app",
     "packageNamespace": "@scoped/scoped",
     "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@scoped/scoped:package": {
@@ -1057,6 +1148,7 @@ exports[`Environment Resolver #lookup() with options with npmPaths 1`] = `
     "namespace": "@scoped/scoped:package",
     "packageNamespace": "@scoped/scoped",
     "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "module-lib-gen:app": {
@@ -1068,6 +1160,7 @@ exports[`Environment Resolver #lookup() with options with npmPaths 1`] = `
     "namespace": "module-lib-gen:app",
     "packageNamespace": "module-lib-gen",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module-lib-gen",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module-lib-gen/lib/generators/app/index.js",
   },
   "module-root:app": {
@@ -1079,6 +1172,7 @@ exports[`Environment Resolver #lookup() with options with npmPaths 1`] = `
     "namespace": "module-root:app",
     "packageNamespace": "module-root",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module-root",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module-root/app/index.js",
   },
   "module:app": {
@@ -1090,6 +1184,7 @@ exports[`Environment Resolver #lookup() with options with npmPaths 1`] = `
     "namespace": "module:app",
     "packageNamespace": "module",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module/generators/app/index.js",
   },
 }
@@ -1106,6 +1201,7 @@ exports[`Environment Resolver #lookup() with options with packagePaths 1`] = `
     "namespace": "module:app",
     "packageNamespace": "module",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module/generators/app/index.js",
   },
 }
@@ -1122,6 +1218,7 @@ exports[`Environment Resolver #lookup() with options with packagePatterns 1`] = 
     "namespace": "module-root:app",
     "packageNamespace": "module-root",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module-root",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module-root/app/index.js",
   },
   "module:app": {
@@ -1133,6 +1230,7 @@ exports[`Environment Resolver #lookup() with options with packagePatterns 1`] = 
     "namespace": "module:app",
     "packageNamespace": "module",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module/generators/app/index.js",
   },
 }
@@ -1149,6 +1247,7 @@ exports[`Environment Resolver #lookup() with options with scope and packagePaths
     "namespace": "@scoped/scoped:app",
     "packageNamespace": "@scoped/scoped",
     "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@scoped/scoped:package": {
@@ -1160,6 +1259,7 @@ exports[`Environment Resolver #lookup() with options with scope and packagePaths
     "namespace": "@scoped/scoped:package",
     "packageNamespace": "@scoped/scoped",
     "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "@test/module:app": {
@@ -1171,6 +1271,7 @@ exports[`Environment Resolver #lookup() with options with scope and packagePaths
     "namespace": "@test/module:app",
     "packageNamespace": "@test/module",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module/generators/app/index.js",
   },
 }
@@ -1187,6 +1288,7 @@ exports[`Environment Resolver #lookup() with options with scoped packagePaths 1`
     "namespace": "@scoped/scoped:app",
     "packageNamespace": "@scoped/scoped",
     "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/app/index.js",
   },
   "@scoped/scoped:package": {
@@ -1198,6 +1300,7 @@ exports[`Environment Resolver #lookup() with options with scoped packagePaths 1`
     "namespace": "@scoped/scoped:package",
     "packageNamespace": "@scoped/scoped",
     "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/package/index.js",
   },
   "module-lib-gen:app": {
@@ -1209,6 +1312,7 @@ exports[`Environment Resolver #lookup() with options with scoped packagePaths 1`
     "namespace": "module-lib-gen:app",
     "packageNamespace": "module-lib-gen",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module-lib-gen",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module-lib-gen/lib/generators/app/index.js",
   },
   "module-root:app": {
@@ -1220,6 +1324,7 @@ exports[`Environment Resolver #lookup() with options with scoped packagePaths 1`
     "namespace": "module-root:app",
     "packageNamespace": "module-root",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module-root",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module-root/app/index.js",
   },
   "module:app": {
@@ -1231,6 +1336,7 @@ exports[`Environment Resolver #lookup() with options with scoped packagePaths 1`
     "namespace": "module:app",
     "packageNamespace": "module",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module/generators/app/index.js",
   },
 }
@@ -1247,6 +1353,7 @@ exports[`Environment Resolver #lookup() with options with sub-sub-generators and
     "namespace": "@scoped/scoped:app:scaffold",
     "packageNamespace": "@scoped/scoped",
     "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/app/scaffold/index.js",
   },
 }
@@ -1263,6 +1370,7 @@ exports[`Environment Resolver #lookup() with options with sub-sub-generators and
     "namespace": "@scoped/scoped:app:scaffold",
     "packageNamespace": "@scoped/scoped",
     "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/app/scaffold/index.js",
   },
 }
@@ -1279,6 +1387,7 @@ exports[`Environment Resolver #lookup() with options with sub-sub-generators fil
     "namespace": "@scoped/scoped:app:scaffold",
     "packageNamespace": "@scoped/scoped",
     "packagePath": "fixtures/lookup-custom/node_modules/@scoped/generator-scoped",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-scoped/app/scaffold/index.js",
   },
   "module:app": {
@@ -1290,6 +1399,7 @@ exports[`Environment Resolver #lookup() with options with sub-sub-generators fil
     "namespace": "module:app",
     "packageNamespace": "module",
     "packagePath": "fixtures/lookup-custom/node_modules/generator-module",
+    "requireModule": [Function],
     "resolved": "fixtures/generator-module/generators/app/index.js",
   },
 }

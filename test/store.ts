@@ -38,6 +38,10 @@ describe('Store', async () => {
         outcome = (await store.get('foo:module')) as StoredModule;
       });
 
+      it('has no requireModule', async () => {
+        expect(store.getMeta('foo:module')!.requireModule).toBeUndefined();
+      });
+
       it('store and return the module', async () => {
         expect(outcome).toBe(module);
       });
@@ -64,6 +68,10 @@ describe('Store', async () => {
       it('assign meta data to the module', async () => {
         expect(outcome.resolved).toEqual(join(modulePath, 'index.js'));
         expect(outcome.namespace).toEqual('foo:path');
+      });
+
+      it('requireModule returns the module synchronously', async () => {
+        expect(store.getMeta('foo:path')!.requireModule!()).toBe(module);
       });
     });
   });
