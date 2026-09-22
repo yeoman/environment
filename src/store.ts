@@ -48,6 +48,8 @@ export type StoreLookupGeneratorMeta = FoundGenerator &
  * any, or the one passed to the store method that returned the meta.
  */
 export type StoreGeneratorMeta = Omit<GeneratorMeta, 'importGenerator' | 'instantiate' | 'instantiateHelp'> & {
+  /** Require the module `require(meta.resolved)`, throws if the module cannot be required synchronously. */
+  requireModule?: () => unknown;
   importGenerator: <G extends BaseGenerator = BaseGenerator>(
     options?: StoreEnvironmentOptions,
   ) => Promise<GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta> | (GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta);
@@ -115,15 +117,17 @@ export default class Store {
       meta.packagePath = join(meta.packagePath);
     }
 
+    let requireModule: (() => unknown) | undefined;
     let importModule: (() => Promise<unknown>) | undefined;
     if (!Generator) {
       if (!meta.resolved) {
         throw new Error(`Generator Stub or resolved path is required for ${meta.namespace}`);
       }
 
+      requireModule = () => require(meta.resolved!);
       importModule = () => {
         try {
-          return require(meta.resolved!);
+          return requireModule!() as Promise<unknown>;
         } catch (error: any) {
           if (error.code === 'ERR_REQUIRE_ESM' || error.code === 'ERR_REQUIRE_ASYNC_MODULE') {
             return import(pathToFileURL(meta.resolved!).href);
@@ -227,6 +231,7 @@ export default class Store {
     generatorMeta = {
       ...meta,
       importGenerator,
+      requireModule,
       importModule,
       instantiate,
       instantiateHelp,
