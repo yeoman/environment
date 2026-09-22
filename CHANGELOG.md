@@ -2,10 +2,9 @@
 
 ## [7.2.0](https://github.com/yeoman/environment/compare/v7.1.0...v7.2.0) (2026-09-22)
 
-
 ### Features
 
-* **store:** add requireModule to the generator meta ([#841](https://github.com/yeoman/environment/issues/841)) ([70df40f](https://github.com/yeoman/environment/commit/70df40f66e1597fcfedf8eae06c8d33edb9e44f3))
+- **store:** add requireModule to the generator meta ([#841](https://github.com/yeoman/environment/issues/841)) ([70df40f](https://github.com/yeoman/environment/commit/70df40f66e1597fcfedf8eae06c8d33edb9e44f3))
 
 ## [7.1.0](https://github.com/yeoman/environment/compare/v7.0.0...v7.1.0) (2026-09-21)
 
