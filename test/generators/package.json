@@ -2,8 +2,8 @@
   "name": "@yeoman-environment/generator-tests",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "description": "Private workspace holding the yeoman-generator version matrix as pre-built bundles, re-exported as generator-v* subpaths, plus the latest npm release as generator-latest",
+  "type": "module",
   "exports": {
     ".": "./generator-versions.ts",
     "./generator-v2": "./generator-v2.ts",
