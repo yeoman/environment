@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.3.0](https://github.com/yeoman/environment/compare/v7.2.0...v7.3.0) (2026-10-01)
+
+
+### Features
+
+* **deps:** bump ip-address from 10.7.0 to 10.7.2 ([#847](https://github.com/yeoman/environment/issues/847)) ([2bced4f](https://github.com/yeoman/environment/commit/2bced4f4a02ba0996d392347e9ff38b75c88c57c))
+
 ## [7.2.0](https://github.com/yeoman/environment/compare/v7.1.0...v7.2.0) (2026-09-22)
 
 ### Features
