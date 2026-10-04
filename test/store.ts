@@ -1,6 +1,8 @@
 import { createRequire } from 'node:module';
 import path, { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { beforeEach, describe, expect, it } from 'esmocha';
 import Store from '../src/store.ts';
 
@@ -264,6 +266,32 @@ describe('Store', async () => {
         expect(ownStore.getMeta('foo:app', { env: environment })).toBe(ownStore.getMeta('foo:app'));
         expect(ownStore.getGeneratorsMeta({ env: environment })).toBe(ownStore.getGeneratorsMeta());
       });
+    });
+  });
+  describe('moduleUrl option', async () => {
+    it('imports a generator from the URL it gives, again for another URL', async () => {
+      const folder = await mkdtemp(join(tmpdir(), 'yeoman-store-'));
+      const resolved = join(folder, 'index.js');
+      const urls: string[] = [];
+      const importVersion = async (version: number) => {
+        await writeFile(resolved, `export default class { static version = ${version}; }`);
+        const versionStore = new Store(undefined, {
+          moduleUrl(url) {
+            urls.push(url);
+            return `${url}?version=${version}`;
+          },
+        });
+        versionStore.add({ namespace: 'foo:app', resolved, packagePath: folder });
+        return ((await versionStore.get('foo:app')) as unknown as { version: number }).version;
+      };
+      try {
+        expect(await importVersion(1)).toBe(1);
+        // The same file, changed: imported again from another URL.
+        expect(await importVersion(2)).toBe(2);
+        expect(urls).toEqual([pathToFileURL(resolved).href, pathToFileURL(resolved).href]);
+      } finally {
+        await rm(folder, { recursive: true, force: true });
+      }
     });
   });
 });

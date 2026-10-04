@@ -74,6 +74,16 @@ type BoundFunctions = Pick<StoreGeneratorMeta, 'importGenerator' | 'instantiate'
  *
  * @experimental The Store API is not stable yet and may change in a minor release.
  */
+export type StoreOptions = {
+  /**
+   * The URL a generator module is imported from, given its file URL. Node keeps a module by its URL: a query in it
+   * imports the module again, with the modules it imports that keep the query (a module resolution hook), like the code
+   * of a generator changed in a long running process. Given, the modules are imported with `import()`, never with
+   * `require`, which keeps a module by its file name.
+   */
+  moduleUrl?: (url: string) => string;
+};
+
 export default class Store {
   private readonly _meta: Record<string, StoreGeneratorMeta> = {};
   // Cache parsed package.json by packagePath
@@ -88,8 +98,11 @@ export default class Store {
   /** The environment used when none is passed to `importGenerator` or `instantiate`. */
   readonly environment?: BaseEnvironment;
 
-  constructor(environment?: BaseEnvironment) {
+  private readonly moduleUrl?: (url: string) => string;
+
+  constructor(environment?: BaseEnvironment, { moduleUrl }: StoreOptions = {}) {
     this.environment = environment;
+    this.moduleUrl = moduleUrl;
   }
 
   /**
@@ -125,7 +138,12 @@ export default class Store {
       }
 
       requireModule = () => require(meta.resolved!);
+      const { moduleUrl } = this;
       importModule = () => {
+        if (moduleUrl) {
+          return import(moduleUrl(pathToFileURL(meta.resolved!).href));
+        }
+
         try {
           return requireModule!() as Promise<unknown>;
         } catch (error: any) {

@@ -7,6 +7,7 @@ export { default as EnvironmentBase, type EnvironmentOptions } from './environme
 export {
   default as Store,
   type StoreEnvironmentOptions,
+  type StoreOptions,
   type StoreGeneratorMeta,
   type StoreLookupGeneratorMeta,
   type StoreLookupOptions,
