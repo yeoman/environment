@@ -1,5 +1,16 @@
 # Changelog
 
+## [8.0.0](https://github.com/yeoman/environment/compare/v7.2.0...v8.0.0) (2026-10-07)
+
+### ⚠ BREAKING CHANGES
+
+- the engines become the ones of fly-import 2 and @npmcli/arborist 10, ^22.22.2 || ^24.15.0 || >=26.0.0: every LTS line is still supported, its releases before 22.22.2 and 24.15.0 are not, nor is Node.js 25.
+
+### Features
+
+- **deps:** bump ip-address from 10.7.0 to 10.7.2 ([#847](https://github.com/yeoman/environment/issues/847)) ([2bced4f](https://github.com/yeoman/environment/commit/2bced4f4a02ba0996d392347e9ff38b75c88c57c))
+- fly-import 2, which imports arborist at its first install ([#852](https://github.com/yeoman/environment/issues/852)) ([bc97b40](https://github.com/yeoman/environment/commit/bc97b409ab1975dd11ef5f8d9b1755a8b94fa6ca))
+
 ## [7.2.0](https://github.com/yeoman/environment/compare/v7.1.0...v7.2.0) (2026-09-22)
 
 ### Features
