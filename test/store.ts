@@ -158,6 +158,17 @@ describe('Store', async () => {
       ).toEqual(['module:app']);
     });
 
+    it('#lookupSync() derives the namespace of a package from its name with usePackageName, like namespaceFromPackageName', () => {
+      // A checkout of @scope/generator-scoped-generator-module in a folder of another name: only the leading generator- goes.
+      const packagePath = path.join(__dirname, 'fixtures/scoped-checkout');
+      expect(
+        store
+          .lookupSync({ packagePaths: [packagePath], usePackageName: true })
+          .map(({ namespace }) => namespace)
+          .toSorted(),
+      ).toEqual(['@scope/scoped-generator-module:app', '@scope/scoped-generator-module:server']);
+    });
+
     it('#namespace() uses the lookups of the store, or the default ones', () => {
       const filePath = 'generator-foo/custom/app/index.js';
       expect(store.namespace(filePath)).toBe('foo:custom:app');
