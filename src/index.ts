@@ -10,6 +10,7 @@ export {
   type StoreGeneratorMeta,
   type StoreLookupGeneratorMeta,
   type StoreLookupOptions,
+  type StoreSharedLookupOptions,
 } from './store.ts';
 
 export const createEnv = (options?: EnvironmentOptions) => new Environment(options);
@@ -17,8 +18,8 @@ export const createEnv = (options?: EnvironmentOptions) => new Environment(optio
 // Backward compatibility
 export const enforceUpdate = () => {};
 
-export * from './commands.ts';
-export * from './util/command.ts';
-export * from './package-manager.ts';
-export * from './commit.ts';
+export { type CommandPreparation, prepareCommand, prepareGeneratorCommand } from './commands.ts';
+export { addEnvironmentOptions } from './util/command.ts';
+export { type InstallTask, type PackageManagerInstallTaskOptions, packageManagerInstallTask } from './package-manager.ts';
+export { commitSharedFsTask } from './commit.ts';
 export { lookupGenerator } from './generator-lookup.ts';
