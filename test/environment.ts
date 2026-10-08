@@ -86,6 +86,13 @@ for (const generatorVersion of allVersions) {
       it('instantiates a mem-fs instance', async function () {
         expect(env.sharedFs).toBeTruthy();
       });
+
+      it('aborts the pipelines of the mem-fs it instantiates with its adapter', async () => {
+        const adapter = new TestAdapter();
+        const environment = new Environment({ adapter });
+        adapter.abort('cancelled');
+        await expect(environment.sharedFs.pipeline()).rejects.toThrow(/abort/i);
+      });
     });
 
     describe('#getVersion()', () => {

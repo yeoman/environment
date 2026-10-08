@@ -177,7 +177,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     const {
       cwd = process.cwd(),
       logCwd = cwd,
-      sharedFs = createMemFs<MemFsEditorFile>(),
+      sharedFs,
       command,
       yeomanRepository,
       arboristRegistry,
@@ -201,7 +201,8 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
 
     this.runLoop = new GroupedQueue(defaultQueues, false);
     this.composedStore = new ComposedStore({ log: this.adapter.log });
-    this.sharedFs = sharedFs as MemFs<MemFsEditorFile>;
+    // Its pipelines, like the commit, are aborted with the adapter.
+    this.sharedFs = (sharedFs ?? createMemFs<MemFsEditorFile>({ signal: this.adapter.signal })) as MemFs<MemFsEditorFile>;
 
     // Each composed generator might set listeners on these shared resources. Let's make sure
     // Node won't complain about event listeners leaks.
