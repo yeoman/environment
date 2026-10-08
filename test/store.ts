@@ -147,6 +147,17 @@ describe('Store', async () => {
       expect(sharedStore.namespaces()).toEqual(['shared:app', 'own:app']);
     });
 
+    it('#lookupSync() derives the namespace from the package.json name with usePackageName', () => {
+      const packagePath = path.join(__dirname, 'fixtures/generator-module-root');
+      expect(store.lookupSync({ packagePaths: [packagePath] }).map(({ namespace }) => namespace)).toEqual(['module-root:app']);
+      expect(store.lookupSync({ packagePaths: [packagePath], usePackageName: true }).map(({ namespace }) => namespace)).toEqual([
+        'module:app',
+      ]);
+      expect(
+        new Store(undefined, { usePackageName: true }).lookupSync({ packagePaths: [packagePath] }).map(({ namespace }) => namespace),
+      ).toEqual(['module:app']);
+    });
+
     it('#lookupSync() customizes the namespace and registers to a scope', async () => {
       store.lookupSync({
         packagePaths: [esmPackage],
