@@ -1,5 +1,18 @@
 # Changelog
 
+## [8.2.0](https://github.com/yeoman/environment/compare/v8.1.0...v8.2.0) (2026-10-08)
+
+
+### Features
+
+* add nestedGenerators lookup option ([#857](https://github.com/yeoman/environment/issues/857)) ([8387994](https://github.com/yeoman/environment/commit/83879947b8bb57929fe4ec0caa34b32626e83d5b))
+
+
+### Bug Fixes
+
+* keep a generator- inside a package or generator name in the namespace ([#860](https://github.com/yeoman/environment/issues/860)) ([931e742](https://github.com/yeoman/environment/commit/931e7428dacb0b907bbf00e2404044e216eccebf))
+* **store:** the namespace of usePackageName as namespaceFromPackageName gives it ([#858](https://github.com/yeoman/environment/issues/858)) ([6a93890](https://github.com/yeoman/environment/commit/6a93890ab03bfaa3ccf502e6592886d861e61db7))
+
 ## [8.1.0](https://github.com/yeoman/environment/compare/v8.0.0...v8.1.0) (2026-10-08)
 
 ### Features
