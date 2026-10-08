@@ -165,6 +165,32 @@ describe('Store', async () => {
       expect(new Store(undefined, { lookups: ['custom'] }).namespace(filePath)).toBe('foo:app');
     });
 
+    it('#lookupSync() looks up the nested generators with nestedGenerators', () => {
+      const nestedPackage = path.join(__dirname, 'fixtures/generator-nested');
+      expect(store.lookupSync({ packagePaths: [nestedPackage] }).map(({ namespace }) => namespace)).toEqual(['nested:app']);
+
+      const nested = ['nested:app', 'nested:app:sub', 'nested:server:cache'];
+      const generators = store.lookupSync({ packagePaths: [nestedPackage], nestedGenerators: true });
+      expect(generators.map(({ namespace }) => namespace).toSorted()).toEqual(nested);
+      expect(path.normalize(generators.find(({ namespace }) => namespace === 'nested:app:sub')!.filePath)).toBe(
+        path.join(nestedPackage, 'generators/app/generators/sub/index.js'),
+      );
+
+      const sharingStore = new Store(undefined, { nestedGenerators: true });
+      expect(
+        sharingStore
+          .lookupSync({ packagePaths: [nestedPackage] })
+          .map(({ namespace }) => namespace)
+          .toSorted(),
+      ).toEqual(nested);
+    });
+
+    it('#namespace() removes the folder of the nested generators with nestedGenerators', () => {
+      const filePath = 'generator-foo/app/generators/sub/index.js';
+      expect(new Store(undefined, { lookups: ['.'] }).namespace(filePath)).toBe('foo:app:generators:sub');
+      expect(new Store(undefined, { lookups: ['.'], nestedGenerators: true }).namespace(filePath)).toBe('foo:app:sub');
+    });
+
     it('#lookupSync() customizes the namespace and registers to a scope', async () => {
       store.lookupSync({
         packagePaths: [esmPackage],

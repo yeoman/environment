@@ -46,7 +46,7 @@ export type StoreLookupOptions = LookupOptions &
  */
 export type StoreSharedLookupOptions = Pick<
   StoreLookupOptions,
-  'lookups' | 'localOnly' | 'filterPaths' | 'customizeNamespace' | 'filter' | 'usePackageName'
+  'lookups' | 'localOnly' | 'filterPaths' | 'customizeNamespace' | 'filter' | 'usePackageName' | 'nestedGenerators'
 >;
 
 /** A generator found by a lookup, `registered` tells if it was added to the store. */
@@ -147,7 +147,7 @@ export default class Store {
    * @param lookups - The lookups of the store if omitted
    */
   namespace(filepath: string, lookups: string[] = this.lookups): string {
-    return asNamespace(filepath, { lookups });
+    return asNamespace(filepath, { lookups, nestedGenerators: this.lookupOptions.nestedGenerators });
   }
 
   /**
@@ -402,11 +402,11 @@ export default class Store {
         namespacePath = relative(repositoryPath, filePath);
       }
 
-      let namespace = customizeNamespace(asNamespace(namespacePath, { lookups }));
+      let namespace = customizeNamespace(asNamespace(namespacePath, { lookups, nestedGenerators: lookupOptions.nestedGenerators }));
       try {
         const resolved = realpathSync(filePath);
         if (!namespace) {
-          namespace = customizeNamespace(asNamespace(resolved, { lookups }));
+          namespace = customizeNamespace(asNamespace(resolved, { lookups, nestedGenerators: lookupOptions.nestedGenerators }));
         }
 
         namespace = namespace!;

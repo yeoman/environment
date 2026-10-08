@@ -15,6 +15,7 @@ import { type LookupOptions } from './generator-lookup.ts';
 import YeomanCommand from './util/command.ts';
 import EnvironmentBase, { type EnvironmentOptions } from './environment-base.ts';
 import { splitArgsFromString as splitArgumentsFromString } from './util/util.ts';
+import { nestedGeneratorsFolder } from './util/namespace.ts';
 
 class FullEnvironment extends EnvironmentBase {
   constructor(options?: EnvironmentOptions);
@@ -307,8 +308,13 @@ class FullEnvironment extends EnvironmentBase {
       const nsOptions: LookupOptions = { packagePatterns: [ns.generatorHint] };
       if (ns.generator) {
         // Build filePatterns to look specifically for the namespace.
-        const genPath = ns.generator.split(':').join('/');
-        let filePatterns = [`${genPath}/index.?s`, `${genPath}.?s`];
+        const generatorPaths = [ns.generator.split(':').join('/')];
+        if (options.nestedGenerators ?? this.store.lookupOptions.nestedGenerators) {
+          // `app:sub` is `app/generators/sub` too.
+          generatorPaths.push(ns.generator.split(':').join(`/${nestedGeneratorsFolder}/`));
+        }
+
+        let filePatterns = generatorPaths.flatMap(genPath => [`${genPath}/index.?s`, `${genPath}.?s`]);
         const lookups = options.lookups ?? this.store.lookups;
         filePatterns = lookups.flatMap(prefix => filePatterns.map(pattern => join(prefix, pattern)));
         nsOptions.filePatterns = filePatterns;

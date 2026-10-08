@@ -562,6 +562,7 @@ describe('Environment Resolver', async function () {
       linkGenerator('generator-module-lib-gen');
       linkGenerator('generator-module');
       linkGenerator('generator-module-root');
+      linkGenerator('generator-nested');
     });
 
     beforeEach(function () {
@@ -573,6 +574,7 @@ describe('Environment Resolver', async function () {
       unlinkGenerator('generator-module-lib-gen');
       unlinkGenerator('generator-module');
       unlinkGenerator('generator-module-root');
+      unlinkGenerator('generator-nested');
 
       process.chdir(projectRoot);
       fs.rmSync(path.join(customProjectRoot, 'node_modules'), {
@@ -604,6 +606,22 @@ describe('Environment Resolver', async function () {
       });
       expect(await env.get('@scoped/scoped:app:scaffold')).toBeTruthy();
       expect(env.getRegisteredPackages().length === 1).toBeTruthy();
+    });
+
+    it('with a nested generator', async function () {
+      await env.lookupNamespaces('nested:app:sub', { localOnly: true, npmPaths: ['node_modules'] });
+      expect(env.getGeneratorMeta('nested:app:sub')).toBeUndefined();
+
+      await env.lookupNamespaces('nested:app:sub', { localOnly: true, npmPaths: ['node_modules'], nestedGenerators: true });
+      expect(env.getGeneratorMeta('nested:app:sub')?.resolved).toBe(
+        fs.realpathSync(path.join(customProjectRoot, 'node_modules/generator-nested/generators/app/generators/sub/index.js')),
+      );
+    });
+
+    it('with a nested generator, the store sharing nestedGenerators', async function () {
+      env = new Environment({ experimental: true, storeOptions: { nestedGenerators: true } });
+      await env.lookupNamespaces('nested:server:cache', { localOnly: true, npmPaths: ['node_modules'] });
+      expect(env.getGeneratorMeta('nested:server:cache')).toBeDefined();
     });
   });
 

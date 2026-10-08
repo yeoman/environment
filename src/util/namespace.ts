@@ -1,10 +1,22 @@
-import { parse } from 'node:path';
+import { parse, posix } from 'node:path';
 import slash from 'slash';
 import { escapeRegExp, findLast } from 'lodash-es';
 
 type AsNamespaceOptions = {
   lookups?: string[];
+  /** Generators nested in the `generators` folder of a generator: `app/generators/sub` is `app:sub`. */
+  nestedGenerators?: boolean;
 };
+
+/** The folder holding the generators nested in a generator. */
+export const nestedGeneratorsFolder = 'generators';
+
+/**
+ * The lookups of the generators, with the lookups of the generators nested in them if `nestedGenerators`:
+ * `generators` and `generators/*\/generators`.
+ */
+export const withNestedLookups = (lookups: string[], nestedGenerators?: boolean): string[] =>
+  nestedGenerators ? lookups.flatMap(lookup => [lookup, posix.join(lookup, '*', nestedGeneratorsFolder)]) : lookups;
 
 export const defaultLookups = ['.', 'generators', 'lib/generators', 'dist/generators'];
 
@@ -28,7 +40,7 @@ export const defaultLookups = ['.', 'generators', 'lib/generators', 'dist/genera
  * @param filepath
  * @param lookups paths
  */
-export const asNamespace = (filepath: string, { lookups = defaultLookups }: AsNamespaceOptions): string => {
+export const asNamespace = (filepath: string, { lookups = defaultLookups, nestedGenerators }: AsNamespaceOptions): string => {
   if (!filepath) {
     throw new Error('Missing file path');
   }
@@ -47,7 +59,8 @@ export const asNamespace = (filepath: string, { lookups = defaultLookups }: AsNa
   ns = parsed.dir ? `${parsed.dir}/${parsed.name}` : parsed.name;
 
   // Sort lookups by length so biggest are removed first
-  const nsLookups = [...lookups, '..']
+  // The folder of the nested generators is removed like a lookup.
+  const nsLookups = [...lookups, ...(nestedGenerators ? [nestedGeneratorsFolder] : []), '..']
     .map(found => slash(found))
     .toSorted((a, b) => a.split('/').length - b.split('/').length)
     .toReversed();
