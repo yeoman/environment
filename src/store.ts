@@ -34,6 +34,8 @@ export type StoreLookupOptions = LookupOptions &
   StoreEnvironmentOptions & {
     registerToScope?: string;
     customizeNamespace?: (ns?: string) => string | undefined;
+    /** Derive the namespace from the name in the package.json instead of the package directory. */
+    usePackageName?: boolean;
     /** Generators to keep, the others are neither registered nor returned. */
     filter?: (generator: FoundGenerator) => boolean;
   };
@@ -42,7 +44,10 @@ export type StoreLookupOptions = LookupOptions &
  * Lookup options shared by every lookup of a store, the options passed to a lookup take precedence.
  * What to look up (paths, package patterns and `singleResult`) is given by each lookup.
  */
-export type StoreSharedLookupOptions = Pick<StoreLookupOptions, 'lookups' | 'localOnly' | 'filterPaths' | 'customizeNamespace' | 'filter'>;
+export type StoreSharedLookupOptions = Pick<
+  StoreLookupOptions,
+  'lookups' | 'localOnly' | 'filterPaths' | 'customizeNamespace' | 'filter' | 'usePackageName'
+>;
 
 /** A generator found by a lookup, `registered` tells if it was added to the store. */
 export type StoreLookupGeneratorMeta = FoundGenerator &
@@ -334,6 +339,7 @@ export default class Store {
     const {
       registerToScope,
       customizeNamespace = (ns?: string) => ns,
+      usePackageName,
       filter,
       env,
       lookups = defaultLookups,
@@ -343,13 +349,21 @@ export default class Store {
 
     const generators: StoreLookupGeneratorMeta[] = [];
     lookupGeneratorsSync(lookupOptions, ({ packagePath, filePath, lookups }) => {
-      let repositoryPath = join(packagePath, '..');
-      if (basename(repositoryPath).startsWith('@')) {
-        // Scoped package
-        repositoryPath = join(repositoryPath, '..');
+      const packageName = usePackageName ? this.getPackageJson<{ name?: string }>(packagePath)?.name : undefined;
+      let namespacePath: string;
+      if (packageName) {
+        namespacePath = join(packageName, relative(packagePath, filePath));
+      } else {
+        let repositoryPath = join(packagePath, '..');
+        if (basename(repositoryPath).startsWith('@')) {
+          // Scoped package
+          repositoryPath = join(repositoryPath, '..');
+        }
+
+        namespacePath = relative(repositoryPath, filePath);
       }
 
-      let namespace = customizeNamespace(asNamespace(relative(repositoryPath, filePath), { lookups }));
+      let namespace = customizeNamespace(asNamespace(namespacePath, { lookups }));
       try {
         const resolved = realpathSync(filePath);
         if (!namespace) {
