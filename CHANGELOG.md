@@ -2,12 +2,11 @@
 
 ## [8.1.0](https://github.com/yeoman/environment/compare/v8.0.0...v8.1.0) (2026-10-08)
 
-
 ### Features
 
-* **store:** add shared lookup options and clone ([#853](https://github.com/yeoman/environment/issues/853)) ([27abd96](https://github.com/yeoman/environment/commit/27abd96b16c705ae4acb320827b47cd4c0cf8814))
-* **store:** add usePackageName lookup option ([#855](https://github.com/yeoman/environment/issues/855)) ([9326398](https://github.com/yeoman/environment/commit/932639891f2f1354825564844e6b62f33f483398))
-* **store:** move namespace to the store and clone the store passed to the environment ([#856](https://github.com/yeoman/environment/issues/856)) ([2164b5a](https://github.com/yeoman/environment/commit/2164b5acc6af31c36a39b2c2b0d4b51b4f1e5cb0))
+- **store:** add shared lookup options and clone ([#853](https://github.com/yeoman/environment/issues/853)) ([27abd96](https://github.com/yeoman/environment/commit/27abd96b16c705ae4acb320827b47cd4c0cf8814))
+- **store:** add usePackageName lookup option ([#855](https://github.com/yeoman/environment/issues/855)) ([9326398](https://github.com/yeoman/environment/commit/932639891f2f1354825564844e6b62f33f483398))
+- **store:** move namespace to the store and clone the store passed to the environment ([#856](https://github.com/yeoman/environment/issues/856)) ([2164b5a](https://github.com/yeoman/environment/commit/2164b5acc6af31c36a39b2c2b0d4b51b4f1e5cb0))
 
 ## [8.0.0](https://github.com/yeoman/environment/compare/v7.2.0...v8.0.0) (2026-10-07)
 
