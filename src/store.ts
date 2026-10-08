@@ -72,6 +72,14 @@ export type StoreGeneratorMeta = Omit<GeneratorMeta, 'importGenerator' | 'instan
   instantiateHelp: <G extends BaseGenerator = BaseGenerator>(options?: StoreEnvironmentOptions) => Promise<G>;
 };
 
+// The operations of a meta, kept on the meta itself: the meta of a clone has the operations of the meta it was cloned from.
+const operationsKey = Symbol('operations');
+
+const setOperations = <M extends StoreGeneratorMeta>(meta: M, operations: MetaOperations): M =>
+  Object.defineProperty(meta, operationsKey, { value: operations });
+
+const getOperations = (meta: StoreGeneratorMeta): MetaOperations => (meta as any)[operationsKey];
+
 type BoundFunctions = Pick<StoreGeneratorMeta, 'importGenerator' | 'instantiate' | 'instantiateHelp'>;
 
 /** The operations of a meta, taking the environment to use. */
@@ -101,8 +109,6 @@ export default class Store {
   private readonly _packagesNS: string[] = [];
   // Metas bound to an environment, by the meta of the store.
   private readonly _boundMetas = new WeakMap<StoreGeneratorMeta, WeakMap<BaseEnvironment, StoreGeneratorMeta>>();
-  // Operations of the metas of the store, shared with the metas of its clones.
-  private readonly _operations = new WeakMap<StoreGeneratorMeta, MetaOperations>();
 
   /** The environment used when none is passed to `importGenerator` or `instantiate`. */
   readonly environment?: BaseEnvironment;
@@ -115,18 +121,53 @@ export default class Store {
     this.lookupOptions = lookupOptions;
   }
 
+  /** The lookups shared by the store, or the default ones. */
+  get lookups(): string[] {
+    return this.lookupOptions.lookups ?? defaultLookups;
+  }
+
+  /**
+   * Given a String `filepath`, tries to figure out the relative namespace.
+   *
+   * ### Examples:
+   *
+   *     store.namespace('backbone/all/index.js');
+   *     // => backbone:all
+   *
+   *     store.namespace('generator-backbone/model');
+   *     // => backbone:model
+   *
+   *     store.namespace('backbone.js');
+   *     // => backbone
+   *
+   *     store.namespace('generator-mocha/backbone/model/index.js');
+   *     // => mocha:backbone:model
+   *
+   * @param filepath
+   * @param lookups - The lookups of the store if omitted
+   */
+  namespace(filepath: string, lookups: string[] = this.lookups): string {
+    return asNamespace(filepath, { lookups });
+  }
+
   /**
    * A copy of the store with the same generators, packages and lookup options, whose metas default to the given
    * environment. The generators already imported are shared, what is added after cloning goes only to its store.
    * @param environment - The environment of the clone, the environment of the store if omitted
+   * @param options - Lookup options of the clone, merged over the ones of the store
    */
-  clone(environment: BaseEnvironment | undefined = this.environment): Store {
-    const store = new Store(environment, this.lookupOptions);
+  clone(environment: BaseEnvironment | undefined = this.environment, options?: StoreSharedLookupOptions): Store {
+    const store = new Store(environment, { ...this.lookupOptions, ...options });
     for (const [namespace, meta] of Object.entries(this._meta)) {
-      const operations = this._operations.get(meta)!;
-      const cloned: StoreGeneratorMeta = { ...meta, ...store.createMetaFunctions(operations, () => store.environment) };
-      store._operations.set(cloned, operations);
-      store._meta[namespace] = cloned;
+      const operations = getOperations(meta);
+      store._meta[namespace] = setOperations(
+        {
+          ...meta,
+          ...store.createMetaFunctions(operations, () => store.environment),
+          getPackageJson: <T = Record<string, any>>() => store.getPackageJson<T>(meta.packagePath),
+        },
+        operations,
+      );
     }
 
     for (const [packageNamespace, packagePaths] of Object.entries(this._packagesPaths)) {
@@ -134,10 +175,6 @@ export default class Store {
     }
 
     store._packagesNS.push(...this._packagesNS);
-    for (const [packagePath, packageJson] of this._packagesJson) {
-      store._packagesJson.set(packagePath, packageJson);
-    }
-
     return store;
   }
 
@@ -280,7 +317,7 @@ export default class Store {
       getPackageJson,
       packageNamespace,
     };
-    this._operations.set(generatorMeta, operations);
+    setOperations(generatorMeta, operations);
     this._meta[meta.namespace] = generatorMeta;
 
     if (packageNamespace) {
@@ -297,10 +334,12 @@ export default class Store {
    * The meta bound to an environment: its functions default to it. The meta of the environment the store was created
    * with is the meta itself, as it already defaults to it. A meta is bound once by environment, and delegates to the
    * meta of the store instead of copying it, so it keeps showing what the store has.
+   * The meta of the store a clone was created from, as the one a generator class keeps, is the meta of the clone.
    */
   bindMeta<M extends StoreGeneratorMeta>(meta: M, options?: StoreEnvironmentOptions): M;
   bindMeta<M extends StoreGeneratorMeta>(meta: M | undefined, options?: StoreEnvironmentOptions): M | undefined;
   bindMeta<M extends StoreGeneratorMeta>(meta: M | undefined, { env }: StoreEnvironmentOptions = {}): M | undefined {
+    meta = this.ownMeta(meta);
     if (!meta || !env || env === this.environment) {
       return meta;
     }
@@ -342,7 +381,7 @@ export default class Store {
       usePackageName,
       filter,
       env,
-      lookups = defaultLookups,
+      lookups = this.lookups,
       ...remainingOptions
     } = { ...this.lookupOptions, ...options };
     const lookupOptions: LookupOptions = { ...remainingOptions, lookups };
@@ -523,10 +562,23 @@ export default class Store {
   }
 
   /**
+   * The meta of the store sharing its operations with the given meta, coming from the store it was cloned from or from
+   * one of its clones, or the given meta.
+   */
+  private ownMeta<M extends StoreGeneratorMeta>(meta: M | undefined): M | undefined {
+    if (!meta) {
+      return meta;
+    }
+
+    const own = this._meta[meta.namespace];
+    return own && own !== meta && getOperations(own) === getOperations(meta) ? (own as M) : meta;
+  }
+
+  /**
    * The functions of a meta that need an environment, defaulting to the given one.
    */
   private bindMetaFunctions(meta: StoreGeneratorMeta, env: BaseEnvironment): BoundFunctions {
-    return this.createMetaFunctions(this._operations.get(meta)!, () => env);
+    return this.createMetaFunctions(getOperations(meta), () => env);
   }
 
   /**

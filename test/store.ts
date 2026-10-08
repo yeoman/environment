@@ -158,6 +158,13 @@ describe('Store', async () => {
       ).toEqual(['module:app']);
     });
 
+    it('#namespace() uses the lookups of the store, or the default ones', () => {
+      const filePath = 'generator-foo/custom/app/index.js';
+      expect(store.namespace(filePath)).toBe('foo:custom:app');
+      expect(store.namespace(filePath, ['custom'])).toBe('foo:app');
+      expect(new Store(undefined, { lookups: ['custom'] }).namespace(filePath)).toBe('foo:app');
+    });
+
     it('#lookupSync() customizes the namespace and registers to a scope', async () => {
       store.lookupSync({
         packagePaths: [esmPackage],
@@ -287,7 +294,8 @@ describe('Store', async () => {
 
         const clone = ownStore.clone(environmentB);
         expect(clone.environment).toBe(environmentB);
-        expect(clone.lookupOptions).toBe(ownStore.lookupOptions);
+        expect(clone.lookupOptions).toEqual({ localOnly: true });
+        expect(ownStore.clone(environmentB, { lookups: ['custom'] }).lookupOptions).toEqual({ localOnly: true, lookups: ['custom'] });
         expect(clone.namespaces()).toEqual(['foo:app']);
         expect(clone.getPackagesNS()).toEqual(['foo']);
         expect(clone.getPackagesPaths()).toEqual(ownStore.getPackagesPaths());
@@ -307,6 +315,32 @@ describe('Store', async () => {
         clone.add({ namespace: 'bar:app', resolved: '/bar/path' }, class {});
         expect(ownStore.namespaces()).toEqual(['foo:app']);
         expect(ownStore.clone().environment).toBe(environmentA);
+      });
+
+      it('#clone() shares no data with the store: what is added to one is not seen by the other', () => {
+        const ownStore = new Store(createEnvironment(), { lookups: ['custom'] });
+        ownStore.add({ namespace: 'foo:app', resolved: '/foo/path', packagePath: '/foo' }, class {});
+        const clone = ownStore.clone(createEnvironment());
+
+        ownStore.add({ namespace: 'original:app', resolved: '/original/path', packagePath: '/original' }, class {});
+        ownStore.addPackage('foo', '/foo-original');
+        clone.add({ namespace: 'cloned:app', resolved: '/cloned/path', packagePath: '/cloned' }, class {});
+        clone.addPackage('foo', '/foo-cloned');
+
+        expect(ownStore.namespaces()).toEqual(['foo:app', 'original:app']);
+        expect(clone.namespaces()).toEqual(['foo:app', 'cloned:app']);
+        expect(ownStore.getPackagesNS()).toEqual(['foo', 'original']);
+        expect(clone.getPackagesNS()).toEqual(['foo', 'cloned']);
+        // The package path of a generator added is normalized.
+        expect(ownStore.getPackagesPaths()).toEqual({ foo: ['/foo-original', path.join('/foo')], original: [path.join('/original')] });
+        expect(clone.getPackagesPaths()).toEqual({ foo: ['/foo-cloned', path.join('/foo')], cloned: [path.join('/cloned')] });
+
+        // Replacing a generator in one does not replace it in the other.
+        const { resolved } = clone.getMeta('foo:app')!;
+        ownStore.add({ namespace: 'foo:app', resolved: '/foo/replaced' }, class {});
+        expect(ownStore.getMeta('foo:app')!.resolved).not.toBe(resolved);
+        expect(clone.getMeta('foo:app')!.resolved).toBe(resolved);
+        expect(ownStore.lookupOptions).not.toBe(clone.lookupOptions);
       });
 
       it('returns the meta itself for the environment of the store', () => {
