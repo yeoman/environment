@@ -2,7 +2,7 @@ import { pathToFileURL } from 'node:url';
 import { basename, extname, join, relative } from 'node:path';
 import { createRequire } from 'node:module';
 import { readFileSync, realpathSync } from 'node:fs';
-import { toNamespace } from '@yeoman/namespace';
+import { namespaceFromPackageName, toNamespace } from '@yeoman/namespace';
 import type {
   BaseEnvironment,
   BaseGenerator,
@@ -86,6 +86,15 @@ type BoundFunctions = Pick<StoreGeneratorMeta, 'importGenerator' | 'instantiate'
 type MetaOperations = {
   importGenerator: (environment?: BaseEnvironment) => ReturnType<StoreGeneratorMeta['importGenerator']>;
   instantiate: (arguments_: string[] | undefined, options: any, environment?: BaseEnvironment) => Promise<any>;
+};
+
+/** The namespace of a generator package, like `@scope/foo` for `@scope/generator-foo`, undefined for another name. */
+const namespaceOfPackage = (packageName: string): string | undefined => {
+  try {
+    return namespaceFromPackageName(packageName).namespace;
+  } catch {
+    return undefined;
+  }
 };
 
 /**
@@ -387,11 +396,17 @@ export default class Store {
     const lookupOptions: LookupOptions = { ...remainingOptions, lookups };
 
     const generators: StoreLookupGeneratorMeta[] = [];
+    const { nestedGenerators } = lookupOptions;
     lookupGeneratorsSync(lookupOptions, ({ packagePath, filePath, lookups }) => {
       const packageName = usePackageName ? this.getPackageJson<{ name?: string }>(packagePath)?.name : undefined;
-      let namespacePath: string;
-      if (packageName) {
-        namespacePath = join(packageName, relative(packagePath, filePath));
+      const packageNamespace = packageName ? namespaceOfPackage(packageName) : undefined;
+      let foundNamespace: string;
+      if (packageNamespace) {
+        // The namespace of the package, then the generator from its path in the package.
+        const generatorPath = join('generator-package', relative(packagePath, filePath));
+        foundNamespace = `${packageNamespace}${asNamespace(generatorPath, { lookups, nestedGenerators }).slice('package'.length)}`;
+      } else if (packageName) {
+        foundNamespace = asNamespace(join(packageName, relative(packagePath, filePath)), { lookups, nestedGenerators });
       } else {
         let repositoryPath = join(packagePath, '..');
         if (basename(repositoryPath).startsWith('@')) {
@@ -399,14 +414,14 @@ export default class Store {
           repositoryPath = join(repositoryPath, '..');
         }
 
-        namespacePath = relative(repositoryPath, filePath);
+        foundNamespace = asNamespace(relative(repositoryPath, filePath), { lookups, nestedGenerators });
       }
 
-      let namespace = customizeNamespace(asNamespace(namespacePath, { lookups, nestedGenerators: lookupOptions.nestedGenerators }));
+      let namespace = customizeNamespace(foundNamespace);
       try {
         const resolved = realpathSync(filePath);
         if (!namespace) {
-          namespace = customizeNamespace(asNamespace(resolved, { lookups, nestedGenerators: lookupOptions.nestedGenerators }));
+          namespace = customizeNamespace(asNamespace(resolved, { lookups, nestedGenerators }));
         }
 
         namespace = namespace!;
