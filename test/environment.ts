@@ -905,6 +905,21 @@ for (const generatorVersion of allVersions) {
         expect(env.namespace('/node_modules/@dummyscope/generator-mocha/backbone/model.js')).toEqual('@dummyscope/mocha:backbone:model');
       });
 
+      it('keeps a generator- inside the name of the package or of a generator', async function () {
+        expect(env.namespace('generator-foo-generator-bar/generators/app/index.js')).toEqual('foo-generator-bar:app');
+        expect(env.namespace('@scope/generator-foo-generator-bar/generators/app/index.js')).toEqual('@scope/foo-generator-bar:app');
+        expect(env.namespace('generator-foo/generators/my-generator-thing/index.js')).toEqual('foo:my-generator-thing');
+        expect(env.namespace('/projects/generator-old/node_modules/generator-foo/generators/app-generator-x/index.js')).toEqual(
+          'foo:app-generator-x',
+        );
+      });
+
+      it('throws for a scoped path of a package that is not a generator- one', async function () {
+        expect(() => env.namespace('@scope/plain-package/generators/app/index.js')).toThrow(/is not a generator- package/);
+        expect(() => env.namespace('/node_modules/@scope/plain/generators/app/index.js')).toThrow(/is not a generator- package/);
+        expect(() => env.namespace('c:\\projects\\@scope\\plain\\generators\\app\\index.js')).toThrow(/is not a generator- package/);
+      });
+
       it('handle relative paths', async function () {
         expect(env.namespace('../local/stuff')).toEqual('local:stuff');
         expect(env.namespace('./local/stuff')).toEqual('local:stuff');

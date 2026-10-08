@@ -398,27 +398,28 @@ export default class Store {
     const generators: StoreLookupGeneratorMeta[] = [];
     const { nestedGenerators } = lookupOptions;
     lookupGeneratorsSync(lookupOptions, ({ packagePath, filePath, lookups }) => {
-      const packageName = usePackageName ? this.getPackageJson<{ name?: string }>(packagePath)?.name : undefined;
-      const packageNamespace = packageName ? namespaceOfPackage(packageName) : undefined;
-      let foundNamespace: string;
-      if (packageNamespace) {
-        // The namespace of the package, then the generator from its path in the package.
-        const generatorPath = join('generator-package', relative(packagePath, filePath));
-        foundNamespace = `${packageNamespace}${asNamespace(generatorPath, { lookups, nestedGenerators }).slice('package'.length)}`;
-      } else if (packageName) {
-        foundNamespace = asNamespace(join(packageName, relative(packagePath, filePath)), { lookups, nestedGenerators });
-      } else {
-        let repositoryPath = join(packagePath, '..');
-        if (basename(repositoryPath).startsWith('@')) {
-          // Scoped package
-          repositoryPath = join(repositoryPath, '..');
+      let namespace: string | undefined;
+      try {
+        const packageName = usePackageName ? this.getPackageJson<{ name?: string }>(packagePath)?.name : undefined;
+        const packageNamespace = packageName ? namespaceOfPackage(packageName) : undefined;
+        let foundNamespace: string;
+        if (packageNamespace) {
+          // The namespace of the package, then the generator from its path in the package.
+          const generatorPath = join('generator-package', relative(packagePath, filePath));
+          foundNamespace = `${packageNamespace}${asNamespace(generatorPath, { lookups, nestedGenerators }).slice('package'.length)}`;
+        } else if (packageName) {
+          foundNamespace = asNamespace(join(packageName, relative(packagePath, filePath)), { lookups, nestedGenerators });
+        } else {
+          let repositoryPath = join(packagePath, '..');
+          if (basename(repositoryPath).startsWith('@')) {
+            // Scoped package
+            repositoryPath = join(repositoryPath, '..');
+          }
+
+          foundNamespace = asNamespace(relative(repositoryPath, filePath), { lookups, nestedGenerators });
         }
 
-        foundNamespace = asNamespace(relative(repositoryPath, filePath), { lookups, nestedGenerators });
-      }
-
-      let namespace = customizeNamespace(foundNamespace);
-      try {
+        namespace = customizeNamespace(foundNamespace);
         const resolved = realpathSync(filePath);
         if (!namespace) {
           namespace = customizeNamespace(asNamespace(resolved, { lookups, nestedGenerators }));
