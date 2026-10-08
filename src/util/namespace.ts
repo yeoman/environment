@@ -39,6 +39,7 @@ export const defaultLookups = ['.', 'generators', 'lib/generators', 'dist/genera
  *
  * @param filepath
  * @param lookups paths
+ * @throws if the path is in a scoped package that is not a `generator-` one
  */
 export const asNamespace = (filepath: string, { lookups = defaultLookups, nestedGenerators }: AsNamespaceOptions): string => {
   if (!filepath) {
@@ -77,12 +78,19 @@ export const asNamespace = (filepath: string, { lookups = defaultLookups, nested
   // Cleanup `ns` from unwanted parts and then normalize slashes to `:`
   ns = ns
     .replaceAll('//', '') // Remove double `/`
-    .replace(/(.*generator-)/, '') // Remove before `generator-`
+    // Remove the path before the package, the last folder starting with `generator-`, and its `generator-` prefix:
+    // a `generator-` inside the name of the package or of a generator is kept.
+    .replace(/^(?:.*\/)?generator-/, '')
     .replace(/\/(index|main)$/, '') // Remove `/index` or `/main`
     .replace(/^\//, '') // Remove leading `/`
     .replaceAll(/\/+/g, ':'); // Replace slashes by `:`
 
   if (scope) {
+    // The path up to the scope is left when the package is not a `generator-` one.
+    if (new RegExp(`(?:^|:)${escapeRegExp(scope)}:`).test(ns)) {
+      throw new Error(`The scoped package of ${filepath} is not a generator- package, it has no namespace.`);
+    }
+
     ns = `${scope}/${ns}`;
   }
 

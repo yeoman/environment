@@ -186,6 +186,16 @@ describe('Store', async () => {
       ]);
     });
 
+    it('#lookupSync() does not register the generators of a scoped package that is not a generator- one, and goes on', () => {
+      const generators = store.lookupSync({
+        packagePaths: [path.join(__dirname, 'fixtures/scoped-plain-checkout'), path.join(__dirname, 'fixtures/plain-checkout')],
+        usePackageName: true,
+      });
+      expect(generators.find(({ registered }) => !registered)?.filePath).toContain('scoped-plain-checkout');
+      expect(generators.filter(({ registered }) => registered)).toHaveLength(1);
+      expect(store.namespaces()).toEqual(['plain-package:app']);
+    });
+
     it('#lookupSync() derives the namespace from the package folder with usePackageName when the package.json has no name', () => {
       const packagePath = path.join(__dirname, 'fixtures/noname-checkout');
       expect(store.lookupSync({ packagePaths: [packagePath], usePackageName: true }).map(({ namespace }) => namespace)).toEqual([
