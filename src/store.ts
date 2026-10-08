@@ -38,6 +38,12 @@ export type StoreLookupOptions = LookupOptions &
     filter?: (generator: FoundGenerator) => boolean;
   };
 
+/**
+ * Lookup options shared by every lookup of a store, the options passed to a lookup take precedence.
+ * What to look up (paths, package patterns and `singleResult`) is given by each lookup.
+ */
+export type StoreSharedLookupOptions = Pick<StoreLookupOptions, 'lookups' | 'localOnly' | 'filterPaths' | 'customizeNamespace' | 'filter'>;
+
 /** A generator found by a lookup, `registered` tells if it was added to the store. */
 export type StoreLookupGeneratorMeta = FoundGenerator &
   ((StoreGeneratorMeta & { registered: true }) | (Required<BaseGeneratorMeta> & { registered: false }));
@@ -63,6 +69,12 @@ export type StoreGeneratorMeta = Omit<GeneratorMeta, 'importGenerator' | 'instan
 
 type BoundFunctions = Pick<StoreGeneratorMeta, 'importGenerator' | 'instantiate' | 'instantiateHelp'>;
 
+/** The operations of a meta, taking the environment to use. */
+type MetaOperations = {
+  importGenerator: (environment?: BaseEnvironment) => ReturnType<StoreGeneratorMeta['importGenerator']>;
+  instantiate: (arguments_: string[] | undefined, options: any, environment?: BaseEnvironment) => Promise<any>;
+};
+
 /**
  * The Generator store
  * This is used to store generator (npm packages) reference and instantiate them when
@@ -84,12 +96,44 @@ export default class Store {
   private readonly _packagesNS: string[] = [];
   // Metas bound to an environment, by the meta of the store.
   private readonly _boundMetas = new WeakMap<StoreGeneratorMeta, WeakMap<BaseEnvironment, StoreGeneratorMeta>>();
+  // Operations of the metas of the store, shared with the metas of its clones.
+  private readonly _operations = new WeakMap<StoreGeneratorMeta, MetaOperations>();
 
   /** The environment used when none is passed to `importGenerator` or `instantiate`. */
   readonly environment?: BaseEnvironment;
 
-  constructor(environment?: BaseEnvironment) {
+  /** Options passed to every lookup, so consecutive lookups share the same configuration. */
+  readonly lookupOptions: StoreSharedLookupOptions;
+
+  constructor(environment?: BaseEnvironment, lookupOptions: StoreSharedLookupOptions = {}) {
     this.environment = environment;
+    this.lookupOptions = lookupOptions;
+  }
+
+  /**
+   * A copy of the store with the same generators, packages and lookup options, whose metas default to the given
+   * environment. The generators already imported are shared, what is added after cloning goes only to its store.
+   * @param environment - The environment of the clone, the environment of the store if omitted
+   */
+  clone(environment: BaseEnvironment | undefined = this.environment): Store {
+    const store = new Store(environment, this.lookupOptions);
+    for (const [namespace, meta] of Object.entries(this._meta)) {
+      const operations = this._operations.get(meta)!;
+      const cloned: StoreGeneratorMeta = { ...meta, ...store.createMetaFunctions(operations, () => store.environment) };
+      store._operations.set(cloned, operations);
+      store._meta[namespace] = cloned;
+    }
+
+    for (const [packageNamespace, packagePaths] of Object.entries(this._packagesPaths)) {
+      store._packagesPaths[packageNamespace] = [...packagePaths];
+    }
+
+    store._packagesNS.push(...this._packagesNS);
+    for (const [packagePath, packageJson] of this._packagesJson) {
+      store._packagesJson.set(packagePath, packageJson);
+    }
+
+    return store;
   }
 
   /**
@@ -200,28 +244,23 @@ export default class Store {
       return creating;
     };
 
-    const importGenerator = (({ env: environment = this.environment }: StoreEnvironmentOptions = {}) => {
+    const importGenerator = (environment?: BaseEnvironment) => {
       const importing = importGeneratorModule();
       return importing ? importing.then(() => getGenerator(environment)) : getGenerator(environment);
-    }) as StoreGeneratorMeta['importGenerator'];
+    };
 
-    const instantiate: StoreGeneratorMeta['instantiate'] = async <G extends BaseGenerator>(
-      arguments_: string[] = [],
-      options: any = {},
-      { env: environment = this.environment }: StoreEnvironmentOptions = {},
-    ) => {
+    const instantiate = async (arguments_: string[] = [], options: any = {}, environment?: BaseEnvironment) => {
       if (!environment) {
         throw new Error(`An environment is required to instantiate the generator ${meta.namespace}`);
       }
 
-      return environment.instantiate<G>(await importGenerator<G>({ env: environment }), {
+      return environment.instantiate(await importGenerator(environment), {
         generatorArgs: arguments_,
         generatorOptions: options,
       });
     };
 
-    const instantiateHelp: StoreGeneratorMeta['instantiateHelp'] = async <G extends BaseGenerator>(options?: StoreEnvironmentOptions) =>
-      instantiate<G>([], { help: true }, options);
+    const operations: MetaOperations = { importGenerator, instantiate };
 
     const getPackageJson: GeneratorMeta['getPackageJson'] = <T = Record<string, any>>(): T | undefined =>
       this.getPackageJson<T>(meta.packagePath);
@@ -230,14 +269,13 @@ export default class Store {
 
     generatorMeta = {
       ...meta,
-      importGenerator,
+      ...this.createMetaFunctions(operations, () => this.environment),
       requireModule,
       importModule,
-      instantiate,
-      instantiateHelp,
       getPackageJson,
       packageNamespace,
     };
+    this._operations.set(generatorMeta, operations);
     this._meta[meta.namespace] = generatorMeta;
 
     if (packageNamespace) {
@@ -289,6 +327,8 @@ export default class Store {
    *
    * So this index file `node_modules/generator-dummy/lib/generators/yo/index.js` would be
    * registered as `dummy:yo` generator.
+   *
+   * The options are merged over the lookup options the store was created with.
    */
   lookupSync(options?: StoreLookupOptions): StoreLookupGeneratorMeta[] {
     const {
@@ -298,7 +338,7 @@ export default class Store {
       env,
       lookups = defaultLookups,
       ...remainingOptions
-    } = options ?? { localOnly: false };
+    } = { ...this.lookupOptions, ...options };
     const lookupOptions: LookupOptions = { ...remainingOptions, lookups };
 
     const generators: StoreLookupGeneratorMeta[] = [];
@@ -472,11 +512,18 @@ export default class Store {
    * The functions of a meta that need an environment, defaulting to the given one.
    */
   private bindMetaFunctions(meta: StoreGeneratorMeta, env: BaseEnvironment): BoundFunctions {
+    return this.createMetaFunctions(this._operations.get(meta)!, () => env);
+  }
+
+  /**
+   * The functions of a meta, running its operations in the environment passed as `{ env }`, or the default one.
+   */
+  private createMetaFunctions(operations: MetaOperations, getEnvironment: () => BaseEnvironment | undefined): BoundFunctions {
     return {
-      importGenerator: (({ env: environment = env }: StoreEnvironmentOptions = {}) =>
-        meta.importGenerator({ env: environment })) as BoundFunctions['importGenerator'],
-      instantiate: (arguments_, options, { env: environment = env } = {}) => meta.instantiate(arguments_, options, { env: environment }),
-      instantiateHelp: ({ env: environment = env } = {}) => meta.instantiateHelp({ env: environment }),
+      importGenerator: (({ env = getEnvironment() }: StoreEnvironmentOptions = {}) =>
+        operations.importGenerator(env)) as BoundFunctions['importGenerator'],
+      instantiate: async (arguments_, options, { env = getEnvironment() } = {}) => operations.instantiate(arguments_, options, env),
+      instantiateHelp: async ({ env = getEnvironment() } = {}) => operations.instantiate([], { help: true }, env),
     };
   }
 

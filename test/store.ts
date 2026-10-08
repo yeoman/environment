@@ -137,6 +137,16 @@ describe('Store', async () => {
       expect(store.getMeta('esm:app')?.packagePath).toBe(esmPackage);
     });
 
+    it('#lookupSync() uses the lookup options shared by the store, the options of the lookup taking precedence', () => {
+      const sharedStore = new Store(undefined, {
+        customizeNamespace: ns => ns?.replace('esm:', 'shared:'),
+        filter: ({ namespace }) => namespace.endsWith(':app'),
+      });
+      sharedStore.lookupSync({ packagePaths: [esmPackage] });
+      sharedStore.lookupSync({ packagePaths: [esmPackage], customizeNamespace: ns => ns?.replace('esm:', 'own:') });
+      expect(sharedStore.namespaces()).toEqual(['shared:app', 'own:app']);
+    });
+
     it('#lookupSync() customizes the namespace and registers to a scope', async () => {
       store.lookupSync({
         packagePaths: [esmPackage],
@@ -255,6 +265,37 @@ describe('Store', async () => {
         const generatorsMeta = store.getGeneratorsMeta({ env: environment });
         expect(generatorsMeta['foo:app']).toBe(store.getMeta('foo:app', { env: environment }));
         expect(store.getGeneratorsMeta()).not.toBe(generatorsMeta);
+      });
+
+      it('#clone() copies the store, binding its metas to the environment given', async () => {
+        const environmentA = createEnvironment();
+        const environmentB = createEnvironment();
+        const ownStore = new Store(environmentA, { localOnly: true });
+        ownStore.add({ namespace: 'foo:app', resolved: '/foo/path', packagePath: '/foo' }, class {});
+        const meta = ownStore.getMeta('foo:app')!;
+
+        const clone = ownStore.clone(environmentB);
+        expect(clone.environment).toBe(environmentB);
+        expect(clone.lookupOptions).toBe(ownStore.lookupOptions);
+        expect(clone.namespaces()).toEqual(['foo:app']);
+        expect(clone.getPackagesNS()).toEqual(['foo']);
+        expect(clone.getPackagesPaths()).toEqual(ownStore.getPackagesPaths());
+
+        const clonedMeta = clone.getMeta('foo:app')!;
+        expect(clonedMeta).not.toBe(meta);
+        expect(clonedMeta.namespace).toBe('foo:app');
+        expect(await clonedMeta.importGenerator()).toBe(await meta.importGenerator());
+        await clonedMeta.instantiate();
+        await clonedMeta.instantiateHelp();
+        await meta.instantiate();
+        expect(environmentA.instantiated).toHaveLength(1);
+        expect(environmentB.instantiated).toHaveLength(2);
+        await clone.getMeta('foo:app', { env: environmentA })!.instantiate();
+        expect(environmentA.instantiated).toHaveLength(2);
+
+        clone.add({ namespace: 'bar:app', resolved: '/bar/path' }, class {});
+        expect(ownStore.namespaces()).toEqual(['foo:app']);
+        expect(ownStore.clone().environment).toBe(environmentA);
       });
 
       it('returns the meta itself for the environment of the store', () => {
