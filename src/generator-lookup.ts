@@ -3,12 +3,17 @@ import { pathToFileURL } from 'node:url';
 import type { LookupOptions as LookupOptionsApi } from '@yeoman/types';
 import { requireNamespace, toNamespace } from '@yeoman/namespace';
 import { type ModuleLookupOptions, findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.ts';
-import { defaultLookups } from './util/namespace.ts';
+import { defaultLookups, withNestedLookups } from './util/namespace.ts';
 import Store from './store.ts';
 
 export type LookupOptions = LookupOptionsApi &
   ModuleLookupOptions & {
     lookups?: string[];
+    /**
+     * Look up the generators nested in the `generators` folder of a generator too:
+     * `generators/server/generators/cache` is registered as `server:cache`.
+     */
+    nestedGenerators?: boolean;
   };
 
 type LookupMeta = { filePath: string; packagePath: string; lookups: string[] };
@@ -40,10 +45,12 @@ export const defaultExtensions = ['.ts', '.cts', '.mts', '.js', '.cjs', '.mjs'];
  * @return {Object[]} List of generators
  */
 export function lookupGeneratorsSync(options: LookupOptions = {}, register?: (meta: LookupMeta) => boolean) {
-  const { lookups = defaultLookups } = options;
+  const { lookups = defaultLookups, nestedGenerators } = options;
   options = {
     // Js generators should be after, last will override registered one.
-    filePatterns: lookups.flatMap(prefix => defaultExtensions.map(extension => `${prefix}/*/index${extension}`)),
+    filePatterns: withNestedLookups(lookups, nestedGenerators).flatMap(prefix =>
+      defaultExtensions.map(extension => `${prefix}/*/index${extension}`),
+    ),
     filterPaths: false,
     packagePatterns: ['generator-*'],
     reverse: !options.singleResult,
@@ -79,15 +86,17 @@ export function lookupGeneratorsSync(options: LookupOptions = {}, register?: (me
  */
 export function lookupGenerator(
   namespace: string,
-  options?: ModuleLookupOptions & { packagePath?: boolean; generatorPath?: boolean } & { singleResult?: true },
+  options?: ModuleLookupOptions &
+    Pick<LookupOptions, 'nestedGenerators'> & { packagePath?: boolean; generatorPath?: boolean } & { singleResult?: true },
 ): string;
 export function lookupGenerator(
   namespace: string,
-  options?: ModuleLookupOptions & { packagePath?: boolean; generatorPath?: boolean } & { singleResult: false },
+  options?: ModuleLookupOptions &
+    Pick<LookupOptions, 'nestedGenerators'> & { packagePath?: boolean; generatorPath?: boolean } & { singleResult: false },
 ): string[];
 export function lookupGenerator(
   namespace: string,
-  options?: ModuleLookupOptions & { packagePath?: boolean; generatorPath?: boolean },
+  options?: ModuleLookupOptions & Pick<LookupOptions, 'nestedGenerators'> & { packagePath?: boolean; generatorPath?: boolean },
 ): string | string[] {
   options = typeof options === 'boolean' ? { localOnly: options } : (options ?? {});
   const { packagePath: returnPackagePath, generatorPath: returnGeneratorPath, singleResult = true, ...lookupOptions } = options;
@@ -102,7 +111,7 @@ export function lookupGenerator(
 
   // The generators are looked up by a store of their own, which keeps the ones asked for.
   const generators = new Store().lookupSync({
-    filePatterns: defaultLookups.map(prefix => join(prefix, '*/index.{js,ts}')),
+    filePatterns: withNestedLookups(defaultLookups, lookupOptions.nestedGenerators).map(prefix => join(prefix, '*/index.{js,ts}')),
     reverse: false,
     ...lookupOptions,
     lookups: defaultLookups,
