@@ -309,7 +309,7 @@ class FullEnvironment extends EnvironmentBase {
         // Build filePatterns to look specifically for the namespace.
         const genPath = ns.generator.split(':').join('/');
         let filePatterns = [`${genPath}/index.?s`, `${genPath}.?s`];
-        const lookups = options.lookups ?? this.lookups;
+        const lookups = options.lookups ?? this.store.lookups;
         filePatterns = lookups.flatMap(prefix => filePatterns.map(pattern => join(prefix, pattern)));
         nsOptions.filePatterns = filePatterns;
         nsOptions.singleResult = true;

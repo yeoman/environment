@@ -30,9 +30,8 @@ import chalk from 'chalk';
 import { type ConflicterOptions } from '@yeoman/conflicter';
 import { defaults, pick } from 'lodash-es';
 import { ComposedStore } from './composed-store.ts';
-import Store, { type StoreGeneratorMeta } from './store.ts';
+import Store, { type StoreGeneratorMeta, type StoreSharedLookupOptions } from './store.ts';
 import type YeomanCommand from './util/command.ts';
-import { asNamespace, defaultLookups } from './util/namespace.ts';
 import { type LookupOptions } from './generator-lookup.ts';
 import { UNKNOWN_NAMESPACE, UNKNOWN_RESOLVED, defaultQueues } from './constants.ts';
 import { resolveModulePath } from './util/resolve.ts';
@@ -62,10 +61,22 @@ export type EnvironmentOptions = ConflicterOptions &
     yeomanRepository?: string;
     arboristRegistry?: string;
     nodePackageManager?: string;
+    /**
+     * @deprecated Use `storeOptions`.
+     */
     generatorLookupOptions?: Pick<EnvironmentLookupOptions, 'customizeNamespace' | 'lookups'>;
     /**
-     * Generators store to use instead of a new one, to share looked up and registered generators with other
-     * environments. Generators registered through this environment are added to it.
+     * Lookup options of the store of the environment, shared by every lookup. When a `store` is passed, the
+     * environment works on a clone of it with these options merged over its own.
+     *
+     * @experimental
+     */
+    storeOptions?: StoreSharedLookupOptions;
+    /**
+     * Generators store to start from instead of an empty one, to reuse the generators already looked up and registered
+     * in it. The environment works on a clone of it (see `Store#clone`), with `storeOptions` merged over its options:
+     * the generators the environment looks up or registers are added to its clone only, they are neither added to the
+     * store passed nor seen by the other environments created with it. The generators already imported are shared.
      *
      * @experimental
      */
@@ -161,7 +172,6 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   protected command?: YeomanCommand;
   protected runLoop: GroupedQueue;
   protected composedStore: ComposedStore;
-  protected lookups: string[];
   protected repository: FlyRepository;
   protected experimental: boolean;
   protected _rootGenerator?: BaseGenerator;
@@ -189,6 +199,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       stdout,
       adapter = new QueuedAdapter({ console: adapterConsole, stdin, stdout, stderr }),
       store,
+      storeOptions,
       ...remainingOptions
     } = options;
 
@@ -196,7 +207,9 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     this.adapter = adapter as QueuedAdapter;
     this.cwd = resolve(cwd);
     this.logCwd = logCwd;
-    this.store = store ?? new Store(this as BaseEnvironment);
+    const lookupOptions = { ...remainingOptions.generatorLookupOptions, ...storeOptions };
+    // A store passed is cloned: what this environment looks up or registers does not change it.
+    this.store = store ? store.clone(this as BaseEnvironment, lookupOptions) : new Store(this as BaseEnvironment, lookupOptions);
     this.command = command;
 
     this.runLoop = new GroupedQueue(defaultQueues, false);
@@ -207,8 +220,6 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     // Node won't complain about event listeners leaks.
     this.runLoop.setMaxListeners(0);
     this.sharedFs.setMaxListeners(0);
-
-    this.lookups = this.options.generatorLookupOptions?.lookups ?? defaultLookups;
 
     this.sharedOptions = sharedOptions;
 
@@ -480,8 +491,15 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * @param {String} filepath
    * @param {Array} lookups paths
    */
-  namespace(filepath: string, lookups = this.lookups) {
-    return asNamespace(filepath, { lookups });
+  namespace(filepath: string, lookups?: string[]) {
+    return this.store.namespace(filepath, lookups);
+  }
+
+  /**
+   * @deprecated Use the lookups of the store.
+   */
+  protected get lookups(): string[] {
+    return this.store.lookups;
   }
 
   /**
@@ -654,12 +672,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    * registered as `dummy:yo` generator.
    */
   async lookup(options?: EnvironmentLookupOptions): Promise<LookupGeneratorMeta[]> {
-    return this.store.lookupSync({
-      customizeNamespace: this.options.generatorLookupOptions?.customizeNamespace,
-      lookups: this.lookups,
-      ...(options ?? { localOnly: false }),
-      env: this.asEnvironment(),
-    }) as LookupGeneratorMeta[];
+    return this.store.lookupSync({ ...options, env: this.asEnvironment() }) as LookupGeneratorMeta[];
   }
 
   /**
