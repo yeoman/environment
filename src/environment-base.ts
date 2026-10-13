@@ -83,6 +83,15 @@ export type EnvironmentOptions = ConflicterOptions &
     store?: Store;
   };
 
+/** The options to instantiate a generator with, and the namespace it was asked with. */
+type EnvironmentInstantiateOptions<G extends BaseGenerator = BaseGenerator> = InstantiateOptions<G> & {
+  /**
+   * The namespace the generator is created for, with its instance id (`namespace#id`), passed to the generator as
+   * the `namespaceId` option. The `namespace` option stays the one of the generator, without the instance id.
+   */
+  namespaceId?: string;
+};
+
 const getInstantiateOptions = (firstArg?: any, generatorOptions?: any): InstantiateOptions => {
   // First argument can be an array of string, a string, a ComposeOptions, a GeneratorOptions, old variant of ComposeOptions.
   if (Array.isArray(firstArg) || typeof firstArg === 'string') {
@@ -388,6 +397,19 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       return Generator;
     };
 
+    const instantiate = (Generator?: GetGeneratorConstructor<G> & Partial<BaseGeneratorConstructorMeta>): Promise<G> | G => {
+      const checked = checkGenerator(Generator);
+      if (!namespace) {
+        return this.instantiate(checked, ...arguments_);
+      }
+
+      // Read after checkGenerator, which updates the namespace to the one of an aliased generator.
+      return this.instantiate(checked, {
+        ...getInstantiateOptions(...arguments_),
+        namespaceId: namespace.id,
+      } as EnvironmentInstantiateOptions<G>);
+    };
+
     if (typeof namespaceOrPath === 'string') {
       const meta = this.findMeta(namespaceOrPath);
       const constructor = meta?.importGenerator();
@@ -397,13 +419,11 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       }
 
       if (constructor && 'then' in constructor) {
-        return constructor.then(g => {
-          return this.instantiate(checkGenerator(g), ...arguments_);
-        });
+        return constructor.then(g => instantiate(g as GetGeneratorConstructor<G>));
       }
-      return this.instantiate(checkGenerator(constructor), ...arguments_);
+      return instantiate(constructor as GetGeneratorConstructor<G> | undefined);
     } else {
-      return this.instantiate(checkGenerator(namespaceOrPath), ...arguments_);
+      return instantiate(namespaceOrPath);
     }
   }
 
@@ -416,17 +436,18 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
    */
   instantiate<G extends BaseGenerator = BaseGenerator>(
     generator: GetGeneratorConstructor<G>,
-    instantiateOptions?: InstantiateOptions<G>,
+    instantiateOptions?: EnvironmentInstantiateOptions<G>,
   ): Promise<G>;
   instantiate<G extends BaseGenerator = BaseGenerator>(
     constructor: GetGeneratorConstructor<G> & Partial<BaseGeneratorConstructorMeta>,
     ...arguments_: any[]
   ): Promise<G> | G {
-    const composeOptions = arguments_.length > 0 ? (getInstantiateOptions(...arguments_) as InstantiateOptions<G>) : {};
+    const composeOptions = arguments_.length > 0 ? (getInstantiateOptions(...arguments_) as EnvironmentInstantiateOptions<G>) : {};
     const { namespace = UNKNOWN_NAMESPACE, resolved = UNKNOWN_RESOLVED } = constructor;
     // The generator class keeps the meta of the store, which may be shared: the generator gets the one of this environment.
     const _meta = this.bindMeta(constructor._meta as StoreGeneratorMeta | undefined);
-    const environmentOptions = { env: this, resolved, namespace, _meta };
+    const { namespaceId } = composeOptions;
+    const environmentOptions = { env: this, resolved, namespace, _meta, ...(namespaceId && { namespaceId }) };
     const generator = new constructor(composeOptions.generatorArgs ?? [], {
       ...this.sharedOptions,
       ...composeOptions.generatorOptions,

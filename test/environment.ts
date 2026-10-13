@@ -141,6 +141,48 @@ for (const generatorVersion of allVersions) {
         expect((await env.create('@scope/stub')) instanceof registeredGenerator).toBeTruthy();
       });
 
+      describe('namespaceId option', () => {
+        class OptionsGenerator {
+          options: any;
+          constructor(_arguments: string[], options: any) {
+            this.options = options;
+          }
+        }
+
+        beforeEach(() => {
+          env.register(OptionsGenerator as any, { namespace: 'dummy:namespace' });
+        });
+
+        it('passes the namespace with the instance id as namespaceId, the namespace option keeps the one of the generator', async () => {
+          const one = (await env.create('dummy:namespace#one')) as any;
+          const two = (await env.create('dummy:namespace#two', { generatorOptions: { foo: 'bar' } as any })) as any;
+          expect(one.options.namespaceId).toBe('dummy:namespace#one');
+          expect(one.options.namespace).toBe('dummy:namespace');
+          expect(two.options.namespaceId).toBe('dummy:namespace#two');
+          expect(two.options.foo).toBe('bar');
+          expect(two._environmentOptions.namespaceId).toBe('dummy:namespace#two');
+        });
+
+        it('passes the namespace as namespaceId without an instance id', async () => {
+          expect(((await env.create('dummy:namespace')) as any).options.namespaceId).toBe('dummy:namespace');
+        });
+
+        it('passes the namespace of the generator with the instance id for an alias', async () => {
+          env.alias(/^aliased:(.*)$/, 'dummy:$1');
+          expect(((await env.create('aliased:namespace#one')) as any).options.namespaceId).toBe('dummy:namespace#one');
+        });
+
+        it('keeps the arguments and options given in the legacy forms', async () => {
+          // @ts-expect-error legacy behavior
+          const generator = (await env.create('dummy:namespace#one', ['arg'], { foo: 'bar' })) as any;
+          expect(generator.options).toMatchObject({ namespaceId: 'dummy:namespace#one', foo: 'bar' });
+        });
+
+        it('does not pass namespaceId for a generator class', async () => {
+          expect(((await env.create(OptionsGenerator as any)) as any).options).not.toHaveProperty('namespaceId');
+        });
+      });
+
       it('pass args parameter', async function () {
         const arguments_ = ['foo', 'bar'];
         // @ts-expect-error legacy behavior
