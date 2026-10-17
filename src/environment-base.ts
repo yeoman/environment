@@ -86,8 +86,9 @@ export type EnvironmentOptions = ConflicterOptions &
 /** The options to instantiate a generator with, and the namespace it was asked with. */
 type EnvironmentInstantiateOptions<G extends BaseGenerator = BaseGenerator> = InstantiateOptions<G> & {
   /**
-   * The namespace the generator is created for, with its instance id (`namespace#id`), passed to the generator as
-   * the `namespaceId` option. The `namespace` option stays the one of the generator, without the instance id.
+   * The namespace the generator is created for, complete with its version, instance id, methods and flags
+   * (`namespace@semver@#id+method?`), passed to the generator as the `namespaceId` option. The `namespace` option
+   * stays the one of the generator, without them.
    */
   namespaceId?: string;
 };
@@ -406,7 +407,7 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
       // Read after checkGenerator, which updates the namespace to the one of an aliased generator.
       return this.instantiate(checked, {
         ...getInstantiateOptions(...arguments_),
-        namespaceId: namespace.id,
+        namespaceId: namespace.complete,
       } as EnvironmentInstantiateOptions<G>);
     };
 

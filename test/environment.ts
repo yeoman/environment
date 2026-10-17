@@ -163,6 +163,12 @@ for (const generatorVersion of allVersions) {
           expect(two._environmentOptions.namespaceId).toBe('dummy:namespace#two');
         });
 
+        it('passes the methods and flags of the namespace in namespaceId', async () => {
+          const generator = (await env.create('dummy:namespace#one+writing+end?')) as any;
+          expect(generator.options.namespaceId).toBe('dummy:namespace#one+writing+end?');
+          expect(generator.options.namespace).toBe('dummy:namespace');
+        });
+
         it('passes the namespace as namespaceId without an instance id', async () => {
           expect(((await env.create('dummy:namespace')) as any).options.namespaceId).toBe('dummy:namespace');
         });
@@ -170,6 +176,7 @@ for (const generatorVersion of allVersions) {
         it('passes the namespace of the generator with the instance id for an alias', async () => {
           env.alias(/^aliased:(.*)$/, 'dummy:$1');
           expect(((await env.create('aliased:namespace#one')) as any).options.namespaceId).toBe('dummy:namespace#one');
+          expect(((await env.create('aliased:namespace#one+writing?')) as any).options.namespaceId).toBe('dummy:namespace#one+writing?');
         });
 
         it('keeps the arguments and options given in the legacy forms', async () => {
