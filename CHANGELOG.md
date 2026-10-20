@@ -2,15 +2,13 @@
 
 ## [8.3.0](https://github.com/yeoman/environment/compare/v8.2.0...v8.3.0) (2026-10-20)
 
-
 ### Features
 
-* pass the namespace with its instance id to the generator as namespaceId ([#863](https://github.com/yeoman/environment/issues/863)) ([68089d9](https://github.com/yeoman/environment/commit/68089d9a09c590ab9fb5bb719740cc4606e72deb))
-
+- pass the namespace with its instance id to the generator as namespaceId ([#863](https://github.com/yeoman/environment/issues/863)) ([68089d9](https://github.com/yeoman/environment/commit/68089d9a09c590ab9fb5bb719740cc4606e72deb))
 
 ### Performance Improvements
 
-* drop lodash-es ([#865](https://github.com/yeoman/environment/issues/865)) ([f7774f1](https://github.com/yeoman/environment/commit/f7774f10e7c6ff116a19679d521f66a37191c621))
+- drop lodash-es ([#865](https://github.com/yeoman/environment/issues/865)) ([f7774f1](https://github.com/yeoman/environment/commit/f7774f10e7c6ff116a19679d521f66a37191c621))
 
 ## [8.2.0](https://github.com/yeoman/environment/compare/v8.1.0...v8.2.0) (2026-10-08)
 
