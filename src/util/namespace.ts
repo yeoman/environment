@@ -1,7 +1,6 @@
 import { parse, posix } from 'node:path';
 import slash from 'slash';
-import escapeRegExp from 'lodash-es/escapeRegExp.js';
-import findLast from 'lodash-es/findLast.js';
+import { escapeRegExp } from './util.ts';
 
 type AsNamespaceOptions = {
   lookups?: string[];
@@ -74,7 +73,7 @@ export const asNamespace = (filepath: string, { lookups = defaultLookups, nested
   }
 
   const folders = ns.split('/');
-  const scope = findLast(folders, folder => folder.startsWith('@'));
+  const scope = folders.findLast(folder => folder.startsWith('@'));
 
   // Cleanup `ns` from unwanted parts and then normalize slashes to `:`
   ns = ns
