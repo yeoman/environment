@@ -28,7 +28,8 @@ import { type FilePipelineTransform, filePipeline, transform } from '@yeoman/tra
 import { type YeomanNamespace, toNamespace } from '@yeoman/namespace';
 import chalk from 'chalk';
 import { type ConflicterOptions } from '@yeoman/conflicter';
-import { defaults, pick } from 'lodash-es';
+import defaults from 'lodash-es/defaults.js';
+import pick from 'lodash-es/pick.js';
 import { ComposedStore } from './composed-store.ts';
 import Store, { type StoreGeneratorMeta, type StoreSharedLookupOptions } from './store.ts';
 import type YeomanCommand from './util/command.ts';

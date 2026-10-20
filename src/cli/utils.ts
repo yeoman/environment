@@ -1,6 +1,6 @@
 import { requireNamespace } from '@yeoman/namespace';
 import type { BaseGeneratorMeta } from '@yeoman/types';
-import { groupBy } from 'lodash-es';
+import groupBy from 'lodash-es/groupBy.js';
 import createLogger from 'debug';
 import { createEnv as createEnvironment } from '../index.ts';
 import type YeomanCommand from '../util/command.ts';

@@ -1,6 +1,7 @@
 import { parse, posix } from 'node:path';
 import slash from 'slash';
-import { escapeRegExp, findLast } from 'lodash-es';
+import escapeRegExp from 'lodash-es/escapeRegExp.js';
+import findLast from 'lodash-es/findLast.js';
 
 type AsNamespaceOptions = {
   lookups?: string[];

@@ -9,7 +9,9 @@ import type {
 } from '@yeoman/types';
 import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
 import { flyImport } from 'fly-import';
-import { defaults, pick, uniq } from 'lodash-es';
+import defaults from 'lodash-es/defaults.js';
+import pick from 'lodash-es/pick.js';
+import uniq from 'lodash-es/uniq.js';
 import { valid } from 'semver';
 import { type LookupOptions } from './generator-lookup.ts';
 import YeomanCommand from './util/command.ts';

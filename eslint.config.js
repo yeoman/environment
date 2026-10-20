@@ -18,6 +18,11 @@ export default config(
       'unicorn/no-this-assignment': 'off',
       'unicorn/prefer-spread': 'off',
       'unicorn/prevent-abbreviations': 'off',
+      // The lodash-es index imports every lodash-es module: import each function from its own module.
+      'no-restricted-imports': [
+        'error',
+        { paths: [{ name: 'lodash-es', message: "Import the function from its own module, like 'lodash-es/merge.js'." }] },
+      ],
     },
   },
   {
