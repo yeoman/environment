@@ -9,12 +9,11 @@ import type {
 } from '@yeoman/types';
 import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
 import { flyImport } from 'fly-import';
-import { defaults, pick, uniq } from 'lodash-es';
 import { valid } from 'semver';
 import { type LookupOptions } from './generator-lookup.ts';
 import YeomanCommand from './util/command.ts';
 import EnvironmentBase, { type EnvironmentOptions } from './environment-base.ts';
-import { splitArgsFromString as splitArgumentsFromString } from './util/util.ts';
+import { defaults, pick, splitArgsFromString as splitArgumentsFromString } from './util/util.ts';
 import { nestedGeneratorsFolder } from './util/namespace.ts';
 
 class FullEnvironment extends EnvironmentBase {
@@ -134,7 +133,7 @@ class FullEnvironment extends EnvironmentBase {
    * @return {Array}
    */
   getGeneratorNames() {
-    return uniq(Object.keys(this.getGeneratorsMeta()).map(namespace => toNamespace(namespace)?.packageNamespace));
+    return [...new Set(Object.keys(this.getGeneratorsMeta()).map(namespace => toNamespace(namespace)?.packageNamespace))];
   }
 
   /**

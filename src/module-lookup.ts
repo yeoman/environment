@@ -3,7 +3,6 @@ import { delimiter, dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import process from 'node:process';
 import arrify from 'arrify';
-import { compact, uniq } from 'lodash-es';
 import { type Options as GlobbyOptions, globbySync } from 'globby';
 import slash from 'slash';
 import createdLogger from 'debug';
@@ -190,7 +189,7 @@ export function getNpmPaths(options: { localOnly?: boolean; filterPaths?: boolea
     paths = paths.concat(getGlobalNpmPaths(options.filterPaths));
   }
 
-  return uniq(paths);
+  return [...new Set(paths)];
 }
 
 /**
@@ -215,7 +214,7 @@ function getLocalNpmPaths(): string[] {
       paths.push(lookup);
     });
 
-  return uniq(paths.toReversed());
+  return [...new Set(paths.toReversed())];
 }
 
 /**
@@ -254,7 +253,7 @@ function getGlobalNpmPaths(filterPaths = true): string[] {
   // because of bugs in the parseable implementation of `ls` command and mostly
   // performance issues. So, we go with our best bet for now.
   if (process.env.NODE_PATH) {
-    paths = compact(process.env.NODE_PATH.split(delimiter)).concat(paths);
+    paths = process.env.NODE_PATH.split(delimiter).filter(Boolean).concat(paths);
   }
 
   // Global node_modules should be 4 or 2 directory up this one (most of the time)
@@ -293,5 +292,5 @@ function getGlobalNpmPaths(filterPaths = true): string[] {
     paths.push(...filterValidNpmPath(join(dirname(process.argv[1]), '../..'), !filterPaths));
   }
 
-  return uniq(paths.filter(Boolean).toReversed());
+  return [...new Set(paths.filter(Boolean).toReversed())];
 }

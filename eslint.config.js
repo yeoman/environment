@@ -18,6 +18,14 @@ export default config(
       'unicorn/no-this-assignment': 'off',
       'unicorn/prefer-spread': 'off',
       'unicorn/prevent-abbreviations': 'off',
+      // lodash-es is not a dependency: use the native code, or the helpers of src/util/util.ts.
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [{ name: 'lodash-es', message: 'lodash-es is not a dependency, use native code.' }],
+          patterns: [{ group: ['lodash-es/*'], message: 'lodash-es is not a dependency, use native code.' }],
+        },
+      ],
     },
   },
   {

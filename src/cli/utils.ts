@@ -1,6 +1,5 @@
 import { requireNamespace } from '@yeoman/namespace';
 import type { BaseGeneratorMeta } from '@yeoman/types';
-import { groupBy } from 'lodash-es';
 import createLogger from 'debug';
 import { createEnv as createEnvironment } from '../index.ts';
 import type YeomanCommand from '../util/command.ts';
@@ -8,8 +7,13 @@ import type YeomanCommand from '../util/command.ts';
 const debug = createLogger('yeoman:yoe');
 
 export const printGroupedGenerator = (generators: BaseGeneratorMeta[]) => {
-  const grouped = groupBy(generators, 'packagePath');
-  for (const [packagePath, group] of Object.entries(grouped)) {
+  const grouped = new Map<string, BaseGeneratorMeta[]>();
+  for (const generator of generators) {
+    const packagePath = String(generator.packagePath);
+    grouped.set(packagePath, [...(grouped.get(packagePath) ?? []), generator]);
+  }
+
+  for (const [packagePath, group] of grouped) {
     const namespace = requireNamespace(group[0].namespace);
     console.log(`  ${namespace.packageNamespace} at ${packagePath}`);
     for (const generator of group) {

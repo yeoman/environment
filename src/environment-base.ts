@@ -28,7 +28,6 @@ import { type FilePipelineTransform, filePipeline, transform } from '@yeoman/tra
 import { type YeomanNamespace, toNamespace } from '@yeoman/namespace';
 import chalk from 'chalk';
 import { type ConflicterOptions } from '@yeoman/conflicter';
-import { defaults, pick } from 'lodash-es';
 import { ComposedStore } from './composed-store.ts';
 import Store, { type StoreGeneratorMeta, type StoreSharedLookupOptions } from './store.ts';
 import type YeomanCommand from './util/command.ts';
@@ -37,7 +36,7 @@ import { UNKNOWN_NAMESPACE, UNKNOWN_RESOLVED, defaultQueues } from './constants.
 import { resolveModulePath } from './util/resolve.ts';
 import { commitSharedFsTask } from './commit.ts';
 import { type InstallTask, packageManagerInstallTask } from './package-manager.ts';
-import { splitArgsFromString as splitArgumentsFromString } from './util/util.ts';
+import { defaults, pick, splitArgsFromString as splitArgumentsFromString } from './util/util.ts';
 
 const require = createRequire(import.meta.url);
 
