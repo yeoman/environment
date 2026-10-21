@@ -1,7 +1,5 @@
 import { join, resolve } from 'node:path';
 import createdLogger from 'debug';
-import { whichPackageManager } from 'which-package-manager';
-import { execa } from 'execa';
 import type { MemFsEditorFile } from 'mem-fs-editor';
 import type { InputOutputAdapter } from '@yeoman/types';
 import type { Store } from 'mem-fs';
@@ -87,7 +85,10 @@ Changes to package.json were detected.`);
     return false;
   }
 
-  let packageManagerName = nodePackageManager ?? (await whichPackageManager({ cwd: packageJsonLocation }));
+  // which-package-manager and execa are loaded by an install only.
+  let packageManagerName =
+    nodePackageManager ??
+    (await import('which-package-manager').then(({ whichPackageManager }) => whichPackageManager({ cwd: packageJsonLocation })));
 
   const execPackageManager = async () => {
     if (!packageManagerName) {
@@ -102,6 +103,7 @@ Changes to package.json were detected.`);
 
     adapter.log(`
 Running ${packageManagerName} install for you to install the required dependencies.`);
+    const { execa } = await import('execa');
     await execa(packageManagerName, ['install'], { stdio: 'inherit', cwd: packageJsonLocation });
     return true;
   };

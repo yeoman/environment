@@ -3,7 +3,7 @@ import { pathToFileURL } from 'node:url';
 import { requireNamespace, toNamespace } from '@yeoman/namespace';
 import { type ModuleLookupOptions, findPackagesIn, getNpmPaths } from './module-lookup.ts';
 import { defaultLookups, withNestedLookups } from './namespace.ts';
-import { type LookupOptions } from './lookup.ts';
+import type { LookupOptions } from './lookup.ts';
 import Store from './store.ts';
 
 /**

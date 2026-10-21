@@ -18,6 +18,9 @@ export default config(
       'unicorn/no-this-assignment': 'off',
       'unicorn/prefer-spread': 'off',
       'unicorn/prevent-abbreviations': 'off',
+      // An import of types only, written `import { type A }`, keeps an import of the module in the JavaScript emitted by
+      // verbatimModuleSyntax: `import type { A }` does not load it.
+      '@typescript-eslint/no-import-type-side-effects': 'error',
       // lodash-es is not a dependency: use the native code, or the helpers of src/util/util.ts.
       'no-restricted-imports': [
         'error',

@@ -19,6 +19,11 @@ const helperWithMockedFeatures = createHelpers({
   createEnv: getCreateEnv(BasicEnvironment),
 });
 
+// The modules are mocked once for the tests of every version.
+after(() => {
+  exnode.resetModules();
+});
+
 for (const generatorVersion of greaterThan5) {
   const { default: Generator } = await import(generatorVersion);
   const FeaturesGenerator = Generator as BaseGeneratorConstructor;
@@ -33,9 +38,6 @@ for (const generatorVersion of greaterThan5) {
   describe(`environment (generator-features) using ${generatorVersion}`, () => {
     afterEach(() => {
       exnode.resetAllMocks();
-    });
-    after(() => {
-      exnode.resetModules();
     });
 
     describe('customCommitTask feature', () => {
