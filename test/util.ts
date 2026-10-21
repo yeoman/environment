@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'esmocha';
+import { describe, expect, it } from 'expect-node';
 import { defaults, escapeRegExp, pick } from '../src/util/util.ts';
 
 describe('util', () => {

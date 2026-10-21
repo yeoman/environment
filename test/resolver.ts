@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import process from 'node:process';
 import fs from 'node:fs';
-import { after, afterEach, before, beforeEach, describe, expect, it } from 'esmocha';
+import { after, afterEach, before, beforeEach, describe, expect, it } from 'expect-node';
 import { execaSync } from 'execa';
 import slash from 'slash';
 import Environment from '../src/index.ts';
@@ -17,7 +17,7 @@ const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const globalLookupTest = () => (process.env.NODE_PATH ? it : xit);
+const globalLookupTest = () => (process.env.NODE_PATH ? it : it.skip);
 
 const toRelativeMeta = (meta: Record<string, GeneratorMeta>): Record<string, Record<string, any>> =>
   Object.fromEntries(

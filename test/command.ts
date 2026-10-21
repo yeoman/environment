@@ -1,6 +1,6 @@
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { beforeEach, describe, esmocha, expect, it } from 'esmocha';
+import { beforeEach, describe, exnode, expect, it } from 'expect-node';
 import { TestAdapter } from 'yeoman-test';
 import { prepareCommand } from '../src/commands.ts';
 import Environment from '../src/index.ts';
@@ -31,7 +31,7 @@ describe('environment (command)', () => {
         adapter.addAnswers({
           aproveInstall: false,
         });
-        getRepository(environment).install = esmocha.fn().mockReturnValue(Promise.resolve([]));
+        getRepository(environment).install = exnode.fn().mockReturnValue(Promise.resolve([]));
         await expect(environment.execute('commands:options')).rejects.toThrow(
           /Installation of generator-commands is declined by the user. Install manually and try again/,
         );
@@ -42,7 +42,7 @@ describe('environment (command)', () => {
         adapter.addAnswers({
           aproveInstall: true,
         });
-        getRepository(environment).install = esmocha.fn().mockReturnValue(Promise.resolve([]));
+        getRepository(environment).install = exnode.fn().mockReturnValue(Promise.resolve([]));
         await expect(environment.execute('commands:options')).rejects.toThrow(
           /You don't seem to have a generator with the name “generator-commands” installed./,
         );
@@ -56,7 +56,7 @@ describe('environment (command)', () => {
 
     beforeEach(async () => {
       environment = new Environment({ skipInstall: true, dryRun: true });
-      environment.adapter.log = esmocha.fn() as any;
+      environment.adapter.log = exnode.fn() as any;
       await environment.register(path.join(__dirname, 'fixtures/generator-commands/generators/options'));
     });
 
@@ -127,7 +127,7 @@ describe('environment (command)', () => {
 
     beforeEach(() => {
       environment = new Environment({ skipInstall: true, dryRun: true });
-      environment.adapter.log = esmocha.fn() as any;
+      environment.adapter.log = exnode.fn() as any;
       environment.register(path.join(__dirname, 'fixtures/generator-commands/generators/arguments'));
     });
 

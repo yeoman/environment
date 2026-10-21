@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module';
 import path, { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { beforeEach, describe, expect, it } from 'esmocha';
+import { beforeEach, describe, expect, it } from 'expect-node';
 import Store from '../src/store.ts';
 
 const require = createRequire(import.meta.url);

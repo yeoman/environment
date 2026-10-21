@@ -1,4 +1,4 @@
-import { after, afterEach, before, beforeEach, describe, esmocha, expect, it } from 'esmocha';
+import { after, afterEach, before, beforeEach, describe, exnode, expect, it } from 'expect-node';
 import type { BaseGeneratorConstructor, GeneratorFeatures, GeneratorOptions } from '@yeoman/types';
 import helpers, { getCreateEnv, result } from './helpers.ts';
 import { greaterThan5 } from './generators/generator-versions.ts';
@@ -6,11 +6,13 @@ import { createHelpers } from 'yeoman-test';
 
 const commitModule = await import('../src/commit.ts');
 const { commitSharedFsTask: originalCommitSharedFsTask } = commitModule;
-const { commitSharedFsTask } = await esmocha.mock('../src/commit.ts', Promise.resolve(commitModule));
-const { execa } = await esmocha.mock('execa', import('execa'));
+const { commitSharedFsTask } = await exnode.mock<typeof commitModule>('../src/commit.ts', undefined, { reimport: true });
+const { execa } = await exnode.mock<typeof import('execa')>('execa', undefined, { reimport: true });
 const packageManagerModule = await import('../src/package-manager.ts');
 const { packageManagerInstallTask: originalPackageManagerInstallTask } = packageManagerModule;
-const { packageManagerInstallTask } = await esmocha.mock('../src/package-manager.ts', Promise.resolve(packageManagerModule));
+const { packageManagerInstallTask } = await exnode.mock<typeof packageManagerModule>('../src/package-manager.ts', undefined, {
+  reimport: true,
+});
 const { default: BasicEnvironment } = await import('../src/environment-base.ts');
 
 const helperWithMockedFeatures = createHelpers({
@@ -30,10 +32,10 @@ for (const generatorVersion of greaterThan5) {
 
   describe(`environment (generator-features) using ${generatorVersion}`, () => {
     afterEach(() => {
-      esmocha.resetAllMocks();
+      exnode.resetAllMocks();
     });
     after(() => {
-      esmocha.reset(true);
+      exnode.resetModules();
     });
 
     describe('customCommitTask feature', () => {
@@ -69,10 +71,10 @@ for (const generatorVersion of greaterThan5) {
       });
 
       describe('with function customCommitTask', () => {
-        let commitSharedFsMock: ReturnType<typeof esmocha.fn>;
-        let customCommitTask: ReturnType<typeof esmocha.fn>;
+        let commitSharedFsMock: ReturnType<typeof exnode.fn>;
+        let customCommitTask: ReturnType<typeof exnode.fn>;
         beforeEach(async () => {
-          customCommitTask = esmocha.fn();
+          customCommitTask = exnode.fn();
           await helpers
             .run('custom-commit')
             .withOptions({ skipInstall: true })
@@ -89,7 +91,7 @@ for (const generatorVersion of greaterThan5) {
               ],
             ])
             .withEnvironment((environment: any) => {
-              commitSharedFsMock = esmocha.fn().mockReturnValue(Promise.resolve());
+              commitSharedFsMock = exnode.fn().mockReturnValue(Promise.resolve());
               environment.commitSharedFs = commitSharedFsMock;
             });
         });
@@ -182,9 +184,9 @@ for (const generatorVersion of greaterThan5) {
       });
 
       describe('with function customInstallTask', () => {
-        let customInstallTask: ReturnType<typeof esmocha.fn>;
+        let customInstallTask: ReturnType<typeof exnode.fn>;
         beforeEach(async () => {
-          customInstallTask = esmocha.fn();
+          customInstallTask = exnode.fn();
           await helpers
             .run('custom-install')
             .withOptions({ skipInstall: false })
@@ -304,10 +306,10 @@ for (const generatorVersion of greaterThan5) {
       });
 
       describe('with function customInstallTask and custom path', () => {
-        let customInstallTask: ReturnType<typeof esmocha.fn>;
+        let customInstallTask: ReturnType<typeof exnode.fn>;
         let installTask: (pm: any, defaultTask: (pm: any) => unknown) => unknown;
         beforeEach(async () => {
-          customInstallTask = esmocha.fn();
+          customInstallTask = exnode.fn();
           installTask = (pm, defaultTask) => defaultTask(pm);
           await helperWithMockedFeatures
             .run('custom-install')
