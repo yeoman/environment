@@ -2,12 +2,12 @@ import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
 import { mkdirSync, rmSync } from 'node:fs';
-import { afterEach, beforeEach, describe, esmocha, expect, it } from 'esmocha';
+import { afterEach, beforeEach, describe, exnode, expect, it } from 'expect-node';
 
 // Installing yeoman-generator through fly-import/arborist takes several seconds even when it is already cached,
 // so resolve it from the bundled latest release instead.
-const flyImport = esmocha.fn(async (_specifier: string) => import('@yeoman-environment/generator-tests/generator-latest'));
-await esmocha.mock('fly-import', { ...(await import('fly-import')), flyImport });
+const flyImport = exnode.fn(async (_specifier: string) => import('@yeoman-environment/generator-tests/generator-latest'));
+await exnode.mock('fly-import', { flyImport }, { reimport: true });
 const { default: Environment } = await import('../src/index.ts');
 
 const tmpdir = path.join(os.tmpdir(), 'yeoman-environment/light');

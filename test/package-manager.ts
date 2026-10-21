@@ -1,12 +1,14 @@
 import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { after, afterEach, beforeEach, describe, esmocha, expect, it } from 'esmocha';
+import { after, afterEach, beforeEach, describe, exnode, expect, it } from 'expect-node';
 import type { InputOutputAdapter } from '@yeoman/types';
 import type { Store } from 'mem-fs';
 import type { MemFsEditorFile } from 'mem-fs-editor';
 
-const { execa } = await esmocha.mock('execa', import('execa'));
-const { whichPackageManager } = await esmocha.mock('which-package-manager', import('which-package-manager'));
+const { execa } = await exnode.mock<typeof import('execa')>('execa', undefined, { reimport: true });
+const { whichPackageManager } = await exnode.mock<typeof import('which-package-manager')>('which-package-manager', undefined, {
+  reimport: true,
+});
 
 const { packageManagerInstallTask } = await import('../src/package-manager.ts');
 
@@ -23,23 +25,23 @@ Running ${pm} install for you to install the required dependencies.`;
 describe('environment (package-manager)', () => {
   let adapter: InputOutputAdapter;
   let memFs: Store<MemFsEditorFile>;
-  let memFsGetSpy: ReturnType<typeof esmocha.fn>;
+  let memFsGetSpy: ReturnType<typeof exnode.fn>;
   let packageJsonLocation: string;
 
   beforeEach(() => {
-    adapter = { log: esmocha.fn() } as unknown as InputOutputAdapter;
+    adapter = { log: exnode.fn() } as unknown as InputOutputAdapter;
     execa.mockReturnValue(undefined as any);
-    memFsGetSpy = esmocha.fn();
-    memFs = { get: memFsGetSpy, existsInMemory: esmocha.fn().mockReturnValue(true) } as unknown as Store<MemFsEditorFile>;
+    memFsGetSpy = exnode.fn();
+    memFs = { get: memFsGetSpy, existsInMemory: exnode.fn().mockReturnValue(true) } as unknown as Store<MemFsEditorFile>;
     packageJsonLocation = path.join(__dirname, 'fixtures', 'package-manager', 'npm');
     whichPackageManager.mockResolvedValue('npm');
   });
 
   afterEach(() => {
-    esmocha.resetAllMocks();
+    exnode.resetAllMocks();
   });
   after(() => {
-    esmocha.reset();
+    exnode.resetModules();
   });
 
   describe('#packageManagerInstallTask()', () => {
