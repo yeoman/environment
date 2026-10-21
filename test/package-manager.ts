@@ -5,8 +5,10 @@ import type { InputOutputAdapter } from '@yeoman/types';
 import type { Store } from 'mem-fs';
 import type { MemFsEditorFile } from 'mem-fs-editor';
 
-const { execa } = await exnode.mock<typeof import('execa')>('execa');
-const { whichPackageManager } = await exnode.mock<typeof import('which-package-manager')>('which-package-manager');
+const { execa } = await exnode.mock<typeof import('execa')>('execa', undefined, { reimport: true });
+const { whichPackageManager } = await exnode.mock<typeof import('which-package-manager')>('which-package-manager', undefined, {
+  reimport: true,
+});
 
 const { packageManagerInstallTask } = await import('../src/package-manager.ts');
 
