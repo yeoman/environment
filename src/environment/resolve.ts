@@ -2,7 +2,7 @@ import { dirname, extname, join, normalize, resolve, sep } from 'node:path';
 import { realpathSync, statSync } from 'node:fs';
 import untildify from 'untildify';
 import { locatePathSync } from 'locate-path';
-import { defaultExtensions } from '../generator-lookup.ts';
+import { defaultExtensions } from '../store/index.ts';
 
 /**
  * Resolve a module path

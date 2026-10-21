@@ -1,6 +1,6 @@
 import { parse, posix } from 'node:path';
 import slash from 'slash';
-import { escapeRegExp } from './util.ts';
+import { escapeRegExp } from '../util/regexp.ts';
 
 type AsNamespaceOptions = {
   lookups?: string[];

@@ -1,6 +1,6 @@
 import type { BaseGeneratorConstructor, GeneratorMeta } from '@yeoman/types';
-import YeomanCommand, { addEnvironmentOptions } from './util/command.ts';
-import { createEnv as createEnvironment } from './index.ts';
+import YeomanCommand, { addEnvironmentOptions } from './command.ts';
+import Environment from '../environment/environment-full.ts';
 
 export type CommandPreparation = {
   resolved?: string;
@@ -22,7 +22,7 @@ export const prepareGeneratorCommand = async ({
   generator,
   namespace,
 }: CommandPreparation) => {
-  const environment = createEnvironment();
+  const environment = new Environment();
   let meta: GeneratorMeta;
   if (generator && namespace) {
     meta = environment.register(generator, { namespace, resolved });

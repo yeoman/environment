@@ -1,5 +1,5 @@
 import { Command, Option } from 'commander';
-import type BaseEnvironment from '../environment-base.ts';
+import type BaseEnvironment from '../environment/environment-base.ts';
 
 export default class YeomanCommand extends Command {
   env?: BaseEnvironment;

@@ -1,5 +1,5 @@
 import { createHelpers } from 'yeoman-test';
-import BaseEnvironment from '../src/environment-base.ts';
+import BaseEnvironment from '../src/environment/environment-base.ts';
 import FullEnvironment from '../src/index.ts';
 
 type EnvironmentConstructor = typeof BaseEnvironment;

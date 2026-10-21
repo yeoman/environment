@@ -2,7 +2,7 @@ import path, { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { beforeEach, describe, exnode, expect, it } from 'expect-node';
 import { TestAdapter } from 'yeoman-test';
-import { prepareCommand } from '../src/commands.ts';
+import { prepareCommand } from '../src/cli/commands.ts';
 import Environment from '../src/index.ts';
 
 type ParsedGenerator = {

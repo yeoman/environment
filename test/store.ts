@@ -2,7 +2,7 @@ import { createRequire } from 'node:module';
 import path, { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { beforeEach, describe, expect, it } from 'expect-node';
-import Store from '../src/store.ts';
+import { Store } from '../src/store/index.ts';
 
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
@@ -488,7 +488,7 @@ describe('Store sibling modules', () => {
 
 describe('store export', () => {
   it('exports the store alone, as its default and as Store', async () => {
-    const storeExport = await import('../src/store-export.ts');
+    const storeExport = await import('../src/store/public.ts');
     expect(storeExport.Store).toBe(Store);
     expect(storeExport.default).toBe(Store);
   });

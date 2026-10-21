@@ -6,12 +6,12 @@ import arrify from 'arrify';
 import { type Options as GlobbyOptions, globbySync } from 'globby';
 import slash from 'slash';
 import createdLogger from 'debug';
-import { execaOutput } from './util/util.ts';
+import { execaOutput } from '../util/exec.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const PROJECT_ROOT = join(__dirname, '..');
+const PROJECT_ROOT = join(__dirname, '../..');
 
 const PACKAGE_NAME_PATTERN = [JSON.parse(readFileSync(join(PROJECT_ROOT, 'package.json')).toString()).name];
 
