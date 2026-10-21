@@ -4,16 +4,16 @@ import helpers, { getCreateEnv, result } from './helpers.ts';
 import { greaterThan5 } from './generators/generator-versions.ts';
 import { createHelpers } from 'yeoman-test';
 
-const commitModule = await import('../src/commit.ts');
+const commitModule = await import('../src/environment/commit.ts');
 const { commitSharedFsTask: originalCommitSharedFsTask } = commitModule;
-const { commitSharedFsTask } = await exnode.mock<typeof commitModule>('../src/commit.ts', undefined, { reimport: true });
+const { commitSharedFsTask } = await exnode.mock<typeof commitModule>('../src/environment/commit.ts', undefined, { reimport: true });
 const { execa } = await exnode.mock<typeof import('execa')>('execa', undefined, { reimport: true });
-const packageManagerModule = await import('../src/package-manager.ts');
+const packageManagerModule = await import('../src/environment/package-manager.ts');
 const { packageManagerInstallTask: originalPackageManagerInstallTask } = packageManagerModule;
-const { packageManagerInstallTask } = await exnode.mock<typeof packageManagerModule>('../src/package-manager.ts', undefined, {
+const { packageManagerInstallTask } = await exnode.mock<typeof packageManagerModule>('../src/environment/package-manager.ts', undefined, {
   reimport: true,
 });
-const { default: BasicEnvironment } = await import('../src/environment-base.ts');
+const { default: BasicEnvironment } = await import('../src/environment/environment-base.ts');
 
 const helperWithMockedFeatures = createHelpers({
   createEnv: getCreateEnv(BasicEnvironment),

@@ -12,7 +12,7 @@ import { TestAdapter } from '@yeoman/adapter/testing';
 import type { BaseGeneratorConstructor, GeneratorFeatures, GeneratorOptions } from '@yeoman/types';
 import type YeomanGenerator from '@yeoman-environment/generator-tests/generator-v8';
 import Environment, { createEnv as createEnvironment } from '../src/index.ts';
-import { resolveModulePath } from '../src/util/resolve.ts';
+import { resolveModulePath } from '../src/environment/resolve.ts';
 import { allVersions, generator4, importGenerator, isGreaterThan6, isLegacyVersion } from './generators/generator-versions.ts';
 
 const require = createRequire(import.meta.url);

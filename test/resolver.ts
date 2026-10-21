@@ -7,9 +7,9 @@ import { after, afterEach, before, beforeEach, describe, expect, it } from 'expe
 import { execaSync } from 'execa';
 import slash from 'slash';
 import Environment from '../src/index.ts';
-import { execaOutput } from '../src/util/util.ts';
-import { findPackagesIn, getNpmPaths } from '../src/module-lookup.ts';
-import { lookupGenerator } from '../src/generator-lookup.ts';
+import { execaOutput } from '../src/util/exec.ts';
+import { findPackagesIn, getNpmPaths } from '../src/store/module-lookup.ts';
+import { lookupGenerator } from '../src/store/lookup-generator.ts';
 import type { GeneratorMeta } from '@yeoman/types';
 
 const require = createRequire(import.meta.url);

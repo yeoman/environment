@@ -2,8 +2,8 @@ import { readFileSync } from 'node:fs';
 import process from 'node:process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import YeomanCommand, { addEnvironmentOptions } from '../util/command.ts';
-import { createEnv as createEnvironment } from '../index.ts';
+import YeomanCommand, { addEnvironmentOptions } from './command.ts';
+import Environment from '../environment/environment-full.ts';
 import { environmentAction, printGroupedGenerator } from './utils.ts';
 
 const program = new YeomanCommand();
@@ -28,7 +28,7 @@ program
   .command('find')
   .description('Find installed generators')
   .action(async () => {
-    const environment = createEnvironment();
+    const environment = new Environment();
     printGroupedGenerator(await environment.lookup());
   });
 
@@ -36,7 +36,7 @@ program
   .command('list')
   .description('List generators available to be used')
   .action(async () => {
-    const environment = createEnvironment();
+    const environment = new Environment();
     await environment.lookup();
     printGroupedGenerator(Object.values(environment.getGeneratorsMeta()));
   });

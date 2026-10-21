@@ -10,7 +10,7 @@ const { whichPackageManager } = await exnode.mock<typeof import('which-package-m
   reimport: true,
 });
 
-const { packageManagerInstallTask } = await import('../src/package-manager.ts');
+const { packageManagerInstallTask } = await import('../src/environment/package-manager.ts');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

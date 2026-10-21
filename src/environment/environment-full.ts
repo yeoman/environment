@@ -10,11 +10,11 @@ import type {
 import { type YeomanNamespace, requireNamespace, toNamespace } from '@yeoman/namespace';
 import { flyImport } from 'fly-import';
 import { valid } from 'semver';
-import { type LookupOptions } from './generator-lookup.ts';
-import YeomanCommand from './util/command.ts';
+import YeomanCommand from '../cli/command.ts';
 import EnvironmentBase, { type EnvironmentOptions } from './environment-base.ts';
-import { defaults, pick, splitArgsFromString as splitArgumentsFromString } from './util/util.ts';
-import { nestedGeneratorsFolder } from './util/namespace.ts';
+import { splitArgsFromString as splitArgumentsFromString } from '../util/args.ts';
+import { defaults, pick } from '../util/object.ts';
+import { type LookupOptions, nestedGeneratorsFolder } from '../store/index.ts';
 
 class FullEnvironment extends EnvironmentBase {
   constructor(options?: EnvironmentOptions);

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'expect-node';
-import { defaults, escapeRegExp, pick } from '../src/util/util.ts';
+import { defaults, pick } from '../src/util/object.ts';
+import { escapeRegExp } from '../src/util/regexp.ts';
 
 describe('util', () => {
   describe('pick()', () => {

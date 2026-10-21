@@ -1,8 +1,8 @@
 import { requireNamespace } from '@yeoman/namespace';
 import type { BaseGeneratorMeta } from '@yeoman/types';
 import createLogger from 'debug';
-import { createEnv as createEnvironment } from '../index.ts';
-import type YeomanCommand from '../util/command.ts';
+import Environment from '../environment/environment-full.ts';
+import type YeomanCommand from './command.ts';
 
 const debug = createLogger('yeoman:yoe');
 
@@ -39,7 +39,7 @@ export const environmentAction = async function (this: YeomanCommand, generatorN
     return;
   }
 
-  const environment = createEnvironment({ ...options, command: this });
+  const environment = new Environment({ ...options, command: this });
   this.env = environment;
   await environment.lookupLocalPackages();
 

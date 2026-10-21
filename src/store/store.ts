@@ -12,8 +12,8 @@ import type {
   GetGeneratorConstructor,
 } from '@yeoman/types';
 import createDebug from 'debug';
-import { type LookupOptions, lookupGeneratorsSync } from './generator-lookup.ts';
-import { asNamespace, defaultLookups } from './util/namespace.ts';
+import { type LookupOptions, lookupGeneratorsSync } from './lookup.ts';
+import { asNamespace, defaultLookups } from './namespace.ts';
 
 const debug = createDebug('yeoman:environment:store');
 const require = createRequire(import.meta.url);

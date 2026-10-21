@@ -29,18 +29,18 @@ import { type YeomanNamespace, toNamespace } from '@yeoman/namespace';
 import chalk from 'chalk';
 import { type ConflicterOptions } from '@yeoman/conflicter';
 import { ComposedStore } from './composed-store.ts';
-import Store, { type StoreGeneratorMeta, type StoreSharedLookupOptions } from './store.ts';
-import type YeomanCommand from './util/command.ts';
-import { type LookupOptions } from './generator-lookup.ts';
-import { UNKNOWN_NAMESPACE, UNKNOWN_RESOLVED, defaultQueues } from './constants.ts';
-import { resolveModulePath } from './util/resolve.ts';
+import { type LookupOptions, Store, type StoreGeneratorMeta, type StoreSharedLookupOptions } from '../store/index.ts';
+import type YeomanCommand from '../cli/command.ts';
+import { UNKNOWN_NAMESPACE, UNKNOWN_RESOLVED, defaultQueues } from '../constants.ts';
+import { resolveModulePath } from './resolve.ts';
 import { commitSharedFsTask } from './commit.ts';
 import { type InstallTask, packageManagerInstallTask } from './package-manager.ts';
-import { defaults, pick, splitArgsFromString as splitArgumentsFromString } from './util/util.ts';
+import { splitArgsFromString as splitArgumentsFromString } from '../util/args.ts';
+import { defaults, pick } from '../util/object.ts';
 
 const require = createRequire(import.meta.url);
 
-const ENVIRONMENT_VERSION = require('../package.json').version;
+const ENVIRONMENT_VERSION = require('../../package.json').version;
 
 const debug = createdLogger('yeoman:environment');
 
