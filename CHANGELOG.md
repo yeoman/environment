@@ -1,5 +1,15 @@
 # Changelog
 
+## [8.5.0](https://github.com/yeoman/environment/compare/v8.4.0...v8.5.0) (2026-10-21)
+
+### Features
+
+- export the store alone as yeoman-environment/store, without execa ([#871](https://github.com/yeoman/environment/issues/871)) ([503fa16](https://github.com/yeoman/environment/commit/503fa164949e804311dc94903f0d6761e48c58d9))
+
+### Performance Improvements
+
+- import the types only by import type, and load the conflicter, execa and which-package-manager when used ([#875](https://github.com/yeoman/environment/issues/875)) ([37e7a80](https://github.com/yeoman/environment/commit/37e7a80e9aca61ff1f914ccdc10f6454b4f0a54e))
+
 ## [8.4.0](https://github.com/yeoman/environment/compare/v8.3.0...v8.4.0) (2026-10-21)
 
 ### Features
