@@ -29,7 +29,7 @@ import { type YeomanNamespace, toNamespace } from '@yeoman/namespace';
 import chalk from 'chalk';
 import { type ConflicterOptions } from '@yeoman/conflicter';
 import { ComposedStore } from './composed-store.ts';
-import Store, { type StoreGeneratorMeta, type StoreSharedLookupOptions } from './store.ts';
+import { Store, type StoreGeneratorMeta, type StoreSharedLookupOptions } from './store/index.ts';
 import type YeomanCommand from './util/command.ts';
 import { type LookupOptions } from './generator-lookup.ts';
 import { UNKNOWN_NAMESPACE, UNKNOWN_RESOLVED, defaultQueues } from './constants.ts';

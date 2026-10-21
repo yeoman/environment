@@ -11,7 +11,7 @@ export {
   type StoreLookupGeneratorMeta,
   type StoreLookupOptions,
   type StoreSharedLookupOptions,
-} from './store.ts';
+} from './store/index.ts';
 
 export const createEnv = (options?: EnvironmentOptions) => new Environment(options);
 

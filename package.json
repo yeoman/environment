@@ -29,8 +29,8 @@
       "default": "./dist/index.js"
     },
     "./store": {
-      "types": "./dist/store-export.d.ts",
-      "default": "./dist/store-export.js"
+      "types": "./dist/store/index.d.ts",
+      "default": "./dist/store/index.js"
     },
     "./package.json": "./package.json"
   },

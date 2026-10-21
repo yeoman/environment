@@ -4,7 +4,7 @@ import type { LookupOptions as LookupOptionsApi } from '@yeoman/types';
 import { requireNamespace, toNamespace } from '@yeoman/namespace';
 import { type ModuleLookupOptions, findPackagesIn, getNpmPaths, moduleLookupSync } from './module-lookup.ts';
 import { defaultLookups, withNestedLookups } from './util/namespace.ts';
-import Store from './store.ts';
+import { Store } from './store/index.ts';
 
 export type LookupOptions = LookupOptionsApi &
   ModuleLookupOptions & {

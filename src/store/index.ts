@@ -12,8 +12,8 @@ import type {
   GetGeneratorConstructor,
 } from '@yeoman/types';
 import createDebug from 'debug';
-import { type LookupOptions, lookupGeneratorsSync } from './generator-lookup.ts';
-import { asNamespace, defaultLookups } from './util/namespace.ts';
+import { type LookupOptions, lookupGeneratorsSync } from '../generator-lookup.ts';
+import { asNamespace, defaultLookups } from '../util/namespace.ts';
 
 const debug = createDebug('yeoman:environment:store');
 const require = createRequire(import.meta.url);
@@ -672,3 +672,6 @@ export default class Store {
     return Generator;
   }
 }
+
+// `yeoman-environment/store` gives the store by its name too.
+export { Store };
