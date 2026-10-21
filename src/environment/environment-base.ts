@@ -19,7 +19,7 @@ import type {
   LookupGeneratorMeta,
 } from '@yeoman/types';
 import { type Store as MemFs, create as createMemFs } from 'mem-fs';
-import { type MemFsEditorFile } from 'mem-fs-editor';
+import type { MemFsEditorFile } from 'mem-fs-editor';
 import { FlyRepository } from 'fly-import';
 import createdLogger from 'debug';
 import GroupedQueue from 'grouped-queue';
@@ -27,7 +27,7 @@ import { isFilePending } from 'mem-fs-editor/state';
 import { type FilePipelineTransform, filePipeline, transform } from '@yeoman/transform';
 import { type YeomanNamespace, toNamespace } from '@yeoman/namespace';
 import chalk from 'chalk';
-import { type ConflicterOptions } from '@yeoman/conflicter';
+import type { ConflicterOptions } from '@yeoman/conflicter';
 import { ComposedStore } from './composed-store.ts';
 import { type LookupOptions, Store, type StoreGeneratorMeta, type StoreSharedLookupOptions } from '../store/index.ts';
 import type YeomanCommand from '../cli/command.ts';

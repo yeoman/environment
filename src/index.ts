@@ -1,4 +1,4 @@
-import { type EnvironmentOptions } from './environment/environment-base.ts';
+import type { EnvironmentOptions } from './environment/environment-base.ts';
 import Environment from './environment/environment-full.ts';
 
 export { default } from './environment/environment-full.ts';
