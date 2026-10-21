@@ -424,3 +424,64 @@ describe('Store', async () => {
     });
   });
 });
+
+describe('Store sibling modules', () => {
+  const siblingPackage = path.join(__dirname, 'fixtures/generator-sibling');
+
+  beforeEach(() => {
+    delete (globalThis as any).siblingGeneratorLoaded;
+  });
+
+  it('requires a module next to the generator module, without loading the generator', () => {
+    const store = new Store();
+    store.lookupSync({ packagePaths: [siblingPackage] });
+    const command = store.getMeta('sibling:app')!.requireSibling!('command') as any;
+    expect(command.default).toEqual({ options: { foo: { type: Boolean } } });
+    expect((globalThis as any).siblingGeneratorLoaded).toBeUndefined();
+  });
+
+  it('gives undefined for a module that is not next to the generator module, without loading the generator', async () => {
+    const store = new Store();
+    store.lookupSync({ packagePaths: [siblingPackage] });
+    expect(store.getMeta('sibling:other')!.requireSibling!('command')).toBeUndefined();
+    expect(await store.getMeta('sibling:other')!.importSibling!('command')).toBeUndefined();
+    expect(store.getMeta('sibling:app')!.requireSibling!('missing')).toBeUndefined();
+  });
+
+  it('imports a module that can not be required', async () => {
+    const store = new Store();
+    store.lookupSync({ packagePaths: [siblingPackage] });
+    const meta = store.getMeta('sibling:async')!;
+    expect(() => meta.requireSibling!('command')).toThrow();
+    expect(((await meta.importSibling!('command')) as any).default).toEqual({ options: { async: { type: Boolean } } });
+  });
+
+  it('uses the extension of the generator module only', () => {
+    const store = new Store();
+    store.lookupSync({ packagePaths: [siblingPackage] });
+    // other/command.mjs is next to other/index.js.
+    expect(store.getMeta('sibling:other')!.requireSibling!('command')).toBeUndefined();
+  });
+
+  it('gives no sibling function to a meta without a resolved file path', () => {
+    const store = new Store();
+    store.add({ namespace: 'stub:app' }, class {});
+    expect(store.getMeta('stub:app')!.requireSibling).toBeUndefined();
+    expect(store.getMeta('stub:app')!.importSibling).toBeUndefined();
+  });
+
+  it('keeps the functions in a clone and a bound meta', () => {
+    const store = new Store();
+    store.lookupSync({ packagePaths: [siblingPackage] });
+    const environment = {} as any;
+    expect((store.clone().getMeta('sibling:app')!.requireSibling!('command') as any).default).toBeDefined();
+    expect((store.getMeta('sibling:app', { env: environment })!.requireSibling!('command') as any).default).toBeDefined();
+  });
+
+  it('gives the functions to the generators found by a lookup', () => {
+    const store = new Store();
+    const generators = store.lookupSync({ packagePaths: [siblingPackage] });
+    const app = generators.find(({ namespace }) => namespace === 'sibling:app') as any;
+    expect(app.requireSibling('command').default).toBeDefined();
+  });
+});
