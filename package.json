@@ -28,6 +28,10 @@
       "types": "./dist/index.d.js",
       "default": "./dist/index.js"
     },
+    "./store": {
+      "types": "./dist/store-export.d.ts",
+      "default": "./dist/store-export.js"
+    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.js",

@@ -485,3 +485,11 @@ describe('Store sibling modules', () => {
     expect(app.requireSibling('command').default).toBeDefined();
   });
 });
+
+describe('store export', () => {
+  it('exports the store alone, as its default and as Store', async () => {
+    const storeExport = await import('../src/store-export.ts');
+    expect(storeExport.Store).toBe(Store);
+    expect(storeExport.default).toBe(Store);
+  });
+});
