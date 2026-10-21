@@ -2,10 +2,9 @@
 
 ## [8.4.0](https://github.com/yeoman/environment/compare/v8.3.0...v8.4.0) (2026-10-21)
 
-
 ### Features
 
-* **store:** give the metas requireSibling and importSibling, loading the modules next to a generator ([#867](https://github.com/yeoman/environment/issues/867)) ([e827cc6](https://github.com/yeoman/environment/commit/e827cc682159857aa84d2193ecf705cacda46222))
+- **store:** give the metas requireSibling and importSibling, loading the modules next to a generator ([#867](https://github.com/yeoman/environment/issues/867)) ([e827cc6](https://github.com/yeoman/environment/commit/e827cc682159857aa84d2193ecf705cacda46222))
 
 ## [8.3.0](https://github.com/yeoman/environment/compare/v8.2.0...v8.3.0) (2026-10-20)
 
