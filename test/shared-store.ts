@@ -91,6 +91,17 @@ describe('Environment with a store', () => {
     expect(environment.getGeneratorMeta('custom:app')).toBeDefined();
   });
 
+  it('gives the sibling functions to the generators of its lookups, with a store passed or not', async () => {
+    const siblingPackage = path.join(__dirname, 'fixtures/generator-sibling');
+    const environment = new Environment();
+    await environment.lookup({ packagePaths: [siblingPackage] });
+    expect(((environment.getGeneratorMeta('sibling:app') as any).requireSibling('command') as any).default).toBeDefined();
+
+    const withStore = new Environment({ store: new Store() });
+    await withStore.lookup({ packagePaths: [siblingPackage] });
+    expect(((withStore.getGeneratorMeta('sibling:app') as any).requireSibling('command') as any).default).toBeDefined();
+  });
+
   it('binds the generators found by a lookup', async () => {
     const environment = new Environment({ store: new Store() });
     const generators = await environment.lookup({ packagePaths: [esmPackage] });

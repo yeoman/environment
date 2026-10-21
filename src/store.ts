@@ -1,7 +1,7 @@
 import { pathToFileURL } from 'node:url';
-import { basename, extname, join, relative } from 'node:path';
+import { basename, dirname, extname, join, relative } from 'node:path';
 import { createRequire } from 'node:module';
-import { readFileSync, realpathSync } from 'node:fs';
+import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { namespaceFromPackageName, toNamespace } from '@yeoman/namespace';
 import type {
   BaseEnvironment,
@@ -61,6 +61,10 @@ export type StoreLookupGeneratorMeta = FoundGenerator &
 export type StoreGeneratorMeta = Omit<GeneratorMeta, 'importGenerator' | 'instantiate' | 'instantiateHelp'> & {
   /** Require the module `require(meta.resolved)`, throws if the module cannot be required synchronously. */
   requireModule?: () => unknown;
+  /** Require the sibling module of the name, like `command.ts` next to `index.ts`, `undefined` if missing. */
+  requireSibling?: (name: string) => unknown;
+  /** Import the sibling module of the name, like `requireSibling` for a module that can not be required. */
+  importSibling?: (name: string) => Promise<unknown>;
   importGenerator: <G extends BaseGenerator = BaseGenerator>(
     options?: StoreEnvironmentOptions,
   ) => Promise<GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta> | (GetGeneratorConstructor<G> & BaseGeneratorConstructorMeta);
@@ -79,6 +83,44 @@ const setOperations = <M extends StoreGeneratorMeta>(meta: M, operations: MetaOp
   Object.defineProperty(meta, operationsKey, { value: operations });
 
 const getOperations = (meta: StoreGeneratorMeta): MetaOperations => (meta as any)[operationsKey];
+
+/** The functions loading the modules next to a generator module, with its extension. */
+const createSiblingFunctions = (resolved?: string): Pick<StoreGeneratorMeta, 'requireSibling' | 'importSibling'> => {
+  if (typeof resolved !== 'string' || !extname(resolved)) {
+    return {};
+  }
+
+  const folder = dirname(resolved);
+  const extension = extname(resolved);
+  const siblingPath = (name: string): string | undefined => {
+    const filePath = join(folder, `${name}${extension}`);
+    return existsSync(filePath) ? filePath : undefined;
+  };
+
+  const requireSibling = (name: string): unknown => {
+    const filePath = siblingPath(name);
+    return filePath ? require(filePath) : undefined;
+  };
+
+  const importSibling = async (name: string): Promise<unknown> => {
+    const filePath = siblingPath(name);
+    if (!filePath) {
+      return undefined;
+    }
+
+    try {
+      return require(filePath);
+    } catch (error: any) {
+      if (error.code === 'ERR_REQUIRE_ESM' || error.code === 'ERR_REQUIRE_ASYNC_MODULE') {
+        return import(pathToFileURL(filePath).href);
+      }
+
+      throw error;
+    }
+  };
+
+  return { requireSibling, importSibling };
+};
 
 type BoundFunctions = Pick<StoreGeneratorMeta, 'importGenerator' | 'instantiate' | 'instantiateHelp'>;
 
@@ -321,6 +363,7 @@ export default class Store {
     generatorMeta = {
       ...meta,
       ...this.createMetaFunctions(operations, () => this.environment),
+      ...createSiblingFunctions(meta.resolved),
       requireModule,
       importModule,
       getPackageJson,
