@@ -1,5 +1,11 @@
 # Changelog
 
+## [8.5.1](https://github.com/yeoman/environment/compare/v8.5.0...v8.5.1) (2026-10-28)
+
+### Bug Fixes
+
+- **store:** name a package inside node_modules after its folder with usePackageName ([#879](https://github.com/yeoman/environment/issues/879)) ([d7020b2](https://github.com/yeoman/environment/commit/d7020b217a673f1be56a94b418f2b51bacaf2b3c))
+
 ## [8.5.0](https://github.com/yeoman/environment/compare/v8.4.0...v8.5.0) (2026-10-21)
 
 ### Features
