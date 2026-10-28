@@ -1,4 +1,6 @@
 import { createRequire } from 'node:module';
+import { cpSync, mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import path, { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { beforeEach, describe, expect, it } from 'expect-node';
@@ -156,6 +158,25 @@ describe('Store', async () => {
       expect(
         new Store(undefined, { usePackageName: true }).lookupSync({ packagePaths: [packagePath] }).map(({ namespace }) => namespace),
       ).toEqual(['module:app']);
+    });
+
+    it('#lookupSync() derives the namespace of a package inside node_modules from its folder with usePackageName', () => {
+      // generator-module installed under aliases, like generator-alias@npm:generator-module.
+      const temporaryDirectory = mkdtempSync(join(tmpdir(), 'yeoman-environment-'));
+      try {
+        const aliasPath = join(temporaryDirectory, 'node_modules/generator-alias');
+        const scopedAliasPath = join(temporaryDirectory, 'node_modules/@alias/generator-scoped');
+        cpSync(path.join(__dirname, 'fixtures/generator-module-root'), aliasPath, { recursive: true });
+        cpSync(path.join(__dirname, 'fixtures/generator-module-root'), scopedAliasPath, { recursive: true });
+        expect(
+          store
+            .lookupSync({ packagePaths: [aliasPath, scopedAliasPath], usePackageName: true })
+            .map(({ namespace }) => namespace)
+            .toSorted(),
+        ).toEqual(['@alias/scoped:app', 'alias:app']);
+      } finally {
+        rmSync(temporaryDirectory, { recursive: true, force: true });
+      }
     });
 
     it('#lookupSync() derives the namespace of a package from its name with usePackageName, like namespaceFromPackageName', () => {

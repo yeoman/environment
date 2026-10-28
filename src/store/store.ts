@@ -18,6 +18,8 @@ import { asNamespace, defaultLookups } from './namespace.ts';
 const debug = createDebug('yeoman:environment:store');
 const require = createRequire(import.meta.url);
 
+const isInNodeModules = (packagePath: string): boolean => packagePath.split(/[/\\]/).includes('node_modules');
+
 type FoundGenerator = {
   namespace: string;
   /** Path of the generator as it was found, `resolved` is its real path. */
@@ -34,7 +36,11 @@ export type StoreLookupOptions = LookupOptions &
   StoreEnvironmentOptions & {
     registerToScope?: string;
     customizeNamespace?: (ns?: string) => string | undefined;
-    /** Derive the namespace from the name in the package.json instead of the package directory. */
+    /**
+     * Derive the namespace from the name in the package.json instead of the package directory, for a package outside
+     * `node_modules` (a checkout). A package inside `node_modules` is named after its folder, the name it was installed
+     * as, which may be an alias.
+     */
     usePackageName?: boolean;
     /** Generators to keep, the others are neither registered nor returned. */
     filter?: (generator: FoundGenerator) => boolean;
@@ -443,7 +449,8 @@ export default class Store {
     lookupGeneratorsSync(lookupOptions, ({ packagePath, filePath, lookups }) => {
       let namespace: string | undefined;
       try {
-        const packageName = usePackageName ? this.getPackageJson<{ name?: string }>(packagePath)?.name : undefined;
+        const packageName =
+          usePackageName && !isInNodeModules(packagePath) ? this.getPackageJson<{ name?: string }>(packagePath)?.name : undefined;
         const packageNamespace = packageName ? namespaceOfPackage(packageName) : undefined;
         let foundNamespace: string;
         if (packageNamespace) {
