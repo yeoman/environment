@@ -10,6 +10,7 @@ import type {
   BaseGeneratorMeta,
   GeneratorMeta,
   GetGeneratorConstructor,
+  InstantiateOptions,
 } from '@yeoman/types';
 import createDebug from 'debug';
 import { type LookupOptions, lookupGeneratorsSync } from './lookup.ts';
@@ -356,7 +357,8 @@ export default class Store {
       return environment.instantiate(await importGenerator(environment), {
         generatorArgs: arguments_,
         generatorOptions: options,
-      });
+        meta: generatorMeta,
+      } as InstantiateOptions);
     };
 
     const operations: MetaOperations = { importGenerator, instantiate };
@@ -674,6 +676,7 @@ export default class Store {
       throw new TypeError("The generator doesn't provide a constructor.");
     }
 
+    // Kept for compatibility, the environment instantiates from the meta: the class is shared by the metas of its module.
     Object.assign(Generator, meta);
     Generator._meta = generatorMeta;
     return Generator;

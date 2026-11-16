@@ -321,7 +321,9 @@ describe('Store', async () => {
       const instantiated: unknown[] = [];
       const environment = { instantiate: async (generator: unknown, options: unknown) => instantiated.push([generator, options]) } as any;
       await meta.instantiate(['arg'], { option: true }, { env: environment });
-      expect(instantiated).toEqual([[await meta.importGenerator(), { generatorArgs: ['arg'], generatorOptions: { option: true } }]]);
+      expect(instantiated).toEqual([
+        [await meta.importGenerator(), { generatorArgs: ['arg'], generatorOptions: { option: true }, meta: store.getMeta('foo:app') }],
+      ]);
     });
 
     describe('with { env }', () => {

@@ -90,6 +90,15 @@ type EnvironmentInstantiateOptions<G extends BaseGenerator = BaseGenerator> = In
    * stays the one of the generator, without them.
    */
   namespaceId?: string;
+  /**
+   * The meta the generator was found by: its namespace, its path and its meta are given to the generator, instead of
+   * the ones the class keeps, which are of the last meta of its module imported.
+   */
+  meta?: StoreGeneratorMeta;
+  /** The namespace of a generator class that is not registered, instead of the one the class keeps. */
+  namespace?: string;
+  /** The path of a generator class that is not registered, instead of the one the class keeps. */
+  resolved?: string;
 };
 
 const getInstantiateOptions = (firstArg?: any, generatorOptions?: any): InstantiateOptions => {
@@ -369,8 +378,9 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
   ): Promise<G> | G {
     const namespace = typeof namespaceOrPath === 'string' ? toNamespace(namespaceOrPath) : undefined;
 
+    const meta = typeof namespaceOrPath === 'string' ? this.findMeta(namespaceOrPath) : undefined;
     const checkGenerator = <const T extends Partial<BaseGeneratorConstructorMeta>>(Generator?: T): T => {
-      const generatorNamespace = Generator?.namespace;
+      const generatorNamespace = meta?.namespace ?? Generator?.namespace;
       if (namespace && generatorNamespace && generatorNamespace !== namespace.namespace && generatorNamespace !== UNKNOWN_NAMESPACE) {
         // Update namespace object in case of aliased namespace.
         try {
@@ -400,18 +410,20 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     const instantiate = (Generator?: GetGeneratorConstructor<G> & Partial<BaseGeneratorConstructorMeta>): Promise<G> | G => {
       const checked = checkGenerator(Generator);
       if (!namespace) {
-        return this.instantiate(checked, ...arguments_);
+        return meta
+          ? this.instantiate(checked, { ...getInstantiateOptions(...arguments_), meta } as EnvironmentInstantiateOptions<G>)
+          : this.instantiate(checked, ...arguments_);
       }
 
       // Read after checkGenerator, which updates the namespace to the one of an aliased generator.
       return this.instantiate(checked, {
         ...getInstantiateOptions(...arguments_),
         namespaceId: namespace.complete,
+        ...(meta && { meta }),
       } as EnvironmentInstantiateOptions<G>);
     };
 
     if (typeof namespaceOrPath === 'string') {
-      const meta = this.findMeta(namespaceOrPath);
       const constructor = meta?.importGenerator();
       if (namespace && !constructor) {
         // Await this.lookupLocalNamespaces(namespace);
@@ -443,10 +455,11 @@ export default class EnvironmentBase extends EventEmitter implements BaseEnviron
     ...arguments_: any[]
   ): Promise<G> | G {
     const composeOptions = arguments_.length > 0 ? (getInstantiateOptions(...arguments_) as EnvironmentInstantiateOptions<G>) : {};
-    const { namespace = UNKNOWN_NAMESPACE, resolved = UNKNOWN_RESOLVED } = constructor;
-    // The generator class keeps the meta of the store, which may be shared: the generator gets the one of this environment.
-    const _meta = this.bindMeta(constructor._meta as StoreGeneratorMeta | undefined);
-    const { namespaceId } = composeOptions;
+    const { meta: foundMeta, namespaceId } = composeOptions;
+    const namespace = foundMeta?.namespace ?? composeOptions.namespace ?? constructor.namespace ?? UNKNOWN_NAMESPACE;
+    const resolved = foundMeta?.resolved ?? composeOptions.resolved ?? constructor.resolved ?? UNKNOWN_RESOLVED;
+    // The meta of the store may be shared: the generator gets the one bound to this environment.
+    const _meta = this.bindMeta(foundMeta ?? (constructor._meta as StoreGeneratorMeta | undefined));
     const environmentOptions = { env: this, resolved, namespace, _meta, ...(namespaceId && { namespaceId }) };
     const generator = new constructor(composeOptions.generatorArgs ?? [], {
       ...this.sharedOptions,
