@@ -2,15 +2,13 @@
 
 ## [8.6.0](https://github.com/yeoman/environment/compare/v8.5.1...v8.6.0) (2026-11-16)
 
-
 ### Features
 
-* **deps:** bump undici from 8.11.2 to 8.12.3 ([#881](https://github.com/yeoman/environment/issues/881)) ([e04d8c3](https://github.com/yeoman/environment/commit/e04d8c3fcb0745668cddc5eba297b0e5c72e9a2a))
-
+- **deps:** bump undici from 8.11.2 to 8.12.3 ([#881](https://github.com/yeoman/environment/issues/881)) ([e04d8c3](https://github.com/yeoman/environment/commit/e04d8c3fcb0745668cddc5eba297b0e5c72e9a2a))
 
 ### Bug Fixes
 
-* instantiate a generator from the meta it was found by ([#883](https://github.com/yeoman/environment/issues/883)) ([0771601](https://github.com/yeoman/environment/commit/07716011767640959aadcae8a872dce42bb92f99))
+- instantiate a generator from the meta it was found by ([#883](https://github.com/yeoman/environment/issues/883)) ([0771601](https://github.com/yeoman/environment/commit/07716011767640959aadcae8a872dce42bb92f99))
 
 ## [8.5.1](https://github.com/yeoman/environment/compare/v8.5.0...v8.5.1) (2026-10-28)
 
