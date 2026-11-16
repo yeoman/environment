@@ -141,6 +141,60 @@ for (const generatorVersion of allVersions) {
         expect((await env.create('@scope/stub')) instanceof registeredGenerator).toBeTruthy();
       });
 
+      describe('metas of one module', () => {
+        class SharedGenerator {
+          options: any;
+          constructor(_arguments: string[], options: any) {
+            this.options = options;
+          }
+        }
+
+        beforeEach(async () => {
+          env.register(SharedGenerator as any, { namespace: 'first:app', resolved: 'first/app/index.js', packagePath: 'first' });
+          env.register(SharedGenerator as any, { namespace: 'second:app', resolved: 'second/app/index.js', packagePath: 'second' });
+          // The class keeps the last meta imported.
+          await env.get('first:app');
+          await env.get('second:app');
+        });
+
+        it('instantiates each generator with the meta it was found by', async () => {
+          const first = (await env.create('first:app')) as any;
+          expect(first.options.namespace).toBe('first:app');
+          expect(first.options.resolved).toBe('first/app/index.js');
+          expect(first.options._meta.packagePath).toBe('first');
+          const second = (await env.create('second:app')) as any;
+          expect(second.options.namespace).toBe('second:app');
+          expect(second.options._meta.packagePath).toBe('second');
+        });
+
+        it('instantiates each generator with its meta by the meta instantiate', async () => {
+          const first = (await env.getGeneratorMeta('first:app')!.instantiate()) as any;
+          expect(first.options.namespace).toBe('first:app');
+          expect(first.options._meta.packagePath).toBe('first');
+        });
+
+        it('instantiates the generator an alias resolves to with its meta', async () => {
+          env.alias(/^alias:(.*)$/, 'first:$1');
+          const generator = (await env.create('alias:app')) as any;
+          expect(generator.options.namespace).toBe('first:app');
+          expect(generator.options.namespaceId).toBe('first:app');
+          expect(generator.options._meta.packagePath).toBe('first');
+        });
+
+        it('instantiates a class that is not registered with the namespace and the path of the options', async () => {
+          const generator = (await env.instantiate(
+            SharedGenerator as any,
+            {
+              generatorOptions: {},
+              namespace: 'other:app',
+              resolved: 'other/app/index.js',
+            } as any,
+          )) as any;
+          expect(generator.options.namespace).toBe('other:app');
+          expect(generator.options.resolved).toBe('other/app/index.js');
+        });
+      });
+
       describe('namespaceId option', () => {
         class OptionsGenerator {
           options: any;
