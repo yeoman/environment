@@ -160,7 +160,7 @@ for (const generatorVersion of allVersions) {
         it('instantiates each generator with the meta it was found by', async () => {
           const first = (await env.create('first:app')) as any;
           expect(first.options.namespace).toBe('first:app');
-          expect(first.options.resolved).toBe('first/app/index.js');
+          expect(first.options.resolved).toBe(path.normalize('first/app/index.js'));
           expect(first.options._meta.packagePath).toBe('first');
           const second = (await env.create('second:app')) as any;
           expect(second.options.namespace).toBe('second:app');
