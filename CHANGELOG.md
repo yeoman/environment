@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.7.0](https://github.com/yeoman/environment/compare/v8.6.0...v8.7.0) (2026-11-19)
+
+
+### Features
+
+* **deps:** bump @yeoman/transform to v3 and @yeoman/conflicter to v4.3 ([#887](https://github.com/yeoman/environment/issues/887)) ([9bdf938](https://github.com/yeoman/environment/commit/9bdf93881e549de7761bfaa758681c9a4027889a))
+
 ## [8.6.0](https://github.com/yeoman/environment/compare/v8.5.1...v8.6.0) (2026-11-16)
 
 ### Features
