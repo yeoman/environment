@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.8.0](https://github.com/yeoman/environment/compare/v8.7.0...v8.8.0) (2026-11-20)
+
+
+### Features
+
+* **store:** add getPackageVersion to the meta of the generators ([#890](https://github.com/yeoman/environment/issues/890)) ([e13752a](https://github.com/yeoman/environment/commit/e13752af5f7e1d0191cf8244b1e25d473172ea9c))
+
 ## [8.7.0](https://github.com/yeoman/environment/compare/v8.6.0...v8.7.0) (2026-11-19)
 
 ### Features
