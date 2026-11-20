@@ -88,6 +88,16 @@ export type StoreGeneratorMeta = Omit<GeneratorMeta, 'importGenerator' | 'instan
   getPackageVersion?: () => string | undefined;
 };
 
+/** The meta of a generator package, shared by its generators. */
+export type StorePackageMeta = {
+  packageNamespace: string;
+  packagePath: string;
+  /** The package.json of the package, read once and cached by the store. */
+  getPackageJson: <T = Record<string, any>>() => T | undefined;
+  /** `yeoman.meta.packageVersion` of the package.json, or its `version`. */
+  getPackageVersion: () => string | undefined;
+};
+
 // The operations of a meta, kept on the meta itself: the meta of a clone has the operations of the meta it was cloned from.
 const operationsKey = Symbol('operations');
 
@@ -371,10 +381,7 @@ export default class Store {
     const getPackageJson: GeneratorMeta['getPackageJson'] = <T = Record<string, any>>(): T | undefined =>
       this.getPackageJson<T>(meta.packagePath);
 
-    const getPackageVersion = (): string | undefined => {
-      const packageJson = getPackageJson<{ version?: string; yeoman?: { meta?: { packageVersion?: string } } }>();
-      return packageJson?.yeoman?.meta?.packageVersion ?? packageJson?.version;
-    };
+    const getPackageVersion = (): string | undefined => this.getPackageVersion(meta.packagePath);
 
     const { packageNamespace } = toNamespace(meta.namespace) ?? {};
 
@@ -616,6 +623,41 @@ export default class Store {
 
   getPackagesNS(): string[] {
     return this._packagesNS;
+  }
+
+  /**
+   * The meta of the package of a namespace: of a package, at its last added path (see `addPackage`), or of a
+   * generator, at its packagePath. A package keeps its paths when its generators are replaced, like by mocked ones.
+   * @param namespace - namespace of a package or of a generator
+   */
+  getPackageMeta(namespace: string): StorePackageMeta | undefined {
+    let packageNamespace: string | undefined;
+    let packagePath: string | undefined;
+    if (namespace.includes(':')) {
+      ({ packageNamespace, packagePath } = this._meta[namespace] ?? {});
+    } else {
+      packageNamespace = namespace;
+      packagePath = this._packagesPaths[namespace]?.[0];
+    }
+
+    if (!packageNamespace || !packagePath) {
+      return undefined;
+    }
+
+    return {
+      packageNamespace,
+      packagePath,
+      getPackageJson: <T = Record<string, any>>() => this.getPackageJson<T>(packagePath),
+      getPackageVersion: () => this.getPackageVersion(packagePath),
+    };
+  }
+
+  /**
+   * `yeoman.meta.packageVersion` of the package.json of packagePath, or its `version`.
+   */
+  private getPackageVersion(packagePath?: string): string | undefined {
+    const packageJson = this.getPackageJson<{ version?: string; yeoman?: { meta?: { packageVersion?: string } } }>(packagePath);
+    return packageJson?.yeoman?.meta?.packageVersion ?? packageJson?.version;
   }
 
   /**
