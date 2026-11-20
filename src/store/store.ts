@@ -81,6 +81,11 @@ export type StoreGeneratorMeta = Omit<GeneratorMeta, 'importGenerator' | 'instan
     environmentOptions?: StoreEnvironmentOptions,
   ) => Promise<G>;
   instantiateHelp: <G extends BaseGenerator = BaseGenerator>(options?: StoreEnvironmentOptions) => Promise<G>;
+  /**
+   * The version of the package: `yeoman.meta.packageVersion` of its package.json, or its `version`, like a package
+   * published under another name telling the version it is of.
+   */
+  getPackageVersion?: () => string | undefined;
 };
 
 // The operations of a meta, kept on the meta itself: the meta of a clone has the operations of the meta it was cloned from.
@@ -366,6 +371,11 @@ export default class Store {
     const getPackageJson: GeneratorMeta['getPackageJson'] = <T = Record<string, any>>(): T | undefined =>
       this.getPackageJson<T>(meta.packagePath);
 
+    const getPackageVersion = (): string | undefined => {
+      const packageJson = getPackageJson<{ version?: string; yeoman?: { meta?: { packageVersion?: string } } }>();
+      return packageJson?.yeoman?.meta?.packageVersion ?? packageJson?.version;
+    };
+
     const { packageNamespace } = toNamespace(meta.namespace) ?? {};
 
     generatorMeta = {
@@ -375,6 +385,7 @@ export default class Store {
       requireModule,
       importModule,
       getPackageJson,
+      getPackageVersion,
       packageNamespace,
     };
     setOperations(generatorMeta, operations);

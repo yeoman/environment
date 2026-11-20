@@ -1,9 +1,9 @@
 import { createRequire } from 'node:module';
-import { cpSync, mkdtempSync, rmSync } from 'node:fs';
+import { cpSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path, { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { beforeEach, describe, expect, it } from 'expect-node';
+import { afterEach, beforeEach, describe, expect, it } from 'expect-node';
 import { Store } from '../src/store/index.ts';
 
 const require = createRequire(import.meta.url);
@@ -111,6 +111,37 @@ describe('Store', async () => {
     it('returns undefined if package.json does not exist', () => {
       const meta = store.add({ namespace: 'foo:module', resolved: '/foo/path', packagePath: '/foo/path' }, {});
       expect(meta?.getPackageJson?.()).toBeUndefined();
+    });
+  });
+
+  describe('#getPackageVersion()', () => {
+    let packagePath: string;
+
+    beforeEach(() => {
+      packagePath = mkdtempSync(join(tmpdir(), 'yeoman-environment-package-version-'));
+    });
+
+    afterEach(() => {
+      rmSync(packagePath, { recursive: true, force: true });
+    });
+
+    it('reads the version of the package when it is called', () => {
+      const meta = store.add({ namespace: 'foo:app', resolved: join(packagePath, 'app/index.js'), packagePath }, {});
+      writeFileSync(join(packagePath, 'package.json'), JSON.stringify({ name: 'generator-foo', version: '1.2.3' }));
+      expect(meta.getPackageVersion?.()).toBe('1.2.3');
+    });
+
+    it('reads yeoman.meta.packageVersion over the version of the package', () => {
+      writeFileSync(
+        join(packagePath, 'package.json'),
+        JSON.stringify({ name: 'generator-foo', version: '0.0.14', yeoman: { meta: { packageVersion: '9.5.0-next.0' } } }),
+      );
+      const meta = store.add({ namespace: 'foo:app', resolved: join(packagePath, 'app/index.js'), packagePath }, {});
+      expect(meta.getPackageVersion?.()).toBe('9.5.0-next.0');
+    });
+
+    it('returns undefined without a package.json', () => {
+      expect(store.add({ namespace: 'foo:app', resolved: '/foo/path' }, {}).getPackageVersion?.()).toBeUndefined();
     });
   });
 
