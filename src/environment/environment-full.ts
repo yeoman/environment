@@ -14,10 +14,7 @@ import YeomanCommand from '../cli/command.ts';
 import EnvironmentBase, { type EnvironmentOptions } from './environment-base.ts';
 import { splitArgsFromString as splitArgumentsFromString } from '../util/args.ts';
 import { defaults, pick } from '../util/object.ts';
-import { type LookupOptions, type StorePackageMeta, nestedGeneratorsFolder } from '../store/index.ts';
-
-/** The meta of a generator package, with its namespace. */
-export type EnvironmentPackageMeta = StorePackageMeta & { packageNamespace: string };
+import { type LookupOptions, nestedGeneratorsFolder } from '../store/index.ts';
 
 class FullEnvironment extends EnvironmentBase {
   constructor(options?: EnvironmentOptions);
@@ -153,23 +150,6 @@ class FullEnvironment extends EnvironmentBase {
 
     const packagePaths = this.getPackagePaths(namespace) || [];
     return packagePaths[0];
-  }
-
-  /**
-   * The meta of the package of a namespace, of a package or of a generator, resolved as `getPackagePath` does.
-   *
-   * @param namespace - namespace of a package or of a generator
-   */
-  getPackageMeta(namespace: string): EnvironmentPackageMeta | undefined {
-    let packageNamespace: string | undefined;
-    if (namespace.includes(':')) {
-      packageNamespace = this.getGeneratorMeta(namespace)?.packageNamespace;
-    } else {
-      packageNamespace = this.store.getPackagesPaths()[namespace] ? namespace : requireNamespace(this.alias(namespace)).packageNamespace;
-    }
-
-    const packagePath = this.getPackagePath(namespace);
-    return packagePath && packageNamespace ? { packageNamespace, ...this.store.getPackageMeta(packagePath) } : undefined;
   }
 
   /**

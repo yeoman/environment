@@ -146,21 +146,30 @@ describe('Store', async () => {
   });
 
   describe('#getPackageMeta()', () => {
-    it('reads the package.json and the version of the package, cached by packagePath', () => {
-      const packagePath = path.join(__dirname, 'fixtures/generator-mocha');
-      const packageMeta = store.getPackageMeta(packagePath);
-      expect(packageMeta).toMatchObject({ packagePath });
-      expect(packageMeta.getPackageJson()).toMatchObject({ name: 'generator-mocha', version: '0.0.0' });
-      expect(packageMeta.getPackageVersion()).toBe('0.0.0');
-      expect(store.getPackageMeta(packagePath)).toBe(packageMeta);
+    const packagePath = path.join(__dirname, 'fixtures/generator-mocha');
+
+    it('gives the meta of the package of a package or a generator namespace', () => {
+      store.add({ namespace: 'mocha:app', resolved: '/foo/path', packagePath }, {});
+      for (const namespace of ['mocha', 'mocha:app']) {
+        const packageMeta = store.getPackageMeta(namespace)!;
+        expect(packageMeta).toMatchObject({ packageNamespace: 'mocha', packagePath });
+        expect(packageMeta.getPackageJson()).toMatchObject({ name: 'generator-mocha', version: '0.0.0' });
+        expect(packageMeta.getPackageVersion()).toBe('0.0.0');
+      }
+
+      expect(store.getPackageMeta('mocha')!.getPackageJson()).toBe(store.getMeta('mocha:app')!.getPackageJson!());
     });
 
-    it('is the package of the getPackageJson and getPackageVersion of a generator meta', () => {
-      const packagePath = path.join(__dirname, 'fixtures/generator-mocha');
-      const meta = store.add({ namespace: 'mocha:app', resolved: '/foo/path', packagePath }, {});
-      const packageMeta = store.getPackageMeta(packagePath);
-      expect(meta.getPackageJson?.()).toBe(packageMeta.getPackageJson());
-      expect(meta.getPackageVersion?.()).toBe('0.0.0');
+    it('keeps the package of a generator replaced by one without packagePath', () => {
+      store.add({ namespace: 'mocha:app', resolved: '/foo/path', packagePath }, {});
+      store.add({ namespace: 'mocha:app' }, {});
+      expect(store.getPackageMeta('mocha:app')).toBeUndefined();
+      expect(store.getPackageMeta('mocha')).toMatchObject({ packageNamespace: 'mocha', packagePath });
+    });
+
+    it('is undefined for a namespace not added', () => {
+      expect(store.getPackageMeta('unknown')).toBeUndefined();
+      expect(store.getPackageMeta('unknown:app')).toBeUndefined();
     });
   });
 

@@ -918,23 +918,6 @@ for (const generatorVersion of allVersions) {
         expect(await env.getPackagePath('prefix-fixtures')).toEqual(await env.getPackagePath('fixtures'));
         expect(await env.getPackagePaths('prefix-fixtures')).toEqual(await env.getPackagePaths('fixtures'));
       });
-
-      it('#getPackageMeta() gives the meta of the package of a namespace', async function () {
-        expect(env.getPackageMeta('fixtures:generator-simple')).toMatchObject({ packageNamespace: 'fixtures', packagePath: simplePath });
-        expect(env.getPackageMeta('fixtures')).toMatchObject({ packageNamespace: 'fixtures', packagePath: 'new-path' });
-        expect(env.getPackageMeta('prefix-fixtures')).toMatchObject({ packageNamespace: 'fixtures', packagePath: 'new-path' });
-        expect(env.getPackageMeta('fixtures2')).toMatchObject({ packageNamespace: 'fixtures2', packagePath: simplePath });
-        expect(env.getPackageMeta('fixtures:generator-simple')!.getPackageJson()).toMatchObject({ name: 'generator-simple' });
-        expect(env.getPackageMeta('fixtures:generator-simple')!.getPackageVersion()).toBe('0.0.0');
-        expect(env.getPackageMeta('unknown')).toBeUndefined();
-        expect(env.getPackageMeta('unknown:app')).toBeUndefined();
-      });
-
-      it('#getPackageMeta() gives the package of a generator replaced by one without packagePath', async function () {
-        env.register(exnode.fn(), { namespace: 'fixtures:generator-simple' });
-        expect(env.getPackageMeta('fixtures:generator-simple')).toBeUndefined();
-        expect(env.getPackageMeta('fixtures')).toMatchObject({ packageNamespace: 'fixtures', packagePath: 'new-path' });
-      });
     });
 
     describe('#register()', () => {
