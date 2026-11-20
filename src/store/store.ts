@@ -88,6 +88,15 @@ export type StoreGeneratorMeta = Omit<GeneratorMeta, 'importGenerator' | 'instan
   getPackageVersion?: () => string | undefined;
 };
 
+/** The meta of a generator package, shared by its generators. */
+export type StorePackageMeta = {
+  packagePath: string;
+  /** The package.json of the package, read once and cached by the store. */
+  getPackageJson: <T = Record<string, any>>() => T | undefined;
+  /** `yeoman.meta.packageVersion` of the package.json, or its `version`. */
+  getPackageVersion: () => string | undefined;
+};
+
 // The operations of a meta, kept on the meta itself: the meta of a clone has the operations of the meta it was cloned from.
 const operationsKey = Symbol('operations');
 
@@ -166,6 +175,8 @@ export default class Store {
   private readonly _meta: Record<string, StoreGeneratorMeta> = {};
   // Cache parsed package.json by packagePath
   private readonly _packagesJson = new Map<string, unknown>();
+  // The package metas by packagePath
+  private readonly _packagesMeta = new Map<string, StorePackageMeta>();
   // Store packages paths by ns
   private readonly _packagesPaths: Record<string, string[]> = {};
   // Store packages ns
@@ -371,10 +382,8 @@ export default class Store {
     const getPackageJson: GeneratorMeta['getPackageJson'] = <T = Record<string, any>>(): T | undefined =>
       this.getPackageJson<T>(meta.packagePath);
 
-    const getPackageVersion = (): string | undefined => {
-      const packageJson = getPackageJson<{ version?: string; yeoman?: { meta?: { packageVersion?: string } } }>();
-      return packageJson?.yeoman?.meta?.packageVersion ?? packageJson?.version;
-    };
+    const getPackageVersion = (): string | undefined =>
+      meta.packagePath ? this.getPackageMeta(meta.packagePath).getPackageVersion() : undefined;
 
     const { packageNamespace } = toNamespace(meta.namespace) ?? {};
 
@@ -616,6 +625,27 @@ export default class Store {
 
   getPackagesNS(): string[] {
     return this._packagesNS;
+  }
+
+  /**
+   * The meta of the package at packagePath, cached by packagePath.
+   */
+  getPackageMeta(packagePath: string): StorePackageMeta {
+    let packageMeta = this._packagesMeta.get(packagePath);
+    if (!packageMeta) {
+      const getPackageJson = <T = Record<string, any>>(): T | undefined => this.getPackageJson<T>(packagePath);
+      packageMeta = {
+        packagePath,
+        getPackageJson,
+        getPackageVersion() {
+          const packageJson = getPackageJson<{ version?: string; yeoman?: { meta?: { packageVersion?: string } } }>();
+          return packageJson?.yeoman?.meta?.packageVersion ?? packageJson?.version;
+        },
+      };
+      this._packagesMeta.set(packagePath, packageMeta);
+    }
+
+    return packageMeta;
   }
 
   /**

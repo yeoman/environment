@@ -145,6 +145,25 @@ describe('Store', async () => {
     });
   });
 
+  describe('#getPackageMeta()', () => {
+    it('reads the package.json and the version of the package, cached by packagePath', () => {
+      const packagePath = path.join(__dirname, 'fixtures/generator-mocha');
+      const packageMeta = store.getPackageMeta(packagePath);
+      expect(packageMeta).toMatchObject({ packagePath });
+      expect(packageMeta.getPackageJson()).toMatchObject({ name: 'generator-mocha', version: '0.0.0' });
+      expect(packageMeta.getPackageVersion()).toBe('0.0.0');
+      expect(store.getPackageMeta(packagePath)).toBe(packageMeta);
+    });
+
+    it('is the package of the getPackageJson and getPackageVersion of a generator meta', () => {
+      const packagePath = path.join(__dirname, 'fixtures/generator-mocha');
+      const meta = store.add({ namespace: 'mocha:app', resolved: '/foo/path', packagePath }, {});
+      const packageMeta = store.getPackageMeta(packagePath);
+      expect(meta.getPackageJson?.()).toBe(packageMeta.getPackageJson());
+      expect(meta.getPackageVersion?.()).toBe('0.0.0');
+    });
+  });
+
   describe('#namespaces()', async () => {
     beforeEach(async () => {
       store.add({ namespace: 'foo' }, {});

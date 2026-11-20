@@ -6,5 +6,6 @@ export {
   type StoreGeneratorMeta,
   type StoreLookupGeneratorMeta,
   type StoreLookupOptions,
+  type StorePackageMeta,
   type StoreSharedLookupOptions,
 } from './store.ts';

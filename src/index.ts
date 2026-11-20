@@ -1,7 +1,7 @@
 import type { EnvironmentOptions } from './environment/environment-base.ts';
 import Environment from './environment/environment-full.ts';
 
-export { default } from './environment/environment-full.ts';
+export { default, type EnvironmentPackageMeta } from './environment/environment-full.ts';
 export { default as EnvironmentBase, type EnvironmentOptions } from './environment/environment-base.ts';
 // Experimental: the Store API is not stable yet.
 export {
@@ -10,6 +10,7 @@ export {
   type StoreGeneratorMeta,
   type StoreLookupGeneratorMeta,
   type StoreLookupOptions,
+  type StorePackageMeta,
   type StoreSharedLookupOptions,
 } from './store/index.ts';
 
