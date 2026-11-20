@@ -1,6 +1,6 @@
 {
   "name": "yeoman-environment",
-  "version": "8.8.0",
+  "version": "8.9.0",
   "description": "Handles the lifecyle and bootstrapping of generators in a specific environment",
   "keywords": [
     "development",

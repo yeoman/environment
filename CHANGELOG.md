@@ -1,5 +1,12 @@
 # Changelog
 
+## [8.9.0](https://github.com/yeoman/environment/compare/v8.8.0...v8.9.0) (2026-11-20)
+
+
+### Features
+
+* **store:** add getPackageMeta, the meta of the package of a namespace ([#892](https://github.com/yeoman/environment/issues/892)) ([a001964](https://github.com/yeoman/environment/commit/a001964257e0182618b797a2f03f206bb15aa098))
+
 ## [8.8.0](https://github.com/yeoman/environment/compare/v8.7.0...v8.8.0) (2026-11-20)
 
 
